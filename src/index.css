@@ -86,7 +86,7 @@ main{
 .header-right{
   display: flex;
   align-items: center;
-  margin-right: 5px;
+  margin-right: 15px;
 }
 .main{
   display: flex;
