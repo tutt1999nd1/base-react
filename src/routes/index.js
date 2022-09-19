@@ -12,8 +12,13 @@ export default function RenderRoute() {
                 <Main></Main>
             }>
                 <Route path="" element={<div>Main1</div>} />
-                <Route path="/main1" element={<div>Main1</div>} />
-                <Route path="/main2" element={<div>Main2</div>} />
+                <Route path="/dashboard" element={<div>Dashboard</div>} />
+                <Route path="/assets" element={<div>Tài sản</div>} />
+                <Route path="/loan-purpose" element={<div>Mục đích vay</div>} />
+                <Route path="/loan-amount" element={<div>Khoản vay</div>} />
+                <Route path="/account" element={<div>Tài khoản</div>} />
+                <Route path="/company" element={<div>Công ty vay</div>} />
+                <Route path="/categories" element={<div>Hạng mục</div>} />
             </Route>
         </Routes>
     )

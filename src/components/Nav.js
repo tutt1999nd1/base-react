@@ -24,53 +24,79 @@ export default function Nav() {
             <hr/>
             <div style={{marginTop: "10px"}}>
                 <ul>
-                    <li>
-                        <div className={'nav-item'}>
-                            <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>Dashboard</div>
-                        </div>
-                    </li>
-                    <li>
-                        <div className={'nav-item'}>
-                            <div className={'nav-item-name'}><AttachMoneyIcon></AttachMoneyIcon>Quản lý tài sản</div>
-                        </div>
-                    </li>
-                    <li>
-                        <div className={'nav-item'}>
-                            <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>Quản lý mục đích vay</div>
-                        </div>
-                    </li>
-                    <li>
-                        <div className={'nav-item'}>
-                            <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý khoản vay</div>
-                        </div>
-                    </li>
-
+                    <NavLink className={'nav-link'} to={'dashboard'}>
+                        <li>
+                            <div className={'nav-item'}>
+                                <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>
+                                </div>
+                            </div>
+                            Dashboard
+                        </li>
+                    </NavLink>
+                    <NavLink className={'nav-link'} to={'assets'}>
+                        <li>
+                            <div className={'nav-item'}>
+                                <div className={'nav-item-name'}><AttachMoneyIcon></AttachMoneyIcon>Quản lý tài sản</div>
+                            </div>
+                        </li>
+                    </NavLink>
+                    <NavLink className={'nav-link'} to={'loan-purpose'}>
+                        <li>
+                            <div className={'nav-item'}>
+                                <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>Quản lý mục đích vay</div>
+                            </div>
+                        </li>
+                    </NavLink>
+                    <NavLink className={'nav-link'} to={'loan-amount'}>
+                        <li>
+                            <div className={'nav-item'}>
+                                <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý khoản vay</div>
+                            </div>
+                        </li>
+                    </NavLink>
+                    {/*<NavLink className={'nav-link'} to={''}>*/}
+                    {/*    <li onClick={handleClickCollapse}>*/}
+                    {/*        <div className={'nav-item'} style={{width:'100%'}}>*/}
+                    {/*            <div className={'nav-item-name'}><LibraryBooksIcon></LibraryBooksIcon>Danh mục</div>*/}
+                    {/*            {open ? <ExpandLess/> : <ExpandMore/>}*/}
+                    {/*        </div>*/}
+                    {/*    </li>*/}
+                    {/*</NavLink>*/}
                     <li onClick={handleClickCollapse}>
-                        <div className={'nav-item'}>
+                        <div className={'nav-item'} style={{width:'100%'}}>
                             <div className={'nav-item-name'}><LibraryBooksIcon></LibraryBooksIcon>Danh mục</div>
                             {open ? <ExpandLess/> : <ExpandMore/>}
                         </div>
                     </li>
+
+
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <ul>
-                            <li>
-                                <div className={'nav-item li-child'}>
-                                    <div className={'nav-item-name'}><SwitchAccountIcon></SwitchAccountIcon>Tài khoản
-                                    </div>
+                            <NavLink className={'nav-link'} to={'account'}>
+                                <li>
+                                    <div className={'nav-item li-child'}>
+                                        <div className={'nav-item-name'}><SwitchAccountIcon></SwitchAccountIcon>Tài khoản
+                                        </div>
 
-                                </div>
-                            </li>
-                            <li>
-                                <div className={'nav-item li-child'}>
-                                    <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Quản lý công ty vay
                                     </div>
-                                </div>
-                            </li>
-                            <li>
-                                <div className={'nav-item li-child'}>
-                                    <div className={'nav-item-name'}><ClassIcon></ClassIcon>Hạng mục</div>
-                                </div>
-                            </li>
+                                </li>
+                            </NavLink>
+
+                            <NavLink className={'nav-link'} to={'company'}>
+                                <li>
+                                    <div className={'nav-item li-child'}>
+                                        <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Công ty vay
+                                        </div>
+                                    </div>
+                                </li>
+                            </NavLink>
+                            <NavLink className={'nav-link'} to={'categories'}>
+                                <li>
+                                    <div className={'nav-item li-child'}>
+                                        <div className={'nav-item-name'}><ClassIcon></ClassIcon>Hạng mục</div>
+                                    </div>
+                                </li>
+                            </NavLink>
                         </ul>
                     </Collapse>
 

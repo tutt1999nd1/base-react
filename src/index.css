@@ -32,7 +32,7 @@ hr{
 .nav ul{
   list-style-type: none;
   margin: 0;
-  padding: 0;
+  padding: 10px;
 }
 .nav ul li:hover {
   background: #242a38;
@@ -54,9 +54,10 @@ hr{
   justify-content: space-between;
   display: flex;
   cursor: pointer;
+
 }
 .li-child{
-  padding-left: 45px;
+  /*padding-left: 45px;*/
 }
 .footer{
   width: 100%;
@@ -90,4 +91,23 @@ main{
 }
 .main{
   display: flex;
+}
+.nav-link{
+display: flex;
+}
+.nav-link li{
+  width: 100%;
+  display: flex;
+
+}
+.nav-link{
+  margin-top: 5px;
+  border-radius: 5px;
+  direction: unset;
+  text-decoration: none;
+  color: rgb(209, 213, 219);;
+}
+.nav .active{
+  color: rgb(16, 185, 129) !important;
+  background: #242a38;
 }
