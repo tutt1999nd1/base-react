@@ -9,10 +9,12 @@ export default function Main() {
     return (
         <div className={'main'}>
             <Nav></Nav>
-            <div style={{width:'100%'}}>
+            <div style={{width:'100%',height:'100%','overflow-y':'auto'}}>
                 <Header></Header>
-                <Outlet/>
-                <Footer></Footer>
+                <div className={'main-body'}>
+                        <Outlet/>
+                </div>
+                {/*<Footer></Footer>*/}
             </div>
 
 
