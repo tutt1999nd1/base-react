@@ -156,6 +156,7 @@ display: flex;
   background-clip: content-box;
 }
 .main-content-body{
+  margin-top: 20px;
   height: 100%;
   width: 100%;
   background-color: rgb(255, 255, 255);
@@ -182,4 +183,22 @@ display: flex;
   height: 100px;
   display: flex;
   align-items: center;
+}
+.MuiDataGrid-root .MuiDataGrid-cell:focus {
+  /* outline: solid #1976d2 1px; */
+  outline: unset!important;
+}
+.icon-action{
+  display: flex;
+  width: 90%;
+  justify-content: space-between;
+}
+.icon-action svg{
+  cursor: pointer;
+}
+.formik-input{
+  width: 100%;
+}
+.form-content{
+  padding: 20px;
 }

@@ -17,10 +17,8 @@ import {
 } from "@mui/x-data-grid";
 import {GridRowsProp} from "@mui/x-data-grid";
 import {GridColDef} from "@mui/x-data-grid";
-import {useNavigate} from "react-router-dom";
 
-export default function ManageAssets() {
-    const navigate = useNavigate();
+export default function DetailAssets() {
     //     const localizedTextsMap = {
     //     columnMenuUnsort: "não classificado",
     //     columnMenuSortAsc: "Classificar por ordem crescente",
@@ -126,9 +124,6 @@ export default function ManageAssets() {
 
         // { field: 'document', headerName: 'Nhóm tài sản' },
     ];
-    const redirectAddPage = () => {
-        navigate('/assets/create')
-    }
     // const { data } = useDemoData({
     //     dataSet: 'Commodity',
     //     rowLength: 20,
@@ -152,7 +147,7 @@ export default function ManageAssets() {
                     <Typography variant="h5" className={'main-content-tittle'}>
                         Quản lý tài sản
                     </Typography>
-                    <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon />}>
+                    <Button variant="outlined" startIcon={<AddIcon />}>
                         Thêm
                     </Button>
                 </div>
