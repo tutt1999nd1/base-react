@@ -223,6 +223,7 @@ export default function ManageAssets() {
         </div>
     )
 }
+
 function CustomToolbar() {
     return (
         <GridToolbarContainer>

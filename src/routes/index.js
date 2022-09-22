@@ -16,8 +16,8 @@ export default function RenderRoute() {
                 <Route path="" element={<div>Main1</div>} />
                 <Route path="/dashboard" element={<div>Dashboard</div>} />
                 <Route path="/assets" element={<ManageAssets></ManageAssets>} />
-                <Route path="/assets/create" element={<EditAssets></EditAssets>} />
-                <Route path="/assets/update" element={<EditAssets></EditAssets>} />
+                <Route path="/assets/create" element={<EditAssets isUpdate = {false}></EditAssets>} />
+                <Route path="/assets/update" element={<EditAssets isUpdate = {true}></EditAssets>} />
                 <Route path="/assets" element={<ManageAssets></ManageAssets>} />
                 <Route path="/loan-purpose" element={<div>Mục đích vay</div>} />
                 <Route path="/loan-amount" element={<div>Khoản vay</div>} />

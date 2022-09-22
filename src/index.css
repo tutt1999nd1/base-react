@@ -21,8 +21,8 @@ hr{
 }
 .header{
   width: 100%;
-  position: fixed;
-  top: 0;
+  /*position: fixed;*/
+  /*top: 0;*/
 }
 .nav{
   /*float: left;*/
@@ -121,7 +121,7 @@ display: flex;
   /*display: flex;*/
   /*justify-content: center;*/
   /*align-items: center;*/
-  margin-top: 54px;
+  /*margin-top: 54px;*/
 
 
 }

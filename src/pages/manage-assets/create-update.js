@@ -3,9 +3,9 @@ import {
     Box,
     Button,
     Divider,
-    FormControl,
+    FormControl, FormHelperText,
     Grid,
-    InputAdornment, MenuItem,
+    InputAdornment, InputLabel, MenuItem,
     Paper, Select,
     TextField,
     Tooltip,
@@ -30,50 +30,48 @@ import {GridRowsProp} from "@mui/x-data-grid";
 import {GridColDef} from "@mui/x-data-grid";
 import * as yup from 'yup';
 import {Form, Formik} from 'formik';
+import {useNavigate} from "react-router-dom";
 
-export default function EditAssets() {
+export default function EditAssets(props) {
+    const navigate = useNavigate();
+    const {isUpdate} = props
     const validationSchema = yup.object({
-        email: yup
+        asset_name: yup
             .string()
             .trim()
-            .email('Vui lòng nhập đúng định dạng email')
-            .required('Email không được để trống'),
-        username: yup
+            .required('Không được để trống'),
+        asset_type: yup
             .string()
             .trim()
-            .required('Tên đăng nhập không được để trống').matches(
-                /^[a-zA-Z0-9]+$/,
-                "Tên đăng nhập không chứa ký tự đặc biệt"
-            ),
-        name: yup
+            .required('Không được để trống'),
+        asset_group: yup
             .string()
             .trim()
-            .required('Tên không được để trống')
+            .required('Không được để trống')
         ,
-        phoneNumber: yup
+        description: yup
             .string()
             .trim()
-            .required('Số điện thoại không được để trống')
-            .matches(/^((([+84]|[84])+[3|5|7|8|9])|0[3|5|7|8|9])+([0-9]{8})$/,"Nhập đúng định dạng số điện thoại"),
+            .required('Không được để trống'),
         // .matches( /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,"Nhập đúng định dạng số điện thoại"),
-        password: yup
+        initial_value: yup
             .string()
             .trim()
-            // .matches(
-            //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/,
-            //     "Mật khẩu tối thiểu 8 ký tự, chứa chữ hoa, chữ thường, số, và ký tự đặc biệt"
-            // )
-            .required('Mật khẩu không được để trống'),
-        groupId: yup
+            .required('Không được để trống'),
+        capital_value: yup
             .string()
             .trim()
-            .required('Nhóm quyền không được để trống'),
-        rePassword: yup.string()
-            .test('passwords-match', 'Mật khẩu không khớp', function (value) {
-                return this.parent.password === value
-            })
+            .required('Không được để trống'),
+        max_capital_value: yup.string()
+            .trim()
+            .required('Không được để trống'),
+        current_credit_value: yup.string()
+            .trim()
+            .required('Không được để trống'),
     });
-
+    const backList = () => {
+        navigate('/assets')
+    }
     return (
         <div className={'main-content'}>
             <ToastContainer
@@ -96,13 +94,20 @@ export default function EditAssets() {
             </div>
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
-                    <h4>Thêm mới</h4>
+                    <h4>{isUpdate?'Cập nhật':'Thêm mới'} </h4>
                 </div>
                 <Divider light />
                 <Formik
                     enableReinitialize
                     initialValues={{
-
+                        asset_name:'',
+                        asset_type:'1',
+                        asset_group:'1',
+                        description:'',
+                        initial_value:'',
+                        capital_value:'',
+                        max_capital_value:'',
+                        current_credit_value:'',
                     }}
                     validationSchema={validationSchema}
                     onSubmit={
@@ -110,6 +115,32 @@ export default function EditAssets() {
                             // setInfoAccount();
                             // submitAccount();
                             console.log('values',values)
+                            if(isUpdate){
+                                toast.success('Cập nhật thành công', {
+                                    position: "top-right",
+                                    autoClose: 1500,
+                                    hideProgressBar: true,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                });
+                                setTimeout(() => {
+                                    navigate('/assets')
+                                }, 1050);
+                            }
+                            else {
+                                toast.success('Thêm mới thành công', {
+                                    position: "top-right",
+                                    autoClose: 1500,
+                                    hideProgressBar: true,
+                                    closeOnClick: true,
+                                    pauseOnHover: true,
+                                    draggable: true,
+                                });
+                                setTimeout(() => {
+                                    navigate('/assets')
+                                }, 1050);
+                            }
                         }
                     }
                 >
@@ -128,63 +159,126 @@ export default function EditAssets() {
                                     <Grid container spacing={4}>
                                         <Grid item xs={6} md={6}>
                                             <TextField
+                                                id='asset_name'
+                                                name='asset_name'
                                                 className={'formik-input'}
                                                 label="Tên tài sản"
                                                 placeholder={'Tên tài sản'}
                                                 // variant="standard"
+                                                value={values.asset_name}
+                                                onChange={handleChange}
+                                                error={touched.asset_name && Boolean(errors.asset_name)}
+                                                helperText={touched.asset_name && errors.asset_name}
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <FormControl fullWidth>
+                                                <InputLabel id="asset_group_label">Nhóm tài sản</InputLabel>
+
                                                 <Select
-                                                    value={'1'}
-                                                    // value={infoAccount.groupId}
-                                                    // onChange={handleChange}
+                                                    label={"Nhóm tài sản"}
+                                                    id='asset_group'
+                                                    name='asset_group'
+                                                    value={values.asset_group}
+                                                    onChange={handleChange}
+                                                    error={touched.asset_group && Boolean(errors.asset_group)}
+                                                    helperText={touched.asset_group && errors.asset_group}
                                                     // size='small'
                                                 >
                                                     <MenuItem value={'1'}>Nhóm 1</MenuItem>
-                                                    <MenuItem value={'2'}>Nhóm 2</MenuItem>
-                                                    <MenuItem value={'3'}>Nhóm 3</MenuItem>
+
 
                                                 </Select>
-                                                {/*<FormHelperText className={'error-message'}>{errors.groupId}</FormHelperText>*/}
+                                                <FormHelperText className={'error-message'}>{errors.asset_group}</FormHelperText>
+                                            </FormControl>
+                                        </Grid>
+
+                                        <Grid item xs={6} md={6}>
+
+                                            <FormControl fullWidth>
+                                                <InputLabel id="asset_type_label">Loại tài sản</InputLabel>
+                                                <Select
+                                                    labelId="asset_type_label"
+                                                    id='asset_type'
+                                                    name='asset_type'
+                                                    label='Loại tài sản'
+                                                    value={values.asset_type}
+                                                    onChange={handleChange}
+                                                    error={touched.asset_type && Boolean(errors.asset_type)}
+                                                    helperText={touched.asset_type && errors.asset_type}
+                                                    // size='small'
+                                                >
+                                                    <MenuItem value={'1'}>Bất động sản</MenuItem>
+
+
+                                                </Select>
+                                                <FormHelperText className={'error-message'}>{errors.asset_type}</FormHelperText>
                                             </FormControl>
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>
                                             <TextField
+                                                id='initial_value'
+                                                name='initial_value'
                                                 className={'formik-input'}
                                                 label="Giá trị ban đầu"
                                                 placeholder={'Giá trị ban đầu'}
+                                                type={"number"}
                                                 // variant="standard"
+                                                value={values.initial_value}
+                                                onChange={handleChange}
+                                                error={touched.initial_value && Boolean(errors.initial_value)}
+                                                helperText={touched.initial_value && errors.initial_value}
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <TextField
+                                                id='capital_value'
+                                                name='capital_value'
                                                 className={'formik-input'}
                                                 label="Vốn vay"
                                                 placeholder={'Vốn vay'}
+                                                type={"number"}
                                                 // variant="standard"
+                                                value={values.capital_value}
+                                                onChange={handleChange}
+                                                error={touched.capital_value && Boolean(errors.capital_value)}
+                                                helperText={touched.capitalValue && errors.capitalValue}
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <TextField
+                                                id='current_credit_value'
+                                                name='current_credit_value'
                                                 className={'formik-input'}
                                                 label="Gốc vay tín dụng hiện tại"
                                                 placeholder={'Gốc vay tín dụng hiện tại'}
+                                                type={"number"}
+                                                value={values.current_credit_value}
+                                                onChange={handleChange}
+                                                error={touched.current_credit_value  && Boolean(errors.current_credit_value)}
+                                                helperText={touched.current_credit_value && errors.current_credit_value}
                                                 // variant="standard"
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <TextField
+                                                id='max_capital_value'
+                                                name='max_capital_value'
                                                 className={'formik-input'}
                                                 label="Số tiền vay tối đa"
                                                 placeholder={'Số tiền vay tối đa'}
+                                                type={"number"}
                                                 // variant="standard"
+                                                value={values.max_capital_value}
+                                                onChange={handleChange}
+                                                error={touched.max_capital_value  && Boolean(errors.max_capital_value)}
+                                                helperText={touched.max_capital_value && errors.max_capital_value}
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <TextField
+
                                                 className={'formik-input'}
                                                 label="Link tài liệu"
                                                 placeholder={'Link tài liệu'}
@@ -197,7 +291,25 @@ export default function EditAssets() {
                                                 label="Thông tin"
                                                 placeholder={'Thông tin'}
                                                 // variant="standard"
+                                                id='description'
+                                                name='description'
+                                                multiline
+                                                rows={5}
+                                                value={values.description}
+                                                onChange={handleChange}
+                                                error={touched.description  && Boolean(errors.description)}
+                                                helperText={touched.description && errors.description}
                                             />
+                                        </Grid>
+                                        {/*<Grid item xs={6} md={6}>*/}
+                                        {/*    <input type="file"/>*/}
+                                        {/*</Grid>*/}
+                                        <Grid item xs={6} md={12}>
+                                            <div className={''} style={{display:"flex", justifyContent:"center"}}>
+                                                <Button style={{marginRight:'10px'}} onClick={backList} variant="outlined">Hủy</Button>
+                                                <Button variant="contained" type='submit'>Lưu</Button>
+
+                                            </div>
                                         </Grid>
                                     </Grid>
                                 </Box>
@@ -206,7 +318,6 @@ export default function EditAssets() {
                         )
                     }}
                 </Formik>
-
             </div>
         </div>
     )
