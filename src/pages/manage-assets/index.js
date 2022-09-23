@@ -1,5 +1,15 @@
-import React, {useState} from "react";
-import {Button, Divider, InputAdornment, Paper, TextField, Tooltip, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {
+    Button,
+    Divider,
+    FormControl, FormHelperText,
+    InputAdornment,
+    InputLabel, MenuItem,
+    Paper, Select,
+    TextField,
+    Tooltip,
+    Typography
+} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
@@ -18,6 +28,8 @@ import {
 import {GridRowsProp} from "@mui/x-data-grid";
 import {GridColDef} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
+import apiManagerAssets from "../../api/manage-assets";
+import ModalConfirmDel from "../../components/ModalConfirmDelete";
 
 export default function ManageAssets() {
     const navigate = useNavigate();
@@ -29,55 +41,45 @@ export default function ManageAssets() {
     //     columnMenuHideColumn: "Ocultar",
     //     columnMenuShowColumns: "Mostrar colunas"
     // };
-    const [data, setData] = useState([
-        {
-            'name':'Tài sản 1',
-            'group':'Group 1',
-            'type':'Cho vay',
-            'information':'Thông tin chi tiết',
-            'gia_tri_ban_dau':'1000000',
-            'von_vay':'1000000',
-            'goc_vay_tin_dung_hien_tai':'1000000',
-            'so_tien_toi_da':'1000000',
-            'status':'1',
-            'document':''
-        }
-    ])
-    const rows: GridRowsProp = [
-        { id:1,name: 'Tài sản 1', group: 'Group1', type: 'World' ,information:'Thông tin 1',gia_tri_ban_dau:100000,von_vay:100000,goc_vay_tin_dung_hien_tai:100000,so_tien_toi_da:100000,status:'Chưa phê duyệt',document:''},
-        { id:2,name: 'Tài sản 2', group: 'Group1', type: 'World' ,information:'Thông tin 1',gia_tri_ban_dau:100000,von_vay:100000,goc_vay_tin_dung_hien_tai:100000,so_tien_toi_da:100000,status:'Chưa phê duyệt',document:''},
-        { id:3,name: 'Tài sản 3', group: 'Group1', type: 'World' ,information:'Thông tin 1',gia_tri_ban_dau:100000,von_vay:100000,goc_vay_tin_dung_hien_tai:100000,so_tien_toi_da:100000,status:'Chưa phê duyệt',document:''},
-        { id:4,name: 'Tài sản 4', group: 'Group1', type: 'World' ,information:'Thông tin 1',gia_tri_ban_dau:100000,von_vay:100000,goc_vay_tin_dung_hien_tai:100000,so_tien_toi_da:100000,status:'Chưa phê duyệt',document:''},
-        { id:5,name: 'Tài sản 5', group: 'Group1', type: 'World' ,information:'Thông tin 1',gia_tri_ban_dau:100000,von_vay:100000,goc_vay_tin_dung_hien_tai:100000,so_tien_toi_da:100000,status:'Chưa phê duyệt',document:''},
-        { id:6,name: 'Tài sản 6', group: 'Group1', type: 'World' ,information:'Thông tin 1',gia_tri_ban_dau:100000,von_vay:100000,goc_vay_tin_dung_hien_tai:100000,so_tien_toi_da:100000,status:'Chưa phê duyệt',document:''},
-        { id:7,name: 'Tài sản 7', group: 'Group1', type: 'World' ,information:'Thông tin 1',gia_tri_ban_dau:100000,von_vay:100000,goc_vay_tin_dung_hien_tai:100000,so_tien_toi_da:100000,status:'Chưa phê duyệt',document:''},
-        { id:8,name: 'Tài sản 8', group: 'Group1', type: 'World' ,information:'Thông tin 1',gia_tri_ban_dau:100000,von_vay:100000,goc_vay_tin_dung_hien_tai:100000,so_tien_toi_da:100000,status:'Chưa phê duyệt',document:''},
-        { id:9,name: 'Tài sản 9', group: 'Group1', type: 'World' ,information:'Thông tin 1',gia_tri_ban_dau:100000,von_vay:100000,goc_vay_tin_dung_hien_tai:100000,so_tien_toi_da:100000,status:'Chưa phê duyệt',document:''},
-        { id:10,name: 'Tài sản 10', group: 'Group1', type: 'World' ,information:'Thông tin 1',gia_tri_ban_dau:100000,von_vay:100000,goc_vay_tin_dung_hien_tai:100000,so_tien_toi_da:100000,status:'Chưa phê duyệt',document:''},
-        { id:11,name: 'Tài sản 11', group: 'Group1', type: 'World' ,information:'Thông tin 1',gia_tri_ban_dau:100000,von_vay:100000,goc_vay_tin_dung_hien_tai:100000,so_tien_toi_da:100000,status:'Chưa phê duyệt',document:''},
-        { id:12,name: 'Tài sản 12', group: 'Group1', type: 'World' ,information:'Thông tin 1',gia_tri_ban_dau:100000,von_vay:100000,goc_vay_tin_dung_hien_tai:100000,so_tien_toi_da:100000,status:'Chưa phê duyệt',document:''},
-
-
-    ];
+    const [listGroup,setListGroup] =useState([]);
+    const [listType,setListType] =useState([]);
+    const [loading,setLoading] = useState(false)
+    const [refresh,setRefresh] = useState(false)
+    const [openModalDel,setOpenModalDel] = useState(false)
+    const [nameSearch,setNameSearch] = useState('')
+    const [groupSearch,setGroupSearch] = useState(0)
+    const [typeSearch,setTypeSearch] = useState(0   )
+    const [listResult, setListResult] = React.useState({
+        page: 0,
+        pageSize: 5,
+        rows: [
+            // {id:"t",project_name:'Project1',project_type:'type1',annotation_group:"tesst",description:"ajaja"},
+            // {id:"t2",project_name:'Project1',project_type:'type1',annotation_group:"tesst",description:"ajaja"},
+            // {id:"t3",project_name:'Project1',project_type:'type1',annotation_group:"tesst",description:"ajaja"}
+        ],
+        total: 0
+    });
+    const [infoDel,setInfoDel] = useState({})
 
     const columns: GridColDef[] = [
         {
+            sortable: false,
             field: 'id' ,
             headerName: 'STT',
             maxWidth:75,
             filterable: false,
             renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
-        { field: 'name', headerName: 'Tên tài sản',headerClassName: 'super-app-theme--header',minWidth: 120},
-        { field: 'group', headerName: 'Nhóm tài sản' ,headerClassName: 'super-app-theme--header',minWidth: 120},
-        { field: 'type', headerName: 'Nhóm tài sản' ,headerClassName: 'super-app-theme--header',minWidth: 120 },
-        { field: 'gia_tri_ban_dau', headerName: 'Gía trị ban đầu',headerClassName: 'super-app-theme--header',minWidth: 120 },
-        { field: 'von_vay', headerName: 'Vốn vay' ,headerClassName: 'super-app-theme--header',minWidth: 120},
-        { field: 'goc_vay_tin_dung_hien_tai', headerName: 'Gốc vay tín dụng hiện tại',headerClassName: 'super-app-theme--header',minWidth: 120 },
-        { field: 'so_tien_toi_da', headerName: 'Số tiền vay tối đa',headerClassName: 'super-app-theme--header',minWidth: 120 },
-        { field: 'status', headerName: 'Trạng thái',headerClassName: 'super-app-theme--header',minWidth: 120 },
-        { field: 'document', headerName: 'Tài liệu',headerClassName: 'super-app-theme--header' ,minWidth: 120},
-        { field: 'information', headerName: 'Thông tin' ,headerClassName: 'super-app-theme--header',minWidth: 120,flex:1},
+        {filterable: false,sortable: false, field: 'asset_name', headerName: 'Tên tài sản',headerClassName: 'super-app-theme--header',minWidth: 120},
+        {filterable: false,sortable: false, field: 'asset_group_name', headerName: 'Nhóm tài sản' ,headerClassName: 'super-app-theme--header',minWidth: 120},
+        {filterable: false,sortable: false, field: 'asset_type_name', headerName: 'Loại tài sản' ,headerClassName: 'super-app-theme--header',minWidth: 120 },
+        {filterable: false,sortable: false, field: 'initial_value', headerName: 'Gía trị ban đầu',headerClassName: 'super-app-theme--header',minWidth: 120 },
+        {filterable: false,sortable: false, field: 'capital_value', headerName: 'Vốn vay' ,headerClassName: 'super-app-theme--header',minWidth: 120},
+        {filterable: false,sortable: false, field: 'current_credit_value', headerName: 'Gốc vay tín dụng hiện tại',headerClassName: 'super-app-theme--header',minWidth: 120 },
+        {filterable: false,sortable: false, field: 'max_capital_value', headerName: 'Số tiền vay tối đa',headerClassName: 'super-app-theme--header',minWidth: 120 },
+        {filterable: false,sortable: false, field: 'status', headerName: 'Trạng thái',headerClassName: 'super-app-theme--header',minWidth: 120 },
+        // {filterable: false,sortable: false, field: 'document', headerName: 'Tài liệu',headerClassName: 'super-app-theme--header' ,minWidth: 120},
+        {filterable: false,sortable: false, field: 'description', headerName: 'Thông tin' ,headerClassName: 'super-app-theme--header',minWidth: 120,flex:1},
 
         {
             field: 'action',
@@ -89,34 +91,51 @@ export default function ManageAssets() {
             // flex: 1,
             renderCell: (params) => {
 
-                const selectProject = (e) => {
+                const detailBtn = (e) => {
                     e.stopPropagation();
                     console.log(params)
+                    navigate(`/assets/detail?id=${params.id}`)
 
                 }
                 const deleteBtn = (e) => {
                     e.stopPropagation();
-                    toast.success('Xoá thành công', {
-                        position: "top-right",
-                        autoClose: 1500,
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                    });                }
-                const updateProjectBtn = (e) => {
+                    setOpenModalDel(true)
+                    // console.log("params",params)
+                    setInfoDel(params.row)
+                    // deleteAssetApi(params.id).then(r=>{
+                    //     setRefresh(!refresh)
+                    //     toast.success('Xoá thành công', {
+                    //         position: "top-right",
+                    //         autoClose: 1500,
+                    //         hideProgressBar: true,
+                    //         closeOnClick: true,
+                    //         pauseOnHover: true,
+                    //         draggable: true,
+                    //     });
+                    // }).catch(r=>{
+                    //     toast.error('Có lỗi xảy ra', {
+                    //         position: "top-right",
+                    //         autoClose: 1500,
+                    //         hideProgressBar: true,
+                    //         closeOnClick: true,
+                    //         pauseOnHover: true,
+                    //         draggable: true,
+                    //     });
+                    // })
+                             }
+                const updateBtn = (e) => {
                     e.stopPropagation();
-
+                    navigate(`/assets/update?id=${params.id}`)
                     // });
                 }
                 return <div className='icon-action'>
-                    <Tooltip title="Cập nhật">
+                    <Tooltip title="Cập nhật" onClick={updateBtn}>
                         <BorderColorOutlinedIcon style={{color:"rgb(107, 114, 128)"}} ></BorderColorOutlinedIcon>
                     </Tooltip>
                     <Tooltip title="Xóa" onClick={deleteBtn}>
                         <DeleteOutlineIcon  style={{color:"rgb(107, 114, 128)"}}></DeleteOutlineIcon>
                     </Tooltip>
-                    <Tooltip title="Xem chi tiết">
+                    <Tooltip onClick={detailBtn} title="Xem chi tiết">
                         <ArrowForwardIcon  style={{color:"rgb(107, 114, 128)"}}></ArrowForwardIcon>
                     </Tooltip>
 
@@ -126,14 +145,110 @@ export default function ManageAssets() {
 
         // { field: 'document', headerName: 'Nhóm tài sản' },
     ];
+
+    const handleCloseModalDel = () => {
+      setOpenModalDel(false)
+    }
+    const submitDelete = () => {
+      // alert("tutt20")
+        deleteAssetApi(infoDel.id).then(r=>{
+            toast.success('Xóa thành công', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            setRefresh(!refresh);
+        }).catch(e=>{
+            toast.error('Có lỗi xảy ra', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        })
+
+    }
     const redirectAddPage = () => {
         navigate('/assets/create')
     }
+    const convertArr = (arr) => {
+        for (let i = 0; i < arr.length; i++) {
+            arr[i].asset_group_name =  arr[i].asset_group.group_name;
+            arr[i].asset_type_name =  arr[i].asset_type.asset_type_name;
+        }
+        return arr;
+    }
+    const handleChangeAssetName = (e) => {
+        setNameSearch(e.target.value)
+    }
+    const handleChangeAssetGroup= (e) => {
+        setGroupSearch(e.target.value)
+    };
+    const handleChangeAssetType= (e) => {
+        setTypeSearch(e.target.value)
+    };
+    useEffect(()=>{
+
+        getListAssetsApi({
+            'page_size':listResult.pageSize,
+            'page_index':listResult.page+1,
+            'paging':true,
+            'asset_name':nameSearch===''?null:nameSearch,
+            'asset_group_id':groupSearch===0?null:groupSearch,
+            'asset_type_id':typeSearch===0?null:typeSearch,
+        }).then(r => {
+            setLoading(false)
+            console.log("r",r)
+            let arr = convertArr(r.data.assets)
+            setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
+        }).catch(e =>{
+            setLoading(false)
+
+            console.log(e)
+        })
+    },[listResult.page, listResult.pageSize,nameSearch,groupSearch,typeSearch,refresh])
+    useEffect(()=>{
+        getListAssetTypeApi().then(r=>{
+            setListType(r.data.asset_types)
+            if(r.data.asset_types.length>0){
+                // setTypeSearch(r.data.asset_types[0].id)
+            }
+        }).catch(e=>{
+
+        })
+        getListAssetGroupApi().then(r=>{
+            setListGroup(r.data.asset_groups)
+            if(r.data.asset_groups.length>0){
+                // setGroupSearch(r.data.asset_groups[0].id)
+            }
+        }).catch(e=>{
+
+        })
+    },[])
+
     // const { data } = useDemoData({
     //     dataSet: 'Commodity',
     //     rowLength: 20,
     //     maxColumns: 5,
     // });
+    const getListAssetsApi = (data) => {
+        setLoading(true)
+        return apiManagerAssets.getListAsset(data);
+    }
+    const getListAssetGroupApi = (data) => {
+        return apiManagerAssets.getAssetGroup(data);
+    }
+    const getListAssetTypeApi = (data) => {
+        return apiManagerAssets.getAssetType(data);
+    }
+    const deleteAssetApi = (id) => {
+        return apiManagerAssets.deleteAsset(id);
+    }
     return (
         <div className={'main-content'}>
             <ToastContainer
@@ -148,6 +263,7 @@ export default function ManageAssets() {
                 pauseOnHover
             />
             <div className={'main-content-header'}>
+                <ModalConfirmDel name={infoDel.asset_name} openModalDel={openModalDel} handleCloseModalDel={handleCloseModalDel} submitDelete={submitDelete} ></ModalConfirmDel>
                 <div className={'row'} style={{justifyContent:'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
                         Quản lý tài sản
@@ -168,25 +284,80 @@ export default function ManageAssets() {
                 <Divider light />
                 <div className={'main-content-body-search'}>
                     <TextField
+                        style={{width:'20%'}}
                         // label="TextField"
-                        placeholder={'Tìm kiếm'}
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchIcon />
-                                </InputAdornment>
-                            ),
-                        }}
+                        placeholder={'Tên tài sản'}
+                        value={nameSearch}
+                        onChange={handleChangeAssetName}
+                        // InputProps={{
+                        //     startAdornment: (
+                        //         <InputAdornment position="start">
+                        //             <SearchIcon />
+                        //         </InputAdornment>
+                        //     ),
+                        // }}
                         // variant="standard"
                     />
+                    <FormControl style={{width:'20%',marginLeft:'20px'}}>
+                        <InputLabel id="asset_group_label">Nhóm tài sản</InputLabel>
+
+                        <Select
+                            label={"Nhóm tài sản"}
+                            id='asset_group'
+                            name='asset_group'
+                            value={groupSearch}
+                            onChange={handleChangeAssetGroup}
+                        >
+                            <MenuItem value={0}>Tất cả</MenuItem>
+
+                            {
+                                listGroup.map((e) => (
+                                    <MenuItem value={e.id}>{e.group_name}</MenuItem>
+                                ))
+                            }
+
+                        </Select>
+                    </FormControl>
+                    <FormControl style={{width:'20%',marginLeft:'20px'}}>
+                        <InputLabel id="asset_type_label">Loại tài sản</InputLabel>
+                        <Select
+                            labelId="asset_type_label"
+                            id='asset_type'
+                            name='asset_type'
+                            label='Loại tài sản'
+                            value={typeSearch}
+                            onChange={handleChangeAssetType}
+                        >
+                            <MenuItem value={0}>Tất cả</MenuItem>
+
+                            {
+                                listType.map((e) => (
+                                    <MenuItem value={e.id}>{e.asset_type_name}</MenuItem>
+                                ))
+                            }
+                        </Select>
+                    </FormControl>
                 </div>
                 <Divider light />
                 <div className={'main-content-body-result'}>
-                    <div style={{ height: '80vh', width: '100%' }}>
+                    <div style={{ height: '100%', width: '100%' }}>
                         <DataGrid
                             density="comfortable"
-                            // localeText={localizedTextsMap}
-                            rows={rows} columns={columns}
+                            columns={columns}
+                            pagination
+                            rowCount={listResult.total}
+                            {...listResult}
+                            paginationMode="server"
+                            // onPageChange={(page) => setCurrentPage(page)}
+                            // onPageSizeChange={(pageSize) =>
+                            //    setCurrentSize(pageSize)
+                            // }
+                            onPageChange={(page) => setListResult((prev) => ({...prev, page}))}
+                            onPageSizeChange={(pageSize) =>
+                                setListResult((prev) => ({...prev, pageSize}))
+                            }
+                            loading={loading}
+                            rowsPerPageOptions={[5, 10, 25]}
                             disableSelectionOnClick
                             sx={{
                                 // boxShadow: 2,
@@ -211,7 +382,6 @@ export default function ManageAssets() {
                                 },
 
                             }}
-                            {...data}
                             components={{
                                 Toolbar: CustomToolbar,
                             }}

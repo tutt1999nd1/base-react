@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {
     Box,
     Button,
@@ -30,11 +30,29 @@ import {GridRowsProp} from "@mui/x-data-grid";
 import {GridColDef} from "@mui/x-data-grid";
 import * as yup from 'yup';
 import {Form, Formik} from 'formik';
-import {useNavigate} from "react-router-dom";
-
+import {useNavigate, useSearchParams} from "react-router-dom";
+import apiManagerAssets from "../../api/manage-assets";
+import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 export default function EditAssets(props) {
     const navigate = useNavigate();
+    const [location,setLocation] = useSearchParams();
+    const [listGroup,setListGroup] =useState([]);
+    const [listType,setListType] =useState([]);
+    const [typeDefault,setTypeDefault] = useState(0)
+    const [groupDefault,setGroupDefault] = useState(0)
+
+    const [info,setInfo] =useState({
+        asset_name:'',
+        asset_type:{id:0},
+        asset_group:{id:0},
+        description:'',
+        initial_value:'',
+        capital_value:'',
+        max_capital_value:'',
+        current_credit_value:'',
+    })
     const {isUpdate} = props
+    const [idUpdate,setIdUpdate] = useState(null)
     const validationSchema = yup.object({
         asset_name: yup
             .string()
@@ -72,6 +90,71 @@ export default function EditAssets(props) {
     const backList = () => {
         navigate('/assets')
     }
+    useEffect(()=>{
+        if(isUpdate){
+            if(location.get('id')){
+                setIdUpdate(location.get('id'));
+            }
+            else navigate('/assets')
+        }
+
+    },[location])
+    useEffect(()=>{
+        if(isUpdate&&idUpdate){
+            getListAssetsApi({id:idUpdate,page_size:1}).then(r=>{
+                setInfo( r.data.assets[0])
+                console.log(r.data.assets[0])
+            }).catch(e=>{
+
+            })
+        }
+    },[idUpdate])
+    const createAssetApi = (data) => {
+        return apiManagerAssets.createAsset(data);
+    }
+    const updateAssetApi = (data) => {
+        return apiManagerAssets.updateAsset(idUpdate,data);
+    }
+    const getListAssetsApi = (data) => {
+        return apiManagerAssets.getListAsset(data);
+    }
+    useEffect(()=>{
+        getListAssetTypeApi().then(r=>{
+            setListType(r.data.asset_types)
+            if(!isUpdate)
+            if(r.data.asset_types.length>0){
+                setTypeDefault(r.data.asset_types[0].id)
+            }
+        }).catch(e=>{
+
+        })
+        getListAssetGroupApi().then(r=>{
+            setListGroup(r.data.asset_groups)
+            if(!isUpdate)
+                if(r.data.asset_groups.length>0){
+                setGroupDefault(r.data.asset_groups[0].id)
+            }
+        }).catch(e=>{
+
+        })
+    },[])
+    useEffect(()=>{
+        if(!isUpdate){
+
+        }
+    },[listType,listGroup])
+    const getListAssetGroupApi = (data) => {
+        return apiManagerAssets.getAssetGroup(data);
+    }
+    const getListAssetTypeApi = (data) => {
+        return apiManagerAssets.getAssetType(data);
+    }
+    const back = () => {
+      navigate('/assets')
+    }
+    useEffect(()=>{
+        console.log("info",info)
+    },[info])
     return (
         <div className={'main-content'}>
             <ToastContainer
@@ -85,6 +168,8 @@ export default function EditAssets(props) {
                 draggable
                 pauseOnHover
             />
+            <Button onClick={back} style={{marginBottom:'10px'}} variant="text" startIcon={<KeyboardBackspaceIcon />}>Tài sản</Button>
+
             <div className={'main-content-header'}>
                 <div className={'row'} style={{justifyContent:'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
@@ -100,14 +185,16 @@ export default function EditAssets(props) {
                 <Formik
                     enableReinitialize
                     initialValues={{
-                        asset_name:'',
-                        asset_type:'1',
-                        asset_group:'1',
-                        description:'',
-                        initial_value:'',
-                        capital_value:'',
-                        max_capital_value:'',
-                        current_credit_value:'',
+                        asset_name:info.asset_name,
+                        asset_type:isUpdate?info.asset_type.id:typeDefault,
+                        asset_group:isUpdate?info.asset_group.id:groupDefault,
+                        // asset_type:info.asset_type.id,
+                        // asset_group:info.asset_group.id,
+                        description:info.description,
+                        initial_value:info.initial_value,
+                        capital_value:info.capital_value,
+                        max_capital_value:info.max_capital_value,
+                        current_credit_value:info.current_credit_value,
                     }}
                     validationSchema={validationSchema}
                     onSubmit={
@@ -115,31 +202,64 @@ export default function EditAssets(props) {
                             // setInfoAccount();
                             // submitAccount();
                             console.log('values',values)
+                            let valueConvert = values;
+
+                            console.log(valueConvert)
                             if(isUpdate){
-                                toast.success('Cập nhật thành công', {
-                                    position: "top-right",
-                                    autoClose: 1500,
-                                    hideProgressBar: true,
-                                    closeOnClick: true,
-                                    pauseOnHover: true,
-                                    draggable: true,
-                                });
-                                setTimeout(() => {
-                                    navigate('/assets')
-                                }, 1050);
+                                valueConvert.asset_type = {id : values.asset_type}
+                                valueConvert.asset_group = {id : values.asset_group}
+                                updateAssetApi(valueConvert).then(r=>{
+                                    toast.success('Cập nhật thành công', {
+                                        position: "top-right",
+                                        autoClose: 1500,
+                                        hideProgressBar: true,
+                                        closeOnClick: true,
+                                        pauseOnHover: true,
+                                        draggable: true,
+                                    });
+                                    setTimeout(() => {
+                                        navigate(`/assets/detail?id=${idUpdate}`)
+                                    }, 1050);
+
+                                }).catch(e=>{
+                                    toast.error('Có lỗi xảy ra', {
+                                        position: "top-right",
+                                        autoClose: 1500,
+                                        hideProgressBar: true,
+                                        closeOnClick: true,
+                                        pauseOnHover: true,
+                                        draggable: true,
+                                    });
+                                })
+
+
                             }
                             else {
-                                toast.success('Thêm mới thành công', {
-                                    position: "top-right",
-                                    autoClose: 1500,
-                                    hideProgressBar: true,
-                                    closeOnClick: true,
-                                    pauseOnHover: true,
-                                    draggable: true,
-                                });
-                                setTimeout(() => {
-                                    navigate('/assets')
-                                }, 1050);
+                                valueConvert.asset_type = {id : values.asset_type}
+                                valueConvert.asset_group = {id : values.asset_group}
+                                createAssetApi(valueConvert).then(r=>{
+                                    toast.success('Thêm mới thành công', {
+                                        position: "top-right",
+                                        autoClose: 1500,
+                                        hideProgressBar: true,
+                                        closeOnClick: true,
+                                        pauseOnHover: true,
+                                        draggable: true,
+                                    });
+                                    setTimeout(() => {
+                                        navigate('/assets')
+                                    }, 1050);
+
+                                }).catch(e=>{
+                                    toast.error('Có lỗi xảy ra', {
+                                        position: "top-right",
+                                        autoClose: 1500,
+                                        hideProgressBar: true,
+                                        closeOnClick: true,
+                                        pauseOnHover: true,
+                                        draggable: true,
+                                    });
+                                })
                             }
                         }
                     }
@@ -185,8 +305,11 @@ export default function EditAssets(props) {
                                                     helperText={touched.asset_group && errors.asset_group}
                                                     // size='small'
                                                 >
-                                                    <MenuItem value={'1'}>Nhóm 1</MenuItem>
-
+                                                    {
+                                                        listGroup.map((e) => (
+                                                            <MenuItem value={e.id}>{e.group_name}</MenuItem>
+                                                        ))
+                                                    }
 
                                                 </Select>
                                                 <FormHelperText className={'error-message'}>{errors.asset_group}</FormHelperText>
@@ -208,8 +331,11 @@ export default function EditAssets(props) {
                                                     helperText={touched.asset_type && errors.asset_type}
                                                     // size='small'
                                                 >
-                                                    <MenuItem value={'1'}>Bất động sản</MenuItem>
-
+                                                    {
+                                                        listType.map((e) => (
+                                                            <MenuItem value={e.id}>{e.asset_type_name}</MenuItem>
+                                                        ))
+                                                    }
 
                                                 </Select>
                                                 <FormHelperText className={'error-message'}>{errors.asset_type}</FormHelperText>

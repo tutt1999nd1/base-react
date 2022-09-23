@@ -3,6 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import Main from "../pages/Main";
 import ManageAssets from "../pages/manage-assets";
 import EditAssets from "../pages/manage-assets/create-update";
+import DetailAsset from "../pages/manage-assets/detail";
 export default function RenderRoute() {
     return (
         <Routes>
@@ -17,6 +18,7 @@ export default function RenderRoute() {
                 <Route path="/dashboard" element={<div>Dashboard</div>} />
                 <Route path="/assets" element={<ManageAssets></ManageAssets>} />
                 <Route path="/assets/create" element={<EditAssets isUpdate = {false}></EditAssets>} />
+                <Route path="/assets/detail" element={<DetailAsset isUpdate = {false}></DetailAsset>} />
                 <Route path="/assets/update" element={<EditAssets isUpdate = {true}></EditAssets>} />
                 <Route path="/assets" element={<ManageAssets></ManageAssets>} />
                 <Route path="/loan-purpose" element={<div>Mục đích vay</div>} />

@@ -17,12 +17,12 @@ const Header = () => {
         <header className={'header'}>
             <div style={{display:"flex",justifyContent:'space-between',width:'100%'}}>
                 <div className={'header-left'}>
-                    <Breadcrumbs aria-label="breadcrumb">
-                        <Link underline="hover" color="inherit" href="/" to={""}>
-                            Danh mục
-                        </Link>
-                        <Typography color="text.primary">Tài khoản</Typography>
-                    </Breadcrumbs>
+                    {/*<Breadcrumbs aria-label="breadcrumb">*/}
+                    {/*    <Link underline="hover" color="inherit" href="/" to={""}>*/}
+                    {/*        Danh mục*/}
+                    {/*    </Link>*/}
+                    {/*    <Typography color="text.primary">Tài khoản</Typography>*/}
+                    {/*</Breadcrumbs>*/}
                 </div>
                 <div className={'header-right'}>
                     <Tooltip title="Thông báo">
