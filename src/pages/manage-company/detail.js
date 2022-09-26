@@ -36,7 +36,8 @@ import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import {ClipLoader} from "react-spinners";
 import {currencyFormatter} from "../../constants/utils";
-export default function DetailAsset(props) {
+import apiManagerCompany from "../../api/manage-company";
+export default function DetailCompany(props) {
     const navigate = useNavigate();
     const [location,setLocation] = useSearchParams();
     const [listGroup,setListGroup] =useState([]);
@@ -47,26 +48,25 @@ export default function DetailAsset(props) {
     const [openModalDel,setOpenModalDel] = useState(false)
 
     const [info,setInfo] =useState({
-        asset_name:'',
-        asset_type:{id:0},
-        asset_group:{id:0},
-        description:'',
-        initial_value:'',
-        capital_value:'',
-        max_capital_value:'',
-        current_credit_value:'',
+        company_name:'',
+        address:'',
+        contact_detail:'',
+        tax_number:'',
+        charter_capital:'',
+        capital_limit:'',
+        founding_date:'',
     })
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
     const backList = () => {
-        navigate('/assets')
+        navigate('/company')
     }
     useEffect(()=>{
         if(idDetail){
-            getListAssetsApi({id:idDetail,page_size:1}).then(r=>{
-                setInfo( r.data.assets[0])
-                console.log(r.data.assets[0])
+            getListCompanyApi({id:idDetail,page_size:1}).then(r=>{
+                setInfo( r.data.companies[0])
+                console.log(r.data.companies[0])
             }).catch(e=>{
 
             })
@@ -76,12 +76,12 @@ export default function DetailAsset(props) {
         if(location.get('id')){
             setIdDetail(location.get('id'));
         }
-        else navigate('/assets')
+        else navigate('/company')
 
     },[location])
     const submitDelete = () => {
         // alert("tutt20")
-        deleteAssetApi(info.id).then(r=>{
+        deleteCompanyApi(info.id).then(r=>{
             toast.success('Xóa thành công', {
                 position: "top-right",
                 autoClose: 1500,
@@ -91,7 +91,7 @@ export default function DetailAsset(props) {
                 draggable: true,
             });
             setTimeout(() => {
-                navigate(`/assets`)
+                navigate(`/company`)
             }, 1050);
 
         }).catch(e=>{
@@ -106,28 +106,19 @@ export default function DetailAsset(props) {
         })
 
     }
-    const getListAssetsApi = (data) => {
-        return apiManagerAssets.getListAsset(data);
+    const getListCompanyApi = (data) => {
+        return apiManagerCompany.getListCompany(data);
     }
 
-
-    const getListAssetGroupApi = (data) => {
-        return apiManagerAssets.getAssetGroup(data);
-    }
-    const getListAssetTypeApi = (data) => {
-        return apiManagerAssets.getAssetType(data);
-    }
     const update = () => {
-        navigate(`/assets/update?id=${idDetail}`)
+        navigate(`/company/update?id=${idDetail}`)
     }
-    const back = () => {
-        navigate(`/assets/update?id=${idDetail}`)
-    }
-    const deleteAssetBtn = () => {
+
+    const deleteCompanyBtn = () => {
         setOpenModalDel(true)
     }
-    const deleteAssetApi = (id) => {
-        return apiManagerAssets.deleteAsset(id);
+    const deleteCompanyApi = (id) => {
+        return apiManagerCompany.deleteCompany(id);
     }
     useEffect(()=>{
         console.log("info",info)
@@ -139,7 +130,7 @@ export default function DetailAsset(props) {
             {/*    <ClipLoader*/}
             {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
             {/*</div>*/}
-            <ModalConfirmDel name={info.asset_name} openModalDel={openModalDel} handleCloseModalDel={handleCloseModalDel} submitDelete={submitDelete} ></ModalConfirmDel>
+            <ModalConfirmDel name={info.company_name} openModalDel={openModalDel} handleCloseModalDel={handleCloseModalDel} submitDelete={submitDelete} ></ModalConfirmDel>
 
             <ToastContainer
                 position="top-right"
@@ -170,86 +161,69 @@ export default function DetailAsset(props) {
                 <Divider light />
                 <div className={'row-detail'}>
                     <div className={'text-info-tittle'}>
-                        Tên tài sản
+                        Tên công ty
                     </div>
                     <div className={'text-info-content'}>
-                        {info.asset_name}
+                        {info.company_name}
                     </div>
                 </div>
                 <Divider></Divider>
 
                 <div className={'row-detail'}>
                     <div className={'text-info-tittle'}>
-                        Nhóm tài sản
+                        Đại chỉ
                     </div>
                     <div className={'text-info-content'}>
-                        {info.asset_group.group_name}
+                        {info.address}
                     </div>
                 </div>
                 <Divider></Divider>
                 <div className={'row-detail'}>
                     <div className={'text-info-tittle'}>
-                        Loại tài sản
+                        Thông tin liên hệ
                     </div>
                     <div className={'text-info-content'}>
-                        {info.asset_type.asset_type_name}
+                        {info.contact_detail}
 
                     </div>
                 </div>
                 <Divider></Divider>
                 <div className={'row-detail'}>
                     <div className={'text-info-tittle'}>
-                        Gía trị ban đầu
+                        Mã số thuế
                     </div>
                     <div className={'text-info-content'}>
-                        {currencyFormatter(info.initial_value)}
+                        {info.tax_number}
                     </div>
                 </div>
                 <Divider></Divider>
                 <div className={'row-detail'}>
                     <div className={'text-info-tittle'}>
-                        Vốn vay
+                        Vốn điều lệ
                     </div>
                     <div className={'text-info-content'}>
-                        {currencyFormatter(info.capital_value)}
+                        {currencyFormatter(info.charter_capital)}
                     </div>
                 </div>
                 <Divider></Divider>
                 <div className={'row-detail'}>
                     <div className={'text-info-tittle'}>
-                        Gốc vay tín dụng hiện tại
+                       Số tiền vay tối đa
                     </div>
                     <div className={'text-info-content'}>
-                        {currencyFormatter(info.current_credit_value)}
+                        {currencyFormatter(info.capital_limit)}
                     </div>
                 </div>
                 <Divider></Divider>
                 <div className={'row-detail'}>
                     <div className={'text-info-tittle'}>
-                        Số tiền vay tối đa
+                        Ngày thành lập
                     </div>
                     <div className={'text-info-content'}>
-                        {currencyFormatter(info.max_capital_value)}
+                        {info.founding_date}
                     </div>
                 </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Trạng thái
-                    </div>
-                    <div className={'text-info-content'}>
 
-                    </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Thông tin
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.description}
-                    </div>
-                </div>
                 <Divider></Divider>
 
             </div>
@@ -259,7 +233,7 @@ export default function DetailAsset(props) {
                 </div>
                 <Divider light />
                 <div style={{padding:'20px'}}>
-                    <Button onClick={deleteAssetBtn}  color={'error'} style={{marginBottom:'10px'}} variant="outlined" >Xóa dữ liệu</Button>
+                    <Button onClick={deleteCompanyBtn}  color={'error'} style={{marginBottom:'10px'}} variant="outlined" >Xóa dữ liệu</Button>
                     <div className={'text-info-content'}>
                         Thao tác này sẽ xóa toàn bộ dữ liệu của bản ghi
                     </div>

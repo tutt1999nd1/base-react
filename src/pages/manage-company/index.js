@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+ import React, {useEffect, useState} from "react";
 import {ClipLoader, HashLoader} from "react-spinners";
 
 import {
@@ -34,33 +34,22 @@ import {useNavigate} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import Utils, {currencyFormatter} from "../../constants/utils";
+ import apiManagerCompany from "../../api/manage-company";
 
-export default function ManageAssets() {
+export default function ManageCompany() {
+    const [nameSearch,setNameSearch] =useState(null)
+    const [contactSearch,setContactSearch] =useState(null)
+    const [taxSearch,setTaxSearch] =useState(null)
+    const [] =useState(null)
+    const [] =useState(null)
     const navigate = useNavigate();
-    //     const localizedTextsMap = {
-    //     columnMenuUnsort: "não classificado",
-    //     columnMenuSortAsc: "Classificar por ordem crescente",
-    //     columnMenuSortDesc: "Classificar por ordem decrescente",
-    //     columnMenuFilter: "Filtro",
-    //     columnMenuHideColumn: "Ocultar",
-    //     columnMenuShowColumns: "Mostrar colunas"
-    // };
-
-    const [listGroup, setListGroup] = useState([]);
-    const [listType, setListType] = useState([]);
     const [loading, setLoading] = useState(false)
     const [refresh, setRefresh] = useState(false)
     const [openModalDel, setOpenModalDel] = useState(false)
-    const [nameSearch, setNameSearch] = useState('')
-    const [groupSearch, setGroupSearch] = useState(0)
-    const [typeSearch, setTypeSearch] = useState(0)
     const [listResult, setListResult] = React.useState({
         page: 0,
         pageSize: 5,
         rows: [
-            // {id:"t",project_name:'Project1',project_type:'type1',annotation_group:"tesst",description:"ajaja"},
-            // {id:"t2",project_name:'Project1',project_type:'type1',annotation_group:"tesst",description:"ajaja"},
-            // {id:"t3",project_name:'Project1',project_type:'type1',annotation_group:"tesst",description:"ajaja"}
         ],
         total: 0
     });
@@ -78,78 +67,65 @@ export default function ManageAssets() {
         {
             filterable: false,
             sortable: false,
-            field: 'asset_name',
-            headerName: 'Tên tài sản',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 120
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'asset_group_name',
-            headerName: 'Nhóm tài sản',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 120
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'asset_type_name',
-            headerName: 'Loại tài sản',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 120
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'initial_value',
-            headerName: 'Gía trị ban đầu',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 120
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'capital_value',
-            headerName: 'Vốn vay',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 120
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'current_credit_value',
-            headerName: 'Gốc vay tín dụng hiện tại',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 120
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'max_capital_value',
-            headerName: 'Số tiền vay tối đa',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 120
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'status',
-            headerName: 'Trạng thái',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 120
-        },
-        // {filterable: false,sortable: false, field: 'document', headerName: 'Tài liệu',headerClassName: 'super-app-theme--header' ,minWidth: 120},
-        {
-            filterable: false,
-            sortable: false,
-            field: 'description',
-            headerName: 'Thông tin',
+            field: 'company_name',
+            headerName: 'Tên công ty',
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
-            flex: 1
+            flex:1
         },
 
+        {
+            filterable: false,
+            sortable: false,
+            field: 'contact_detail',
+            headerName: 'Thông tin liên hệ',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 120,
+            flex:1
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'tax_number',
+            headerName: 'Mã số thuế',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 120
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'charter_capital',
+            headerName: 'Vốn điều lệ',
+            headerClassName: 'super-app-theme--header',
+            flex:1
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'founding_date',
+            headerName: 'Ngày thành lập',
+            headerClassName: 'super-app-theme--header',
+            flex:1
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'capital_limit',
+            headerName: 'Số tiền vay tối đa',
+            headerClassName: 'super-app-theme--header',
+            flex:1
+        },
+        // {filterable: false,sortable: false, field: 'document', headerName: 'Tài liệu',headerClassName: 'super-app-theme--header' ,minWidth: 120},
+
+        {
+            filterable: false,
+            sortable: false,
+            field: 'address',
+            headerName: 'Địa chỉ',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 120,
+            flex:1,
+        },
         {
             field: 'action',
             headerName: 'Thao tác',
@@ -163,7 +139,7 @@ export default function ManageAssets() {
                 const detailBtn = (e) => {
                     e.stopPropagation();
                     console.log(params)
-                    navigate(`/assets/detail?id=${params.id}`)
+                    navigate(`/company/detail?id=${params.id}`)
 
                 }
                 const deleteBtn = (e) => {
@@ -194,12 +170,21 @@ export default function ManageAssets() {
         // { field: 'document', headerName: 'Nhóm tài sản' },
     ];
 
+    const handleChangeNameSearch = (e) => {
+      setNameSearch(e.target.value)
+    }
+    const handleChangeContactSearch = (e) => {
+        setContactSearch(e.target.value)
+    }
+    const handleChangeTaxSearch = (e) => {
+        setTaxSearch(e.target.value)
+    }
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
     const submitDelete = () => {
         // alert("tutt20")
-        deleteAssetApi(infoDel.id).then(r => {
+        deleteCompanyApi(infoDel.id).then(r => {
             toast.success('Xóa thành công', {
                 position: "top-right",
                 autoClose: 1500,
@@ -208,8 +193,10 @@ export default function ManageAssets() {
                 pauseOnHover: true,
                 draggable: true,
             });
+            setLoading(false)
             setRefresh(!refresh);
         }).catch(e => {
+            setLoading(false)
             toast.error('Có lỗi xảy ra', {
                 position: "top-right",
                 autoClose: 1500,
@@ -222,92 +209,57 @@ export default function ManageAssets() {
 
     }
     const redirectAddPage = () => {
-        navigate('/assets/create')
+        navigate('/company/create')
     }
     const convertArr = (arr) => {
         for (let i = 0; i < arr.length; i++) {
             arr[i].index = (listResult.page) * listResult.pageSize + i + 1;
-            arr[i].asset_group_name = arr[i].asset_group?.group_name;
-            arr[i].asset_type_name = arr[i].asset_type?.asset_type_name;
-            arr[i].initial_value = currencyFormatter(arr[i].initial_value)
-            arr[i].capital_value = currencyFormatter(arr[i].capital_value)
-            arr[i].max_capital_value = currencyFormatter(arr[i].max_capital_value)
-            arr[i].current_credit_value = currencyFormatter(arr[i].current_credit_value)
+            // arr[i].asset_group_name = arr[i].asset_group?.group_name;
+            // arr[i].asset_type_name = arr[i].asset_type?.asset_type_name;
+            // arr[i].initial_value = currencyFormatter(arr[i].initial_value)
+            // arr[i].capital_value = currencyFormatter(arr[i].capital_value)
+            // arr[i].max_capital_value = currencyFormatter(arr[i].max_capital_value)
+            arr[i].capital_limit = currencyFormatter(arr[i].capital_limit)
+            arr[i].charter_capital = currencyFormatter(arr[i].charter_capital)
         }
         return arr;
     }
-    const handleChangeAssetName = (e) => {
-        setNameSearch(e.target.value)
-    }
-    const handleChangeAssetGroup = (e) => {
-        setGroupSearch(e.target.value)
-    };
-    const handleChangeAssetType = (e) => {
-        setTypeSearch(e.target.value)
-    };
-    useEffect(() => {
 
-        getListAssetsApi({
+    useEffect(() => {
+        getListCompanyApi({
             'page_size': listResult.pageSize,
             'page_index': listResult.page + 1,
             'paging': true,
-            'asset_name': nameSearch === '' ? null : nameSearch,
-            'asset_group_id': groupSearch === 0 ? null : groupSearch,
-            'asset_type_id': typeSearch === 0 ? null : typeSearch,
+            'company_name': nameSearch === '' ? null : nameSearch,
+            'contact_detail': contactSearch === 0 ? null : contactSearch,
+            'tax_number': taxSearch === 0 ? null : taxSearch,
         }).then(r => {
             setLoading(false)
             console.log("r", r)
-            let arr = convertArr(r.data.assets)
+            let arr = convertArr(r.data.companies)
             setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
         }).catch(e => {
             setLoading(false)
             console.log(e)
         })
-    }, [listResult.page, listResult.pageSize, nameSearch, groupSearch, typeSearch, refresh])
-    useEffect(() => {
-        getListAssetTypeApi().then(r => {
-            setListType(r.data.asset_types)
-            if (r.data.asset_types.length > 0) {
-                // setTypeSearch(r.data.asset_types[0].id)
-            }
-        }).catch(e => {
+    }, [listResult.page, listResult.pageSize,nameSearch,contactSearch,taxSearch ,refresh])
 
-        })
-        getListAssetGroupApi().then(r => {
-            setListGroup(r.data.asset_groups)
-            if (r.data.asset_groups.length > 0) {
-                // setGroupSearch(r.data.asset_groups[0].id)
-            }
-        }).catch(e => {
 
-        })
-    }, [])
-
-    // const { data } = useDemoData({
-    //     dataSet: 'Commodity',
-    //     rowLength: 20,
-    //     maxColumns: 5,
-    // });
-    const getListAssetsApi = (data) => {
+    const getListCompanyApi = (data) => {
         setLoading(true)
-        return apiManagerAssets.getListAsset(data);
+        return apiManagerCompany.getListCompany(data);
     }
-    const getListAssetGroupApi = (data) => {
-        return apiManagerAssets.getAssetGroup(data);
-    }
-    const getListAssetTypeApi = (data) => {
-        return apiManagerAssets.getAssetType(data);
-    }
-    const deleteAssetApi = (id) => {
-        return apiManagerAssets.deleteAsset(id);
+    const deleteCompanyApi = (id) => {
+        setLoading(true)
+        return apiManagerCompany.deleteCompany(id);
     }
     return (
         <div className={'main-content'}>
-            {/*<div className={`loading ${true ? '' : ''}`}>*/}
-            {/*    /!*<div className={`loading    `}>*!/*/}
-            {/*    <ClipLoader*/}
-            {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
-            {/*</div>*/}
+            <div className={`loading ${loading ? '' : 'hidden'}`}>
+                {/*<div className={`loading    `}>*/}
+                <ClipLoader
+                    color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />
+            </div>
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
@@ -320,12 +272,12 @@ export default function ManageAssets() {
                 pauseOnHover
             />
             <div className={'main-content-header'}>
-                <ModalConfirmDel name={infoDel.asset_name} openModalDel={openModalDel}
+                <ModalConfirmDel name={infoDel.company_name} openModalDel={openModalDel}
                                  handleCloseModalDel={handleCloseModalDel}
                                  submitDelete={submitDelete}></ModalConfirmDel>
                 <div className={'row'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
-                        Quản lý tài sản
+                        Quản lý công ty
                     </Typography>
                     <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
                         Thêm
@@ -345,10 +297,10 @@ export default function ManageAssets() {
                 <div className={'main-content-body-search'}>
                     <TextField
                         style={{width: '20%'}}
-                        // label="TextField"
-                        placeholder={'Tên tài sản'}
+                        label="Tên công ty"
+                        placeholder={'Tên công ty'}
                         value={nameSearch}
-                        onChange={handleChangeAssetName}
+                        onChange={handleChangeNameSearch}
                         // InputProps={{
                         //     startAdornment: (
                         //         <InputAdornment position="start">
@@ -358,45 +310,37 @@ export default function ManageAssets() {
                         // }}
                         // variant="standard"
                     />
-                    <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                        <InputLabel id="asset_group_label">Nhóm tài sản </InputLabel>
+                    <TextField
+                        style={{width: '20%',marginLeft:'20px'}}
+                        label="Thông tin liên hệ"
+                        placeholder={'Thông tin liên hệ'}
+                        value={contactSearch}
+                        onChange={handleChangeContactSearch}
+                        // InputProps={{
+                        //     startAdornment: (
+                        //         <InputAdornment position="start">
+                        //             <SearchIcon />
+                        //         </InputAdornment>
+                        //     ),
+                        // }}
+                        // variant="standard"
+                    />
+                    <TextField
+                        style={{width: '20%',marginLeft:'20px'}}
+                        label="Mã số thuế"
+                        placeholder={'Mã số thuế'}
+                        value={taxSearch}
+                        onChange={handleChangeTaxSearch}
+                        // InputProps={{
+                        //     startAdornment: (
+                        //         <InputAdornment position="start">
+                        //             <SearchIcon />
+                        //         </InputAdornment>
+                        //     ),
+                        // }}
+                        // variant="standard"
+                    />
 
-                        <Select
-                            label={"Nhóm tài sản"}
-                            id='asset_group'
-                            name='asset_group'
-                            value={groupSearch}
-                            onChange={handleChangeAssetGroup}
-                        >
-                            <MenuItem value={0}>Tất cả</MenuItem>
-
-                            {
-                                listGroup.map((e) => (
-                                    <MenuItem value={e.id}>{e.group_name}</MenuItem>
-                                ))
-                            }
-
-                        </Select>
-                    </FormControl>
-                    <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                        <InputLabel id="asset_type_label">Loại tài sản</InputLabel>
-                        <Select
-                            labelId="asset_type_label"
-                            id='asset_type'
-                            name='asset_type'
-                            label='Loại tài sản'
-                            value={typeSearch}
-                            onChange={handleChangeAssetType}
-                        >
-                            <MenuItem value={0}>Tất cả</MenuItem>
-
-                            {
-                                listType.map((e) => (
-                                    <MenuItem value={e.id}>{e.asset_type_name}</MenuItem>
-                                ))
-                            }
-                        </Select>
-                    </FormControl>
                 </div>
                 <Divider light/>
                 <div className={'main-content-body-result'}>

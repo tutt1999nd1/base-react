@@ -36,7 +36,8 @@ import apiManagerAssets from "../../api/manage-assets";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
 import {currencyFormatter} from "../../constants/utils";
-export default function EditAssets(props) {
+import apiManagerCompany from "../../api/manage-company";
+export default function EditCompany(props) {
     const navigate = useNavigate();
     const [location,setLocation] = useSearchParams();
     const [listGroup,setListGroup] =useState([]);
@@ -45,111 +46,77 @@ export default function EditAssets(props) {
     const [groupDefault,setGroupDefault] = useState(0)
 
     const [info,setInfo] =useState({
-        asset_name:'',
-        asset_type:{id:0},
-        asset_group:{id:0},
-        description:'',
-        initial_value:'',
-        capital_value:'',
-        max_capital_value:'',
-        current_credit_value:'',
+        company_name:'',
+        address:'',
+        contact_detail:'',
+        tax_number:'',
+        charter_capital:'',
+        founding_date:'',
+        capital_limit:'',
     })
     const {isUpdate} = props
     const [idUpdate,setIdUpdate] = useState(null)
     const validationSchema = yup.object({
-        asset_name: yup
+        company_name: yup
             .string()
             .trim()
             .required('Không được để trống'),
-        // asset_type: yup
-        //     .string()
-        //     .trim()
-        //     .required('Không được để trống'),
-        // asset_group: yup
-        //     .string()
-        //     .trim()
-        //     .required('Không được để trống')
-        // ,
-        description: yup
+        contact_detail: yup
             .string()
             .trim()
             .required('Không được để trống'),
-        // .matches( /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,"Nhập đúng định dạng số điện thoại"),
-        initial_value: yup
+        tax_number: yup
             .string()
             .trim()
             .required('Không được để trống'),
-        capital_value: yup
+        charter_capital: yup
             .string()
             .trim()
             .required('Không được để trống'),
-        max_capital_value: yup.string()
+        founding_date: yup
+            .string()
             .trim()
             .required('Không được để trống'),
-        current_credit_value: yup.string()
+        capital_limit: yup
+            .string()
             .trim()
             .required('Không được để trống'),
     });
     const backList = () => {
-        navigate('/assets')
+        navigate('/company')
     }
     useEffect(()=>{
         if(isUpdate){
             if(location.get('id')){
                 setIdUpdate(location.get('id'));
             }
-            else navigate('/assets')
+            else navigate('/company')
         }
 
     },[location])
     useEffect(()=>{
         if(isUpdate&&idUpdate){
-            getListAssetsApi({id:idUpdate,page_size:1}).then(r=>{
-                setInfo( r.data.assets[0])
-                console.log(r.data.assets[0])
+            getListCompanyApi({id:idUpdate,page_size:1}).then(r=>{
+                setInfo( r.data.companies[0])
+                console.log(r.data.companies[0])
             }).catch(e=>{
 
             })
         }
     },[idUpdate])
-    const createAssetApi = (data) => {
-        return apiManagerAssets.createAsset(data);
+    const createCompanyApi = (data) => {
+        return apiManagerCompany.createCompany(data);
     }
-    const updateAssetApi = (data) => {
-        return apiManagerAssets.updateAsset(idUpdate,data);
+    const updateCompanyApi = (data) => {
+        return apiManagerCompany.updateCompany(idUpdate,data);
     }
-    const getListAssetsApi = (data) => {
-        return apiManagerAssets.getListAsset(data);
+    const getListCompanyApi = (data) => {
+        return apiManagerCompany.getListCompany(data);
     }
-    useEffect(()=>{
-        getListAssetTypeApi().then(r=>{
-            setListType(r.data.asset_types)
-            if(!isUpdate)
-            if(r.data.asset_types.length>0){
-                setTypeDefault(r.data.asset_types[0].id)
-            }
-        }).catch(e=>{
 
-        })
-        getListAssetGroupApi().then(r=>{
-            setListGroup(r.data.asset_groups)
-            if(!isUpdate)
-                if(r.data.asset_groups.length>0){
-                setGroupDefault(r.data.asset_groups[0].id)
-            }
-        }).catch(e=>{
 
-        })
-    },[])
-
-    const getListAssetGroupApi = (data) => {
-        return apiManagerAssets.getAssetGroup(data);
-    }
-    const getListAssetTypeApi = (data) => {
-        return apiManagerAssets.getAssetType(data);
-    }
     const back = () => {
-      navigate('/assets')
+      navigate('/company')
     }
     useEffect(()=>{
         console.log("info",info)
@@ -167,12 +134,12 @@ export default function EditAssets(props) {
                 draggable
                 pauseOnHover
             />
-            <Button onClick={back} style={{marginBottom:'10px'}} variant="text" startIcon={<KeyboardBackspaceIcon />}>Tài sản</Button>
+            <Button onClick={back} style={{marginBottom:'10px'}} variant="text" startIcon={<KeyboardBackspaceIcon />}>Công ty</Button>
 
             <div className={'main-content-header'}>
                 <div className={'row'} style={{justifyContent:'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
-                        Quản lý tài sản
+                        Quản lý công ty
                     </Typography>
                 </div>
             </div>
@@ -184,16 +151,16 @@ export default function EditAssets(props) {
                 <Formik
                     enableReinitialize
                     initialValues={{
-                        asset_name:info.asset_name,
-                        asset_type:isUpdate?info.asset_type.id:typeDefault,
-                        asset_group:isUpdate?info.asset_group.id:groupDefault,
+                        company_name:info.company_name,
+                        address:info.address,
+                        contact_detail:info.contact_detail,
                         // asset_type:info.asset_type.id,
                         // asset_group:info.asset_group.id,
-                        description:info.description,
-                        initial_value:info.initial_value,
-                        capital_value:info.capital_value,
+                        tax_number:info.tax_number,
+                        charter_capital:info.charter_capital,
+                        founding_date:info.founding_date,
                         max_capital_value:info.max_capital_value,
-                        current_credit_value:info.current_credit_value,
+                        capital_limit:info.capital_limit,
                     }}
                     validationSchema={validationSchema}
                     onSubmit={
@@ -205,9 +172,7 @@ export default function EditAssets(props) {
 
                             console.log(valueConvert)
                             if(isUpdate){
-                                valueConvert.asset_type = {id : values.asset_type}
-                                valueConvert.asset_group = {id : values.asset_group}
-                                updateAssetApi(valueConvert).then(r=>{
+                                updateCompanyApi(valueConvert).then(r=>{
                                     toast.success('Cập nhật thành công', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -217,7 +182,7 @@ export default function EditAssets(props) {
                                         draggable: true,
                                     });
                                     setTimeout(() => {
-                                        navigate(`/assets/detail?id=${idUpdate}`)
+                                        navigate(`/company/detail?id=${idUpdate}`)
                                     }, 1050);
 
                                 }).catch(e=>{
@@ -234,9 +199,7 @@ export default function EditAssets(props) {
 
                             }
                             else {
-                                valueConvert.asset_type = {id : values.asset_type}
-                                valueConvert.asset_group = {id : values.asset_group}
-                                createAssetApi(valueConvert).then(r=>{
+                                createCompanyApi(valueConvert).then(r=>{
                                     toast.success('Thêm mới thành công', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -246,7 +209,7 @@ export default function EditAssets(props) {
                                         draggable: true,
                                     });
                                     setTimeout(() => {
-                                        navigate('/assets')
+                                        navigate('/company')
                                     }, 1050);
 
                                 }).catch(e=>{
@@ -278,68 +241,23 @@ export default function EditAssets(props) {
                                     <Grid container spacing={4}>
                                         <Grid item xs={6} md={6}>
                                             <TextField
-                                                id='asset_name'
-                                                name='asset_name'
+                                                id='company_name'
+                                                name='company_name'
                                                 className={'formik-input'}
-                                                label="Tên tài sản *"
-                                                placeholder={'Tên tài sản *'}
+                                                label="Tên công ty *"
+                                                placeholder={'Tên công ty*'}
                                                 // variant="standard"
-                                                value={values.asset_name}
+                                                value={values.company_name}
                                                 onChange={handleChange}
-                                                error={touched.asset_name && Boolean(errors.asset_name)}
-                                                helperText={touched.asset_name && errors.asset_name}
+                                                error={touched.company_name && Boolean(errors.company_name)}
+                                                helperText={touched.company_name && errors.company_name}
 
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <FormControl fullWidth>
-                                                <InputLabel id="asset_group_label">Nhóm tài sản</InputLabel>
-                                                <Select
-                                                    label={"Nhóm tài sản *"}
-                                                    id='asset_group'
-                                                    name='asset_group'
-                                                    value={values.asset_group}
-                                                    onChange={handleChange}
-                                                    error={touched.asset_group && Boolean(errors.asset_group)}
-                                                    helperText={touched.asset_group && errors.asset_group}
-                                                    // size='small'
-                                                >
-                                                    {
-                                                        listGroup.map((e) => (
-                                                            <MenuItem value={e.id}>{e.group_name}</MenuItem>
-                                                        ))
-                                                    }
-
-                                                </Select>
-                                                <FormHelperText className={'error-message'}>{errors.asset_group}</FormHelperText>
-                                            </FormControl>
                                         </Grid>
-
                                         <Grid item xs={6} md={6}>
 
-                                            <FormControl fullWidth>
-                                                <InputLabel id="asset_type_label">Loại tài sản *</InputLabel>
-                                                <Select
-
-                                                    labelId="asset_type_label"
-                                                    id='asset_type'
-                                                    name='asset_type'
-                                                    label='Loại tài sản *'
-                                                    value={values.asset_type}
-                                                    onChange={handleChange}
-                                                    error={touched.asset_type && Boolean(errors.asset_type)}
-                                                    helperText={touched.asset_type && errors.asset_type}
-                                                    // size='small'
-                                                >
-                                                    {
-                                                        listType.map((e) => (
-                                                            <MenuItem value={e.id}>{e.asset_type_name}</MenuItem>
-                                                        ))
-                                                    }
-
-                                                </Select>
-                                                <FormHelperText className={'error-message'}>{errors.asset_type}</FormHelperText>
-                                            </FormControl>
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>

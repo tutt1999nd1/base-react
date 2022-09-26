@@ -6,6 +6,10 @@ const API_MAP = {
     UPDATE_ASSETS: API_DOMAIN + 'asset',
     DELETE_ASSETS: API_DOMAIN + 'asset',
     GET_ASSETS_GROUP: API_DOMAIN + 'asset_group',
-    GET_ASSETS_TYPE: API_DOMAIN + 'asset_type',
+    GET_LIST_COMPANY: API_DOMAIN + 'capital_company/search',
+    CREATE_COMPANY: API_DOMAIN + 'capital_company/create',
+    UPDATE_COMPANY: API_DOMAIN + 'capital_company/update',
+    DELETE_COMPANY: API_DOMAIN + 'capital_company',
+
 }
 export default API_MAP;
