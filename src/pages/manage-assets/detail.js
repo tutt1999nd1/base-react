@@ -55,6 +55,7 @@ export default function DetailAsset(props) {
         capital_value:'',
         max_capital_value:'',
         current_credit_value:'',
+        list_attachments:[]
     })
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
@@ -132,6 +133,9 @@ export default function DetailAsset(props) {
     useEffect(()=>{
         console.log("info",info)
     },[info])
+    const downloadFile = (url) => {
+        window.open(url, '_blank');
+    }
     return (
         <div className={'main-content main-content-detail'}>
             {/*<div className={`loading ${false ? '' : ''}`}>*/}
@@ -253,6 +257,27 @@ export default function DetailAsset(props) {
                 <Divider></Divider>
 
             </div>
+            <div className={'main-content-body'}>
+                <div className={'main-content-body-tittle'}>
+                    <h4>Tài liệu đính kèm</h4>
+                </div>
+                <Divider light />
+                {
+                    info.list_attachments.map((e,i)=>(
+                        <div style={{cursor:"pointer"}} className={'row-detail'} onClick={()=>downloadFile(e.download_link)}>
+                            <div className={'text-info-content'}>
+                                {e.file_name}
+                            </div>
+                        </div>
+                    ))
+                }
+
+                <Divider></Divider>
+
+
+
+            </div>
+
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
                     <h4>Quản lý</h4>

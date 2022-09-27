@@ -149,7 +149,7 @@ export default function ManageCompany() {
                 }
                 const updateBtn = (e) => {
                     e.stopPropagation();
-                    navigate(`/assets/update?id=${params.id}`)
+                    navigate(`/company/update?id=${params.id}`)
                     // });
                 }
                 return <div className='icon-action'>

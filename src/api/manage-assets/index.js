@@ -6,7 +6,10 @@ class ApiManagerAssets{
         return axiosClient.post(API_MAP.GET_LIST_ASSETS,data)
     }
     createAsset = (data) => {
-        return axiosClient.post(API_MAP.CREATE_ASSETS,data)
+        return axiosClient.post(API_MAP.CREATE_ASSETS,data,{
+            // params: description,
+            headers: {'content-type': 'multipart/form-data'}
+        })
     }
     updateAsset = (id,data) => {
         return axiosClient.put(API_MAP.UPDATE_ASSETS+`/${id}`,data)

@@ -37,6 +37,11 @@ import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
 import {currencyFormatter} from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
+import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import moment from "moment/moment";
+import dateFormat from "dateformat";
+import dayjs from "dayjs";
 export default function EditCompany(props) {
     const navigate = useNavigate();
     const [location,setLocation] = useSearchParams();
@@ -44,14 +49,18 @@ export default function EditCompany(props) {
     const [listType,setListType] =useState([]);
     const [typeDefault,setTypeDefault] = useState(0)
     const [groupDefault,setGroupDefault] = useState(0)
+    const [value, setValue] = useState()
 
+    const handleChangeDate = (newValue) => {
+        setValue(newValue);
+    };
     const [info,setInfo] =useState({
         company_name:'',
         address:'',
         contact_detail:'',
         tax_number:'',
         charter_capital:'',
-        founding_date:'',
+        founding_date:new dayjs,
         capital_limit:'',
     })
     const {isUpdate} = props
@@ -116,7 +125,7 @@ export default function EditCompany(props) {
 
 
     const back = () => {
-      navigate('/company')
+        navigate('/company')
     }
     useEffect(()=>{
         console.log("info",info)
@@ -159,7 +168,6 @@ export default function EditCompany(props) {
                         tax_number:info.tax_number,
                         charter_capital:info.charter_capital,
                         founding_date:info.founding_date,
-                        max_capital_value:info.max_capital_value,
                         capital_limit:info.capital_limit,
                     }}
                     validationSchema={validationSchema}
@@ -167,9 +175,8 @@ export default function EditCompany(props) {
                         (values, actions) => {
                             // setInfoAccount();
                             // submitAccount();
-                            console.log('values',values)
-                            let valueConvert = values;
-
+                            let valueConvert = {...values};
+                            valueConvert.founding_date = dayjs(values.founding_date).format('DD-MM-YYYY');
                             console.log(valueConvert)
                             if(isUpdate){
                                 updateCompanyApi(valueConvert).then(r=>{
@@ -255,19 +262,91 @@ export default function EditCompany(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <TextField
+                                                id='address'
+                                                name='address'
+                                                className={'formik-input'}
+                                                label="Địa chỉ*"
+                                                placeholder={'Địa chỉ*'}
+                                                // variant="standard"
+                                                value={values.address}
+                                                onChange={handleChange}
+                                                error={touched.address && Boolean(errors.address)}
+                                                helperText={touched.address && errors.address}
+
+                                            />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <TextField
+                                                id='contact_detail'
+                                                name='contact_detail'
+                                                className={'formik-input'}
+                                                label="Thông tin liên hệ*"
+                                                placeholder={'Thông tin liên hệ*'}
+                                                // variant="standard"
+                                                value={values.contact_detail}
+                                                onChange={handleChange}
+                                                error={touched.address && Boolean(errors.address)}
+                                                helperText={touched.address && errors.address}
+
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6} md={6}>
+                                            <TextField
+                                                id='tax_number'
+                                                name='tax_number'
+                                                className={'formik-input'}
+                                                label="Mã số thuế*"
+                                                placeholder={'Mã số thuế*'}
+                                                // variant="standard"
+                                                value={values.tax_number}
+                                                onChange={handleChange}
+                                                error={touched.tax_number && Boolean(errors.tax_number)}
+                                                helperText={touched.tax_number && errors.tax_number}
+
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6} md={6}>
+                                            {/*<TextField*/}
+                                            {/*    id='founding_date'*/}
+                                            {/*    name='founding_date'*/}
+                                            {/*    className={'formik-input'}*/}
+                                            {/*    label="Ngày thành lập*"*/}
+                                            {/*    placeholder={'Ngày thành lập*'}*/}
+                                            {/*    // variant="standard"*/}
+                                            {/*    value={values.founding_date}*/}
+                                            {/*    onChange={handleChange}*/}
+                                            {/*    error={touched.founding_date && Boolean(errors.founding_date)}*/}
+                                            {/*    helperText={touched.founding_date && errors.founding_date}*/}
+
+                                            {/*/>*/}
+                                            {JSON.stringify(value)}
+                                            <LocalizationProvider style={{width:'100%'}} dateAdapter={AdapterDayjs}>
+                                                <DesktopDatePicker
+                                                    style={{width:'100% !important'}}
+                                                    label="Ngày thành lập"
+                                                    inputFormat="MM-DD-YYYY"
+                                                    value={values.founding_date}
+                                                    // onChange={(values) => {
+                                                    //     console.log(values)
+                                                    //
+                                                    // }}
+                                                    onChange={value => props.setFieldValue("founding_date", value)}
+                                                    error={touched.founding_date && Boolean(errors.founding_date)}
+                                                    helperText={touched.founding_date && errors.founding_date}
+                                                    renderInput={(params) => <TextField fullWidth {...params} />}
+                                                />
+                                            </LocalizationProvider>
 
                                         </Grid>
-
                                         <Grid item xs={6} md={6}>
                                             <NumericFormat
-                                                id='initial_value'
+                                                id='charter_capital'
                                                 customInput={TextField}
-                                                name='initial_value'
+                                                name='charter_capital'
                                                 className={'formik-input'}
-                                                label="Giá trị ban đầu *"
-                                                placeholder={'Giá trị ban đầu *'}
+                                                label="Vốn điều lệ*"
+                                                placeholder={'Vốn điều lệ*'}
                                                 // variant="standard"
                                                 thousandSeparator={"."}
                                                 decimalSeparator={","}
@@ -281,25 +360,25 @@ export default function EditCompany(props) {
                                                     const re = /^[0-9\b]+$/;
                                                     if(re.test(floatValue)){
                                                         console.log(floatValue)
-                                                        setFieldValue('initial_value', floatValue)
+                                                        setFieldValue('charter_capital', floatValue)
                                                     }
                                                     // setFieldValue('max_capital_value', formattedValue)
 
                                                 }}
-                                                error={touched.initial_value && Boolean(errors.initial_value)}
-                                                helperText={touched.initial_value && errors.initial_value}
+                                                error={touched.charter_capital && Boolean(errors.charter_capital)}
+                                                helperText={touched.charter_capital && errors.charter_capital}
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <NumericFormat
-                                                id='capital_value'
-                                                name='capital_value'
+                                                id='capital_limit'
+                                                name='capital_limit'
                                                 className={'formik-input'}
-                                                label="Vốn vay *"
-                                                placeholder={'Vốn vay *'}
+                                                label="Khoản vay tối đa*"
+                                                placeholder={'Khoản vay tối đa*'}
                                                 customInput={TextField}
                                                 // variant="standard"
-                                                value={values.capital_value}
+                                                value={values.capital_limit}
                                                 thousandSeparator={"."}
                                                 decimalSeparator={","}
                                                 onValueChange={(values) => {
@@ -308,13 +387,13 @@ export default function EditCompany(props) {
                                                     const re = /^[0-9\b]+$/;
                                                     if(re.test(floatValue)){
                                                         console.log(floatValue)
-                                                        setFieldValue('capital_value', floatValue)
+                                                        setFieldValue('capital_limit', floatValue)
                                                     }
                                                     // setFieldValue('max_capital_value', formattedValue)
 
                                                 }}
-                                                error={touched.capital_value && Boolean(errors.capital_value)}
-                                                helperText={touched.capital_value && errors.capital_value}
+                                                error={touched.capital_limit && Boolean(errors.capital_limit)}
+                                                helperText={touched.capital_limit && errors.capital_limit}
                                                 InputProps={{
                                                     endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
 
@@ -322,97 +401,6 @@ export default function EditCompany(props) {
 
                                             />
                                         </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <NumericFormat
-                                                id='current_credit_value'
-                                                name='current_credit_value'
-                                                className={'formik-input'}
-                                                label="Gốc vay tín dụng hiện tại *"
-                                                placeholder={'Gốc vay tín dụng hiện tại *'}
-                                                customInput={TextField}
-                                                value={values.current_credit_value}
-                                                thousandSeparator={"."}
-                                                decimalSeparator={","}
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    const re = /^[0-9\b]+$/;
-                                                    if(re.test(floatValue)){
-                                                        console.log(floatValue)
-                                                        setFieldValue('current_credit_value', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
-
-                                                }}
-                                                error={touched.current_credit_value  && Boolean(errors.current_credit_value)}
-                                                helperText={touched.current_credit_value && errors.current_credit_value}
-                                                InputProps={{
-                                                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
-                                                }}
-                                                // variant="standard"
-                                            />
-
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <NumericFormat
-                                                id='max_capital_value'
-                                                name='max_capital_value'
-                                                className={'formik-input'}
-                                                label="Số tiền vay tối đa *"
-                                                placeholder={'Số tiền vay tối đa *'}
-                                                // type={"number"}
-                                                // variant="standard"
-                                                value={values.max_capital_value}
-                                                // onChange={handleChange}
-                                                customInput={TextField}
-                                                error={touched.max_capital_value  && Boolean(errors.max_capital_value)}
-                                                helperText={touched.max_capital_value && errors.max_capital_value}
-                                                InputProps={{
-                                                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
-
-                                                }}
-                                                thousandSeparator={"."}
-                                                decimalSeparator={","}
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    const re = /^[0-9\b]+$/;
-                                                    if(re.test(floatValue)){
-                                                        console.log(floatValue)
-                                                        setFieldValue('max_capital_value', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
-
-                                                }}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <TextField
-                                                className={'formik-input'}
-                                                label="Link tài liệu"
-                                                placeholder={'Link tài liệu'}
-                                                // variant="standard"
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <TextField
-                                                className={'formik-input'}
-                                                label="Thông tin *"
-                                                placeholder={'Thông tin *'}
-                                                // variant="standard"
-                                                id='description'
-                                                name='description'
-                                                multiline
-                                                rows={5}
-                                                value={values.description}
-                                                onChange={handleChange}
-                                                error={touched.description  && Boolean(errors.description)}
-                                                helperText={touched.description && errors.description}
-
-                                            />
-                                        </Grid>
-
-
                                         {/*<Grid item xs={6} md={6}>*/}
                                         {/*    <input type="file"/>*/}
                                         {/*</Grid>*/}
