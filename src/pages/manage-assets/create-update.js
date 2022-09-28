@@ -38,7 +38,7 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
-import {currencyFormatter} from "../../constants/utils";
+import {capitalizeFirstLetter, currencyFormatter} from "../../constants/utils";
 
 export default function EditAssets(props) {
     const navigate = useNavigate();
@@ -59,7 +59,7 @@ export default function EditAssets(props) {
         capital_value: '',
         max_capital_value: '',
         current_credit_value: '',
-        list_attachments:[]
+        list_attachments: []
     })
     const {isUpdate} = props
     const [idUpdate, setIdUpdate] = useState(null)
@@ -165,20 +165,20 @@ export default function EditAssets(props) {
 
     useEffect(() => {
         console.log(VNnum2words(10000));
-        }, [listFileServer])
+    }, [listFileServer])
     const deleteFileLocal = (name) => {
         let arr = [...listFileLocal]
-        let indexRemove = listFileLocal.findIndex(e=>e.name === name)
+        let indexRemove = listFileLocal.findIndex(e => e.name === name)
         if (indexRemove !== -1) {
             arr.splice(indexRemove, 1);
             setListFileLocal(arr)
         }
 
     }
-    const deleteFileServer = (id,name) => {
+    const deleteFileServer = (id, name) => {
         let arr = [...listFileServer]
-        console.log("Arr",arr)
-        let indexRemove = listFileServer.findIndex(e=>e.file_name === name)
+        console.log("Arr", arr)
+        let indexRemove = listFileServer.findIndex(e => e.file_name === name)
         if (indexRemove !== -1) {
             arr.splice(indexRemove, 1);
             setListFileServer(arr)
@@ -188,12 +188,12 @@ export default function EditAssets(props) {
         setListDeletedAttachment(copyListDeleteServer)
     }
     const checkFileLocaleAlready = (name) => {
-        let index = listFileLocal.findIndex(e=>e.name === name)
-        let index2 = listFileServer.findIndex(e=>e.file_name === name)
-        if(index2 !== -1){
+        let index = listFileLocal.findIndex(e => e.name === name)
+        let index2 = listFileServer.findIndex(e => e.file_name === name)
+        if (index2 !== -1) {
             return true
         }
-        if(index !== -1){
+        if (index !== -1) {
             return true
         }
         return false;
@@ -208,7 +208,7 @@ export default function EditAssets(props) {
             let resultFiles = [];
             if (el.files.length) {
                 for (let i = 0; i < el.files.length; i++) {
-                    if(!checkFileLocaleAlready(el.files[i].name)){
+                    if (!checkFileLocaleAlready(el.files[i].name)) {
                         resultFiles.push(el.files[i])
                     }
                 }
@@ -284,24 +284,24 @@ export default function EditAssets(props) {
                             console.log('values', values)
                             let valueConvert = values;
                             let formData = new FormData();
-                            formData.append('assetTypeId',values.asset_type)
-                            formData.append('description',values.description)
-                            for (let i = 0; i <listFileLocal.length ; i++) {
-                                formData.append('newAttachment',listFileLocal[i])
+                            formData.append('assetTypeId', values.asset_type)
+                            formData.append('description', values.description)
+                            for (let i = 0; i < listFileLocal.length; i++) {
+                                formData.append('newAttachment', listFileLocal[i])
                             }
-                            formData.append('assetName',values.asset_name)
-                            formData.append('assetGroupId',values.asset_group)
-                            formData.append('initialValue',values.initial_value)
-                            formData.append('capitalValue',values.capital_value)
-                            formData.append('currentCreditValue',values.current_credit_value)
-                            formData.append('maxCapitalValue',values.max_capital_value)
+                            formData.append('assetName', values.asset_name)
+                            formData.append('assetGroupId', values.asset_group)
+                            formData.append('initialValue', values.initial_value)
+                            formData.append('capitalValue', values.capital_value)
+                            formData.append('currentCreditValue', values.current_credit_value)
+                            formData.append('maxCapitalValue', values.max_capital_value)
                             // formData.append('currentCreditValue',values.)
                             console.log(valueConvert)
                             if (isUpdate) {
-                                formData.append('description',values.description)
-                                console.log("listDeletedAttachment",listDeletedAttachment)
+                                formData.append('description', values.description)
+                                console.log("listDeletedAttachment", listDeletedAttachment)
                                 for (let i = 0; i < listDeletedAttachment.length; i++) {
-                                    formData.append('listDeletedAttachment',listDeletedAttachment[i])
+                                    formData.append('listDeletedAttachment', listDeletedAttachment[i])
                                 }
                                 updateAssetApi(formData).then(r => {
                                     toast.success('Cập nhật thành công', {
@@ -459,7 +459,7 @@ export default function EditAssets(props) {
                                                     console.log(floatValue)
 
                                                     const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue)||floatValue===undefined) {
+                                                    if (re.test(floatValue) || floatValue === undefined) {
                                                         setFieldValue('initial_value', floatValue)
                                                     }
                                                     // setFieldValue('max_capital_value', formattedValue)
@@ -469,7 +469,12 @@ export default function EditAssets(props) {
                                                 helperText={touched.initial_value && errors.initial_value}
                                                 // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
                                             />
-                                            <div>{values.initial_value}</div>
+                                            {/*<div>{</div>*/}
+                                            <Typography className={'uppercase'} variant="caption" display="block"
+                                                        gutterBottom>
+                                                {values.initial_value ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.initial_value))} đồng` : ''}
+                                            </Typography>
+
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <NumericFormat
@@ -487,7 +492,7 @@ export default function EditAssets(props) {
                                                     const {formattedValue, value, floatValue} = values;
                                                     // do something with floatValue
                                                     const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue)) {
+                                                    if (re.test(floatValue) || floatValue === undefined) {
                                                         console.log(floatValue)
                                                         setFieldValue('capital_value', floatValue)
                                                     }
@@ -502,6 +507,10 @@ export default function EditAssets(props) {
                                                 }}
 
                                             />
+                                            <Typography className={'uppercase'} variant="caption" display="block"
+                                                        gutterBottom>
+                                                {values.capital_value ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.capital_value))} đồng` : ''}
+                                            </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <NumericFormat
@@ -518,7 +527,7 @@ export default function EditAssets(props) {
                                                     const {formattedValue, value, floatValue} = values;
                                                     // do something with floatValue
                                                     const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue)) {
+                                                    if (re.test(floatValue) || floatValue === undefined) {
                                                         console.log(floatValue)
                                                         setFieldValue('current_credit_value', floatValue)
                                                     }
@@ -532,7 +541,10 @@ export default function EditAssets(props) {
                                                 }}
                                                 // variant="standard"
                                             />
-
+                                            <Typography className={'uppercase'} variant="caption" display="block"
+                                                        gutterBottom>
+                                                {values.current_credit_value ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.current_credit_value))} đồng` : ''}
+                                            </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <NumericFormat
@@ -566,6 +578,10 @@ export default function EditAssets(props) {
 
                                                 }}
                                             />
+                                            <Typography className={'uppercase'} variant="caption" display="block"
+                                                        gutterBottom>
+                                                {values.max_capital_value ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.max_capital_value))} đồng` : ''}
+                                            </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <TextField
@@ -606,7 +622,9 @@ export default function EditAssets(props) {
                                                                 <div className={'delete-file'}><DeleteOutlineIcon
                                                                     style={{cursor: "pointer"}}
                                                                     color={"error"}
-                                                                    onClick={()=>{deleteFileLocal(e.name)}}></DeleteOutlineIcon></div>
+                                                                    onClick={() => {
+                                                                        deleteFileLocal(e.name)
+                                                                    }}></DeleteOutlineIcon></div>
                                                             </div>
                                                             <Divider light/>
                                                         </>
@@ -621,7 +639,9 @@ export default function EditAssets(props) {
                                                                 <div className={'delete-file'}><DeleteOutlineIcon
                                                                     style={{cursor: "pointer"}}
                                                                     color={"error"}
-                                                                    onClick={()=>{deleteFileServer(e.id,e.file_name)}}></DeleteOutlineIcon></div>
+                                                                    onClick={() => {
+                                                                        deleteFileServer(e.id, e.file_name)
+                                                                    }}></DeleteOutlineIcon></div>
                                                             </div>
                                                             <Divider light/>
                                                         </>

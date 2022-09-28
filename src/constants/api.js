@@ -11,6 +11,13 @@ const API_MAP = {
     CREATE_COMPANY: API_DOMAIN + 'capital_company/create',
     UPDATE_COMPANY: API_DOMAIN + 'capital_company',
     DELETE_COMPANY: API_DOMAIN + 'capital_company',
-
+    GET_LIST_CATEGORY: API_DOMAIN + 'capital_category/search',
+    CREATE_CATEGORY: API_DOMAIN + 'capital_category/create',
+    UPDATE_CATEGORY: API_DOMAIN + 'capital_category',
+    DELETE_CATEGORY: API_DOMAIN + 'capital_category',
+    GET_LIST_CAMPAIGNS: API_DOMAIN + 'capital_campaign/search',
+    CREATE_CAMPAIGNS: API_DOMAIN + 'capital_campaign/create',
+    UPDATE_CAMPAIGNS: API_DOMAIN + 'capital_campaign',
+    DELETE_CAMPAIGNS: API_DOMAIN + 'capital_campaign',
 }
 export default API_MAP;

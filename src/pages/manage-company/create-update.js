@@ -35,14 +35,15 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
-import {currencyFormatter} from "../../constants/utils";
+import {capitalizeFirstLetter, currencyFormatter} from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import moment from "moment/moment";
 import dateFormat from "dateformat";
 import dayjs from "dayjs";
-export default function EditCompany(props) {
+import {default as VNnum2words} from "vn-num2words";
+export default function EditCategory(props) {
     const navigate = useNavigate();
     const [location,setLocation] = useSearchParams();
     const [listGroup,setListGroup] =useState([]);
@@ -307,6 +308,74 @@ export default function EditCompany(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <NumericFormat
+                                                id='capital_limit'
+                                                name='capital_limit'
+                                                className={'formik-input'}
+                                                label="Khoản vay tối đa*"
+                                                placeholder={'Khoản vay tối đa*'}
+                                                customInput={TextField}
+                                                // variant="standard"
+                                                value={values.capital_limit}
+                                                thousandSeparator={"."}
+                                                decimalSeparator={","}
+                                                onValueChange={(values) => {
+                                                    const {formattedValue, value, floatValue} = values;
+                                                    // do something with floatValue
+                                                    const re = /^[0-9\b]+$/;
+                                                    if(re.test(floatValue)||floatValue===undefined){
+                                                        console.log(floatValue)
+                                                        setFieldValue('capital_limit', floatValue)
+                                                    }
+                                                    // setFieldValue('max_capital_value', formattedValue)
+
+                                                }}
+                                                error={touched.capital_limit && Boolean(errors.capital_limit)}
+                                                helperText={touched.capital_limit && errors.capital_limit}
+                                                InputProps={{
+                                                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
+
+                                                }}
+                                            />
+                                            <Typography className={'uppercase'} variant="caption" display="block" gutterBottom>
+                                                {values.capital_limit?`*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.capital_limit))} đồng`:''}
+                                            </Typography>
+                                        </Grid>
+
+                                        <Grid item xs={6} md={6}>
+                                            <NumericFormat
+                                                id='charter_capital'
+                                                customInput={TextField}
+                                                name='charter_capital'
+                                                className={'formik-input'}
+                                                label="Vốn điều lệ*"
+                                                placeholder={'Vốn điều lệ*'}
+                                                // variant="standard"
+                                                thousandSeparator={"."}
+                                                decimalSeparator={","}
+                                                value={values.charter_capital}
+                                                InputProps={{
+                                                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
+                                                }}
+                                                onValueChange={(values) => {
+                                                    const {formattedValue, value, floatValue} = values;
+                                                    // do something with floatValue
+                                                    const re = /^[0-9\b]+$/;
+                                                    if(re.test(floatValue)||floatValue===undefined){
+                                                        console.log(floatValue)
+                                                        setFieldValue('charter_capital', floatValue)
+                                                    }
+                                                    // setFieldValue('max_capital_value', formattedValue)
+
+                                                }}
+                                                error={touched.charter_capital && Boolean(errors.charter_capital)}
+                                                helperText={touched.charter_capital && errors.charter_capital}
+                                            />
+                                            <Typography className={'uppercase'} variant="caption" display="block" gutterBottom>
+                                                {values.charter_capital?`*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.charter_capital))} đồng`:''}
+                                            </Typography>
+                                        </Grid>
+                                        <Grid item xs={6} md={6}>
                                             {/*<TextField*/}
                                             {/*    id='founding_date'*/}
                                             {/*    name='founding_date'*/}
@@ -339,68 +408,7 @@ export default function EditCompany(props) {
                                             </LocalizationProvider>
 
                                         </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <NumericFormat
-                                                id='charter_capital'
-                                                customInput={TextField}
-                                                name='charter_capital'
-                                                className={'formik-input'}
-                                                label="Vốn điều lệ*"
-                                                placeholder={'Vốn điều lệ*'}
-                                                // variant="standard"
-                                                thousandSeparator={"."}
-                                                decimalSeparator={","}
-                                                value={values.initial_value}
-                                                InputProps={{
-                                                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
-                                                }}
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    const re = /^[0-9\b]+$/;
-                                                    if(re.test(floatValue)){
-                                                        console.log(floatValue)
-                                                        setFieldValue('charter_capital', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
 
-                                                }}
-                                                error={touched.charter_capital && Boolean(errors.charter_capital)}
-                                                helperText={touched.charter_capital && errors.charter_capital}
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <NumericFormat
-                                                id='capital_limit'
-                                                name='capital_limit'
-                                                className={'formik-input'}
-                                                label="Khoản vay tối đa*"
-                                                placeholder={'Khoản vay tối đa*'}
-                                                customInput={TextField}
-                                                // variant="standard"
-                                                value={values.capital_limit}
-                                                thousandSeparator={"."}
-                                                decimalSeparator={","}
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    const re = /^[0-9\b]+$/;
-                                                    if(re.test(floatValue)){
-                                                        console.log(floatValue)
-                                                        setFieldValue('capital_limit', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
-
-                                                }}
-                                                error={touched.capital_limit && Boolean(errors.capital_limit)}
-                                                helperText={touched.capital_limit && errors.capital_limit}
-                                                InputProps={{
-                                                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
-
-                                                }}
-
-                                            />
-                                        </Grid>
                                         {/*<Grid item xs={6} md={6}>*/}
                                         {/*    <input type="file"/>*/}
                                         {/*</Grid>*/}

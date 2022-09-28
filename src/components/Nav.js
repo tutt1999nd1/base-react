@@ -40,7 +40,7 @@ export default function Nav() {
                             </div>
                         </li>
                     </NavLink>
-                    <NavLink className={'nav-link'} to={'loan-purpose'}>
+                    <NavLink className={'nav-link'} to={'campaign'}>
                         <li>
                             <div className={'nav-item'}>
                                 <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>Quản lý mục đích vay</div>
@@ -90,7 +90,7 @@ export default function Nav() {
                                     </div>
                                 </li>
                             </NavLink>
-                            <NavLink className={'nav-link'} to={'categories'}>
+                            <NavLink className={'nav-link'} to={'category'}>
                                 <li>
                                     <div className={'nav-item li-child'}>
                                         <div className={'nav-item-name'}><ClassIcon></ClassIcon>Hạng mục</div>
