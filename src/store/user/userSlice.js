@@ -9,7 +9,8 @@ export const userSlice = createSlice({
         roles: [],
         isSignIn: false,
         isLoading: false,
-        language: 'en'
+        language: 'en',
+        showMenu:true,
     },
     reducers: {
         updateProjectRedux: (state, action) => {
@@ -39,6 +40,9 @@ export const userSlice = createSlice({
         },
         updateUsername: (state, action) => {
             state.username = action.payload
+        },
+        updateShowMenu: (state, action) => {
+            state.showMenu = action.payload
         }
     },
     extraReducers: {
@@ -80,4 +84,4 @@ export const userSlice = createSlice({
     }
 })
 export default userSlice.reducer;
-export const { updateToken, updateProjectRedux, updateLanguage, logout, updateLoading, updateRole,updateUsername } = userSlice.actions;
+export const {updateShowMenu, updateToken, updateProjectRedux, updateLanguage, logout, updateLoading, updateRole,updateUsername } = userSlice.actions;

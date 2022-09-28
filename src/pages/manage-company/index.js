@@ -1,5 +1,6 @@
  import React, {useEffect, useState} from "react";
 import {ClipLoader, HashLoader} from "react-spinners";
+ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 import {
     Button, css,
@@ -62,6 +63,8 @@ export default function ManageCompany() {
             headerName: 'STT',
             maxWidth: 75,
             filterable: false,
+            headerClassName: 'super-app-theme--header',
+
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         {
@@ -82,6 +85,7 @@ export default function ManageCompany() {
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
             flex:1
+
         },
         {
             filterable: false,
@@ -128,6 +132,8 @@ export default function ManageCompany() {
         },
         {
             field: 'action',
+            headerClassName: 'super-app-theme--header',
+
             headerName: 'Thao tác',
             sortable: false,
             width: 200,
@@ -154,7 +160,7 @@ export default function ManageCompany() {
                 }
                 return <div className='icon-action'>
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
-                        <BorderColorOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></BorderColorOutlinedIcon>
+                        <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
                     </Tooltip>
                     <Tooltip title="Xóa" onClick={deleteBtn}>
                         <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
@@ -283,7 +289,7 @@ export default function ManageCompany() {
                         Thêm
                     </Button>
                 </div>
-                <div className={'row'} style={{marginTop: '20px'}}>
+                <div className={'row'} >
                     <Button variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
                     <Button style={{marginLeft: '10px'}} variant="text"
                             startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
@@ -348,7 +354,7 @@ export default function ManageCompany() {
                         <DataGrid
                             localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
                             labelRowsPerPage={"Số kết quả"}
-                            density="comfortable"
+                            density="standard"
                             columns={columns}
                             pagination
                             rowCount={listResult.total}
@@ -369,24 +375,9 @@ export default function ManageCompany() {
                                 // boxShadow: 2,
                                 border: 1,
                                 borderColor: 'rgb(255, 255, 255)',
-                                '& .MuiDataGrid-cell:hover': {
-                                    // color: 'primary.main',
-
+                                '& .MuiDataGrid-iconSeparator': {
+                                    display: 'none',
                                 },
-                                '& .MuiDataGrid-cell': {
-                                    // border: 1,
-                                    borderColor: 'rgba(0, 0, 0, 0.08)',
-                                },
-                                '& .super-app-theme--header': {
-                                    color: 'rgb(55, 65, 81)',
-                                    borderBottom: 'none',
-                                    fontsize: '12px',
-                                    fontWeight: '600',
-                                    // lineHeight: 1,
-                                    letterspacing: '0.5px',
-                                    textTransform: 'uppercase'
-                                },
-
                             }}
                             components={{
                                 Toolbar: CustomToolbar,

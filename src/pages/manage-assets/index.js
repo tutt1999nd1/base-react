@@ -16,6 +16,7 @@ import {
 import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import AddIcon from '@mui/icons-material/Add';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
 import SearchIcon from '@mui/icons-material/Search';
@@ -64,9 +65,18 @@ export default function ManageAssets() {
         page: 0,
         pageSize: 5,
         rows: [
-            // {id:"t",project_name:'Project1',project_type:'type1',annotation_group:"tesst",description:"ajaja"},
-            // {id:"t2",project_name:'Project1',project_type:'type1',annotation_group:"tesst",description:"ajaja"},
-            // {id:"t3",project_name:'Project1',project_type:'type1',annotation_group:"tesst",description:"ajaja"}
+            // {
+            //     id:1,
+            //     asset_name:'2',
+            //     asset_group_name:'111',
+            //     asset_type_name:'111',
+            //     initial_value:'111',
+            //     capital_value:'111',
+            //     current_credit_value:'111',
+            //     max_capital_value:'111',
+            //     status:'111',
+            //     description:'Thông tin chứng khoán ngày hôm nay rất tệ'
+            // }
         ],
         total: 0
     });
@@ -79,6 +89,7 @@ export default function ManageAssets() {
             headerName: 'STT',
             maxWidth: 75,
             filterable: false,
+            headerClassName: 'super-app-theme--header',
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         {
@@ -87,7 +98,7 @@ export default function ManageAssets() {
             field: 'asset_name',
             headerName: 'Tên tài sản',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120
+            flex:1
         },
         {
             filterable: false,
@@ -95,7 +106,7 @@ export default function ManageAssets() {
             field: 'asset_group_name',
             headerName: 'Nhóm tài sản',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120
+            flex:1
         },
         {
             filterable: false,
@@ -103,7 +114,7 @@ export default function ManageAssets() {
             field: 'asset_type_name',
             headerName: 'Loại tài sản',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120
+            flex:1
         },
         {
             filterable: false,
@@ -111,7 +122,7 @@ export default function ManageAssets() {
             field: 'initial_value',
             headerName: 'Gía trị ban đầu',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120
+            flex:1
         },
         {
             filterable: false,
@@ -119,7 +130,7 @@ export default function ManageAssets() {
             field: 'capital_value',
             headerName: 'Vốn vay',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120
+            flex:1
         },
         {
             filterable: false,
@@ -127,7 +138,7 @@ export default function ManageAssets() {
             field: 'current_credit_value',
             headerName: 'Gốc vay tín dụng hiện tại',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120
+            flex:1
         },
         {
             filterable: false,
@@ -135,7 +146,7 @@ export default function ManageAssets() {
             field: 'max_capital_value',
             headerName: 'Số tiền vay tối đa',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120
+            flex:1
         },
         {
             filterable: false,
@@ -143,7 +154,7 @@ export default function ManageAssets() {
             field: 'status',
             headerName: 'Trạng thái',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120
+            flex:1
         },
         // {filterable: false,sortable: false, field: 'document', headerName: 'Tài liệu',headerClassName: 'super-app-theme--header' ,minWidth: 120},
         {
@@ -153,7 +164,8 @@ export default function ManageAssets() {
             headerName: 'Thông tin',
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
-            flex: 1
+            flex:3,
+
         },
 
         {
@@ -163,6 +175,8 @@ export default function ManageAssets() {
             width: 200,
             align: 'center',
             maxWidth: 130,
+            headerClassName: 'super-app-theme--header',
+
             // flex: 1,
             renderCell: (params) => {
 
@@ -184,7 +198,7 @@ export default function ManageAssets() {
                 }
                 return <div className='icon-action'>
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
-                        <BorderColorOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></BorderColorOutlinedIcon>
+                        <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
                     </Tooltip>
                     <Tooltip title="Xóa" onClick={deleteBtn}>
                         <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
@@ -260,7 +274,10 @@ export default function ManageAssets() {
         }).then(r => {
             setLoading(false)
             console.log("r", r)
-            let arr = convertArr(r.data.assets)
+            let arr;
+            if(r.data.assets)
+                arr = convertArr(r.data.assets)
+            else arr=[]
             setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
         }).catch(e => {
             setLoading(false)
@@ -334,7 +351,7 @@ export default function ManageAssets() {
                         Thêm
                     </Button>
                 </div>
-                <div className={'row'} style={{marginTop: '20px'}}>
+                <div className={'row'} >
                     <Button variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
                     <Button style={{marginLeft: '10px'}} variant="text"
                             startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
@@ -419,9 +436,10 @@ export default function ManageAssets() {
                 <div className={'main-content-body-result'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
+                            getRowHeight={() => 'auto'}
                             localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
                             labelRowsPerPage={"Số kết quả"}
-                            density="comfortable"
+                            density="standard"
                             columns={columns}
                             pagination
                             rowCount={listResult.total}
@@ -442,22 +460,8 @@ export default function ManageAssets() {
                                 // boxShadow: 2,
                                 border: 1,
                                 borderColor: 'rgb(255, 255, 255)',
-                                '& .MuiDataGrid-cell:hover': {
-                                    // color: 'primary.main',
-
-                                },
-                                '& .MuiDataGrid-cell': {
-                                    // border: 1,
-                                    borderColor: 'rgba(0, 0, 0, 0.08)',
-                                },
-                                '& .super-app-theme--header': {
-                                    color: 'rgb(55, 65, 81)',
-                                    borderBottom: 'none',
-                                    fontsize: '12px',
-                                    fontWeight: '600',
-                                    // lineHeight: 1,
-                                    letterspacing: '0.5px',
-                                    textTransform: 'uppercase'
+                                '& .MuiDataGrid-iconSeparator': {
+                                    display: 'none',
                                 },
 
                             }}
@@ -477,7 +481,7 @@ function CustomToolbar() {
     return (
         <GridToolbarContainer>
             <GridToolbarColumnsButton/>
-            <GridToolbarDensitySelector/>
+            {/*<GridToolbarDensitySelector/>*/}
         </GridToolbarContainer>
     );
 }

@@ -10,14 +10,16 @@ import {Collapse} from "@mui/material";
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ClassIcon from '@mui/icons-material/Class';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import {useDispatch,useSelector} from "react-redux";
 export default function Nav() {
+    const currentUser = useSelector(state => state.currentUser)
     const [open, setOpen] = useState(true)
     const handleClickCollapse = () => {
         setOpen(!open);
     };
 
     return (
-        <nav className={'nav'}>
+        <nav className={`nav ${currentUser.showMenu?'':'hidden'}`}>
             <div style={{margin: '10px'}}>
                 <img style={{width: '100%'}} src={require('../assets/img/logo-white.png')}/>
             </div>

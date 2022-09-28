@@ -2,8 +2,14 @@ import React, { useEffect, useState } from "react";
 import {Avatar, Badge, Breadcrumbs, Button, IconButton, Menu, MenuItem, Tooltip, Typography} from "@mui/material";
 import Link from '@mui/material/Link';
 import NotificationsIcon from '@mui/icons-material/Notifications';
+import MenuIcon from '@mui/icons-material/Menu';
+import {useDispatch,useSelector} from "react-redux";
+import {updateShowMenu} from "../store/user/userSlice";
+
 const Header = () => {
     // const [anchorEl, setAnchorEl] =
+    const currentUser = useSelector(state => state.currentUser)
+    const dispatch = useDispatch()
     const [anchorEl, setAnchorEl] = React.useState();
     const open = Boolean(anchorEl);
     const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -12,11 +18,16 @@ const Header = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-
+    const touchMenu = () => {
+      dispatch(updateShowMenu(!currentUser.showMenu))
+    }
     return (
         <header className={'header'}>
             <div style={{display:"flex",justifyContent:'space-between',width:'100%'}}>
                 <div className={'header-left'}>
+                    <IconButton  onClick={touchMenu}>
+                        <MenuIcon></MenuIcon>
+                    </IconButton>
                     {/*<Breadcrumbs aria-label="breadcrumb">*/}
                     {/*    <Link underline="hover" color="inherit" href="/" to={""}>*/}
                     {/*        Danh mục*/}
