@@ -3,9 +3,9 @@ import {ClipLoader, HashLoader} from "react-spinners";
  import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 import {
-    Button, css,
+    Button, Collapse, css,
     Divider,
-    FormControl, FormHelperText,
+    FormControl, FormHelperText, IconButton,
     InputAdornment,
     InputLabel, MenuItem,
     Paper, Select,
@@ -38,8 +38,11 @@ import Utils, {currencyFormatter} from "../../constants/utils";
  import apiManagerCompany from "../../api/manage-company";
  import apiManagerCategory from "../../api/manage-category";
  import apiManagerCampaign from "../../api/manage-campaign";
+ import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
+ import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 
 export default function ManageCategory() {
+    const [openSearch, setOpenSearch] = useState(true)
     const [nameSearch,setNameSearch] =useState(null)
     const [listAllResult,setListAllResult] =useState([])
     const navigate = useNavigate();
@@ -82,7 +85,27 @@ export default function ManageCategory() {
             field: 'campaign_name',
             headerName: 'Tên mục đích vay',
             headerClassName: 'super-app-theme--header',
-            flex:1
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'campaign_parent_name',
+            headerName: 'Mục đích cha',
+            headerClassName: 'super-app-theme--header',
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
         },
         {
             filterable: false,
@@ -90,15 +113,13 @@ export default function ManageCategory() {
             field: 'amount',
             headerName: 'Số tiền vay',
             headerClassName: 'super-app-theme--header',
-            flex:1
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'status',
-            headerName: 'Trạng thái',
-            headerClassName: 'super-app-theme--header',
-            flex:1
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
         },
         {
             filterable: false,
@@ -106,7 +127,13 @@ export default function ManageCategory() {
             field: 'description',
             headerName: 'Mô tả',
             headerClassName: 'super-app-theme--header',
-            flex:1
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
         },
         {
             field: 'action',
@@ -197,7 +224,10 @@ export default function ManageCategory() {
         for (let i = 0; i < arr.length; i++) {
             arr[i].index = (listResult.page) * listResult.pageSize + i + 1;
             arr[i].amount = currencyFormatter(arr[i].amount)
-
+            if(arr[i].parent_campaign){
+                arr[i].campaign_parent_name = arr[i].parent_campaign.campaign_name
+            }
+            else  arr[i].campaign_parent_name = ''
             // arr[i].asset_group_name = arr[i].asset_group?.group_name;
             // arr[i].asset_type_name = arr[i].asset_type?.asset_type_name;
             // arr[i].initial_value = currencyFormatter(arr[i].initial_value)
@@ -270,7 +300,7 @@ export default function ManageCategory() {
                 pauseOnHover
             />
             <div className={'main-content-header'}>
-                <ModalConfirmDel name={infoDel.category_name} openModalDel={openModalDel}
+                <ModalConfirmDel name={infoDel.campaign_name} openModalDel={openModalDel}
                                  handleCloseModalDel={handleCloseModalDel}
                                  submitDelete={submitDelete}></ModalConfirmDel>
                 <div className={'row'} style={{justifyContent: 'space-between'}}>
@@ -290,46 +320,61 @@ export default function ManageCategory() {
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
                     <h4>Tìm kiếm</h4>
+                    {openSearch ? <IconButton color="primary" style={{cursor: 'pointer'}}
+                                              onClick={() => setOpenSearch(false)}>
+                            <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>
+                        </IconButton> :
+                        <IconButton style={{cursor: 'pointer'}} color="primary"
+                                    onClick={() => setOpenSearch(true)}>
+                            <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
+                        </IconButton>
+                    }
+
                 </div>
                 <Divider light/>
-                <div className={'main-content-body-search'}>
-                    <TextField
-                        style={{width: '20%'}}
-                        label="Tên mục đích vay"
-                        placeholder={'Tên mục đích vay'}
-                        value={nameSearch}
-                        onChange={handleChangeNameSearch}
-                        // InputProps={{
-                        //     startAdornment: (
-                        //         <InputAdornment position="start">
-                        //             <SearchIcon />
-                        //         </InputAdornment>
-                        //     ),
-                        // }}
-                        // variant="standard"
-                    />
-                    <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                        <InputLabel id="asset_group_label">Mục đích cha</InputLabel>
-                        <Select
-                            label={"Hạng mục cha"}
-                            value={idParent}
-                            onChange={handleChangeIdParent}
-                        >
-                            <MenuItem value={0}>Tất cả</MenuItem>
-                            {
-                                listAllResult.map((e) => (
-                                    <MenuItem value={e.id}>{e.campaign_name}</MenuItem>
-                                ))
-                            }
+                <Collapse in={openSearch} timeout="auto" unmountOnExit>
+                    <div className={'main-content-body-search'}>
+                        <TextField
+                            style={{width: '20%'}}
+                            label="Tên mục đích vay"
+                            placeholder={'Tên mục đích vay'}
+                            value={nameSearch}
+                            onChange={handleChangeNameSearch}
+                            // InputProps={{
+                            //     startAdornment: (
+                            //         <InputAdornment position="start">
+                            //             <SearchIcon />
+                            //         </InputAdornment>
+                            //     ),
+                            // }}
+                            // variant="standard"
+                        />
+                        <FormControl style={{width: '20%', marginLeft: '20px'}}>
+                            <InputLabel id="asset_group_label">Mục đích cha</InputLabel>
+                            <Select
+                                label={"Hạng mục cha"}
+                                value={idParent}
+                                onChange={handleChangeIdParent}
+                            >
+                                <MenuItem value={0}>Tất cả</MenuItem>
+                                {
+                                    listAllResult.map((e) => (
+                                        <MenuItem value={e.id}>{e.campaign_name}</MenuItem>
+                                    ))
+                                }
 
-                        </Select>
-                    </FormControl>
+                            </Select>
+                        </FormControl>
 
-                </div>
+                    </div>
+
+                </Collapse>
+
                 <Divider light/>
                 <div className={'main-content-body-result'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
+                            getRowHeight={() => 'auto'}
                             localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
                             labelRowsPerPage={"Số kết quả"}
                             density="standard"
@@ -351,11 +396,13 @@ export default function ManageCategory() {
                             disableSelectionOnClick
                             sx={{
                                 // boxShadow: 2,
+                                overflowX: 'scroll',
                                 border: 1,
                                 borderColor: 'rgb(255, 255, 255)',
                                 '& .MuiDataGrid-iconSeparator': {
                                     display: 'none',
                                 },
+
                             }}
                             components={{
                                 Toolbar: CustomToolbar,

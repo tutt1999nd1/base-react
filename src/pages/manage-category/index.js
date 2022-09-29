@@ -3,9 +3,9 @@ import {ClipLoader, HashLoader} from "react-spinners";
  import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 import {
-    Button, css,
+    Button, Collapse, css,
     Divider,
-    FormControl, FormHelperText,
+    FormControl, FormHelperText, IconButton,
     InputAdornment,
     InputLabel, MenuItem,
     Paper, Select,
@@ -37,6 +37,8 @@ import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import Utils, {currencyFormatter} from "../../constants/utils";
  import apiManagerCompany from "../../api/manage-company";
  import apiManagerCategory from "../../api/manage-category";
+ import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
+ import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 
 export default function ManageCategory() {
     const [nameSearch,setNameSearch] =useState(null)
@@ -46,6 +48,8 @@ export default function ManageCategory() {
     const [idParent, setIdParent] = useState(0)
     const [refresh, setRefresh] = useState(false)
     const [openModalDel, setOpenModalDel] = useState(false)
+    const [openSearch, setOpenSearch] = useState(true)
+
     const [listResult, setListResult] = React.useState({
         page: 0,
         pageSize: 5,
@@ -81,7 +85,26 @@ export default function ManageCategory() {
             field: 'category_name',
             headerName: 'Tên hạng mục',
             headerClassName: 'super-app-theme--header',
-            flex:1
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+        }, {
+            filterable: false,
+            sortable: false,
+            field: 'parent_category_name',
+            headerName: 'Hạng mục cha',
+            headerClassName: 'super-app-theme--header',
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
         },
         {
             filterable: false,
@@ -89,7 +112,13 @@ export default function ManageCategory() {
             field: 'description',
             headerName: 'Mô tả',
             headerClassName: 'super-app-theme--header',
-            flex:1
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
         },
         {
             field: 'action',
@@ -180,6 +209,10 @@ export default function ManageCategory() {
         for (let i = 0; i < arr.length; i++) {
             arr[i].index = (listResult.page) * listResult.pageSize + i + 1;
             // arr[i].asset_group_name = arr[i].asset_group?.group_name;
+            if(arr[i].parent_category){
+                arr[i].parent_category_name = arr[i].parent_category.category_name
+            }
+            else  arr[i].parent_category_name=''
             // arr[i].asset_type_name = arr[i].asset_type?.asset_type_name;
             // arr[i].initial_value = currencyFormatter(arr[i].initial_value)
             // arr[i].capital_value = currencyFormatter(arr[i].capital_value)
@@ -271,48 +304,61 @@ export default function ManageCategory() {
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
                     <h4>Tìm kiếm</h4>
+                    {openSearch ? <IconButton color="primary" style={{cursor: 'pointer'}}
+                                              onClick={() => setOpenSearch(false)}>
+                            <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>
+                        </IconButton> :
+                        <IconButton style={{cursor: 'pointer'}} color="primary"
+                                    onClick={() => setOpenSearch(true)}>
+                            <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
+                        </IconButton>
+                    }
                 </div>
                 <Divider light/>
-                <div className={'main-content-body-search'}>
-                    <TextField
-                        style={{width: '20%'}}
-                        label="Tên hạng mục"
-                        placeholder={'Tên hạng mục'}
-                        value={nameSearch}
-                        onChange={handleChangeNameSearch}
-                        // InputProps={{
-                        //     startAdornment: (
-                        //         <InputAdornment position="start">
-                        //             <SearchIcon />
-                        //         </InputAdornment>
-                        //     ),
-                        // }}
-                        // variant="standard"
-                    />
-                    <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                        <InputLabel id="asset_group_label">Hạng mục cha</InputLabel>
-                        <Select
-                            label={"Hạng mục cha"}
-                            value={idParent}
-                            onChange={handleChangeIdParent}
-                        >
-                            <MenuItem value={0}>Tất cả</MenuItem>
-                            {
-                                listAllCategory.map((e) => (
-                                    <MenuItem value={e.id}>{e.category_name}</MenuItem>
-                                ))
-                            }
+                <Collapse in={openSearch} timeout="auto" unmountOnExit>
+                    <div className={'main-content-body-search'}>
+                        <TextField
+                            style={{width: '20%'}}
+                            label="Tên hạng mục"
+                            placeholder={'Tên hạng mục'}
+                            value={nameSearch}
+                            onChange={handleChangeNameSearch}
+                            // InputProps={{
+                            //     startAdornment: (
+                            //         <InputAdornment position="start">
+                            //             <SearchIcon />
+                            //         </InputAdornment>
+                            //     ),
+                            // }}
+                            // variant="standard"
+                        />
+                        <FormControl style={{width: '20%', marginLeft: '20px'}}>
+                            <InputLabel id="asset_group_label">Hạng mục cha</InputLabel>
+                            <Select
+                                label={"Hạng mục cha"}
+                                value={idParent}
+                                onChange={handleChangeIdParent}
+                            >
+                                <MenuItem value={0}>Tất cả</MenuItem>
+                                {
+                                    listAllCategory.map((e) => (
+                                        <MenuItem value={e.id}>{e.category_name}</MenuItem>
+                                    ))
+                                }
 
-                        </Select>
-                    </FormControl>
+                            </Select>
+                        </FormControl>
 
-                </div>
+                    </div>
+
+                </Collapse>
                 <Divider light/>
                 <div className={'main-content-body-result'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
                             localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
                             labelRowsPerPage={"Số kết quả"}
+                            getRowHeight={() => 'auto'}
                             density="standard"
                             columns={columns}
                             pagination

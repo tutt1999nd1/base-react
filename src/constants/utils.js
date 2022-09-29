@@ -26,7 +26,7 @@ export const currencyFormatter = (value) => {
         significantDigits: 1,
         thousandsSeparator: '.',
         decimalSeparator: ',',
-        symbol: 'VNĐ'
+        symbol: ''
     }
     if (typeof value !== 'number') value = 0.0
     value = value.toFixed(options.significantDigits)
@@ -35,6 +35,7 @@ export const currencyFormatter = (value) => {
     return ` ${currency.replace(
         /\B(?=(\d{3})+(?!\d))/g,
         options.thousandsSeparator
-    )}${options.decimalSeparator}${decimal} ${options.symbol}`
+    )}`
+    // )}${options.decimalSeparator}${decimal} ${options.symbol}`
 }
 export default Utils;

@@ -13,6 +13,9 @@ import ManageCategory from "../pages/manage-category";
 import ManageCampaign from "../pages/manage-campaign";
 import DetailCampaign from "../pages/manage-campaign/detail";
 import EditCampaign from "../pages/manage-campaign/create-update";
+import ManageSOF from "../pages/manage-sof";
+import EditSOF from "../pages/manage-sof/create-update";
+import DetailSOF from "../pages/manage-sof/detail";
 export default function RenderRoute() {
     return (
         <Routes>
@@ -41,7 +44,10 @@ export default function RenderRoute() {
                 <Route path="/campaign/create" element={<EditCampaign isUpdate = {false}></EditCampaign>} />
                 <Route path="/campaign/update" element={<EditCampaign isUpdate = {true}></EditCampaign>} />
                 <Route path="/campaign/detail" element={<DetailCampaign></DetailCampaign>} />
-                <Route path="/loan-amount" element={<div>Khoản vay</div>} />
+                <Route path="/sof" element={<ManageSOF>Khoản vay</ManageSOF>} />
+                <Route path="/sof/create" element={<EditSOF  isUpdate = {false}></EditSOF>} />
+                <Route path="/sof/update" element={<EditSOF  isUpdate = {true}></EditSOF>} />
+                <Route path="/sof/detail" element={<DetailSOF></DetailSOF>} />
                 <Route path="/account" element={<div>Tài khoản</div>} />
                 <Route path="/company" element={<div>Công ty vay</div>} />
                 <Route path="/categories" element={<div>Hạng mục</div>} />

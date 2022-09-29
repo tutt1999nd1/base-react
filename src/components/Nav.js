@@ -49,7 +49,7 @@ export default function Nav() {
                             </div>
                         </li>
                     </NavLink>
-                    <NavLink className={'nav-link'} to={'loan-amount'}>
+                    <NavLink className={'nav-link'} to={'sof'}>
                         <li>
                             <div className={'nav-item'}>
                                 <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý khoản vay</div>

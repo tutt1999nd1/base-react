@@ -241,7 +241,9 @@ main {
 .formik-input {
     width: 100%;
 }
-
+.text-right input{
+    text-align: right;
+}
 .form-content {
     padding: 20px;
 }
@@ -378,5 +380,21 @@ p::first-letter, .uppercase::first-letter {
 }
 
 .MuiDataGrid-row {
-    max-height: none !important
+    max-height: none !important;
+}
+.MuiDataGrid-root .MuiDataGrid-cell {
+    text-overflow: initial;
+    overflow-x: auto;
+}
+.content-column{
+    width: 100%;
+    word-break: break-all;
+}
+.text-decoration{
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.error-message {
+    color: #d32f2f !important;
 }

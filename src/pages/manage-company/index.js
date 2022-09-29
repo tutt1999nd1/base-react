@@ -3,9 +3,9 @@ import {ClipLoader, HashLoader} from "react-spinners";
  import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 import {
-    Button, css,
+    Button, Collapse, css,
     Divider,
-    FormControl, FormHelperText,
+    FormControl, FormHelperText, IconButton,
     InputAdornment,
     InputLabel, MenuItem,
     Paper, Select,
@@ -36,8 +36,11 @@ import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import Utils, {currencyFormatter} from "../../constants/utils";
  import apiManagerCompany from "../../api/manage-company";
+ import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
+ import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 
 export default function ManageCompany() {
+    const [openSearch, setOpenSearch] = useState(true)
     const [nameSearch,setNameSearch] =useState(null)
     const [contactSearch,setContactSearch] =useState(null)
     const [taxSearch,setTaxSearch] =useState(null)
@@ -74,7 +77,13 @@ export default function ManageCompany() {
             headerName: 'Tên công ty',
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
-            flex:1
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
         },
 
         {
@@ -84,7 +93,13 @@ export default function ManageCompany() {
             headerName: 'Thông tin liên hệ',
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
-            flex:1
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
 
         },
         {
@@ -93,7 +108,13 @@ export default function ManageCompany() {
             field: 'tax_number',
             headerName: 'Mã số thuế',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120
+            minWidth: 120,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
         },
         {
             filterable: false,
@@ -101,7 +122,13 @@ export default function ManageCompany() {
             field: 'charter_capital',
             headerName: 'Vốn điều lệ',
             headerClassName: 'super-app-theme--header',
-            flex:1
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
         },
         {
             filterable: false,
@@ -109,7 +136,13 @@ export default function ManageCompany() {
             field: 'founding_date',
             headerName: 'Ngày thành lập',
             headerClassName: 'super-app-theme--header',
-            flex:1
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
         },
         {
             filterable: false,
@@ -117,7 +150,13 @@ export default function ManageCompany() {
             field: 'capital_limit',
             headerName: 'Số tiền vay tối đa',
             headerClassName: 'super-app-theme--header',
-            flex:1
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
         },
         // {filterable: false,sortable: false, field: 'document', headerName: 'Tài liệu',headerClassName: 'super-app-theme--header' ,minWidth: 120},
 
@@ -129,6 +168,12 @@ export default function ManageCompany() {
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
             flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
         },
         {
             field: 'action',
@@ -298,60 +343,74 @@ export default function ManageCompany() {
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
                     <h4>Tìm kiếm</h4>
-                </div>
-                <Divider light/>
-                <div className={'main-content-body-search'}>
-                    <TextField
-                        style={{width: '20%'}}
-                        label="Tên công ty"
-                        placeholder={'Tên công ty'}
-                        value={nameSearch}
-                        onChange={handleChangeNameSearch}
-                        // InputProps={{
-                        //     startAdornment: (
-                        //         <InputAdornment position="start">
-                        //             <SearchIcon />
-                        //         </InputAdornment>
-                        //     ),
-                        // }}
-                        // variant="standard"
-                    />
-                    <TextField
-                        style={{width: '20%',marginLeft:'20px'}}
-                        label="Thông tin liên hệ"
-                        placeholder={'Thông tin liên hệ'}
-                        value={contactSearch}
-                        onChange={handleChangeContactSearch}
-                        // InputProps={{
-                        //     startAdornment: (
-                        //         <InputAdornment position="start">
-                        //             <SearchIcon />
-                        //         </InputAdornment>
-                        //     ),
-                        // }}
-                        // variant="standard"
-                    />
-                    <TextField
-                        style={{width: '20%',marginLeft:'20px'}}
-                        label="Mã số thuế"
-                        placeholder={'Mã số thuế'}
-                        value={taxSearch}
-                        onChange={handleChangeTaxSearch}
-                        // InputProps={{
-                        //     startAdornment: (
-                        //         <InputAdornment position="start">
-                        //             <SearchIcon />
-                        //         </InputAdornment>
-                        //     ),
-                        // }}
-                        // variant="standard"
-                    />
+                    {openSearch ? <IconButton color="primary" style={{cursor: 'pointer'}}
+                                              onClick={() => setOpenSearch(false)}>
+                            <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>
+                        </IconButton> :
+                        <IconButton style={{cursor: 'pointer'}} color="primary"
+                                    onClick={() => setOpenSearch(true)}>
+                            <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
+                        </IconButton>
+                    }
 
                 </div>
+                <Divider light/>
+                <Collapse in={openSearch} timeout="auto" unmountOnExit>
+                    <div className={'main-content-body-search'}>
+                        <TextField
+                            style={{width: '20%'}}
+                            label="Tên công ty"
+                            placeholder={'Tên công ty'}
+                            value={nameSearch}
+                            onChange={handleChangeNameSearch}
+                            // InputProps={{
+                            //     startAdornment: (
+                            //         <InputAdornment position="start">
+                            //             <SearchIcon />
+                            //         </InputAdornment>
+                            //     ),
+                            // }}
+                            // variant="standard"
+                        />
+                        <TextField
+                            style={{width: '20%',marginLeft:'20px'}}
+                            label="Thông tin liên hệ"
+                            placeholder={'Thông tin liên hệ'}
+                            value={contactSearch}
+                            onChange={handleChangeContactSearch}
+                            // InputProps={{
+                            //     startAdornment: (
+                            //         <InputAdornment position="start">
+                            //             <SearchIcon />
+                            //         </InputAdornment>
+                            //     ),
+                            // }}
+                            // variant="standard"
+                        />
+                        <TextField
+                            style={{width: '20%',marginLeft:'20px'}}
+                            label="Mã số thuế"
+                            placeholder={'Mã số thuế'}
+                            value={taxSearch}
+                            onChange={handleChangeTaxSearch}
+                            // InputProps={{
+                            //     startAdornment: (
+                            //         <InputAdornment position="start">
+                            //             <SearchIcon />
+                            //         </InputAdornment>
+                            //     ),
+                            // }}
+                            // variant="standard"
+                        />
+
+                    </div>
+
+                </Collapse>
                 <Divider light/>
                 <div className={'main-content-body-result'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
+                            getRowHeight={() => 'auto'}
                             localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
                             labelRowsPerPage={"Số kết quả"}
                             density="standard"
@@ -373,11 +432,12 @@ export default function ManageCompany() {
                             disableSelectionOnClick
                             sx={{
                                 // boxShadow: 2,
+                                overflowX: 'scroll',
                                 border: 1,
                                 borderColor: 'rgb(255, 255, 255)',
                                 '& .MuiDataGrid-iconSeparator': {
                                     display: 'none',
-                                },
+                                }
                             }}
                             components={{
                                 Toolbar: CustomToolbar,

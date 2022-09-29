@@ -1,5 +1,6 @@
 // const API_DOMAIN = 'http://10.190.180.251:8088/'
 const API_DOMAIN = 'http://10.190.160.20:8088/'
+// const API_DOMAIN = 'http://103.151.238.62/'
 const API_MAP = {
     GET_LIST_ASSETS: API_DOMAIN + 'asset/search',
     CREATE_ASSETS: API_DOMAIN + 'asset/create',
@@ -8,6 +9,7 @@ const API_MAP = {
     GET_ASSETS_TYPE: API_DOMAIN + 'asset_type',
     GET_ASSETS_GROUP: API_DOMAIN + 'asset_group',
     GET_LIST_COMPANY: API_DOMAIN + 'capital_company/search',
+    GET_LIST_COMPANY_AVAI: API_DOMAIN + 'capital_company/available',
     CREATE_COMPANY: API_DOMAIN + 'capital_company/create',
     UPDATE_COMPANY: API_DOMAIN + 'capital_company',
     DELETE_COMPANY: API_DOMAIN + 'capital_company',
@@ -19,5 +21,9 @@ const API_MAP = {
     CREATE_CAMPAIGNS: API_DOMAIN + 'capital_campaign/create',
     UPDATE_CAMPAIGNS: API_DOMAIN + 'capital_campaign',
     DELETE_CAMPAIGNS: API_DOMAIN + 'capital_campaign',
+    GET_LIST_SOF: API_DOMAIN + 'source_of_fund/search',
+    CREATE_SOF: API_DOMAIN + 'source_of_fund/create',
+    UPDATE_SOF: API_DOMAIN + 'source_of_fund',
+    DELETE_SOF: API_DOMAIN + 'source_of_fund',
 }
 export default API_MAP;

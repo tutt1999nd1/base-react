@@ -42,7 +42,9 @@ import apiManagerCampaign from "../../api/manage-campaign";
 export default function DetailCampaign(props) {
     const navigate = useNavigate();
     const [location,setLocation] = useSearchParams();
+
     const [listGroup,setListGroup] =useState([]);
+    const [listChild,setListChild] =useState([]);
     const [listType,setListType] =useState([]);
     const [typeDefault,setTypeDefault] = useState(0)
     const [groupDefault,setGroupDefault] = useState(0)
@@ -56,6 +58,7 @@ export default function DetailCampaign(props) {
         description:'',
         status:'',
         parent_id:'',
+        parent_campaign:{}
     })
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
@@ -74,6 +77,15 @@ export default function DetailCampaign(props) {
             }).catch(e=>{
 
             })
+            getListCampaignApi({parent_id:idDetail,paging:false,page_size:100}).then(r=>{
+                if(r.data.campaigns){
+                    setListChild(r.data.campaigns)
+                }
+                else setListChild([])
+            }).catch(e=>{
+
+            })
+
         }
     },[idDetail])
     useEffect(()=>{
@@ -122,6 +134,9 @@ export default function DetailCampaign(props) {
     }
     const deleteCampaignApi = (id) => {
         return apiManagerCampaign.deleteCampaign(id);
+    }
+    const redirectOther = (id) => {
+      navigate(`/campaign/detail?id=${id}`)
     }
     useEffect(()=>{
         console.log("info",info)
@@ -180,15 +195,7 @@ export default function DetailCampaign(props) {
                     </div>
                 </div>
                 <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Trạng thái
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.status}
-                    </div>
-                </div>
-                <Divider></Divider>
+
                 <div className={'row-detail'}>
                     <div className={'text-info-tittle'}>
                         Mô tả
@@ -198,28 +205,46 @@ export default function DetailCampaign(props) {
                     </div>
                 </div>
                 <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Mục đích vay cha
+
+                {info.parent_campaign?
+                <>
+                    <div className={`row-detail`}>
+                        <div className={'text-info-tittle'}>
+                            Mục đích vay cha
+                        </div>
+                        <div className={'text-info-content text-decoration'} onClick={()=>redirectOther(info.parent_campaign.id)}>
+                            {info.parent_campaign.campaign_name}
+                        </div>
                     </div>
-                    <div className={'text-info-content'}>
-                        {info.parent_id}
-                    </div>
-                </div>
-                <Divider></Divider>
+                    <Divider></Divider>
+                </>
+                    :''
+                }
+
 
             </div>
-            <div className={'main-content-body'}>
+            <div className={`main-content-body ${listChild.length>0?'':'hidden'}`}>
                 <div className={'main-content-body-tittle'}>
                     <h4>Danh sách mục đích vay con</h4>
                 </div>
                 <Divider light />
-                <div className={'row-detail'}>
+                {
+                    listChild.map((e)=>(
+                        <>
+                            <div className={'row-detail'}>
+                                <div className={'text-info-tittle'}>
+                                    Tên mục đích
+                                </div>
+                                <div className={'text-info-content text-decoration'} onClick={()=>redirectOther(e.id)}>
+                                    {e.campaign_name}
+                                </div>
+                            </div>
+                            <Divider></Divider>
+                        </>
+                    ))
+                }
 
-                </div>
-                <Divider></Divider>
 
-                <Divider></Divider>
 
             </div>
 

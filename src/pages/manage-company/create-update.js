@@ -311,7 +311,7 @@ export default function EditCategory(props) {
                                             <NumericFormat
                                                 id='capital_limit'
                                                 name='capital_limit'
-                                                className={'formik-input'}
+                                                className={'formik-input text-right'}
                                                 label="Khoản vay tối đa*"
                                                 placeholder={'Khoản vay tối đa*'}
                                                 customInput={TextField}
@@ -347,7 +347,7 @@ export default function EditCategory(props) {
                                                 id='charter_capital'
                                                 customInput={TextField}
                                                 name='charter_capital'
-                                                className={'formik-input'}
+                                                className={'formik-input text-right'}
                                                 label="Vốn điều lệ*"
                                                 placeholder={'Vốn điều lệ*'}
                                                 // variant="standard"

@@ -40,8 +40,12 @@ import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import Utils, {currencyFormatter} from "../../constants/utils";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import {red} from "@mui/material/colors";
+import apiManagerSOF from "../../api/manage-sof";
+import apiManagerCompany from "../../api/manage-company";
+import apiManagerCategory from "../../api/manage-category";
+import apiManagerCampaign from "../../api/manage-campaign";
 
-export default function ManageAssets() {
+export default function ManageSOF() {
     const navigate = useNavigate();
     //     const localizedTextsMap = {
     //     columnMenuUnsort: "não classificado",
@@ -52,14 +56,18 @@ export default function ManageAssets() {
     //     columnMenuShowColumns: "Mostrar colunas"
     // };
 
-    const [listGroup, setListGroup] = useState([]);
+    const [listCompany, setListCompany] = useState([]);
+    const [listCampaign, setListCampaign] = useState([]);
+    const [listCategory, setListCategory] = useState([]);
+    const [statusSOF, setStatusSOF] = useState();
     const [listType, setListType] = useState([]);
     const [loading, setLoading] = useState(false)
     const [refresh, setRefresh] = useState(false)
     const [openModalDel, setOpenModalDel] = useState(false)
-    const [nameSearch, setNameSearch] = useState('')
-    const [groupSearch, setGroupSearch] = useState(0)
-    const [typeSearch, setTypeSearch] = useState(0)
+    const [categorySearch, setCategorySearch] = useState(0)
+    const [campaignSearch, setCampaignSearch] = useState(0)
+    const [companySearch, setCompanySearch] = useState(0)
+    const [statusSearch, setStatusSearch] = useState(0)
     const [openSearch, setOpenSearch] = useState(true)
     const [listResult, setListResult] = React.useState({
         page: 0,
@@ -93,13 +101,21 @@ export default function ManageAssets() {
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         {
+            sortable: false,
+            field: 'id',
+            headerName: 'ID',
+            maxWidth: 75,
+            filterable: false,
+            headerClassName: 'super-app-theme--header',
+            // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
+        },
+        {
             filterable: false,
             sortable: false,
-            field: 'asset_name',
-            headerName: 'Tên tài sản',
+            field: 'capital_company_name',
+            headerName: 'Công ty vay',
             headerClassName: 'super-app-theme--header',
-            minWidth:150,
-
+            minWidth: 150,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -110,11 +126,10 @@ export default function ManageAssets() {
         {
             filterable: false,
             sortable: false,
-            field: 'asset_group_name',
-            headerName: 'Nhóm tài sản',
+            field: 'capital_category_name',
+            headerName: 'Hạng mục',
             headerClassName: 'super-app-theme--header',
-            minWidth:150,
-
+            minWidth: 150,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -125,71 +140,10 @@ export default function ManageAssets() {
         {
             filterable: false,
             sortable: false,
-            field: 'asset_type_name',
-            headerName: 'Loại tài sản',
+            field: 'capital_campaign_name',
+            headerName: 'Mục đích vay',
             headerClassName: 'super-app-theme--header',
-            minWidth:150,
-
-            renderCell: (params) => {
-
-                return <div className='content-column'>
-                    {params.value}
-                </div>;
-            },
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'initial_value',
-            headerName: 'Gía trị ban đầu',
-            headerClassName: 'super-app-theme--header',
-            minWidth:150,
-            renderCell: (params) => {
-
-                return <div className='content-column'>
-                    {params.value}
-                </div>;
-            },
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'capital_value',
-            headerName: 'Vốn vay',
-            headerClassName: 'super-app-theme--header',
-            minWidth:150,
-
-            renderCell: (params) => {
-
-                return <div className='content-column'>
-                    {params.value}
-                </div>;
-            },
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'current_credit_value',
-            headerName: 'Gốc vay tín dụng hiện tại',
-            headerClassName: 'super-app-theme--header',
-            minWidth:150,
-
-            renderCell: (params) => {
-
-                return <div className='content-column'>
-                    {params.value}
-                </div>;
-            },
-
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'max_capital_value',
-            headerName: 'Số tiền vay tối đa',
-            headerClassName: 'super-app-theme--header',
-            minWidth:150,
-
+            minWidth: 150,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -203,9 +157,64 @@ export default function ManageAssets() {
             field: 'status',
             headerName: 'Trạng thái',
             headerClassName: 'super-app-theme--header',
-            minWidth:150,
+            minWidth: 150,
+            renderCell: (params) => {
 
-            flex: 1,
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'lending_amount',
+            headerName: 'Số tiền vay',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'owner_full_name',
+            headerName: 'Người quản lý',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'lending_start_date',
+            headerName: 'Ngày vay',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'lending_in_month',
+            headerName: 'Thời gian vay',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -217,11 +226,115 @@ export default function ManageAssets() {
         {
             filterable: false,
             sortable: false,
-            field: 'description',
-            headerName: 'Thông tin',
+            field: 'principal_period',
+            headerName: 'Số kỳ trả gốc',
             headerClassName: 'super-app-theme--header',
-            minWidth: 450,
-            // flex: 3,
+            minWidth: 150,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+
+        },   {
+            filterable: false,
+            sortable: false,
+            field: 'interest_period',
+            headerName: 'Số kỳ trả lãi',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+
+        },   {
+            filterable: false,
+            sortable: false,
+            field: 'interest_rate',
+            headerName: 'Lãi suất hợp đồng vay',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            flex: 1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+
+        },   {
+            filterable: false,
+            sortable: false,
+            field: 'grace_principal_in_month',
+            headerName: 'Thời gian ân hạn gốc',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            flex: 1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+
+        },   {
+            filterable: false,
+            sortable: false,
+            field: 'grace_interest_in_month',
+            headerName: 'Thời gian ân hạn lãi',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            flex: 1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+
+        },   {
+            filterable: false,
+            sortable: false,
+            field: 'interest_rate_type',
+            headerName: 'Loại lãi suất',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            flex: 1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+
+        }
+        ,   {
+            filterable: false,
+            sortable: false,
+            field: 'reference_interest_rate',
+            headerName: 'Lãi suất tham chiếu',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            flex: 1,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+
+        }, ,   {
+            filterable: false,
+            sortable: false,
+            field: 'interest_rate_rage',
+            headerName: 'Biên độ lãi suất',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            flex: 1,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -230,23 +343,22 @@ export default function ManageAssets() {
             },
 
         },
-
         {
             field: 'action',
             headerName: 'Thao tác',
             sortable: false,
             width: 200,
             align: 'center',
-            maxWidth: 130,
+            minWidth: 150,
             headerClassName: 'super-app-theme--header',
 
-            // flex: 1,
+            flex: 1,
             renderCell: (params) => {
 
                 const detailBtn = (e) => {
                     e.stopPropagation();
                     console.log(params)
-                    navigate(`/assets/detail?id=${params.id}`)
+                    navigate(`/sof/detail?id=${params.id}`)
 
                 }
                 const deleteBtn = (e) => {
@@ -256,7 +368,7 @@ export default function ManageAssets() {
                 }
                 const updateBtn = (e) => {
                     e.stopPropagation();
-                    navigate(`/assets/update?id=${params.id}`)
+                    navigate(`/sof/update?id=${params.id}`)
                     // });
                 }
                 return <div className='icon-action'>
@@ -280,7 +392,7 @@ export default function ManageAssets() {
     }
     const submitDelete = () => {
         // alert("tutt20")
-        deleteAssetApi(infoDel.id).then(r => {
+        deleteSOFApi(infoDel.id).then(r => {
             toast.success('Xóa thành công', {
                 position: "top-right",
                 autoClose: 1500,
@@ -303,55 +415,70 @@ export default function ManageAssets() {
 
     }
     const redirectAddPage = () => {
-        navigate('/assets/create')
+        navigate('/sof/create')
     }
     const convertArr = (arr) => {
         for (let i = 0; i < arr.length; i++) {
             arr[i].index = (listResult.page) * listResult.pageSize + i + 1;
-            arr[i].asset_group_name = arr[i].asset_group?.group_name;
-            arr[i].asset_type_name = arr[i].asset_type?.asset_type_name;
-            arr[i].initial_value = currencyFormatter(arr[i].initial_value)
-            arr[i].capital_value = currencyFormatter(arr[i].capital_value)
-            arr[i].max_capital_value = currencyFormatter(arr[i].max_capital_value)
-            arr[i].current_credit_value = currencyFormatter(arr[i].current_credit_value)
-            if(arr[i].status==='DRAFT'){
-                arr[i].status="Tạo mới"
+            if(arr[i].capital_company){
+                arr[i].capital_company_name= arr[i].capital_company.company_name
             }
-            else if(arr[i].status==='APPROVING'){
-                arr[i].status="Đang duyệt"
+            else arr[i].capital_company_name= ''
+            if(arr[i].capital_category){
+                arr[i].capital_category_name= arr[i].capital_category.category_name
             }
-            else if(arr[i].status==='APPROVED'){
-                arr[i].status="Đã Duyệt"
+            else arr[i].capital_category_name= ''
+            if(arr[i].capital_campaign){
+                arr[i].capital_campaign_name= arr[i].capital_campaign.campaign_name
             }
-            else if(arr[i].status==='REJECTED'){
-                arr[i].status="Đã từ chối"
+            else arr[i].capital_campaign_name= ''
+            // arr[i].asset_type_name = arr[i].asset_type?.asset_type_name;
+            // arr[i].initial_value = currencyFormatter(arr[i].initial_value)
+            // arr[i].capital_value = currencyFormatter(arr[i].capital_value)
+            // arr[i].max_capital_value = currencyFormatter(arr[i].max_capital_value)
+            arr[i].lending_amount = currencyFormatter(arr[i].lending_amount)
+            if(arr[i].status==='UNPAID'){
+                arr[i].status="Chưa tất toán"
+            }
+            else if(arr[i].status==='PAID'){
+                arr[i].status="Đã tất toán"
+            }
+            else if(arr[i].status==='A_PART_PRINCIPAL_OFF'){
+                arr[i].status="Off 1 phần gốc"
+            }
+            else if(arr[i].status==='PRINCIPAL_OFF_UNPAID_INTEREST'){
+                arr[i].status="Đã off gốc, chưa trả lãi"
             }
         }
         return arr;
     }
-    const handleChangeAssetName = (e) => {
-        setNameSearch(e.target.value)
+    const handleChangeCompany= (e) => {
+        setCompanySearch(e.target.value)
     }
-    const handleChangeAssetGroup = (e) => {
-        setGroupSearch(e.target.value)
+    const handleChangeCategory = (e) => {
+        setCategorySearch(e.target.value)
     };
-    const handleChangeAssetType = (e) => {
-        setTypeSearch(e.target.value)
+    const handleChangeCampaign = (e) => {
+        setCampaignSearch(e.target.value)
+    };
+    const handleChangeStatus = (e) => {
+        setStatusSearch(e.target.value)
     };
     useEffect(() => {
-        getListAssetsApi({
+        getListSOFsApi({
             'page_size': listResult.pageSize,
             'page_index': listResult.page + 1,
             'paging': true,
-            'asset_name': nameSearch === '' ? null : nameSearch,
-            'asset_group_id': groupSearch === 0 ? null : groupSearch,
-            'asset_type_id': typeSearch === 0 ? null : typeSearch,
+            'capital_company_id': companySearch === 0 ? null : companySearch,
+            'capital_category_id': categorySearch === 0 ? null : categorySearch,
+            'capital_campaign_id': campaignSearch === 0 ? null : campaignSearch,
+            'status': statusSearch === 0 ? null : statusSearch,
         }).then(r => {
             setLoading(false)
             console.log("r", r)
             let arr;
-            if (r.data.assets)
-                arr = convertArr(r.data.assets)
+            if (r.data.source_of_funds)
+                arr = convertArr(r.data.source_of_funds)
             else arr = [];
             console.log("arr tutt", arr)
             setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
@@ -359,30 +486,33 @@ export default function ManageAssets() {
             setLoading(false)
             console.log(e)
         })
-    }, [listResult.page, listResult.pageSize, nameSearch, groupSearch, typeSearch, refresh])
+    }, [listResult.page, listResult.pageSize, campaignSearch, categorySearch, companySearch,statusSearch, refresh])
     useEffect(() => {
-        getListAssetTypeApi().then(r => {
-            if (r.data.asset_types) {
-                setListType(r.data.asset_types)
-            } else setListType([])
+        getListCategoryApi({paging:false}).then(r => {
+            if (r.data.categories) {
+                setListCategory(r.data.categories)
+            } else setListCategory([])
 
-            if (r.data.asset_types.length > 0) {
-                // setTypeSearch(r.data.asset_types[0].id)
-            }
         }).catch(e => {
 
         })
-        getListAssetGroupApi().then(r => {
-            console.log("r-list group", listGroup)
-            if (r.data.asset_groups)
-                setListGroup(r.data.asset_groups)
-            else setListGroup([])
-            if (r.data.asset_groups.length > 0) {
-                // setGroupSearch(r.data.asset_groups[0].id)
-            }
+        getListCampaignApi({paging:false}).then(r => {
+            if (r.data.campaigns)
+                setListCampaign(r.data.campaigns)
+            else setListCampaign([])
+
         }).catch(e => {
 
         })
+        getListCompanyApi({paging:false}).then(r => {
+            if (r.data.companies)
+                setListCompany(r.data.companies)
+            else setListCompany([])
+
+        }).catch(e => {
+
+        })
+
     }, [])
 
     // const { data } = useDemoData({
@@ -390,18 +520,21 @@ export default function ManageAssets() {
     //     rowLength: 20,
     //     maxColumns: 5,
     // });
-    const getListAssetsApi = (data) => {
+    const getListSOFsApi = (data) => {
         setLoading(true)
-        return apiManagerAssets.getListAsset(data);
+        return apiManagerSOF.getListSOF(data);
     }
-    const getListAssetGroupApi = (data) => {
-        return apiManagerAssets.getAssetGroup(data);
+    const getListCompanyApi = (data) => {
+        return apiManagerCompany.getListCompany(data);
     }
-    const getListAssetTypeApi = (data) => {
-        return apiManagerAssets.getAssetType(data);
+    const getListCategoryApi = (data) => {
+        return apiManagerCategory.getListCategory(data);
     }
-    const deleteAssetApi = (id) => {
-        return apiManagerAssets.deleteAsset(id);
+    const getListCampaignApi = (data) => {
+        return apiManagerCampaign.getListCampaign(data);
+    }
+    const deleteSOFApi = (id) => {
+        return apiManagerSOF.deleteSOF(id);
     }
     return (
         <div className={'main-content'}>
@@ -422,12 +555,12 @@ export default function ManageAssets() {
                 pauseOnHover
             />
             <div className={'main-content-header'}>
-                <ModalConfirmDel name={infoDel.asset_name} openModalDel={openModalDel}
+                <ModalConfirmDel name={infoDel.id} openModalDel={openModalDel}
                                  handleCloseModalDel={handleCloseModalDel}
                                  submitDelete={submitDelete}></ModalConfirmDel>
                 <div className={'row'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
-                        Quản lý tài sản
+                        Quản lý khoản vay
                     </Typography>
                     <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
                         Thêm
@@ -457,58 +590,95 @@ export default function ManageAssets() {
                 <Divider light/>
                 <Collapse in={openSearch} timeout="auto" unmountOnExit>
                     <div className={'main-content-body-search'}>
-                        <TextField
-                            style={{width: '20%'}}
-                            // label="TextField"
-                            placeholder={'Tên tài sản'}
-                            value={nameSearch}
-                            onChange={handleChangeAssetName}
-                            // InputProps={{
-                            //     startAdornment: (
-                            //         <InputAdornment position="start">
-                            //             <SearchIcon />
-                            //         </InputAdornment>
-                            //     ),
-                            // }}
-                            // variant="standard"
-                        />
+                        {/*<TextField*/}
+                        {/*    style={{width: '20%'}}*/}
+                        {/*    // label="TextField"*/}
+                        {/*    placeholder={'Tên tài sản'}*/}
+                        {/*    value={nameSearch}*/}
+                        {/*    onChange={handleChangeAssetName}*/}
+                        {/*    // InputProps={{*/}
+                        {/*    //     startAdornment: (*/}
+                        {/*    //         <InputAdornment position="start">*/}
+                        {/*    //             <SearchIcon />*/}
+                        {/*    //         </InputAdornment>*/}
+                        {/*    //     ),*/}
+                        {/*    // }}*/}
+                        {/*    // variant="standard"*/}
+                        {/*/>*/}
                         <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                            <InputLabel id="asset_group_label">Nhóm tài sản </InputLabel>
+                            <InputLabel id="asset_group_label">Công ty vay </InputLabel>
 
                             <Select
-                                label={"Nhóm tài sản"}
-                                id='asset_group'
-                                name='asset_group'
-                                value={groupSearch}
-                                onChange={handleChangeAssetGroup}
+                                label={"Công ty vay"}
+                                id='capital_company_id'
+                                name='capital_company_id'
+                                value={companySearch}
+                                onChange={handleChangeCompany}
                             >
                                 <MenuItem value={0}>Tất cả</MenuItem>
 
                                 {
-                                    listGroup.map((e) => (
-                                        <MenuItem value={e.id}>{e.group_name}</MenuItem>
+                                    listCompany.map((e) => (
+                                        <MenuItem value={e.id}>{e.company_name}</MenuItem>
                                     ))
                                 }
 
                             </Select>
                         </FormControl>
                         <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                            <InputLabel id="asset_type_label">Loại tài sản</InputLabel>
+                            <InputLabel id="asset_type_label">Mục đích vay</InputLabel>
+                            <Select
+                                labelId="asset_type_label"
+                                id='asset_type'
+                                name='asset_type'
+                                label='Mục đích vay'
+                                value={campaignSearch}
+                                onChange={handleChangeCampaign}
+                            >
+                                <MenuItem value={0}>Tất cả</MenuItem>
+
+                                {
+                                    listCampaign.map((e) => (
+                                        <MenuItem value={e.id}>{e.campaign_name}</MenuItem>
+                                    ))
+                                }
+                            </Select>
+                        </FormControl>
+                        <FormControl style={{width: '20%', marginLeft: '20px'}}>
+                            <InputLabel id="asset_type_label">Hạng mục</InputLabel>
+                            <Select
+                                labelId="asset_type_label"
+                                id='asset_type'
+                                name='asset_type'
+                                label='Hạng mục'
+                                value={categorySearch}
+                                onChange={handleChangeCategory}
+                            >
+                                <MenuItem value={0}>Tất cả</MenuItem>
+
+                                {
+                                    listCategory.map((e) => (
+                                        <MenuItem value={e.id}>{e.category_name}</MenuItem>
+                                    ))
+                                }
+                            </Select>
+                        </FormControl>
+                        <FormControl style={{width: '20%', marginLeft: '20px'}}>
+                            <InputLabel id="asset_type_label">Trạng thái</InputLabel>
                             <Select
                                 labelId="asset_type_label"
                                 id='asset_type'
                                 name='asset_type'
                                 label='Loại tài sản'
-                                value={typeSearch}
-                                onChange={handleChangeAssetType}
+                                value={statusSearch}
+                                onChange={handleChangeStatus}
                             >
                                 <MenuItem value={0}>Tất cả</MenuItem>
+                                <MenuItem value={'UNPAID'}>Chưa tất toán</MenuItem>
+                                <MenuItem value={'PAID'}>Đã tất toán</MenuItem>
+                                <MenuItem value={'A_PART_PRINCIPAL_OFF'}>Off 1 phần gốc</MenuItem>
+                                <MenuItem value={'PRINCIPAL_OFF_UNPAID_INTEREST'}>Đã off gốc, chưa trả lãi</MenuItem>
 
-                                {
-                                    listType.map((e) => (
-                                        <MenuItem value={e.id}>{e.asset_type_name}</MenuItem>
-                                    ))
-                                }
                             </Select>
                         </FormControl>
                     </div>

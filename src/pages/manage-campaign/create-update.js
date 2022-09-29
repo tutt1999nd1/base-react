@@ -80,11 +80,8 @@ export default function EditCampaign(props) {
         description: yup
             .string()
             .trim()
-            .required('Không được để trống'),
-        status: yup
-            .string()
-            .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+
 
 
     });
@@ -287,7 +284,7 @@ export default function EditCampaign(props) {
                                             <NumericFormat
                                                 id='amount'
                                                 name='amount'
-                                                className={'formik-input'}
+                                                className={'formik-input text-right'}
                                                 label="Số tiền vay *"
                                                 placeholder={'Số tiền vay*'}
                                                 // type={"number"}
@@ -319,23 +316,7 @@ export default function EditCampaign(props) {
                                                 {values.amount?`*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.amount))} đồng`:''}
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <FormControl fullWidth>
-                                                <InputLabel id="status">Trạng thái</InputLabel>
-                                                <Select
-                                                    id={'status'}
-                                                    name={'status'}
-                                                    label={"Trạng thái"}
-                                                    value={values.status}
-                                                    onChange={handleChange}
-                                                >
-                                                    <MenuItem value={"Trạng thái 1"}>Trạng thái 1</MenuItem>
-                                                    <MenuItem value={"Trạng thái 2"}>Trạng thái 2</MenuItem>
 
-
-                                                </Select>
-                                            </FormControl>
-                                        </Grid>
                                         <Grid item xs={6} md={6}>
                                             <TextField
                                                 className={'formik-input'}

@@ -440,10 +440,11 @@ export default function EditAssets(props) {
 
                                         <Grid item xs={6} md={6}>
                                             <NumericFormat
+                                                style={{ textAlign:"right"}}
                                                 id='initial_value'
                                                 customInput={TextField}
                                                 name='initial_value'
-                                                className={'formik-input'}
+                                                className={'formik-input text-right'}
                                                 label="Giá trị ban đầu *"
                                                 placeholder={'Giá trị ban đầu *'}
                                                 // variant="standard"
@@ -480,7 +481,7 @@ export default function EditAssets(props) {
                                             <NumericFormat
                                                 id='capital_value'
                                                 name='capital_value'
-                                                className={'formik-input'}
+                                                className={'formik-input text-right'}
                                                 label="Vốn vay *"
                                                 placeholder={'Vốn vay *'}
                                                 customInput={TextField}
@@ -516,7 +517,7 @@ export default function EditAssets(props) {
                                             <NumericFormat
                                                 id='current_credit_value'
                                                 name='current_credit_value'
-                                                className={'formik-input'}
+                                                className={'formik-input text-right'}
                                                 label="Gốc vay tín dụng hiện tại *"
                                                 placeholder={'Gốc vay tín dụng hiện tại *'}
                                                 customInput={TextField}
@@ -550,7 +551,7 @@ export default function EditAssets(props) {
                                             <NumericFormat
                                                 id='max_capital_value'
                                                 name='max_capital_value'
-                                                className={'formik-input'}
+                                                className={'formik-input text-right'}
                                                 label="Số tiền vay tối đa *"
                                                 placeholder={'Số tiền vay tối đa *'}
                                                 // type={"number"}
