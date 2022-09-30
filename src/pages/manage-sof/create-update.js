@@ -226,7 +226,7 @@ export default function EditSOF(props) {
         navigate('/sof')
     }
     useEffect(() => {
-        console.log("listFile", listFileLocal)
+        console.log(info)
         setListFileServer(info.list_attachments)
     }, [info])
 
@@ -339,7 +339,8 @@ export default function EditSOF(props) {
                         lending_amount: info.lending_amount,
                         owner_full_name: info.owner_full_name,
                         principal_period:info.principal_period,
-                        lending_start_date: info.lending_start_date,
+                        // lending_start_date: idUpdate?dayjs(info.lending_start_date).format('DD-MM-YYYY'):info.lending_start_date,
+                        lending_start_date: idUpdate?dayjs(info.lending_start_date,'DD-MM-YYYY'):info.lending_start_date,
                         status: info.status,
                         lending_in_month: info.lending_in_month,
                         interest_period: info.interest_period,
@@ -633,8 +634,8 @@ export default function EditSOF(props) {
                                                 customInput={TextField}
                                                 name='lending_in_month'
                                                 className={'formik-input'}
-                                                label="Thời gian vay"
-                                                placeholder={'Số tiền vay *'}
+                                                label="Thời gian vay*"
+                                                placeholder={'Thời gian vay*'}
                                                 // variant="standard"
                                                 value={values.lending_in_month}
 
@@ -692,8 +693,8 @@ export default function EditSOF(props) {
                                                 customInput={TextField}
                                                 name='interest_period'
                                                 className={'formik-input'}
-                                                label="Số kỳ trả lãi"
-                                                placeholder={'Số kỳ trả lãi'}
+                                                label="Số kỳ trả lãi*"
+                                                placeholder={'Số kỳ trả lãi*'}
                                                 // variant="standard"
                                                 value={values.interest_period}
 
@@ -721,8 +722,8 @@ export default function EditSOF(props) {
                                                 customInput={TextField}
                                                 name='interest_rate'
                                                 className={'formik-input'}
-                                                label="Lãi suất hợp đồng vay"
-                                                placeholder={'Lãi suất hợp đồng vay'}
+                                                label="Lãi suất hợp đồng vay*"
+                                                placeholder={'Lãi suất hợp đồng vay*'}
                                                 // variant="standard"
                                                 value={values.interest_rate}
 
@@ -750,8 +751,8 @@ export default function EditSOF(props) {
                                                 customInput={TextField}
                                                 name='grace_principal_in_month'
                                                 className={'formik-input'}
-                                                label="Thời gian ân hạn gốc"
-                                                placeholder={'Thời gian ân hạn gốc'}
+                                                label="Thời gian ân hạn gốc*"
+                                                placeholder={'Thời gian ân hạn gốc*'}
                                                 // variant="standard"
                                                 value={values.grace_principal_in_month}
 
@@ -779,8 +780,8 @@ export default function EditSOF(props) {
                                                 customInput={TextField}
                                                 name='grace_interest_in_month'
                                                 className={'formik-input'}
-                                                label="Thời gian ân hạn lãi"
-                                                placeholder={'Thời gian ân hạn lãi'}
+                                                label="Thời gian ân hạn lãi*"
+                                                placeholder={'Thời gian ân hạn lãi*'}
                                                 // variant="standard"
                                                 value={values.grace_interest_in_month}
 
@@ -804,13 +805,13 @@ export default function EditSOF(props) {
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <FormControl fullWidth>
-                                                <InputLabel id="asset_type_label">Loại lãi suất</InputLabel>
+                                                <InputLabel id="asset_type_label">Loại lãi suất*</InputLabel>
                                                 <Select
 
                                                     labelId="asset_type_label"
                                                     id='interest_rate_type'
                                                     name='interest_rate_type'
-                                                    label='Loại lãi suất'
+                                                    label='Loại lãi suất*'
                                                     value={values.interest_rate_type}
                                                     onChange={handleChange}
                                                     error={touched.interest_rate_type && Boolean(errors.interest_rate_type)}
@@ -832,8 +833,8 @@ export default function EditSOF(props) {
                                                 customInput={TextField}
                                                 name='reference_interest_rate'
                                                 className={'formik-input'}
-                                                label="Lãi suất tham chiếu"
-                                                placeholder={'Lãi suất tham chiếu'}
+                                                label="Lãi suất tham chiếu*"
+                                                placeholder={'Lãi suất tham chiếu*'}
                                                 // variant="standard"
                                                 value={values.reference_interest_rate}
 
@@ -861,8 +862,8 @@ export default function EditSOF(props) {
                                                 customInput={TextField}
                                                 name='interest_rate_rage'
                                                 className={'formik-input'}
-                                                label="Biên độ lãi suất"
-                                                placeholder={'Biên độ lãi suất'}
+                                                label="Biên độ lãi suất*"
+                                                placeholder={'Biên độ lãi suất*'}
                                                 // variant="standard"
                                                 value={values.interest_rate_rage}
 

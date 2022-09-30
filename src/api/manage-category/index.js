@@ -5,6 +5,9 @@ class ApiManagerCategory{
     getListCategory= (data) => {
         return axiosClient.post(API_MAP.GET_LIST_CATEGORY,data)
     }
+    getListCategoryTree= (data) => {
+        return axiosClient.post(API_MAP.GET_LIST_CATEGORY_TREE,data)
+    }
     createCategory = (data) => {
         return axiosClient.post(API_MAP.CREATE_CATEGORY,data)
     }

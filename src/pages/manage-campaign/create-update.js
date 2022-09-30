@@ -152,7 +152,7 @@ export default function EditCampaign(props) {
             <div className={'main-content-header'}>
                 <div className={'row'} style={{justifyContent:'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
-                        Quản lý hạng mục
+                        Quản lý mục đích vay
                     </Typography>
                 </div>
             </div>

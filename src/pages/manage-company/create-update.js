@@ -168,7 +168,7 @@ export default function EditCategory(props) {
                         // asset_group:info.asset_group.id,
                         tax_number:info.tax_number,
                         charter_capital:info.charter_capital,
-                        founding_date:info.founding_date,
+                        founding_date:isUpdate?dayjs(info.founding_date,'DD-MM-YYYY'):info.founding_date,
                         capital_limit:info.capital_limit,
                     }}
                     validationSchema={validationSchema}

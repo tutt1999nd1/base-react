@@ -1,6 +1,6 @@
 // const API_DOMAIN = 'http://10.190.180.251:8088/'
-const API_DOMAIN = 'http://10.190.160.20:8088/'
-// const API_DOMAIN = 'http://103.151.238.62/'
+// const API_DOMAIN = 'http://10.190.160.20:8088/'
+const API_DOMAIN = 'http://103.151.238.62:8088/'
 const API_MAP = {
     GET_LIST_ASSETS: API_DOMAIN + 'asset/search',
     CREATE_ASSETS: API_DOMAIN + 'asset/create',
@@ -14,6 +14,7 @@ const API_MAP = {
     UPDATE_COMPANY: API_DOMAIN + 'capital_company',
     DELETE_COMPANY: API_DOMAIN + 'capital_company',
     GET_LIST_CATEGORY: API_DOMAIN + 'capital_category/search',
+    GET_LIST_CATEGORY_TREE: API_DOMAIN + 'capital_category/search-tree',
     CREATE_CATEGORY: API_DOMAIN + 'capital_category/create',
     UPDATE_CATEGORY: API_DOMAIN + 'capital_category',
     DELETE_CATEGORY: API_DOMAIN + 'capital_category',

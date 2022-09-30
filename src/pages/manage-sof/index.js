@@ -1,7 +1,12 @@
 import React, {useEffect, useState} from "react";
 import {ClipLoader, HashLoader} from "react-spinners";
 import Collapse from "@mui/material/Collapse";
+import 'react-dropdown-tree-select/dist/styles.css'
+// import 'antd/dist/antd.css';
+import { TreeSelect } from 'antd';
+
 import {
+    Autocomplete,
     Badge,
     Button, css,
     Divider,
@@ -37,7 +42,7 @@ import {GridColDef} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import Utils, {currencyFormatter} from "../../constants/utils";
+import Utils, {convertToAutoComplete, currencyFormatter} from "../../constants/utils";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import {red} from "@mui/material/colors";
 import apiManagerSOF from "../../api/manage-sof";
@@ -45,8 +50,27 @@ import apiManagerCompany from "../../api/manage-company";
 import apiManagerCategory from "../../api/manage-category";
 import apiManagerCampaign from "../../api/manage-campaign";
 
+import data from "./data.json";
+import TreeNodeCustomize from "../../components/TreeNodeCustomize";
 export default function ManageSOF() {
     const navigate = useNavigate();
+    const [value, setValue] = useState()
+    const { TreeNode } = TreeSelect;
+    const onChange = (newValue: string) => {
+        setValue(newValue);
+    };
+    const renderNode = () => {
+        return <TreeNode value="parent 1" title="parent 1">
+            <TreeNode value="parent 1-0" title="parent 1-0">
+                <TreeNode value="leaf1" title="leaf1" />
+                <TreeNode value="leaf2" title="leaf2" />
+            </TreeNode>
+            <TreeNode value="parent 1-1" title="parent 1-1">
+                <TreeNode value="leaf3" title={<b style={{ color: '#08c' }}>leaf3</b>} />
+            </TreeNode>
+        </TreeNode>
+    }
+    const test = renderNode();
     //     const localizedTextsMap = {
     //     columnMenuUnsort: "não classificado",
     //     columnMenuSortAsc: "Classificar por ordem crescente",
@@ -60,7 +84,7 @@ export default function ManageSOF() {
     const [listCampaign, setListCampaign] = useState([]);
     const [listCategory, setListCategory] = useState([]);
     const [statusSOF, setStatusSOF] = useState();
-    const [listType, setListType] = useState([]);
+    const [listCategoryTree, setListCategoryTree] = useState([]);
     const [loading, setLoading] = useState(false)
     const [refresh, setRefresh] = useState(false)
     const [openModalDel, setOpenModalDel] = useState(false)
@@ -386,7 +410,20 @@ export default function ManageSOF() {
         },
         // { field: 'document', headerName: 'Nhóm tài sản' },
     ];
-
+    // const onChange = (currentNode, selectedNodes) => {
+    //     console.log("path::", selectedNodes);
+    // };
+    //
+    // const assignObjectPaths = (obj, stack) => {
+    //     Object.keys(obj).forEach(k => {
+    //         const node = obj[k];
+    //         if (typeof node === "object") {
+    //             node.path = stack ? `${stack}.${k}` : k;
+    //             assignObjectPaths(node, node.path);
+    //         }
+    //     });
+    // };
+    // assignObjectPaths(data);
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
@@ -490,7 +527,7 @@ export default function ManageSOF() {
     useEffect(() => {
         getListCategoryApi({paging:false}).then(r => {
             if (r.data.categories) {
-                setListCategory(r.data.categories)
+                setListCategory(convertToAutoComplete( r.data.categories,'category_name'))
             } else setListCategory([])
 
         }).catch(e => {
@@ -498,7 +535,7 @@ export default function ManageSOF() {
         })
         getListCampaignApi({paging:false}).then(r => {
             if (r.data.campaigns)
-                setListCampaign(r.data.campaigns)
+                setListCampaign(convertToAutoComplete( r.data.campaigns,'campaign_name'))
             else setListCampaign([])
 
         }).catch(e => {
@@ -506,14 +543,25 @@ export default function ManageSOF() {
         })
         getListCompanyApi({paging:false}).then(r => {
             if (r.data.companies)
-                setListCompany(r.data.companies)
+            {
+                setListCompany(convertToAutoComplete( r.data.companies,'company_name'))
+            }
+
             else setListCompany([])
 
         }).catch(e => {
-
+            console.log(e)
         })
 
     }, [])
+    useEffect(()=>{
+        getListCategoryTreeApi({paging:false}).then(r=>{
+            console.log("setListCategoryTree",r.data)
+                setListCategoryTree(r.data)
+        }).catch(e=>{
+            console.log(e)
+        })
+    },[])
 
     // const { data } = useDemoData({
     //     dataSet: 'Commodity',
@@ -529,6 +577,9 @@ export default function ManageSOF() {
     }
     const getListCategoryApi = (data) => {
         return apiManagerCategory.getListCategory(data);
+    }
+    const getListCategoryTreeApi = (data) => {
+        return apiManagerCategory.getListCategoryTree(data);
     }
     const getListCampaignApi = (data) => {
         return apiManagerCampaign.getListCampaign(data);
@@ -605,71 +656,77 @@ export default function ManageSOF() {
                         {/*    // }}*/}
                         {/*    // variant="standard"*/}
                         {/*/>*/}
-                        <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                            <InputLabel id="asset_group_label">Công ty vay </InputLabel>
+                        {/*<DropdownTreeSelect mode={"radioSelect"}   data={data} onChange={onChange} className="mdl-demo" />*/}
+                        <Autocomplete
+                            style={{width: '20%', marginLeft: '20px'}}
+                            disablePortal
+                            id="combo-box-demo"
+                            options={listCompany}
+                            sx={{ width: 300 }}
+                            // onChange={}
+                            renderInput={(params) => < TextField {...params} label="Công ty vay" />}
 
-                            <Select
-                                label={"Công ty vay"}
-                                id='capital_company_id'
-                                name='capital_company_id'
-                                value={companySearch}
-                                onChange={handleChangeCompany}
-                            >
-                                <MenuItem value={0}>Tất cả</MenuItem>
+                            onChange={(event, newValue) => {
+                                console.log("new_value",newValue)
+                                if(newValue)
+                                setCompanySearch(newValue.id)
+                                else setCompanySearch(null)
+                            }}
+                        />
+                        {/*<TreeSelect*/}
+                        {/*    showSearch*/}
+                        {/*    value={value}*/}
+                        {/*    dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}*/}
+                        {/*    placeholder="Mục đích vay"*/}
+                        {/*    allowClear*/}
+                        {/*    treeDefaultExpandAll*/}
+                        {/*    onChange={onChange}*/}
+                        {/*    style={{width: '20%', marginLeft: '20px'}}*/}
+                        {/*>*/}
+                        {/*    {test}*/}
 
-                                {
-                                    listCompany.map((e) => (
-                                        <MenuItem value={e.id}>{e.company_name}</MenuItem>
-                                    ))
-                                }
+                        {/*</TreeSelect>*/}
 
-                            </Select>
-                        </FormControl>
-                        <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                            <InputLabel id="asset_type_label">Mục đích vay</InputLabel>
-                            <Select
-                                labelId="asset_type_label"
-                                id='asset_type'
-                                name='asset_type'
-                                label='Mục đích vay'
-                                value={campaignSearch}
-                                onChange={handleChangeCampaign}
-                            >
-                                <MenuItem value={0}>Tất cả</MenuItem>
+                        <TreeNodeCustomize listCategoryTree={listCategoryTree} onChange={onChange} value={value}></TreeNodeCustomize>
+                        {/*<Autocomplete*/}
+                        {/*    style={{width: '20%', marginLeft: '20px'}}*/}
+                        {/*    disablePortal*/}
+                        {/*    id="combo-box-demo"*/}
+                        {/*    options={listCampaign}*/}
+                        {/*    sx={{ width: 300 }}*/}
+                        {/*    // onChange={}*/}
+                        {/*    renderInput={(params) => < TextField {...params} label="Mục đích vay" />}*/}
 
-                                {
-                                    listCampaign.map((e) => (
-                                        <MenuItem value={e.id}>{e.campaign_name}</MenuItem>
-                                    ))
-                                }
-                            </Select>
-                        </FormControl>
-                        <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                            <InputLabel id="asset_type_label">Hạng mục</InputLabel>
-                            <Select
-                                labelId="asset_type_label"
-                                id='asset_type'
-                                name='asset_type'
-                                label='Hạng mục'
-                                value={categorySearch}
-                                onChange={handleChangeCategory}
-                            >
-                                <MenuItem value={0}>Tất cả</MenuItem>
+                        {/*    onChange={(event, newValue) => {*/}
+                        {/*        console.log("new_value",newValue)*/}
+                        {/*        if(newValue)*/}
+                        {/*            setCampaignSearch(newValue.id)*/}
+                        {/*        else setCampaignSearch(null)*/}
+                        {/*    }}*/}
+                        {/*/>*/}
+                        <Autocomplete
+                            style={{width: '20%', marginLeft: '20px'}}
+                            disablePortal
+                            id="combo-box-demo"
+                            options={listCategory}
+                            sx={{ width: 300 }}
+                            // onChange={}
+                            renderInput={(params) => < TextField {...params} label="Hạng mục" />}
 
-                                {
-                                    listCategory.map((e) => (
-                                        <MenuItem value={e.id}>{e.category_name}</MenuItem>
-                                    ))
-                                }
-                            </Select>
-                        </FormControl>
+                            onChange={(event, newValue) => {
+                                console.log("new_value",newValue)
+                                if(newValue)
+                                    setCategorySearch(newValue.id)
+                                else setCategorySearch(null)
+                            }}/>
+
                         <FormControl style={{width: '20%', marginLeft: '20px'}}>
                             <InputLabel id="asset_type_label">Trạng thái</InputLabel>
                             <Select
                                 labelId="asset_type_label"
                                 id='asset_type'
                                 name='asset_type'
-                                label='Loại tài sản'
+                                label='Trạng thái'
                                 value={statusSearch}
                                 onChange={handleChangeStatus}
                             >

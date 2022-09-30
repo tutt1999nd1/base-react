@@ -38,4 +38,10 @@ export const currencyFormatter = (value) => {
     )}`
     // )}${options.decimalSeparator}${decimal} ${options.symbol}`
 }
+ export const convertToAutoComplete = (arr,name) => {
+    for (let i = 0; i < arr.length; i++) {
+        arr[i].label=arr[i][name];
+    }
+    return arr;
+}
 export default Utils;
