@@ -457,60 +457,71 @@ export default function ManageAssets() {
                 <Divider light/>
                 <Collapse in={openSearch} timeout="auto" unmountOnExit>
                     <div className={'main-content-body-search'}>
-                        <TextField
-                            style={{width: '20%'}}
-                            // label="TextField"
-                            placeholder={'Tên tài sản'}
-                            value={nameSearch}
-                            onChange={handleChangeAssetName}
-                            // InputProps={{
-                            //     startAdornment: (
-                            //         <InputAdornment position="start">
-                            //             <SearchIcon />
-                            //         </InputAdornment>
-                            //     ),
-                            // }}
-                            // variant="standard"
-                        />
-                        <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                            <InputLabel id="asset_group_label">Nhóm tài sản </InputLabel>
+                        <div style={{width: '20%'}}>
+                            <div className={'label-input'}>Tên tài sản</div>
+                            <TextField
+                                fullWidth
+                                size={"small"}
+                                // label="TextField"
+                                placeholder={'Tên tài sản'}
+                                value={nameSearch}
+                                onChange={handleChangeAssetName}
+                                // InputProps={{
+                                //     startAdornment: (
+                                //         <InputAdornment position="start">
+                                //             <SearchIcon />
+                                //         </InputAdornment>
+                                //     ),
+                                // }}
+                                // variant="standard"
+                            />
+                        </div>
+                        <div style={{width: '20%',marginLeft: '20px'}}>
+                            <div className={'label-input'}>Nhóm tài sản </div>
+                            <FormControl fullWidth>
+                                <Select
+                                    size={"small"}
 
-                            <Select
-                                label={"Nhóm tài sản"}
-                                id='asset_group'
-                                name='asset_group'
-                                value={groupSearch}
-                                onChange={handleChangeAssetGroup}
-                            >
-                                <MenuItem value={0}>Tất cả</MenuItem>
+                                    id='asset_group'
+                                    name='asset_group'
+                                    value={groupSearch}
+                                    onChange={handleChangeAssetGroup}
+                                >
+                                    <MenuItem value={0}>Tất cả</MenuItem>
 
-                                {
-                                    listGroup.map((e) => (
-                                        <MenuItem value={e.id}>{e.group_name}</MenuItem>
-                                    ))
-                                }
+                                    {
+                                        listGroup.map((e) => (
+                                            <MenuItem value={e.id}>{e.group_name}</MenuItem>
+                                        ))
+                                    }
 
-                            </Select>
-                        </FormControl>
-                        <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                            <InputLabel id="asset_type_label">Loại tài sản</InputLabel>
-                            <Select
-                                labelId="asset_type_label"
-                                id='asset_type'
-                                name='asset_type'
-                                label='Loại tài sản'
-                                value={typeSearch}
-                                onChange={handleChangeAssetType}
-                            >
-                                <MenuItem value={0}>Tất cả</MenuItem>
+                                </Select>
+                            </FormControl>
 
-                                {
-                                    listType.map((e) => (
-                                        <MenuItem value={e.id}>{e.asset_type_name}</MenuItem>
-                                    ))
-                                }
-                            </Select>
-                        </FormControl>
+                        </div>
+                        <div style={{width: '20%',marginLeft: '20px'}}>
+                            <div className={'label-input'}>Loại tài sản</div>
+                            <FormControl fullWidth>
+                                <Select
+                                    size={"small"}
+                                    labelId="asset_type_label"
+                                    id='asset_type'
+                                    name='asset_type'
+                                    value={typeSearch}
+
+                                    onChange={handleChangeAssetType}
+                                >
+                                    <MenuItem value={0}>Tất cả</MenuItem>
+
+                                    {
+                                        listType.map((e) => (
+                                            <MenuItem value={e.id}>{e.asset_type_name}</MenuItem>
+                                        ))
+                                    }
+                                </Select>
+                            </FormControl>
+                        </div>
+
                     </div>
 
                 </Collapse>

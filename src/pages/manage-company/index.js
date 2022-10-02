@@ -357,51 +357,61 @@ export default function ManageCompany() {
                 <Divider light/>
                 <Collapse in={openSearch} timeout="auto" unmountOnExit>
                     <div className={'main-content-body-search'}>
-                        <TextField
-                            style={{width: '20%'}}
-                            label="Tên công ty"
-                            placeholder={'Tên công ty'}
-                            value={nameSearch}
-                            onChange={handleChangeNameSearch}
-                            // InputProps={{
-                            //     startAdornment: (
-                            //         <InputAdornment position="start">
-                            //             <SearchIcon />
-                            //         </InputAdornment>
-                            //     ),
-                            // }}
-                            // variant="standard"
-                        />
-                        <TextField
-                            style={{width: '20%',marginLeft:'20px'}}
-                            label="Thông tin liên hệ"
-                            placeholder={'Thông tin liên hệ'}
-                            value={contactSearch}
-                            onChange={handleChangeContactSearch}
-                            // InputProps={{
-                            //     startAdornment: (
-                            //         <InputAdornment position="start">
-                            //             <SearchIcon />
-                            //         </InputAdornment>
-                            //     ),
-                            // }}
-                            // variant="standard"
-                        />
-                        <TextField
-                            style={{width: '20%',marginLeft:'20px'}}
-                            label="Mã số thuế"
-                            placeholder={'Mã số thuế'}
-                            value={taxSearch}
-                            onChange={handleChangeTaxSearch}
-                            // InputProps={{
-                            //     startAdornment: (
-                            //         <InputAdornment position="start">
-                            //             <SearchIcon />
-                            //         </InputAdornment>
-                            //     ),
-                            // }}
-                            // variant="standard"
-                        />
+                        <div style={{width: '20%'}}>
+                            <div className={'label-input'}>Tên công ty</div>
+                            <TextField
+                                size={"small"}
+                                fullWidth
+                                placeholder={'Tên công ty'}
+                                value={nameSearch}
+                                onChange={handleChangeNameSearch}
+                                // InputProps={{
+                                //     startAdornment: (
+                                //         <InputAdornment position="start">
+                                //             <SearchIcon />
+                                //         </InputAdornment>
+                                //     ),
+                                // }}
+                                // variant="standard"
+                            />
+                        </div>
+                        <div style={{width: '20%',marginLeft:'20px'}}>
+                            <div className={'label-input'}>Thông tin liên hệ</div>
+                            <TextField
+                                size={"small"}
+                                fullWidth
+                                placeholder={'Thông tin liên hệ'}
+                                value={contactSearch}
+                                onChange={handleChangeContactSearch}
+                                // InputProps={{
+                                //     startAdornment: (
+                                //         <InputAdornment position="start">
+                                //             <SearchIcon />
+                                //         </InputAdornment>
+                                //     ),
+                                // }}
+                                // variant="standard"
+                            />
+                        </div>
+                        <div style={{width: '20%',marginLeft:'20px'}}>
+                            <div className={'label-input'}>Mã số thuế</div>
+                            <TextField
+                                size={"small"}
+                                fullWidth
+                                placeholder={'Mã số thuế'}
+                                value={taxSearch}
+                                onChange={handleChangeTaxSearch}
+                                // InputProps={{
+                                //     startAdornment: (
+                                //         <InputAdornment position="start">
+                                //             <SearchIcon />
+                                //         </InputAdornment>
+                                //     ),
+                                // }}
+                                // variant="standard"
+                            />
+                        </div>
+
 
                     </div>
 

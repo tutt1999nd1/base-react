@@ -371,25 +371,24 @@ export default function EditAssets(props) {
                                 <Box sx={{flexGrow: 1}} className={'form-content'}>
                                     <Grid container spacing={4}>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Tên tài sản <span className={'error-message'}>*</span></div>
                                             <TextField
+                                                size={"small"}
                                                 id='asset_name'
                                                 name='asset_name'
                                                 className={'formik-input'}
-                                                label="Tên tài sản *"
-                                                placeholder={'Tên tài sản *'}
                                                 // variant="standard"
                                                 value={values.asset_name}
                                                 onChange={handleChange}
                                                 error={touched.asset_name && Boolean(errors.asset_name)}
                                                 helperText={touched.asset_name && errors.asset_name}
-
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Nhóm tài sản <span className={'error-message'}>*</span></div>
                                             <FormControl fullWidth>
-                                                <InputLabel id="asset_group_label">Nhóm tài sản</InputLabel>
                                                 <Select
-                                                    label={"Nhóm tài sản *"}
+                                                    size={"small"}
                                                     id='asset_group'
                                                     name='asset_group'
                                                     value={values.asset_group}
@@ -411,15 +410,13 @@ export default function EditAssets(props) {
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>
-
+                                            <div className={'label-input'}>Loại tài sản  <span className={'error-message'}>*</span></div>
                                             <FormControl fullWidth>
-                                                <InputLabel id="asset_type_label">Loại tài sản *</InputLabel>
                                                 <Select
-
+                                                    size={"small"}
                                                     labelId="asset_type_label"
                                                     id='asset_type'
                                                     name='asset_type'
-                                                    label='Loại tài sản *'
                                                     value={values.asset_type}
                                                     onChange={handleChange}
                                                     error={touched.asset_type && Boolean(errors.asset_type)}
@@ -439,14 +436,14 @@ export default function EditAssets(props) {
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Giá trị ban đầu<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={"small"}
                                                 style={{ textAlign:"right"}}
                                                 id='initial_value'
                                                 customInput={TextField}
                                                 name='initial_value'
                                                 className={'formik-input text-right'}
-                                                label="Giá trị ban đầu *"
-                                                placeholder={'Giá trị ban đầu *'}
                                                 // variant="standard"
                                                 thousandSeparator={"."}
                                                 decimalSeparator={","}
@@ -478,12 +475,12 @@ export default function EditAssets(props) {
 
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Vốn vay<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={"small"}
                                                 id='capital_value'
                                                 name='capital_value'
                                                 className={'formik-input text-right'}
-                                                label="Vốn vay *"
-                                                placeholder={'Vốn vay *'}
                                                 customInput={TextField}
                                                 // variant="standard"
                                                 value={values.capital_value}
@@ -514,13 +511,13 @@ export default function EditAssets(props) {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Gốc vay tín dụng hiện tại<span className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 id='current_credit_value'
                                                 name='current_credit_value'
                                                 className={'formik-input text-right'}
-                                                label="Gốc vay tín dụng hiện tại *"
-                                                placeholder={'Gốc vay tín dụng hiện tại *'}
                                                 customInput={TextField}
+                                                size={"small"}
                                                 value={values.current_credit_value}
                                                 thousandSeparator={"."}
                                                 decimalSeparator={","}
@@ -548,12 +545,12 @@ export default function EditAssets(props) {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Số tiền vay tối đa<span className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 id='max_capital_value'
                                                 name='max_capital_value'
                                                 className={'formik-input text-right'}
-                                                label="Số tiền vay tối đa *"
-                                                placeholder={'Số tiền vay tối đa *'}
+                                                size={"small"}
                                                 // type={"number"}
                                                 // variant="standard"
                                                 value={values.max_capital_value}
@@ -585,18 +582,17 @@ export default function EditAssets(props) {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Link tài liệu<span className={'error-message'}>*</span></div>
                                             <TextField
+                                                size={"small"}
                                                 className={'formik-input'}
-                                                label="Link tài liệu"
-                                                placeholder={'Link tài liệu'}
                                                 // variant="standard"
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Thông tin<span className={'error-message'}>*</span></div>
                                             <TextField
                                                 className={'formik-input'}
-                                                label="Thông tin *"
-                                                placeholder={'Thông tin *'}
                                                 // variant="standard"
                                                 id='description'
                                                 name='description'

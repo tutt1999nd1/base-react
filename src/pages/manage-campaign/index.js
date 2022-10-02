@@ -334,37 +334,43 @@ export default function ManageCategory() {
                 <Divider light/>
                 <Collapse in={openSearch} timeout="auto" unmountOnExit>
                     <div className={'main-content-body-search'}>
-                        <TextField
-                            style={{width: '20%'}}
-                            label="Tên mục đích vay"
-                            placeholder={'Tên mục đích vay'}
-                            value={nameSearch}
-                            onChange={handleChangeNameSearch}
-                            // InputProps={{
-                            //     startAdornment: (
-                            //         <InputAdornment position="start">
-                            //             <SearchIcon />
-                            //         </InputAdornment>
-                            //     ),
-                            // }}
-                            // variant="standard"
-                        />
-                        <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                            <InputLabel id="asset_group_label">Mục đích cha</InputLabel>
-                            <Select
-                                label={"Hạng mục cha"}
-                                value={idParent}
-                                onChange={handleChangeIdParent}
-                            >
-                                <MenuItem value={0}>Tất cả</MenuItem>
-                                {
-                                    listAllResult.map((e) => (
-                                        <MenuItem value={e.id}>{e.campaign_name}</MenuItem>
-                                    ))
-                                }
+                        <div style={{width: '20%'}}>
+                            <div className={'label-input'}>Tên mục đích vay</div>
+                            <TextField
+                                fullWidth
+                                size={"small"}
+                                placeholder={'Tên mục đích vay'}
+                                value={nameSearch}
+                                onChange={handleChangeNameSearch}
+                                // InputProps={{
+                                //     startAdornment: (
+                                //         <InputAdornment position="start">
+                                //             <SearchIcon />
+                                //         </InputAdornment>
+                                //     ),
+                                // }}
+                                // variant="standard"
+                            />
+                        </div>
+                        <div style={{width: '20%',marginLeft: '20px'}}>
+                            <div className={'label-input'}>Mục đích cha</div>
+                            <FormControl fullWidth>
+                                <Select
+                                    size={"small"}
+                                    value={idParent}
+                                    onChange={handleChangeIdParent}
+                                >
+                                    <MenuItem value={0}>Tất cả</MenuItem>
+                                    {
+                                        listAllResult.map((e) => (
+                                            <MenuItem value={e.id}>{e.campaign_name}</MenuItem>
+                                        ))
+                                    }
 
-                            </Select>
-                        </FormControl>
+                                </Select>
+                            </FormControl>
+                        </div>
+
 
                     </div>
 

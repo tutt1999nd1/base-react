@@ -235,12 +235,12 @@ export default function EditCompany(props) {
                                 <Box sx={{ flexGrow: 1 }} className={'form-content'}>
                                     <Grid container spacing={4}>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Tên hạng mục<span className={'error-message'}>*</span></div>
                                             <TextField
+                                                size={"small"}
                                                 id='category_name'
                                                 name='category_name'
                                                 className={'formik-input'}
-                                                label="Tên hạng mục*"
-                                                placeholder={'Tên hạng mục*'}
                                                 // variant="standard"
                                                 value={values.category_name}
                                                 onChange={handleChange}
@@ -250,12 +250,12 @@ export default function EditCompany(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Hạng mục cha<span className={'error-message'}>*</span></div>
                                             <FormControl fullWidth>
-                                                <InputLabel id="parent_id">Hạng mục cha</InputLabel>
                                                 <Select
+                                                    size={"small"}
                                                     id={'parent_id'}
                                                     name={'parent_id'}
-                                                    label={"Hạng mục cha"}
                                                     value={values.parent_id}
                                                     onChange={handleChange}
                                                 >
@@ -271,11 +271,11 @@ export default function EditCompany(props) {
 
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Ghi chú<span className={'error-message'}>*</span></div>
                                             <TextField
                                                 className={'formik-input'}
-                                                label="Ghi chú *"
-                                                placeholder={'Ghi chú *'}
                                                 // variant="standard"
+                                                size={"small"}
                                                 id='description'
                                                 name='description'
                                                 multiline

@@ -248,12 +248,12 @@ export default function EditCategory(props) {
                                 <Box sx={{ flexGrow: 1 }} className={'form-content'}>
                                     <Grid container spacing={4}>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Tên công ty<span className={'error-message'}>*</span></div>
                                             <TextField
+                                                size={"small"}
                                                 id='company_name'
                                                 name='company_name'
                                                 className={'formik-input'}
-                                                label="Tên công ty *"
-                                                placeholder={'Tên công ty*'}
                                                 // variant="standard"
                                                 value={values.company_name}
                                                 onChange={handleChange}
@@ -263,12 +263,12 @@ export default function EditCategory(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Địa chỉ<span className={'error-message'}>*</span></div>
                                             <TextField
+                                                size={"small"}
                                                 id='address'
                                                 name='address'
                                                 className={'formik-input'}
-                                                label="Địa chỉ*"
-                                                placeholder={'Địa chỉ*'}
                                                 // variant="standard"
                                                 value={values.address}
                                                 onChange={handleChange}
@@ -278,12 +278,12 @@ export default function EditCategory(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Thông tin liên hệ<span className={'error-message'}>*</span></div>
                                             <TextField
+                                                size={"small"}
                                                 id='contact_detail'
                                                 name='contact_detail'
                                                 className={'formik-input'}
-                                                label="Thông tin liên hệ*"
-                                                placeholder={'Thông tin liên hệ*'}
                                                 // variant="standard"
                                                 value={values.contact_detail}
                                                 onChange={handleChange}
@@ -293,12 +293,13 @@ export default function EditCategory(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Mã số thuế<span className={'error-message'}>*</span></div>
                                             <TextField
+                                                size={"small"}
                                                 id='tax_number'
                                                 name='tax_number'
                                                 className={'formik-input'}
-                                                label="Mã số thuế*"
-                                                placeholder={'Mã số thuế*'}
+
                                                 // variant="standard"
                                                 value={values.tax_number}
                                                 onChange={handleChange}
@@ -308,12 +309,12 @@ export default function EditCategory(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Khoản vay tối đa<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={"small"}
                                                 id='capital_limit'
                                                 name='capital_limit'
                                                 className={'formik-input text-right'}
-                                                label="Khoản vay tối đa*"
-                                                placeholder={'Khoản vay tối đa*'}
                                                 customInput={TextField}
                                                 // variant="standard"
                                                 value={values.capital_limit}
@@ -343,13 +344,13 @@ export default function EditCategory(props) {
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Vốn điều lệ<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={"small"}
                                                 id='charter_capital'
                                                 customInput={TextField}
                                                 name='charter_capital'
                                                 className={'formik-input text-right'}
-                                                label="Vốn điều lệ*"
-                                                placeholder={'Vốn điều lệ*'}
                                                 // variant="standard"
                                                 thousandSeparator={"."}
                                                 decimalSeparator={","}
@@ -389,11 +390,10 @@ export default function EditCategory(props) {
                                             {/*    helperText={touched.founding_date && errors.founding_date}*/}
 
                                             {/*/>*/}
-                                            {JSON.stringify(value)}
-                                            <LocalizationProvider style={{width:'100%'}} dateAdapter={AdapterDayjs}>
+                                            <div className={'label-input'}>Ngày thành lập<span className={'error-message'}>*</span></div>
+                                            <LocalizationProvider style={{width:'100%'}} dateAdapter={AdapterDayjs} >
                                                 <DesktopDatePicker
-                                                    style={{width:'100% !important'}}
-                                                    label="Ngày thành lập"
+                                                    style={{width:'100% !important',height:'30px'}}
                                                     inputFormat="MM-DD-YYYY"
                                                     value={values.founding_date}
                                                     // onChange={(values) => {
@@ -403,7 +403,7 @@ export default function EditCategory(props) {
                                                     onChange={value => props.setFieldValue("founding_date", value)}
                                                     error={touched.founding_date && Boolean(errors.founding_date)}
                                                     helperText={touched.founding_date && errors.founding_date}
-                                                    renderInput={(params) => <TextField fullWidth {...params} />}
+                                                    renderInput={(params) => <TextField size={"small"} fullWidth {...params} />}
                                                 />
                                             </LocalizationProvider>
 

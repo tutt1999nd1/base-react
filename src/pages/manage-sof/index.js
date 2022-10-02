@@ -3,7 +3,7 @@ import {ClipLoader, HashLoader} from "react-spinners";
 import Collapse from "@mui/material/Collapse";
 import 'react-dropdown-tree-select/dist/styles.css'
 // import 'antd/dist/antd.css';
-import { TreeSelect } from 'antd';
+import {TreeSelect} from 'antd';
 
 import {
     Autocomplete,
@@ -52,44 +52,47 @@ import apiManagerCampaign from "../../api/manage-campaign";
 
 import data from "./data.json";
 import TreeNodeCustomize from "../../components/TreeNodeCustomize";
+
 export default function ManageSOF() {
     const navigate = useNavigate();
     const [value, setValue] = useState()
-    const { TreeNode } = TreeSelect;
+    const {TreeNode} = TreeSelect;
     const onChange = (newValue: string) => {
         setValue(newValue);
     };
-    const renderNode = () => {
-        return <TreeNode value="parent 1" title="parent 1">
-            <TreeNode value="parent 1-0" title="parent 1-0">
-                <TreeNode value="leaf1" title="leaf1" />
-                <TreeNode value="leaf2" title="leaf2" />
-            </TreeNode>
-            <TreeNode value="parent 1-1" title="parent 1-1">
-                <TreeNode value="leaf3" title={<b style={{ color: '#08c' }}>leaf3</b>} />
-            </TreeNode>
-        </TreeNode>
-    }
-    const test = renderNode();
-    //     const localizedTextsMap = {
-    //     columnMenuUnsort: "não classificado",
-    //     columnMenuSortAsc: "Classificar por ordem crescente",
-    //     columnMenuSortDesc: "Classificar por ordem decrescente",
-    //     columnMenuFilter: "Filtro",
-    //     columnMenuHideColumn: "Ocultar",
-    //     columnMenuShowColumns: "Mostrar colunas"
-    // };
-
     const [listCompany, setListCompany] = useState([]);
     const [listCampaign, setListCampaign] = useState([]);
     const [listCategory, setListCategory] = useState([]);
     const [statusSOF, setStatusSOF] = useState();
-    const [listCategoryTree, setListCategoryTree] = useState([]);
+    const [listCategoryTree, setListCategoryTree] = useState([
+        {
+            id:'1',
+            category_name:'Một',
+            child_categories:[{
+                id:'2',
+                category_name:'Hai',
+                child_categories:[]
+            }]
+        },
+
+    ]);
+    const [listCampaignTree, setListCampaignTree] = useState([
+        {
+            id:'1',
+            campaign_name:'Một',
+            child_campaigns:[{
+                id:'2',
+                campaign_name:'Hai',
+                child_campaigns:[]
+            }]
+        },
+
+    ]);
     const [loading, setLoading] = useState(false)
     const [refresh, setRefresh] = useState(false)
     const [openModalDel, setOpenModalDel] = useState(false)
-    const [categorySearch, setCategorySearch] = useState(0)
-    const [campaignSearch, setCampaignSearch] = useState(0)
+    const [categorySearch, setCategorySearch] = useState()
+    const [campaignSearch, setCampaignSearch] = useState()
     const [companySearch, setCompanySearch] = useState(0)
     const [statusSearch, setStatusSearch] = useState(0)
     const [openSearch, setOpenSearch] = useState(true)
@@ -261,7 +264,7 @@ export default function ManageSOF() {
                 </div>;
             },
 
-        },   {
+        }, {
             filterable: false,
             sortable: false,
             field: 'interest_period',
@@ -275,7 +278,7 @@ export default function ManageSOF() {
                 </div>;
             },
 
-        },   {
+        }, {
             filterable: false,
             sortable: false,
             field: 'interest_rate',
@@ -290,7 +293,7 @@ export default function ManageSOF() {
                 </div>;
             },
 
-        },   {
+        }, {
             filterable: false,
             sortable: false,
             field: 'grace_principal_in_month',
@@ -305,7 +308,7 @@ export default function ManageSOF() {
                 </div>;
             },
 
-        },   {
+        }, {
             filterable: false,
             sortable: false,
             field: 'grace_interest_in_month',
@@ -320,7 +323,7 @@ export default function ManageSOF() {
                 </div>;
             },
 
-        },   {
+        }, {
             filterable: false,
             sortable: false,
             field: 'interest_rate_type',
@@ -336,7 +339,7 @@ export default function ManageSOF() {
             },
 
         }
-        ,   {
+        , {
             filterable: false,
             sortable: false,
             field: 'reference_interest_rate',
@@ -351,7 +354,7 @@ export default function ManageSOF() {
                 </div>;
             },
 
-        }, ,   {
+        }, , {
             filterable: false,
             sortable: false,
             field: 'interest_rate_rage',
@@ -410,20 +413,7 @@ export default function ManageSOF() {
         },
         // { field: 'document', headerName: 'Nhóm tài sản' },
     ];
-    // const onChange = (currentNode, selectedNodes) => {
-    //     console.log("path::", selectedNodes);
-    // };
-    //
-    // const assignObjectPaths = (obj, stack) => {
-    //     Object.keys(obj).forEach(k => {
-    //         const node = obj[k];
-    //         if (typeof node === "object") {
-    //             node.path = stack ? `${stack}.${k}` : k;
-    //             assignObjectPaths(node, node.path);
-    //         }
-    //     });
-    // };
-    // assignObjectPaths(data);
+
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
@@ -457,46 +447,40 @@ export default function ManageSOF() {
     const convertArr = (arr) => {
         for (let i = 0; i < arr.length; i++) {
             arr[i].index = (listResult.page) * listResult.pageSize + i + 1;
-            if(arr[i].capital_company){
-                arr[i].capital_company_name= arr[i].capital_company.company_name
-            }
-            else arr[i].capital_company_name= ''
-            if(arr[i].capital_category){
-                arr[i].capital_category_name= arr[i].capital_category.category_name
-            }
-            else arr[i].capital_category_name= ''
-            if(arr[i].capital_campaign){
-                arr[i].capital_campaign_name= arr[i].capital_campaign.campaign_name
-            }
-            else arr[i].capital_campaign_name= ''
+            if (arr[i].capital_company) {
+                arr[i].capital_company_name = arr[i].capital_company.company_name
+            } else arr[i].capital_company_name = ''
+            if (arr[i].capital_category) {
+                arr[i].capital_category_name = arr[i].capital_category.category_name
+            } else arr[i].capital_category_name = ''
+            if (arr[i].capital_campaign) {
+                arr[i].capital_campaign_name = arr[i].capital_campaign.campaign_name
+            } else arr[i].capital_campaign_name = ''
             // arr[i].asset_type_name = arr[i].asset_type?.asset_type_name;
             // arr[i].initial_value = currencyFormatter(arr[i].initial_value)
             // arr[i].capital_value = currencyFormatter(arr[i].capital_value)
             // arr[i].max_capital_value = currencyFormatter(arr[i].max_capital_value)
             arr[i].lending_amount = currencyFormatter(arr[i].lending_amount)
-            if(arr[i].status==='UNPAID'){
-                arr[i].status="Chưa tất toán"
-            }
-            else if(arr[i].status==='PAID'){
-                arr[i].status="Đã tất toán"
-            }
-            else if(arr[i].status==='A_PART_PRINCIPAL_OFF'){
-                arr[i].status="Off 1 phần gốc"
-            }
-            else if(arr[i].status==='PRINCIPAL_OFF_UNPAID_INTEREST'){
-                arr[i].status="Đã off gốc, chưa trả lãi"
+            if (arr[i].status === 'UNPAID') {
+                arr[i].status = "Chưa tất toán"
+            } else if (arr[i].status === 'PAID') {
+                arr[i].status = "Đã tất toán"
+            } else if (arr[i].status === 'A_PART_PRINCIPAL_OFF') {
+                arr[i].status = "Off 1 phần gốc"
+            } else if (arr[i].status === 'PRINCIPAL_OFF_UNPAID_INTEREST') {
+                arr[i].status = "Đã off gốc, chưa trả lãi"
             }
         }
         return arr;
     }
-    const handleChangeCompany= (e) => {
-        setCompanySearch(e.target.value)
+    const handleChangeCompany = (e) => {
+        setCompanySearch(e)
     }
     const handleChangeCategory = (e) => {
-        setCategorySearch(e.target.value)
+        setCategorySearch(e)
     };
     const handleChangeCampaign = (e) => {
-        setCampaignSearch(e.target.value)
+        setCampaignSearch(e)
     };
     const handleChangeStatus = (e) => {
         setStatusSearch(e.target.value)
@@ -507,8 +491,8 @@ export default function ManageSOF() {
             'page_index': listResult.page + 1,
             'paging': true,
             'capital_company_id': companySearch === 0 ? null : companySearch,
-            'capital_category_id': categorySearch === 0 ? null : categorySearch,
-            'capital_campaign_id': campaignSearch === 0 ? null : campaignSearch,
+            'capital_category_id': categorySearch ? categorySearch : null,
+            'capital_campaign_id': campaignSearch ? campaignSearch : null,
             'status': statusSearch === 0 ? null : statusSearch,
         }).then(r => {
             setLoading(false)
@@ -523,45 +507,42 @@ export default function ManageSOF() {
             setLoading(false)
             console.log(e)
         })
-    }, [listResult.page, listResult.pageSize, campaignSearch, categorySearch, companySearch,statusSearch, refresh])
+    }, [listResult.page, listResult.pageSize, campaignSearch, categorySearch, companySearch, statusSearch, refresh])
     useEffect(() => {
-        getListCategoryApi({paging:false}).then(r => {
+        getListCategoryApi({paging: false}).then(r => {
             if (r.data.categories) {
-                setListCategory(convertToAutoComplete( r.data.categories,'category_name'))
+                setListCategory(convertToAutoComplete(r.data.categories, 'category_name'))
             } else setListCategory([])
 
         }).catch(e => {
 
         })
-        getListCampaignApi({paging:false}).then(r => {
+        getListCampaignApi({paging: false}).then(r => {
             if (r.data.campaigns)
-                setListCampaign(convertToAutoComplete( r.data.campaigns,'campaign_name'))
+                setListCampaign(convertToAutoComplete(r.data.campaigns, 'campaign_name'))
             else setListCampaign([])
 
         }).catch(e => {
 
         })
-        getListCompanyApi({paging:false}).then(r => {
-            if (r.data.companies)
-            {
-                setListCompany(convertToAutoComplete( r.data.companies,'company_name'))
-            }
-
-            else setListCompany([])
+        getListCompanyApi({paging: false}).then(r => {
+            if (r.data.companies) {
+                setListCompany(convertToAutoComplete(r.data.companies, 'company_name'))
+            } else setListCompany([])
 
         }).catch(e => {
             console.log(e)
         })
 
     }, [])
-    useEffect(()=>{
-        getListCategoryTreeApi({paging:false}).then(r=>{
-            console.log("setListCategoryTree",r.data)
-                setListCategoryTree(r.data)
-        }).catch(e=>{
+    useEffect(() => {
+        getListCategoryTreeApi({paging: false}).then(r => {
+            console.log("setListCategoryTree", r.data)
+            setListCategoryTree(r.data)
+        }).catch(e => {
             console.log(e)
         })
-    },[])
+    }, [])
 
     // const { data } = useDemoData({
     //     dataSet: 'Commodity',
@@ -641,38 +622,43 @@ export default function ManageSOF() {
                 <Divider light/>
                 <Collapse in={openSearch} timeout="auto" unmountOnExit>
                     <div className={'main-content-body-search'}>
-                        {/*<TextField*/}
-                        {/*    style={{width: '20%'}}*/}
-                        {/*    // label="TextField"*/}
-                        {/*    placeholder={'Tên tài sản'}*/}
-                        {/*    value={nameSearch}*/}
-                        {/*    onChange={handleChangeAssetName}*/}
-                        {/*    // InputProps={{*/}
-                        {/*    //     startAdornment: (*/}
-                        {/*    //         <InputAdornment position="start">*/}
-                        {/*    //             <SearchIcon />*/}
-                        {/*    //         </InputAdornment>*/}
-                        {/*    //     ),*/}
-                        {/*    // }}*/}
-                        {/*    // variant="standard"*/}
-                        {/*/>*/}
-                        {/*<DropdownTreeSelect mode={"radioSelect"}   data={data} onChange={onChange} className="mdl-demo" />*/}
-                        <Autocomplete
-                            style={{width: '20%', marginLeft: '20px'}}
-                            disablePortal
-                            id="combo-box-demo"
-                            options={listCompany}
-                            sx={{ width: 300 }}
-                            // onChange={}
-                            renderInput={(params) => < TextField {...params} label="Công ty vay" />}
-
-                            onChange={(event, newValue) => {
-                                console.log("new_value",newValue)
-                                if(newValue)
-                                setCompanySearch(newValue.id)
-                                else setCompanySearch(null)
-                            }}
-                        />
+                        <div style={{width: '20%'}}>
+                            <div className={'label-input'}>Công ty vay</div>
+                            <Autocomplete
+                                disablePortal
+                                id="combo-box-demo"
+                                options={listCompany}
+                                // sx={{ width: 300 }}
+                                // onChange={}
+                                renderInput={(params) => < TextField {...params} placeholder="Công ty vay"/>}
+                                size={"small"}
+                                onChange={(event, newValue) => {
+                                    console.log("new_value", newValue)
+                                    if (newValue)
+                                        setCompanySearch(newValue.id)
+                                    else setCompanySearch(null)
+                                }}
+                            />
+                        </div>
+                        <div style={{width: '20%', marginLeft: '20px'}}>
+                            <div className={'label-input'}>Mục đích vay</div>
+                            <TreeSelect
+                                style={{ width: '100%' }}
+                                showSearch
+                                value={campaignSearch}
+                                treeData={listCampaignTree}
+                                dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                                placeholder="Mục đích vay"
+                                allowClear
+                                // treeDefaultExpandAll
+                                onChange={handleChangeCampaign}
+                                filterTreeNode={(search, item) => {
+                                    return item.campaign_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
+                                }}
+                                fieldNames={{label: 'campaign_name', value: 'id', children: 'child_campaigns'}}
+                            >
+                            </TreeSelect>
+                        </div>
                         {/*<TreeSelect*/}
                         {/*    showSearch*/}
                         {/*    value={value}*/}
@@ -686,58 +672,47 @@ export default function ManageSOF() {
                         {/*    {test}*/}
 
                         {/*</TreeSelect>*/}
-
-                        <TreeNodeCustomize listCategoryTree={listCategoryTree} onChange={onChange} value={value}></TreeNodeCustomize>
-                        {/*<Autocomplete*/}
-                        {/*    style={{width: '20%', marginLeft: '20px'}}*/}
-                        {/*    disablePortal*/}
-                        {/*    id="combo-box-demo"*/}
-                        {/*    options={listCampaign}*/}
-                        {/*    sx={{ width: 300 }}*/}
-                        {/*    // onChange={}*/}
-                        {/*    renderInput={(params) => < TextField {...params} label="Mục đích vay" />}*/}
-
-                        {/*    onChange={(event, newValue) => {*/}
-                        {/*        console.log("new_value",newValue)*/}
-                        {/*        if(newValue)*/}
-                        {/*            setCampaignSearch(newValue.id)*/}
-                        {/*        else setCampaignSearch(null)*/}
-                        {/*    }}*/}
-                        {/*/>*/}
-                        <Autocomplete
-                            style={{width: '20%', marginLeft: '20px'}}
-                            disablePortal
-                            id="combo-box-demo"
-                            options={listCategory}
-                            sx={{ width: 300 }}
-                            // onChange={}
-                            renderInput={(params) => < TextField {...params} label="Hạng mục" />}
-
-                            onChange={(event, newValue) => {
-                                console.log("new_value",newValue)
-                                if(newValue)
-                                    setCategorySearch(newValue.id)
-                                else setCategorySearch(null)
-                            }}/>
-
-                        <FormControl style={{width: '20%', marginLeft: '20px'}}>
-                            <InputLabel id="asset_type_label">Trạng thái</InputLabel>
-                            <Select
-                                labelId="asset_type_label"
-                                id='asset_type'
-                                name='asset_type'
-                                label='Trạng thái'
-                                value={statusSearch}
-                                onChange={handleChangeStatus}
+                        <div style={{width: '20%', marginLeft: '20px'}}>
+                            <div className={'label-input'}>Hạng mục</div>
+                            <TreeSelect
+                                style={{ width: '100%' }}
+                                showSearch
+                                value={categorySearch}
+                                treeData={listCategoryTree}
+                                dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                                placeholder="Hạng mục"
+                                allowClear
+                                // treeDefaultExpandAll
+                                onChange={handleChangeCategory}
+                                filterTreeNode={(search, item) => {
+                                    return item.category_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
+                                }}
+                                fieldNames={{label: 'category_name', value: 'id', children: 'child_categories'}}
                             >
-                                <MenuItem value={0}>Tất cả</MenuItem>
-                                <MenuItem value={'UNPAID'}>Chưa tất toán</MenuItem>
-                                <MenuItem value={'PAID'}>Đã tất toán</MenuItem>
-                                <MenuItem value={'A_PART_PRINCIPAL_OFF'}>Off 1 phần gốc</MenuItem>
-                                <MenuItem value={'PRINCIPAL_OFF_UNPAID_INTEREST'}>Đã off gốc, chưa trả lãi</MenuItem>
+                            </TreeSelect>
+                        </div>
 
-                            </Select>
-                        </FormControl>
+                        <div style={{width: '20%', marginLeft: '20px'}}>
+                            <div className={'label-input'}>Trạng thái</div>
+                            <FormControl fullWidth >
+                                <Select
+                                    labelId="asset_type_label"
+                                    id='asset_type'
+                                    name='asset_type'
+                                    value={statusSearch}
+                                    onChange={handleChangeStatus}
+                                    size={"small"}
+                                >
+                                    <MenuItem value={0}>Tất cả</MenuItem>
+                                    <MenuItem value={'UNPAID'}>Chưa tất toán</MenuItem>
+                                    <MenuItem value={'PAID'}>Đã tất toán</MenuItem>
+                                    <MenuItem value={'A_PART_PRINCIPAL_OFF'}>Off 1 phần gốc</MenuItem>
+                                    <MenuItem value={'PRINCIPAL_OFF_UNPAID_INTEREST'}>Đã off gốc, chưa trả lãi</MenuItem>
+
+                                </Select>
+                            </FormControl>
+                        </div>
+
                     </div>
 
                 </Collapse>

@@ -246,12 +246,12 @@ export default function EditCampaign(props) {
                                 <Box sx={{ flexGrow: 1 }} className={'form-content'}>
                                     <Grid container spacing={4}>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Tên mục đích vay<span className={'error-message'}>*</span></div>
                                             <TextField
+                                                size={"small"}
                                                 id='campaign_name'
                                                 name='campaign_name'
                                                 className={'formik-input'}
-                                                label="Tên mục đích vay*"
-                                                placeholder={'Tên mục đích vay*'}
                                                 // variant="standard"
                                                 value={values.campaign_name}
                                                 onChange={handleChange}
@@ -261,12 +261,12 @@ export default function EditCampaign(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Hạng mục cha<span className={'error-message'}>*</span></div>
                                             <FormControl fullWidth>
-                                                <InputLabel id="parent_id">Hạng mục cha</InputLabel>
                                                 <Select
+                                                    size={"small"}
                                                     id={'parent_id'}
                                                     name={'parent_id'}
-                                                    label={"Mục đích cha"}
                                                     value={values.parent_id}
                                                     onChange={handleChange}
                                                 >
@@ -281,12 +281,12 @@ export default function EditCampaign(props) {
                                             </FormControl>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Số tiền vay<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={"small"}
                                                 id='amount'
                                                 name='amount'
                                                 className={'formik-input text-right'}
-                                                label="Số tiền vay *"
-                                                placeholder={'Số tiền vay*'}
                                                 // type={"number"}
                                                 // variant="standard"
                                                 value={values.amount}
@@ -318,14 +318,14 @@ export default function EditCampaign(props) {
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Thông tin<span className={'error-message'}>*</span></div>
                                             <TextField
                                                 className={'formik-input'}
-                                                label="Thông tin *"
-                                                placeholder={'Thông tin *'}
                                                 // variant="standard"
                                                 id='description'
                                                 name='description'
                                                 multiline
+                                                size={"small"}
                                                 rows={5}
                                                 value={values.description}
                                                 onChange={handleChange}

@@ -449,10 +449,10 @@ export default function EditSOF(props) {
                                     <Grid container spacing={4}>
 
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Công ty vay<span className={'error-message'}>*</span></div>
                                             <FormControl fullWidth>
-                                                <InputLabel id="asset_group_label">Công ty vay*</InputLabel>
                                                 <Select
-                                                    label={"Công ty vay*"}
+                                                    size={'small'}
                                                     id='capital_company_id'
                                                     name='capital_company_id'
                                                     value={values.capital_company_id}
@@ -471,14 +471,13 @@ export default function EditSOF(props) {
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Mục đích vay<span className={'error-message'}>*</span></div>
                                             <FormControl fullWidth>
-                                                <InputLabel id="asset_type_label">Mục đích vay*</InputLabel>
                                                 <Select
-
+                                                    size={'small'}
                                                     labelId="asset_type_label"
                                                     id='capital_campaign_id'
                                                     name='capital_campaign_id'
-                                                    label='Mục đích vay*'
                                                     value={values.capital_campaign_id}
                                                     onChange={handleChange}
                                                     error={touched.capital_campaign_id && Boolean(errors.capital_campaign_id)}
@@ -495,13 +494,13 @@ export default function EditSOF(props) {
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Hạng mục vay<span className={'error-message'}>*</span></div>
                                             <FormControl fullWidth>
-                                                <InputLabel id="asset_type_label">Hạng mục vay*</InputLabel>
                                                 <Select
+                                                    size={'small'}
                                                     labelId="asset_type_label"
                                                     id='capital_category_id'
                                                     name='capital_category_id'
-                                                    label='Hạng mục vay*'
                                                     value={values.capital_category_id}
                                                     onChange={handleChange}
                                                     error={touched.capital_category_id && Boolean(errors.capital_category_id)}
@@ -517,14 +516,13 @@ export default function EditSOF(props) {
                                             </FormControl>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Trạng thái<span className={'error-message'}>*</span></div>
                                             <FormControl fullWidth>
-                                                <InputLabel id="asset_type_label">Trạng thái*</InputLabel>
                                                 <Select
-
+                                                    size={'small'}
                                                     labelId="asset_type_label"
                                                     id='status'
                                                     name='status'
-                                                    label='Trạng thái*'
                                                     value={values.status}
                                                     onChange={handleChange}
                                                     error={touched.status && Boolean(errors.status)}
@@ -555,10 +553,10 @@ export default function EditSOF(props) {
                                             {/*    helperText={touched.founding_date && errors.founding_date}*/}
 
                                             {/*/>*/}
+                                            <div className={'label-input'}>Ngày vay<span className={'error-message'}>*</span></div>
                                             <LocalizationProvider style={{width:'100%'}} dateAdapter={AdapterDayjs}>
                                                 <DesktopDatePicker
                                                     style={{width:'100% !important'}}
-                                                    label="Ngày vay"
                                                     inputFormat="MM-DD-YYYY"
                                                     value={values.lending_start_date}
                                                     // onChange={(values) => {
@@ -569,19 +567,19 @@ export default function EditSOF(props) {
                                                     onChange={value => props.setFieldValue("lending_start_date", value)}
                                                     error={touched.lending_start_date && Boolean(errors.lending_start_date)}
                                                     helperText={touched.lending_start_date && errors.lending_start_date}
-                                                    renderInput={(params) => <TextField fullWidth {...params} />}
+                                                    renderInput={(params) => <TextField size={"small"} fullWidth {...params} />}
                                                 />
                                             </LocalizationProvider>
 
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Số tền vay<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={'small'}
                                                 id='lending_amount'
                                                 customInput={TextField}
                                                 name='lending_amount'
                                                 className={'formik-input text-right'}
-                                                label="Số tền vay *"
-                                                placeholder={'Số tiền vay *'}
                                                 // variant="standard"
                                                 thousandSeparator={"."}
                                                 decimalSeparator={","}
@@ -614,12 +612,12 @@ export default function EditSOF(props) {
 
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Người quản lý<span className={'error-message'}>*</span></div>
                                             <TextField
+                                                size={'small'}
                                                 id='owner_full_name'
                                                 name='owner_full_name'
                                                 className={'formik-input'}
-                                                label="Người quản lý*"
-                                                placeholder={'Người quản lý*'}
                                                 // variant="standard"
                                                 value={values.owner_full_name}
                                                 onChange={handleChange}
@@ -629,13 +627,13 @@ export default function EditSOF(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Thời gian vay<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={'small'}
                                                 id='lending_in_month'
                                                 customInput={TextField}
                                                 name='lending_in_month'
                                                 className={'formik-input'}
-                                                label="Thời gian vay*"
-                                                placeholder={'Thời gian vay*'}
                                                 // variant="standard"
                                                 value={values.lending_in_month}
 
@@ -659,13 +657,13 @@ export default function EditSOF(props) {
 
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Số kỳ trả gốc<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={'small'}
                                                 id='principal_period'
                                                 customInput={TextField}
                                                 name='principal_period'
                                                 className={'formik-input'}
-                                                label="Số kỳ trả gốc *"
-                                                placeholder={'Số kỳ trả gốc *'}
                                                 // variant="standard"
                                                 value={values.principal_period}
 
@@ -688,13 +686,13 @@ export default function EditSOF(props) {
                                             {/*<div>{</div>*/}
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Số kỳ trả lãi<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={'small'}
                                                 id='interest_period'
                                                 customInput={TextField}
                                                 name='interest_period'
                                                 className={'formik-input'}
-                                                label="Số kỳ trả lãi*"
-                                                placeholder={'Số kỳ trả lãi*'}
                                                 // variant="standard"
                                                 value={values.interest_period}
 
@@ -717,13 +715,13 @@ export default function EditSOF(props) {
                                             {/*<div>{</div>*/}
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Lãi suất hợp đồng vay<span className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 id='interest_rate'
                                                 customInput={TextField}
                                                 name='interest_rate'
+                                                size={'small'}
                                                 className={'formik-input'}
-                                                label="Lãi suất hợp đồng vay*"
-                                                placeholder={'Lãi suất hợp đồng vay*'}
                                                 // variant="standard"
                                                 value={values.interest_rate}
 
@@ -746,13 +744,13 @@ export default function EditSOF(props) {
                                             {/*<div>{</div>*/}
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Thời gian ân hạn gốc<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={'small'}
                                                 id='grace_principal_in_month'
                                                 customInput={TextField}
                                                 name='grace_principal_in_month'
                                                 className={'formik-input'}
-                                                label="Thời gian ân hạn gốc*"
-                                                placeholder={'Thời gian ân hạn gốc*'}
                                                 // variant="standard"
                                                 value={values.grace_principal_in_month}
 
@@ -775,13 +773,13 @@ export default function EditSOF(props) {
                                             {/*<div>{</div>*/}
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Thời gian ân hạn lãi<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={'small'}
                                                 id='grace_interest_in_month'
                                                 customInput={TextField}
                                                 name='grace_interest_in_month'
                                                 className={'formik-input'}
-                                                label="Thời gian ân hạn lãi*"
-                                                placeholder={'Thời gian ân hạn lãi*'}
                                                 // variant="standard"
                                                 value={values.grace_interest_in_month}
 
@@ -804,14 +802,13 @@ export default function EditSOF(props) {
                                             {/*<div>{</div>*/}
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Loại lãi suất<span className={'error-message'}>*</span></div>
                                             <FormControl fullWidth>
-                                                <InputLabel id="asset_type_label">Loại lãi suất*</InputLabel>
                                                 <Select
-
+                                                    size={'small'}
                                                     labelId="asset_type_label"
                                                     id='interest_rate_type'
                                                     name='interest_rate_type'
-                                                    label='Loại lãi suất*'
                                                     value={values.interest_rate_type}
                                                     onChange={handleChange}
                                                     error={touched.interest_rate_type && Boolean(errors.interest_rate_type)}
@@ -828,13 +825,13 @@ export default function EditSOF(props) {
                                             </FormControl>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Lãi suất tham chiếu<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={'small'}
                                                 id='reference_interest_rate'
                                                 customInput={TextField}
                                                 name='reference_interest_rate'
                                                 className={'formik-input'}
-                                                label="Lãi suất tham chiếu*"
-                                                placeholder={'Lãi suất tham chiếu*'}
                                                 // variant="standard"
                                                 value={values.reference_interest_rate}
 
@@ -857,13 +854,13 @@ export default function EditSOF(props) {
                                             {/*<div>{</div>*/}
                                         </Grid>
                                         <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Biên độ lãi suất<span className={'error-message'}>*</span></div>
                                             <NumericFormat
+                                                size={'small'}
                                                 id='interest_rate_rage'
                                                 customInput={TextField}
                                                 name='interest_rate_rage'
                                                 className={'formik-input'}
-                                                label="Biên độ lãi suất*"
-                                                placeholder={'Biên độ lãi suất*'}
                                                 // variant="standard"
                                                 value={values.interest_rate_rage}
 
