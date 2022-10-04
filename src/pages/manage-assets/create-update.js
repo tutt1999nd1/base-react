@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {default as VNnum2words} from 'vn-num2words';
 import {
     Box,
     Button,
@@ -38,7 +37,7 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
-import {capitalizeFirstLetter, currencyFormatter} from "../../constants/utils";
+import {capitalizeFirstLetter, currencyFormatter,VNnum2words} from "../../constants/utils";
 
 export default function EditAssets(props) {
     const navigate = useNavigate();

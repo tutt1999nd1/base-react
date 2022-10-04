@@ -1,7 +1,7 @@
 // const API_DOMAIN = 'http://10.190.180.251:8088/'
-const API_DOMAIN = 'http://10.190.160.20:8088/'
+// const API_DOMAIN = 'http://10.190.160.20:8088/'
 // const API_DOMAIN = 'http://localhost:8088/'
-// const API_DOMAIN = 'http://103.151.238.62:8088/'
+const API_DOMAIN = 'http://103.151.238.62:8088/'
 const API_MAP = {
     GET_LIST_ASSETS: API_DOMAIN + 'asset/search',
     CREATE_ASSETS: API_DOMAIN + 'asset/create',

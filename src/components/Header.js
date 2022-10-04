@@ -21,10 +21,10 @@ const Header = () => {
         setAnchorEl(null);
     };
     function handleLogout() {
-        localStorage.clear();
-        instance.logoutRedirect().catch(e => {
-            console.error(e);
-        });
+        // localStorage.clear();
+        // instance.logoutRedirect().catch(e => {
+        //     console.error(e);
+        // });
     }
     const touchMenu = () => {
       dispatch(updateShowMenu(!currentUser.showMenu))

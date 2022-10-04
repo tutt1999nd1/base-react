@@ -1,3 +1,4 @@
+import { getText } from 'number-to-text-vietnamese';
 const Utils= {
     localizedTextsMap :{
         columnMenuHideColumn: "Ẩn",
@@ -20,6 +21,13 @@ const Utils= {
 export const capitalizeFirstLetter = (string) => {
     return string.charAt(0).toUpperCase() + string.slice(1);
 
+}
+export const VNnum2words = (e) => {
+    console.log("E",e.length)
+    return ''
+        if(e.length<999999999999999)
+            return getText(e)
+    else return ''
 }
 export const currencyFormatter = (value) => {
     const options = {

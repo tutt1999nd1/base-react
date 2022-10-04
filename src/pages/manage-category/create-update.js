@@ -42,7 +42,6 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import moment from "moment/moment";
 import dateFormat from "dateformat";
 import dayjs from "dayjs";
-import {default as VNnum2words} from "vn-num2words";
 import apiManagerCategory from "../../api/manage-category";
 import {TreeSelect} from "antd";
 export default function EditCompany(props) {

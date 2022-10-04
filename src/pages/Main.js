@@ -13,7 +13,6 @@ export default function Main() {
     // useEffect(()=>{
     //     if(!isAuthenticated)navigate('/login')
     // },[isAuthenticated])
-    alert("tuttt")
     const isAuthenticated = useIsAuthenticated();
     const { instance, inProgress,accounts } = useMsal();
 
@@ -26,9 +25,9 @@ export default function Main() {
     //         }
     //     }, 500)
     // }
-    if (inProgress === InteractionStatus.None && !isAuthenticated) {
-        instance.loginRedirect(loginRequest);
-    }
+    // if (inProgress === InteractionStatus.None && !isAuthenticated) {
+    //     instance.loginRedirect(loginRequest);
+    // }
 
     return (
         <div className={'main'}>

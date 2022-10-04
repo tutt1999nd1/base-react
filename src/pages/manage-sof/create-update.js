@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {default as VNnum2words} from 'vn-num2words';
+
 import {
     Autocomplete,
     Box,
@@ -44,7 +44,7 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
-import {capitalizeFirstLetter, convertToAutoComplete, currencyFormatter} from "../../constants/utils";
+import {capitalizeFirstLetter, convertToAutoComplete, currencyFormatter,VNnum2words} from "../../constants/utils";
 import apiManagerSOF from "../../api/manage-sof";
 import apiManagerCompany from "../../api/manage-company";
 import apiManagerCategory from "../../api/manage-category";
