@@ -1,41 +1,13 @@
-import {useEffect} from "react";
-import apiManagerAuth from "../../api/manager-auth";
+import React from "react";
+import MicrosoftLogin from "react-microsoft-login";
 
-export default function  Login(){
+export default function Test() {
 
-    useEffect(()=>{
-        login().then(r=>{
-            console.log("r",r)
-        })
-            .catch(e=>{
-                console.log("e",e)
-            })
-    },[])
+    const authHandler = (err, data) => {
+        console.log("data", data);
+    };
 
-    const login = () => {
-      return apiManagerAuth.login();
-    }
-    return(
-        <div className={'wrapper-login'}>
-            <div className={'wrapper-form-login'}>
-                <div className={'logo'}>
-                    <img src={require('../../assets/img/new-logo.png')} alt=""/>
-                </div>
-                <div className={'login-with'}>
-                        Login with
-                </div>
-                <div className={'options-login'}>
-                    <div className={'button-login'}>
-                        <div className={'icon-microsoft'}>
-                            <img src={require('../../assets/img/microsoft.png')} alt=""/>
-                        </div>
-                        <div className={'tittle-button-login'}>
-                            Microsoft
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    )
+    return (
+        <MicrosoftLogin clientId={'51bdc8d4-f5de-4d4a-97ec-ae446b32c0d2'} authCallback={authHandler} />
+    );
 }

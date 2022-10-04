@@ -4,13 +4,15 @@ export const userSlice = createSlice({
     name: 'user',
     initialState: {
         token: '',
-        email: 'thanhtu199969@gmail.com',
+        email: '',
+        name: '',
         username:'',
         roles: [],
         isSignIn: false,
         isLoading: false,
         language: 'en',
         showMenu:true,
+        msalInstance:undefined,
     },
     reducers: {
         updateProjectRedux: (state, action) => {
@@ -32,7 +34,7 @@ export const userSlice = createSlice({
         },
         updateToken: (state, action) => {
             state.token = action.payload;
-            state.isSignIn = true;
+            // state.isSignIn = true;
             localStorage.setItem('token', action.payload)
         },
         updateRole: (state, action) => {
@@ -41,8 +43,15 @@ export const userSlice = createSlice({
         updateUsername: (state, action) => {
             state.username = action.payload
         },
+        updateName: (state, action) => {
+            state.name = action.payload
+        },
         updateShowMenu: (state, action) => {
             state.showMenu = action.payload
+        },
+        onMsalInstanceChange: (state, action) => {
+            // alert("tuuu")
+            state.msalInstance = action.payload
         }
     },
     extraReducers: {
@@ -84,4 +93,4 @@ export const userSlice = createSlice({
     }
 })
 export default userSlice.reducer;
-export const {updateShowMenu, updateToken, updateProjectRedux, updateLanguage, logout, updateLoading, updateRole,updateUsername } = userSlice.actions;
+export const {updateName,onMsalInstanceChange,updateShowMenu, updateToken, updateProjectRedux, updateLanguage, logout, updateLoading, updateRole,updateUsername } = userSlice.actions;

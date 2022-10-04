@@ -1,6 +1,6 @@
- import React, {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {ClipLoader, HashLoader} from "react-spinners";
- import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
 import {
     Button, Collapse, css,
@@ -35,28 +35,32 @@ import {useNavigate} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import Utils, {currencyFormatter} from "../../constants/utils";
- import apiManagerCompany from "../../api/manage-company";
- import apiManagerCategory from "../../api/manage-category";
- import apiManagerCampaign from "../../api/manage-campaign";
- import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
- import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
+import apiManagerCompany from "../../api/manage-company";
+import apiManagerCategory from "../../api/manage-category";
+import apiManagerCampaign from "../../api/manage-campaign";
+import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
+import {TreeSelect} from "antd";
 
 export default function ManageCategory() {
     const [openSearch, setOpenSearch] = useState(true)
-    const [nameSearch,setNameSearch] =useState(null)
-    const [listAllResult,setListAllResult] =useState([])
+    const [nameSearch, setNameSearch] = useState(null)
+    const [listAllResult, setListAllResult] = useState([])
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
-    const [idParent, setIdParent] = useState(0)
+    const [campaignSearch, setCampaignSearch] = useState()
     const [refresh, setRefresh] = useState(false)
     const [openModalDel, setOpenModalDel] = useState(false)
+    const [listCampaignTree, setListCampaignTree] = useState([]);
     const [listResult, setListResult] = React.useState({
         page: 0,
         pageSize: 5,
-        rows: [
-        ],
+        rows: [],
         total: 0
     });
+    const handleChangeCampaign = (e) => {
+        setCampaignSearch(e)
+    };
     const [infoDel, setInfoDel] = useState({})
 
     const columns: GridColDef[] = [
@@ -85,7 +89,7 @@ export default function ManageCategory() {
             field: 'campaign_name',
             headerName: 'Tên mục đích vay',
             headerClassName: 'super-app-theme--header',
-            flex:1,
+            flex: 1,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -99,7 +103,7 @@ export default function ManageCategory() {
             field: 'campaign_parent_name',
             headerName: 'Mục đích cha',
             headerClassName: 'super-app-theme--header',
-            flex:1,
+            flex: 1,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -113,7 +117,7 @@ export default function ManageCategory() {
             field: 'amount',
             headerName: 'Số tiền vay',
             headerClassName: 'super-app-theme--header',
-            flex:1,
+            flex: 1,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -127,7 +131,7 @@ export default function ManageCategory() {
             field: 'description',
             headerName: 'Mô tả',
             headerClassName: 'super-app-theme--header',
-            flex:1,
+            flex: 1,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -182,11 +186,9 @@ export default function ManageCategory() {
     ];
 
     const handleChangeNameSearch = (e) => {
-      setNameSearch(e.target.value)
+        setNameSearch(e.target.value)
     }
-    const handleChangeIdParent = (e) => {
-        setIdParent(e.target.value)
-    }
+
 
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
@@ -224,10 +226,9 @@ export default function ManageCategory() {
         for (let i = 0; i < arr.length; i++) {
             arr[i].index = (listResult.page) * listResult.pageSize + i + 1;
             arr[i].amount = currencyFormatter(arr[i].amount)
-            if(arr[i].parent_campaign){
+            if (arr[i].parent_campaign) {
                 arr[i].campaign_parent_name = arr[i].parent_campaign.campaign_name
-            }
-            else  arr[i].campaign_parent_name = ''
+            } else arr[i].campaign_parent_name = ''
             // arr[i].asset_group_name = arr[i].asset_group?.group_name;
             // arr[i].asset_type_name = arr[i].asset_type?.asset_type_name;
             // arr[i].initial_value = currencyFormatter(arr[i].initial_value)
@@ -245,7 +246,7 @@ export default function ManageCategory() {
             'page_index': listResult.page + 1,
             'paging': true,
             'campaign_name': nameSearch === '' ? null : nameSearch,
-            'parent_id': idParent === 0 ? null : idParent,
+            'parent_id': campaignSearch ? campaignSearch :null,
         }).then(r => {
             setLoading(false)
             console.log("r", r)
@@ -255,10 +256,24 @@ export default function ManageCategory() {
             setLoading(false)
             console.log(e)
         })
-    }, [listResult.page, listResult.pageSize,nameSearch ,refresh,idParent])
+    }, [listResult.page, listResult.pageSize, nameSearch, refresh, campaignSearch])
 
-    useEffect(()=>{
-        getListCampaignApi({
+    useEffect(() => {
+        // getListCampaignApi({
+        //     'page_size': 0,
+        //     // 'page_index': listResult.page + 1,
+        //     'paging': false,
+        //     // 'company_name': nameSearch === '' ? null : nameSearch,
+        //     // 'contact_detail': contactSearch === 0 ? null : contactSearch,
+        //     // 'tax_number': taxSearch === 0 ? null : taxSearch,
+        // }).then(r => {
+        //     setLoading(false)
+        //     setListAllResult(r.data.campaigns)
+        // }).catch(e => {
+        //     setLoading(false)
+        //     console.log(e)
+        // })
+        getListCampaignTreeApi({
             'page_size': 0,
             // 'page_index': listResult.page + 1,
             'paging': false,
@@ -267,12 +282,13 @@ export default function ManageCategory() {
             // 'tax_number': taxSearch === 0 ? null : taxSearch,
         }).then(r => {
             setLoading(false)
-            setListAllResult(r.data.campaigns)
+            setListCampaignTree(r.data)
         }).catch(e => {
             setLoading(false)
             console.log(e)
         })
-    },[refresh])
+
+    }, [refresh])
     const getListCampaignApi = (data) => {
         setLoading(true)
         return apiManagerCampaign.getListCampaign(data);
@@ -281,12 +297,16 @@ export default function ManageCategory() {
         setLoading(true)
         return apiManagerCampaign.deleteCampaign(id);
     }
+    const getListCampaignTreeApi = (data) => {
+        return apiManagerCampaign.getListCampaignTree(data);
+    }
+
     return (
         <div className={'main-content'}>
             <div className={`loading ${loading ? '' : 'hidden'}`}>
                 {/*<div className={`loading    `}>*/}
                 <ClipLoader
-                    color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />
+                    color={'#1d78d3'} size={50} css={css`color: #1d78d3`}/>
             </div>
             <ToastContainer
                 position="top-right"
@@ -311,7 +331,7 @@ export default function ManageCategory() {
                         Thêm
                     </Button>
                 </div>
-                <div className={'row'} >
+                <div className={'row'}>
                     <Button variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
                     <Button style={{marginLeft: '10px'}} variant="text"
                             startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
@@ -352,23 +372,24 @@ export default function ManageCategory() {
                                 // variant="standard"
                             />
                         </div>
-                        <div style={{width: '20%',marginLeft: '20px'}}>
+                        <div style={{width: '20%', marginLeft: '20px'}}>
                             <div className={'label-input'}>Mục đích cha</div>
-                            <FormControl fullWidth>
-                                <Select
-                                    size={"small"}
-                                    value={idParent}
-                                    onChange={handleChangeIdParent}
-                                >
-                                    <MenuItem value={0}>Tất cả</MenuItem>
-                                    {
-                                        listAllResult.map((e) => (
-                                            <MenuItem value={e.id}>{e.campaign_name}</MenuItem>
-                                        ))
-                                    }
-
-                                </Select>
-                            </FormControl>
+                            <TreeSelect
+                                style={{ width: '100%' }}
+                                showSearch
+                                value={campaignSearch}
+                                treeData={listCampaignTree}
+                                dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                                placeholder="Mục đích vay"
+                                allowClear
+                                treeDefaultExpandAll
+                                onChange={handleChangeCampaign}
+                                filterTreeNode={(search, item) => {
+                                    return item.campaign_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
+                                }}
+                                fieldNames={{label: 'campaign_name', value: 'id', children: 'child_campaigns'}}
+                            >
+                            </TreeSelect>
                         </div>
 
 

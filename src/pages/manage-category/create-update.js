@@ -44,6 +44,7 @@ import dateFormat from "dateformat";
 import dayjs from "dayjs";
 import {default as VNnum2words} from "vn-num2words";
 import apiManagerCategory from "../../api/manage-category";
+import {TreeSelect} from "antd";
 export default function EditCompany(props) {
     const navigate = useNavigate();
     const [location,setLocation] = useSearchParams();
@@ -53,7 +54,10 @@ export default function EditCompany(props) {
     const [groupDefault,setGroupDefault] = useState(0)
     const [value, setValue] = useState()
     const [listAllCategory,setListAllCategory] =useState([])
+    const [categorySearch, setCategorySearch] = useState()
 
+    const [listCategoryTree, setListCategoryTree] = useState([
+    ]);
     const handleChangeDate = (newValue) => {
         setValue(newValue);
     };
@@ -61,6 +65,7 @@ export default function EditCompany(props) {
         category_name:'',
         description:'',
         parent_id:0,
+        parent_category:{}
 
     })
     const {isUpdate} = props
@@ -69,11 +74,15 @@ export default function EditCompany(props) {
         category_name: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(255, 'Tối đa 255 ký tự')
+        ,
         description: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(4000, 'Tối đa 4000 ký tự')
+        ,
 
     });
     const backList = () => {
@@ -107,20 +116,21 @@ export default function EditCompany(props) {
     const getListCategoryApi = (data) => {
         return apiManagerCategory.getListCategory(data);
     }
-
+    const getListCategoryTreeApi = (data) => {
+        return apiManagerCategory.getListCategoryTree(data);
+    }
 
     const back = () => {
         navigate('/category')
     }
     useEffect(()=>{
         console.log("info",info)
+        setCategorySearch(info.parent_category.id)
     },[info])
     useEffect(()=>{
-        getListCategoryApi({
-            'page_size': 0,
-            'paging': false,
-        }).then(r => {
-            setListAllCategory(r.data.categories)
+        getListCategoryTreeApi({paging: false}).then(r => {
+            console.log("setListCategoryTree", r.data)
+            setListCategoryTree(r.data)
         }).catch(e => {
             console.log(e)
         })
@@ -251,23 +261,27 @@ export default function EditCompany(props) {
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <div className={'label-input'}>Hạng mục cha<span className={'error-message'}>*</span></div>
-                                            <FormControl fullWidth>
-                                                <Select
-                                                    size={"small"}
-                                                    id={'parent_id'}
-                                                    name={'parent_id'}
-                                                    value={values.parent_id}
-                                                    onChange={handleChange}
-                                                >
-                                                    <MenuItem value={0}>Không có hạng mục cha</MenuItem>
-                                                    {
-                                                        listAllCategory.map((e) => (
-                                                            <MenuItem value={e.id}>{e.category_name}</MenuItem>
-                                                        ))
-                                                    }
-
-                                                </Select>
-                                            </FormControl>
+                                            <TreeSelect
+                                                style={{ width: '100%' }}
+                                                showSearch
+                                                value={categorySearch}
+                                                treeData={listCategoryTree}
+                                                dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                                                placeholder="Không có hạng mục cha"
+                                                allowClear
+                                                treeDefaultExpandAll
+                                                onChange={(values)=>{
+                                                    setCategorySearch(values)
+                                                    setFieldValue('parent_id', values)
+                                                }}
+                                                filterTreeNode={(search, item) => {
+                                                    return item.category_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
+                                                }}
+                                                fieldNames={{label: 'category_name', value: 'id', children: 'child_categories'}}
+                                            >
+                                            </TreeSelect>
+                                            {/*<FormHelperText style={{marginLeft:'15px'}}*/}
+                                            {/*                className={'error-message'}>{categorySearch?'':'Không được để trống'}</FormHelperText>*/}
 
                                         </Grid>
                                         <Grid item xs={6} md={6}>

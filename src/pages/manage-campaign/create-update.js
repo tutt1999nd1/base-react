@@ -11,7 +11,7 @@ import {
     Tooltip,
     Typography
 } from "@mui/material";
-import { NumericFormat } from 'react-number-format';
+import {NumericFormat} from 'react-number-format';
 import AddIcon from '@mui/icons-material/Add';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
@@ -45,95 +45,102 @@ import dayjs from "dayjs";
 import {default as VNnum2words} from "vn-num2words";
 import apiManagerCategory from "../../api/manage-category";
 import apiManagerCampaign from "../../api/manage-campaign";
+import {TreeSelect} from "antd";
+
 export default function EditCampaign(props) {
     const navigate = useNavigate();
-    const [location,setLocation] = useSearchParams();
-    const [listGroup,setListGroup] =useState([]);
-    const [listType,setListType] =useState([]);
-    const [typeDefault,setTypeDefault] = useState(0)
-    const [groupDefault,setGroupDefault] = useState(0)
+    const [location, setLocation] = useSearchParams();
+    const [listGroup, setListGroup] = useState([]);
+    const [listType, setListType] = useState([]);
+    const [typeDefault, setTypeDefault] = useState(0)
+    const [groupDefault, setGroupDefault] = useState(0)
     const [value, setValue] = useState()
-    const [listAllResult,setListAllResult] =useState([])
+    const [listAllResult, setListAllResult] = useState([])
+    const [listCampaignTree, setListCampaignTree] = useState([]);
+    const [campaignSearch, setCampaignSearch] = useState()
 
     const handleChangeDate = (newValue) => {
         setValue(newValue);
     };
-    const [info,setInfo] =useState({
-        campaign_name:'',
-        amount:'',
-        description:'',
-        status:'Trạng thái 1',
-        parent_id:0,
+    const [info, setInfo] = useState({
+        campaign_name: '',
+        amount: '',
+        description: '',
+        status: 'Trạng thái 1',
+        parent_id: null,
+        parent_campaign:{}
 
     })
     const {isUpdate} = props
-    const [idUpdate,setIdUpdate] = useState(null)
+    const [idUpdate, setIdUpdate] = useState(null)
     const validationSchema = yup.object({
         campaign_name: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(255, 'Tối đa 255 ký tự'),
         amount: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+        .max(15, 'Tối đa 15 chữ số'),
         description: yup
             .string()
             .trim()
             .required('Không được để trống')
-
+            .max(255, 'Tối đa 4000 ký tự'),
 
 
     });
     const backList = () => {
         navigate('/campaign')
     }
-    useEffect(()=>{
-        if(isUpdate){
-            if(location.get('id')){
+    useEffect(() => {
+        if (isUpdate) {
+            if (location.get('id')) {
                 setIdUpdate(location.get('id'));
-            }
-            else navigate('/campaign')
+            } else navigate('/campaign')
         }
 
-    },[location])
-    useEffect(()=>{
-        if(isUpdate&&idUpdate){
-            getListCampaignApi({id:idUpdate,page_size:1}).then(r=>{
-                setInfo( r.data.campaigns[0])
+    }, [location])
+    useEffect(() => {
+        if (isUpdate && idUpdate) {
+            getListCampaignApi({id: idUpdate, page_size: 1}).then(r => {
+                setInfo(r.data.campaigns[0])
                 console.log(r.data.campaigns[0])
-            }).catch(e=>{
+            }).catch(e => {
 
             })
         }
-    },[idUpdate])
+    }, [idUpdate])
     const createCampaignApi = (data) => {
         return apiManagerCampaign.createCampaign(data);
     }
     const updateCampaignApi = (data) => {
-        return apiManagerCampaign.updateCampaign(idUpdate,data);
+        return apiManagerCampaign.updateCampaign(idUpdate, data);
     }
     const getListCampaignApi = (data) => {
         return apiManagerCampaign.getListCampaign(data);
     }
 
-
+    const getListCampaignTreeApi = (data) => {
+        return apiManagerCampaign.getListCampaignTree(data);
+    }
     const back = () => {
         navigate('/campaign')
     }
-    useEffect(()=>{
-        console.log("info",info)
-    },[info])
-    useEffect(()=>{
-        getListCampaignApi({
-            'page_size': 0,
-            'paging': false,
-        }).then(r => {
-            setListAllResult(r.data.campaigns)
+    useEffect(() => {
+        console.log("info", info)
+        setCampaignSearch(info.parent_campaign.id)
+    }, [info])
+    useEffect(() => {
+        getListCampaignTreeApi({paging: false}).then(r => {
+            console.log("setListCategoryTree", r.data)
+            setListCampaignTree(r.data)
         }).catch(e => {
             console.log(e)
         })
-    },[])
+    }, [])
     return (
         <div className={'main-content'}>
             <ToastContainer
@@ -147,10 +154,11 @@ export default function EditCampaign(props) {
                 draggable
                 pauseOnHover
             />
-            <Button onClick={back} style={{marginBottom:'10px'}} variant="text" startIcon={<KeyboardBackspaceIcon />}>Mục đích vay</Button>
+            <Button onClick={back} style={{marginBottom: '10px'}} variant="text" startIcon={<KeyboardBackspaceIcon/>}>Mục
+                đích vay</Button>
 
             <div className={'main-content-header'}>
-                <div className={'row'} style={{justifyContent:'space-between'}}>
+                <div className={'row'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
                         Quản lý mục đích vay
                     </Typography>
@@ -158,17 +166,17 @@ export default function EditCampaign(props) {
             </div>
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
-                    <h4>{isUpdate?'Cập nhật':'Thêm mới'} </h4>
+                    <h4>{isUpdate ? 'Cập nhật' : 'Thêm mới'} </h4>
                 </div>
-                <Divider light />
+                <Divider light/>
                 <Formik
                     enableReinitialize
                     initialValues={{
-                        campaign_name:info.campaign_name,
-                        amount:info.amount,
-                        description:info.description,
-                        status:info.status,
-                        parent_id:info.parent_id==null?0:info.parent_id,
+                        campaign_name: info.campaign_name,
+                        amount: info.amount,
+                        description: info.description,
+                        status: info.status,
+                        parent_id: info.parent_id == null ? 0 : info.parent_id,
                     }}
                     validationSchema={validationSchema}
                     onSubmit={
@@ -176,9 +184,9 @@ export default function EditCampaign(props) {
                             // setInfoAccount();
                             // submitAccount();
                             let valueConvert = {...values};
-                            if(values.parent_id==0)valueConvert.parent_id = null;
-                            if(isUpdate){
-                                updateCampaignApi(valueConvert).then(r=>{
+                            if (values.parent_id == 0) valueConvert.parent_id = null;
+                            if (isUpdate) {
+                                updateCampaignApi(valueConvert).then(r => {
                                     toast.success('Cập nhật thành công', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -191,7 +199,7 @@ export default function EditCampaign(props) {
                                         navigate(`/campaign/detail?id=${idUpdate}`)
                                     }, 1050);
 
-                                }).catch(e=>{
+                                }).catch(e => {
                                     toast.error('Có lỗi xảy ra', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -203,9 +211,8 @@ export default function EditCampaign(props) {
                                 })
 
 
-                            }
-                            else {
-                                createCampaignApi(valueConvert).then(r=>{
+                            } else {
+                                createCampaignApi(valueConvert).then(r => {
                                     toast.success('Thêm mới thành công', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -218,7 +225,7 @@ export default function EditCampaign(props) {
                                         navigate('/campaign')
                                     }, 1050);
 
-                                }).catch(e=>{
+                                }).catch(e => {
                                     toast.error('Có lỗi xảy ra', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -243,10 +250,11 @@ export default function EditCampaign(props) {
                         } = props;
                         return (
                             <Form onSubmit={handleSubmit}>
-                                <Box sx={{ flexGrow: 1 }} className={'form-content'}>
+                                <Box sx={{flexGrow: 1}} className={'form-content'}>
                                     <Grid container spacing={4}>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Tên mục đích vay<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Tên mục đích vay<span
+                                                className={'error-message'}>*</span></div>
                                             <TextField
                                                 size={"small"}
                                                 id='campaign_name'
@@ -261,27 +269,31 @@ export default function EditCampaign(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Hạng mục cha<span className={'error-message'}>*</span></div>
-                                            <FormControl fullWidth>
-                                                <Select
-                                                    size={"small"}
-                                                    id={'parent_id'}
-                                                    name={'parent_id'}
-                                                    value={values.parent_id}
-                                                    onChange={handleChange}
-                                                >
-                                                    <MenuItem value={0}>Không có mục đích cha</MenuItem>
-                                                    {
-                                                        listAllResult.map((e) => (
-                                                            <MenuItem value={e.id}>{e.campaign_name}</MenuItem>
-                                                        ))
-                                                    }
-
-                                                </Select>
-                                            </FormControl>
+                                            <div className={'label-input'}>Hạng mục cha<span
+                                                className={'error-message'}>*</span></div>
+                                            <TreeSelect
+                                                style={{ width: '100%' }}
+                                                showSearch
+                                                value={campaignSearch}
+                                                treeData={listCampaignTree}
+                                                dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                                                placeholder="Mục đích vay"
+                                                allowClear
+                                                treeDefaultExpandAll
+                                                onChange={(values)=>{
+                                                    setCampaignSearch(values)
+                                                    setFieldValue('parent_id', values)
+                                                }}
+                                                filterTreeNode={(search, item) => {
+                                                    return item.campaign_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
+                                                }}
+                                                fieldNames={{label: 'campaign_name', value: 'id', children: 'child_campaigns'}}
+                                            >
+                                            </TreeSelect>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Số tiền vay<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Số tiền vay (VNĐ)<span
+                                                className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 size={"small"}
                                                 id='amount'
@@ -312,13 +324,15 @@ export default function EditCampaign(props) {
 
                                                 }}
                                             />
-                                            <Typography className={'uppercase'} variant="caption" display="block" gutterBottom>
-                                                {values.amount?`*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.amount))} đồng`:''}
+                                            <Typography className={'uppercase'} variant="caption" display="block"
+                                                        gutterBottom>
+                                                {values.amount ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.amount))} đồng` : ''}
                                             </Typography>
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Thông tin<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Thông tin<span
+                                                className={'error-message'}>*</span></div>
                                             <TextField
                                                 className={'formik-input'}
                                                 // variant="standard"
@@ -338,8 +352,9 @@ export default function EditCampaign(props) {
                                         {/*    <input type="file"/>*/}
                                         {/*</Grid>*/}
                                         <Grid item xs={6} md={12}>
-                                            <div className={''} style={{display:"flex", justifyContent:"center"}}>
-                                                <Button style={{marginRight:'10px'}} onClick={backList} variant="outlined">Hủy</Button>
+                                            <div className={''} style={{display: "flex", justifyContent: "center"}}>
+                                                <Button style={{marginRight: '10px'}} onClick={backList}
+                                                        variant="outlined">Hủy</Button>
                                                 <Button variant="contained" type='submit'>Lưu</Button>
 
                                             </div>
@@ -355,8 +370,9 @@ export default function EditCampaign(props) {
         </div>
     )
 }
+
 function NumberFormatCustom(props) {
-    const { inputRef, onChange, ...other } = props;
+    const {inputRef, onChange, ...other} = props;
 
     return (
         <NumericFormat

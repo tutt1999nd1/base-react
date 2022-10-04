@@ -70,19 +70,24 @@ export default function EditCategory(props) {
         company_name: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(255, 'Tối đa 255 ký tự')
+        ,
         contact_detail: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(255, 'Tối đa 255 ký tự'),
         tax_number: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(255, 'Tối đa 255 ký tự'),
         charter_capital: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(15, 'Tối đa 15 chữ số'),
         founding_date: yup
             .string()
             .trim()
@@ -90,7 +95,9 @@ export default function EditCategory(props) {
         capital_limit: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(15, 'Tối đa 15 chữ số'),
+
     });
     const backList = () => {
         navigate('/company')
@@ -309,7 +316,7 @@ export default function EditCategory(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Khoản vay tối đa<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Khoản vay tối đa (VNĐ)<span className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 size={"small"}
                                                 id='capital_limit'
@@ -344,7 +351,7 @@ export default function EditCategory(props) {
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Vốn điều lệ<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Vốn điều lệ (VNĐ)<span className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 size={"small"}
                                                 id='charter_capital'

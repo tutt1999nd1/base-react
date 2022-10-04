@@ -12,6 +12,7 @@ import ClassIcon from '@mui/icons-material/Class';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import {useDispatch,useSelector} from "react-redux";
 export default function Nav() {
+    const { pathname } = useLocation();
     const currentUser = useSelector(state => state.currentUser)
     const [open, setOpen] = useState(true)
     const handleClickCollapse = () => {
@@ -35,7 +36,7 @@ export default function Nav() {
                             Dashboard
                         </li>
                     </NavLink>
-                    <NavLink className={'nav-link'} to={'assets'}>
+                    <NavLink className={'nav-link'}   to={'assets'}>
                         <li>
                             <div className={'nav-item'}>
                                 <div className={'nav-item-name'}><AttachMoneyIcon></AttachMoneyIcon>Quản lý tài sản</div>

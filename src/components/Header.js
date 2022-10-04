@@ -5,8 +5,10 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
 import {useDispatch,useSelector} from "react-redux";
 import {updateShowMenu} from "../store/user/userSlice";
-
+import {useMsal} from "@azure/msal-react";
+import Axios from 'axios'
 const Header = () => {
+    const { instance } = useMsal()
     // const [anchorEl, setAnchorEl] =
     const currentUser = useSelector(state => state.currentUser)
     const dispatch = useDispatch()
@@ -18,9 +20,27 @@ const Header = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
+    function handleLogout() {
+        localStorage.clear();
+        instance.logoutRedirect().catch(e => {
+            console.error(e);
+        });
+    }
     const touchMenu = () => {
       dispatch(updateShowMenu(!currentUser.showMenu))
     }
+    const [imageUrl, setImageUrl] = useState(null)
+    useEffect(() => {
+        Axios.get('https://graph.microsoft.com/v1.0/me/photo/$value', {
+            headers: { 'Authorization': `Bearer ${currentUser.token}` },
+            responseType: 'blob'
+        }).then(o => {
+            const url = window.URL || window.webkitURL;
+            const blobUrl = url.createObjectURL(o.data);
+            console.log("blobUrl",blobUrl)
+            setImageUrl(blobUrl)
+        })
+    }, [currentUser])
     return (
         <header className={'header'}>
             <div style={{display:"flex",justifyContent:'space-between',width:'100%'}}>
@@ -51,11 +71,13 @@ const Header = () => {
                     <Avatar
                         id={"basic-menu"}
                         alt="Avatar"
-                        src={require('../assets/img/avatar.jpg')}
+                        // src={require('../assets/img/avatar.jpg')}
+                        src={imageUrl}
                         sx={{ width: 35, height: 35 }}
                         style={{cursor:'pointer'}}
                         onClick={handleClick}
                     />
+
                     <Menu
                         id="basic-menu"
                         anchorEl={anchorEl}
@@ -67,7 +89,9 @@ const Header = () => {
                     >
                         {/*<MenuItem onClick={handleClose}>Profile</MenuItem>*/}
                         {/*<MenuItem onClick={handleClose}>My account</MenuItem>*/}
-                        <MenuItem onClick={handleClose}>Logout</MenuItem>
+                        <MenuItem >{currentUser.name}</MenuItem>
+                        {/*<MenuItem onClick={handleClose}>Logout</MenuItem>*/}
+                        <MenuItem onClick={handleLogout}>Đăng xuất</MenuItem>
                     </Menu>
                 </div>
             </div>

@@ -7,6 +7,8 @@ const axiosClient = axios.create({
     baseURL: process.env.REACT_APP_API_URL,
     headers: {
         'content-type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': '*'
     },
     paramsSerializer: params => queryString.stringify(params),
 });
@@ -14,8 +16,11 @@ const axiosClient = axios.create({
 axiosClient.interceptors.request.use(async (config) => {
     // const token = JSON.parse(localStorage.getItem('persist:root')).token.replaceAll(`"`,``)
     const token = localStorage.getItem('token');
+
     if (token != "") {
-        config.headers = { 'token': token }
+        const bearer = `Bearer ${token}`;
+
+        config.headers = { 'Authorization': bearer }
     }
     return config;
 });

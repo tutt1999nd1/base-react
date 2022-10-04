@@ -39,6 +39,7 @@ import Utils, {currencyFormatter} from "../../constants/utils";
  import apiManagerCategory from "../../api/manage-category";
  import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
  import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
+ import {TreeSelect} from "antd";
 
 export default function ManageCategory() {
     const [nameSearch,setNameSearch] =useState(null)
@@ -49,6 +50,8 @@ export default function ManageCategory() {
     const [refresh, setRefresh] = useState(false)
     const [openModalDel, setOpenModalDel] = useState(false)
     const [openSearch, setOpenSearch] = useState(true)
+    const [listCategoryTree, setListCategoryTree] = useState([
+    ]);    const [categorySearch, setCategorySearch] = useState()
 
     const [listResult, setListResult] = React.useState({
         page: 0,
@@ -229,7 +232,7 @@ export default function ManageCategory() {
             'page_index': listResult.page + 1,
             'paging': true,
             'category_name': nameSearch === '' ? null : nameSearch,
-            'parent_id': idParent === 0 ? null : idParent,
+            'parent_id': categorySearch ? categorySearch : null,
         }).then(r => {
             setLoading(false)
             console.log("r", r)
@@ -239,21 +242,13 @@ export default function ManageCategory() {
             setLoading(false)
             console.log(e)
         })
-    }, [listResult.page, listResult.pageSize,nameSearch ,refresh,idParent])
+    }, [listResult.page, listResult.pageSize,nameSearch ,refresh,categorySearch])
 
     useEffect(()=>{
-        getListCategoryApi({
-            'page_size': 0,
-            // 'page_index': listResult.page + 1,
-            'paging': false,
-            // 'company_name': nameSearch === '' ? null : nameSearch,
-            // 'contact_detail': contactSearch === 0 ? null : contactSearch,
-            // 'tax_number': taxSearch === 0 ? null : taxSearch,
-        }).then(r => {
-            setLoading(false)
-            setListAllCategory(r.data.categories)
+        getListCategoryTreeApi({paging: false}).then(r => {
+            console.log("setListCategoryTree", r.data)
+            setListCategoryTree(r.data)
         }).catch(e => {
-            setLoading(false)
             console.log(e)
         })
     },[refresh])
@@ -265,6 +260,12 @@ export default function ManageCategory() {
         setLoading(true)
         return apiManagerCategory.deleteCategory(id);
     }
+    const getListCategoryTreeApi = (data) => {
+        return apiManagerCategory.getListCategoryTree(data);
+    }
+    const handleChangeCategory = (e) => {
+        setCategorySearch(e)
+    };
     return (
         <div className={'main-content'}>
             <div className={`loading ${loading ? '' : 'hidden'}`}>
@@ -337,21 +338,22 @@ export default function ManageCategory() {
                         </div>
                         <div style={{width: '20%',marginLeft: '20px'}}>
                             <div className={'label-input'}>Hạng mục cha</div>
-                            <FormControl fullWidth>
-                                <Select
-                                    size={"small"}
-                                    value={idParent}
-                                    onChange={handleChangeIdParent}
-                                >
-                                    <MenuItem value={0}>Tất cả</MenuItem>
-                                    {
-                                        listAllCategory.map((e) => (
-                                            <MenuItem value={e.id}>{e.category_name}</MenuItem>
-                                        ))
-                                    }
-
-                                </Select>
-                            </FormControl>
+                            <TreeSelect
+                                style={{ width: '100%' }}
+                                showSearch
+                                value={categorySearch}
+                                treeData={listCategoryTree}
+                                dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                                placeholder="Hạng mục"
+                                allowClear
+                                treeDefaultExpandAll
+                                onChange={handleChangeCategory}
+                                filterTreeNode={(search, item) => {
+                                    return item.category_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
+                                }}
+                                fieldNames={{label: 'category_name', value: 'id', children: 'child_categories'}}
+                            >
+                            </TreeSelect>
                         </div>
 
 

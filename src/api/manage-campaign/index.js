@@ -5,6 +5,9 @@ class ApiManagerCampaign{
     getListCampaign= (data) => {
         return axiosClient.post(API_MAP.GET_LIST_CAMPAIGNS,data)
     }
+    getListCampaignTree= (data) => {
+        return axiosClient.post(API_MAP.GET_LIST_CAMPAIGNS_TREE,data)
+    }
     createCampaign = (data) => {
         return axiosClient.post(API_MAP.CREATE_CAMPAIGNS,data)
     }

@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {default as VNnum2words} from 'vn-num2words';
 import {
+    Autocomplete,
     Box,
     Button,
     Divider,
@@ -43,7 +44,7 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
-import {capitalizeFirstLetter, currencyFormatter} from "../../constants/utils";
+import {capitalizeFirstLetter, convertToAutoComplete, currencyFormatter} from "../../constants/utils";
 import apiManagerSOF from "../../api/manage-sof";
 import apiManagerCompany from "../../api/manage-company";
 import apiManagerCategory from "../../api/manage-category";
@@ -51,10 +52,12 @@ import apiManagerCampaign from "../../api/manage-campaign";
 import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import {TreeSelect} from "antd";
 
 export default function EditSOF(props) {
     const navigate = useNavigate();
     const [location, setLocation] = useSearchParams();
+    const [companySearch, setCompanySearch] = useState();
     const [listGroup, setListGroup] = useState([]);
     const [listType, setListType] = useState([]);
     const [listCompany, setListCompany] = useState([]);
@@ -66,18 +69,22 @@ export default function EditSOF(props) {
     const [listFileServer, setListFileServer] = useState([])
     const [currentAmount, setCurrentAmount] = useState(0)
     const [listDeletedAttachment, setListDeletedAttachment] = useState([])
+    const [listCategoryTree, setListCategoryTree] = useState([]);
+    const [categorySearch, setCategorySearch] = useState()
+    const [campaignSearch, setCampaignSearch] = useState()
+    const [listCampaignTree, setListCampaignTree] = useState([]);
     const [info, setInfo] = useState({
         id: '',
-        capital_company: {id:0},
-        capital_category: {id:0},
-        capital_campaign: {id:0},
+        capital_company: {},
+        capital_category: {},
+        capital_campaign: {},
 
         capital_company_id: '',
         capital_category_id: '',
         capital_campaign_id: '',
         lending_amount: '',
         owner_full_name: '',
-        lending_start_date:new dayjs,
+        lending_start_date: new dayjs,
         status: '',
         lending_in_month: '',
         interest_period: '',
@@ -86,7 +93,7 @@ export default function EditSOF(props) {
         grace_principal_in_month: '',
         grace_interest_in_month: '',
         interest_rate_type: '',
-        reference_interest_rate:'',
+        reference_interest_rate: '',
         interest_rate_rage: '',
         list_attachments: []
     })
@@ -160,30 +167,26 @@ export default function EditSOF(props) {
 
     }, [location])
     useEffect(() => {
-        getListCategoryApi({paging:false}).then(r => {
-            if (r.data.categories) {
-                setListCategory(r.data.categories)
-            } else setListCategory([])
-
+        getListCategoryTreeApi({paging: false}).then(r => {
+            console.log("setListCategoryTree", r.data)
+            setListCategoryTree(r.data)
         }).catch(e => {
-
+            console.log(e)
         })
-        getListCampaignApi({paging:false}).then(r => {
-            if (r.data.campaigns)
-                setListCampaign(r.data.campaigns)
-            else setListCampaign([])
-
+        getListCampaignTreeApi({paging: false}).then(r => {
+            console.log("setListCategoryTree", r.data)
+            setListCampaignTree(r.data)
         }).catch(e => {
-
+            console.log(e)
         })
-
 
     }, [])
     useEffect(() => {
 
-        getListCompanyApi({lending_amount:currentAmount||0}).then(r => {
+        getListCompanyApi({lending_amount: currentAmount || 0}).then(r => {
+            console.log("r.data.companies",r.data);
             if (r.data)
-                setListCompany(r.data)
+                setListCompany(convertToAutoComplete(r.data, 'company_name'))
             else setListCompany([])
 
         }).catch(e => {
@@ -220,14 +223,23 @@ export default function EditSOF(props) {
         return apiManagerCampaign.getListCampaign(data);
     }
 
-
-
+    const getListCategoryTreeApi = (data) => {
+        return apiManagerCategory.getListCategoryTree(data);
+    }
+    const getListCampaignTreeApi = (data) => {
+        return apiManagerCampaign.getListCampaignTree(data);
+    }
     const back = () => {
         navigate('/sof')
     }
     useEffect(() => {
         console.log(info)
         setListFileServer(info.list_attachments)
+
+        setCategorySearch(info.capital_category.id)
+        setCampaignSearch(info.capital_campaign.id)
+        setCompanySearch({id:info.capital_company.id,label:info.capital_company.company_name})
+
     }, [info])
 
     useEffect(() => {
@@ -303,59 +315,60 @@ export default function EditSOF(props) {
         el.click();
     }
     return (<div className={'main-content'}>
-            <ToastContainer
-                position="top-right"
-                autoClose={5000}
-                hideProgressBar
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss
-                draggable
-                pauseOnHover
-            />
-            <Button onClick={back} style={{marginBottom: '10px'}} variant="text" startIcon={<KeyboardBackspaceIcon/>}>Khoản vay
-                </Button>
+        <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+        />
+        <Button onClick={back} style={{marginBottom: '10px'}} variant="text" startIcon={<KeyboardBackspaceIcon/>}>Khoản
+            vay
+        </Button>
 
-            <div className={'main-content-header'}>
-                <div className={'row'} style={{justifyContent: 'space-between'}}>
-                    <Typography variant="h5" className={'main-content-tittle'}>
-                        Quản lý khoản vay
-                    </Typography>
-                </div>
+        <div className={'main-content-header'}>
+            <div className={'row'} style={{justifyContent: 'space-between'}}>
+                <Typography variant="h5" className={'main-content-tittle'}>
+                    Quản lý khoản vay
+                </Typography>
             </div>
-            <div className={'main-content-body'}>
-                <div className={'main-content-body-tittle'}>
-                    <h4>{isUpdate ? 'Cập nhật' : 'Thêm mới'} </h4>
-                </div>
-                <Divider light/>
-                <Formik
-                    enableReinitialize
-                    initialValues={{
-                        capital_company_id: idUpdate?info.capital_company.id:info.capital_company_id,
-                        capital_category_id: idUpdate?info.capital_category.id:info.capital_category_id ,
-                        capital_campaign_id:idUpdate?info.capital_campaign.id:info.capital_campaign_id ,
-                        // asset_group:info.asset_group.id,
-                        lending_amount: info.lending_amount,
-                        owner_full_name: info.owner_full_name,
-                        principal_period:info.principal_period,
-                        // lending_start_date: idUpdate?dayjs(info.lending_start_date).format('DD-MM-YYYY'):info.lending_start_date,
-                        lending_start_date: idUpdate?dayjs(info.lending_start_date,'DD-MM-YYYY'):info.lending_start_date,
-                        status: info.status,
-                        lending_in_month: info.lending_in_month,
-                        interest_period: info.interest_period,
-                        interest_rate: info.interest_rate,
-                        grace_principal_in_month: info.grace_principal_in_month,
-                        grace_interest_in_month: info.grace_interest_in_month,
-                        interest_rate_type: info.interest_rate_type,
-                        reference_interest_rate: info.reference_interest_rate,
-                        interest_rate_rage: info.interest_rate_rage,
-                    }}
-                    validationSchema={validationSchema}
-                    onSubmit={(values, actions) => {
-                        // setInfoAccount();
-                        // submitAccount();
-                        console.log('values', values)
+        </div>
+        <div className={'main-content-body'}>
+            <div className={'main-content-body-tittle'}>
+                <h4>{isUpdate ? 'Cập nhật' : 'Thêm mới'} </h4>
+            </div>
+            <Divider light/>
+            <Formik
+                enableReinitialize
+                initialValues={{
+                    capital_company_id: idUpdate ? info.capital_company.id : info.capital_company_id,
+                    capital_category_id: idUpdate ? info.capital_category.id : info.capital_category_id,
+                    capital_campaign_id: idUpdate ? info.capital_campaign.id : info.capital_campaign_id,
+                    // asset_group:info.asset_group.id,
+                    lending_amount: info.lending_amount,
+                    owner_full_name: info.owner_full_name,
+                    principal_period: info.principal_period,
+                    // lending_start_date: idUpdate?dayjs(info.lending_start_date).format('DD-MM-YYYY'):info.lending_start_date,
+                    lending_start_date: idUpdate ? dayjs(info.lending_start_date, 'DD-MM-YYYY') : info.lending_start_date,
+                    status: info.status,
+                    lending_in_month: info.lending_in_month,
+                    interest_period: info.interest_period,
+                    interest_rate: info.interest_rate,
+                    grace_principal_in_month: info.grace_principal_in_month,
+                    grace_interest_in_month: info.grace_interest_in_month,
+                    interest_rate_type: info.interest_rate_type,
+                    reference_interest_rate: info.reference_interest_rate,
+                    interest_rate_rage: info.interest_rate_rage,
+                }}
+                validationSchema={validationSchema}
+                onSubmit={(values, actions) => {
+                    // setInfoAccount();
+                    // submitAccount();
+                    if (campaignSearch && categorySearch) {
                         let valueConvert = values;
                         let formData = new FormData();
 
@@ -368,7 +381,7 @@ export default function EditSOF(props) {
                         formData.append('capitalCompanyId', values.capital_company_id)
                         formData.append('status', values.status)
                         formData.append('ownerFullName', values.owner_full_name)
-                        formData.append('lendingStartDate',  dayjs(values.lending_start_date).format('DD-MM-YYYY'))
+                        formData.append('lendingStartDate', dayjs(values.lending_start_date).format('DD-MM-YYYY'))
                         formData.append('lendingInMonth', values.lending_in_month)
                         formData.append('principalPeriod', values.principal_period)
                         formData.append('interestPeriod', values.interest_period)
@@ -438,531 +451,582 @@ export default function EditSOF(props) {
                                 });
                             })
                         }
-                    }}
-                >
-                    {props => {
-                        const {
-                            values, touched, errors, handleChange, setFieldValue, handleSubmit
-                        } = props;
-                        return (<Form onSubmit={handleSubmit}>
-                                <Box sx={{flexGrow: 1}} className={'form-content'}>
-                                    <Grid container spacing={4}>
+                    }
 
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Công ty vay<span className={'error-message'}>*</span></div>
-                                            <FormControl fullWidth>
-                                                <Select
-                                                    size={'small'}
-                                                    id='capital_company_id'
-                                                    name='capital_company_id'
-                                                    value={values.capital_company_id}
-                                                    onChange={handleChange}
-                                                    error={touched.capital_company_id && Boolean(errors.capital_company_id)}
-                                                    helperText={touched.capital_company_id && errors.capital_company_id}
-                                                    // size='small'
-                                                >
-                                                    {listCompany.map((e) => (
-                                                        <MenuItem value={e.id}>{e.company_name}</MenuItem>))}
+                }}
+            >
+                {props => {
+                    const {
+                        values, touched, errors, handleChange, setFieldValue, handleSubmit
+                    } = props;
+                    return (<Form onSubmit={handleSubmit}>
+                        <Box sx={{flexGrow: 1}} className={'form-content'}>
+                            <Grid container spacing={4}>
 
-                                                </Select>
-                                                <FormHelperText
-                                                    className={'error-message'}>{errors.capital_company_id}</FormHelperText>
-                                            </FormControl>
-                                        </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Công ty vay<span className={'error-message'}>*</span>
+                                    </div>
+                                    {/*<div>{JSON.stringify({id:info.capital_company.id,tittle:info.capital_company.company_name})}</div>*/}
+                                    {/*<Autocomplete*/}
+                                    {/*    disablePortal*/}
+                                    {/*    id="combo-box-demo"*/}
+                                    {/*    options={listCompany}*/}
+                                    {/*    defaultValue={[{id:info.capital_company.id,label:info.capital_company.company_name}]}*/}
+                                    {/*    // sx={{ width: 300 }}*/}
+                                    {/*    // onChange={}*/}
+                                    {/*    renderInput={(params) => < TextField  {...params} id='capital_company_id'*/}
+                                    {/*                                         name='capital_company_id'*/}
+                                    {/*                                         placeholder="Công ty vay"*/}
+                                    {/*                                         error={touched.capital_company_id && Boolean(errors.capital_company_id)}*/}
+                                    {/*                                         helperText={touched.capital_company_id && errors.capital_company_id}/>}*/}
+                                    {/*    size={"small"}*/}
+                                    {/*    onChange={(event, newValue) => {*/}
+                                    {/*        alert(newValue)*/}
+                                    {/*        setCompanySearch(newValue)*/}
+                                    {/*        console.log("new_value", newValue)*/}
+                                    {/*        if (newValue)*/}
+                                    {/*        setFieldValue('capital_company_id', newValue.id)*/}
+                                    {/*        else setFieldValue('capital_company_id', null)*/}
+                                    {/*    }}*/}
+                                    {/*/>*/}
+                                    <FormControl fullWidth>
+                                        <Select
+                                            size={'small'}
+                                            id='capital_company_id'
+                                            name='capital_company_id'
+                                            value={values.capital_company_id}
+                                            onChange={handleChange}
+                                            error={touched.capital_company_id && Boolean(errors.capital_company_id)}
+                                            helperText={touched.capital_company_id && errors.capital_company_id}
+                                            // size='small'
+                                        >
+                                            {listCompany.map((e) => (
+                                                <MenuItem value={e.id}>{e.company_name}</MenuItem>))}
 
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Mục đích vay<span className={'error-message'}>*</span></div>
-                                            <FormControl fullWidth>
-                                                <Select
-                                                    size={'small'}
-                                                    labelId="asset_type_label"
-                                                    id='capital_campaign_id'
-                                                    name='capital_campaign_id'
-                                                    value={values.capital_campaign_id}
-                                                    onChange={handleChange}
-                                                    error={touched.capital_campaign_id && Boolean(errors.capital_campaign_id)}
-                                                    helperText={touched.capital_campaign_id && errors.capital_campaign_id}
-                                                    // size='small'
-                                                >
-                                                    {listCampaign.map((e) => (
-                                                        <MenuItem value={e.id}>{e.campaign_name}</MenuItem>))}
+                                        </Select>
+                                        <FormHelperText
+                                            className={'error-message'}>{errors.capital_company_id}</FormHelperText>
+                                    </FormControl>
+                                </Grid>
 
-                                                </Select>
-                                                <FormHelperText
-                                                    className={'error-message'}>{errors.capital_campaign_id}</FormHelperText>
-                                            </FormControl>
-                                        </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Mục đích vay<span
+                                        className={'error-message'}>*</span></div>
+                                    <TreeSelect
+                                        style={{width: '100%'}}
+                                        showSearch
+                                        value={campaignSearch}
+                                        treeData={listCampaignTree}
+                                        dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                                        placeholder="Mục đích vay"
+                                        allowClear
+                                        treeDefaultExpandAll
+                                        onChange={(values) => {
+                                            setCampaignSearch(values)
+                                            setFieldValue('capital_campaign_id', values)
+                                        }}
+                                        filterTreeNode={(search, item) => {
+                                            return item.campaign_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
+                                        }}
+                                        fieldNames={{label: 'campaign_name', value: 'id', children: 'child_campaigns'}}
+                                    >
+                                    </TreeSelect>
+                                    <FormHelperText style={{marginLeft: '15px'}}
+                                                    className={'error-message'}>{campaignSearch ? '' : 'Không được để trống'}</FormHelperText>
+                                </Grid>
 
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Hạng mục vay<span className={'error-message'}>*</span></div>
-                                            <FormControl fullWidth>
-                                                <Select
-                                                    size={'small'}
-                                                    labelId="asset_type_label"
-                                                    id='capital_category_id'
-                                                    name='capital_category_id'
-                                                    value={values.capital_category_id}
-                                                    onChange={handleChange}
-                                                    error={touched.capital_category_id && Boolean(errors.capital_category_id)}
-                                                    helperText={touched.capital_category_id && errors.capital_category_id}
-                                                    // size='small'
-                                                >
-                                                    {listCategory.map((e) => (
-                                                        <MenuItem value={e.id}>{e.category_name}</MenuItem>))}
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Hạng mục vay<span
+                                        className={'error-message'}>*</span></div>
+                                    <TreeSelect
+                                        style={{width: '100%'}}
+                                        showSearch
+                                        value={categorySearch}
+                                        treeData={listCategoryTree}
+                                        dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                                        placeholder="Hạng mục"
+                                        allowClear
+                                        treeDefaultExpandAll
+                                        onChange={(values) => {
+                                            setCategorySearch(values)
+                                            setFieldValue('capital_category_id', values)
+                                        }}
+                                        filterTreeNode={(search, item) => {
+                                            return item.category_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
+                                        }}
+                                        fieldNames={{label: 'category_name', value: 'id', children: 'child_categories'}}
+                                    >
+                                    </TreeSelect>
+                                    <FormHelperText style={{marginLeft: '15px'}}
+                                                    className={'error-message'}>{categorySearch ? '' : 'Không được để trống'}</FormHelperText>
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Trạng thái<span className={'error-message'}>*</span>
+                                    </div>
+                                    <FormControl fullWidth>
+                                        <Select
+                                            size={'small'}
+                                            labelId="asset_type_label"
+                                            id='status'
+                                            name='status'
+                                            value={values.status}
+                                            onChange={handleChange}
+                                            error={touched.status && Boolean(errors.status)}
+                                            helperText={touched.status && errors.status}
+                                            // size='small'
+                                        >
+                                            <MenuItem value={'UNPAID'}>Chưa tất toán</MenuItem>
+                                            <MenuItem value={'PAID'}>Đã tất toán</MenuItem>
+                                            <MenuItem value={'A_PART_PRINCIPAL_OFF'}>Off 1 phần gốc</MenuItem>
+                                            <MenuItem value={'PRINCIPAL_OFF_UNPAID_INTEREST'}>Đã off gốc, chưa trả
+                                                lãi</MenuItem>
 
-                                                </Select>
-                                                <FormHelperText
-                                                    className={'error-message'}>{errors.capital_category_id}</FormHelperText>
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Trạng thái<span className={'error-message'}>*</span></div>
-                                            <FormControl fullWidth>
-                                                <Select
-                                                    size={'small'}
-                                                    labelId="asset_type_label"
-                                                    id='status'
-                                                    name='status'
-                                                    value={values.status}
-                                                    onChange={handleChange}
-                                                    error={touched.status && Boolean(errors.status)}
-                                                    helperText={touched.status && errors.status}
-                                                    // size='small'
-                                                >
-                                                    <MenuItem value={'UNPAID'}>Chưa tất toán</MenuItem>
-                                                    <MenuItem value={'PAID'}>Đã tất toán</MenuItem>
-                                                    <MenuItem value={'A_PART_PRINCIPAL_OFF'}>Off 1 phần gốc</MenuItem>
-                                                    <MenuItem value={'PRINCIPAL_OFF_UNPAID_INTEREST'}>Đã off gốc, chưa trả lãi</MenuItem>
+                                        </Select>
+                                        <FormHelperText
+                                            className={'error-message'}>{errors.status}</FormHelperText>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    {/*<TextField*/}
+                                    {/*    id='founding_date'*/}
+                                    {/*    name='founding_date'*/}
+                                    {/*    className={'formik-input'}*/}
+                                    {/*    label="Ngày thành lập*"*/}
+                                    {/*    placeholder={'Ngày thành lập*'}*/}
+                                    {/*    // variant="standard"*/}
+                                    {/*    value={values.founding_date}*/}
+                                    {/*    onChange={handleChange}*/}
+                                    {/*    error={touched.founding_date && Boolean(errors.founding_date)}*/}
+                                    {/*    helperText={touched.founding_date && errors.founding_date}*/}
 
-                                                </Select>
-                                                <FormHelperText
-                                                    className={'error-message'}>{errors.status}</FormHelperText>
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            {/*<TextField*/}
-                                            {/*    id='founding_date'*/}
-                                            {/*    name='founding_date'*/}
-                                            {/*    className={'formik-input'}*/}
-                                            {/*    label="Ngày thành lập*"*/}
-                                            {/*    placeholder={'Ngày thành lập*'}*/}
-                                            {/*    // variant="standard"*/}
-                                            {/*    value={values.founding_date}*/}
-                                            {/*    onChange={handleChange}*/}
-                                            {/*    error={touched.founding_date && Boolean(errors.founding_date)}*/}
-                                            {/*    helperText={touched.founding_date && errors.founding_date}*/}
+                                    {/*/>*/}
+                                    <div className={'label-input'}>Ngày vay<span className={'error-message'}>*</span>
+                                    </div>
+                                    <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
+                                        <DesktopDatePicker
+                                            style={{width: '100% !important'}}
+                                            inputFormat="MM-DD-YYYY"
+                                            value={values.lending_start_date}
+                                            // onChange={(values) => {
+                                            //     console.log(values)
+                                            //
+                                            // }}
 
-                                            {/*/>*/}
-                                            <div className={'label-input'}>Ngày vay<span className={'error-message'}>*</span></div>
-                                            <LocalizationProvider style={{width:'100%'}} dateAdapter={AdapterDayjs}>
-                                                <DesktopDatePicker
-                                                    style={{width:'100% !important'}}
-                                                    inputFormat="MM-DD-YYYY"
-                                                    value={values.lending_start_date}
-                                                    // onChange={(values) => {
-                                                    //     console.log(values)
-                                                    //
-                                                    // }}
+                                            onChange={value => props.setFieldValue("lending_start_date", value)}
+                                            error={touched.lending_start_date && Boolean(errors.lending_start_date)}
+                                            helperText={touched.lending_start_date && errors.lending_start_date}
+                                            renderInput={(params) => <TextField size={"small"} fullWidth {...params} />}
+                                        />
+                                    </LocalizationProvider>
 
-                                                    onChange={value => props.setFieldValue("lending_start_date", value)}
-                                                    error={touched.lending_start_date && Boolean(errors.lending_start_date)}
-                                                    helperText={touched.lending_start_date && errors.lending_start_date}
-                                                    renderInput={(params) => <TextField size={"small"} fullWidth {...params} />}
-                                                />
-                                            </LocalizationProvider>
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Số tiền vay (VNĐ)<span
+                                        className={'error-message'}>*</span></div>
+                                    <NumericFormat
+                                        size={'small'}
+                                        id='lending_amount'
+                                        customInput={TextField}
+                                        name='lending_amount'
+                                        className={'formik-input text-right'}
+                                        // variant="standard"
+                                        thousandSeparator={"."}
+                                        decimalSeparator={","}
+                                        value={values.lending_amount}
+                                        InputProps={{
+                                            endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
+                                        }}
+                                        onValueChange={(values) => {
+                                            const {formattedValue, value, floatValue} = values;
+                                            // do something with floatValue
+                                            console.log(floatValue)
 
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Số tền vay<span className={'error-message'}>*</span></div>
-                                            <NumericFormat
-                                                size={'small'}
-                                                id='lending_amount'
-                                                customInput={TextField}
-                                                name='lending_amount'
-                                                className={'formik-input text-right'}
-                                                // variant="standard"
-                                                thousandSeparator={"."}
-                                                decimalSeparator={","}
-                                                value={values.lending_amount}
-                                                InputProps={{
-                                                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
-                                                }}
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    console.log(floatValue)
+                                            const re = /^[0-9\b]+$/;
+                                            if (re.test(floatValue) || floatValue === undefined) {
+                                                setFieldValue('lending_amount', floatValue)
+                                                setCurrentAmount(floatValue)
+                                            }
+                                            // setFieldValue('max_capital_value', formattedValue)
 
-                                                    const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue) || floatValue === undefined) {
-                                                        setFieldValue('lending_amount', floatValue)
-                                                        setCurrentAmount(floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
+                                        }}
+                                        error={touched.lending_amount && Boolean(errors.lending_amount)}
+                                        helperText={touched.lending_amount && errors.lending_amount}
+                                        // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
+                                    />
+                                    {/*<div>{</div>*/}
+                                    <Typography className={'uppercase'} variant="caption" display="block"
+                                                gutterBottom>
+                                        {values.lending_amount ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.lending_amount))} đồng` : ''}
+                                    </Typography>
 
-                                                }}
-                                                error={touched.lending_amount && Boolean(errors.lending_amount)}
-                                                helperText={touched.lending_amount && errors.lending_amount}
-                                                // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
-                                            />
-                                            {/*<div>{</div>*/}
-                                            <Typography className={'uppercase'} variant="caption" display="block"
-                                                        gutterBottom>
-                                                {values.lending_amount ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.lending_amount))} đồng` : ''}
-                                            </Typography>
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Người quản lý<span
+                                        className={'error-message'}>*</span></div>
+                                    <TextField
+                                        size={'small'}
+                                        id='owner_full_name'
+                                        name='owner_full_name'
+                                        className={'formik-input'}
+                                        // variant="standard"
+                                        value={values.owner_full_name}
+                                        onChange={handleChange}
+                                        error={touched.owner_full_name && Boolean(errors.owner_full_name)}
+                                        helperText={touched.owner_full_name && errors.owner_full_name}
 
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Người quản lý<span className={'error-message'}>*</span></div>
-                                            <TextField
-                                                size={'small'}
-                                                id='owner_full_name'
-                                                name='owner_full_name'
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                value={values.owner_full_name}
-                                                onChange={handleChange}
-                                                error={touched.owner_full_name && Boolean(errors.owner_full_name)}
-                                                helperText={touched.owner_full_name && errors.owner_full_name}
+                                    />
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Thời gian vay (Tháng)<span
+                                        className={'error-message'}>*</span></div>
+                                    <NumericFormat
+                                        size={'small'}
+                                        id='lending_in_month'
+                                        customInput={TextField}
+                                        name='lending_in_month'
+                                        className={'formik-input'}
+                                        // variant="standard"
+                                        value={values.lending_in_month}
 
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Thời gian vay<span className={'error-message'}>*</span></div>
-                                            <NumericFormat
-                                                size={'small'}
-                                                id='lending_in_month'
-                                                customInput={TextField}
-                                                name='lending_in_month'
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                value={values.lending_in_month}
+                                        onValueChange={(values) => {
+                                            const {formattedValue, value, floatValue} = values;
+                                            // do something with floatValue
+                                            console.log(floatValue)
 
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    console.log(floatValue)
+                                            const re = /^[0-9\b]+$/;
+                                            if (re.test(floatValue) || floatValue === undefined) {
+                                                setFieldValue('lending_in_month', floatValue)
+                                            }
+                                            // setFieldValue('max_capital_value', formattedValue)
 
-                                                    const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue) || floatValue === undefined) {
-                                                        setFieldValue('lending_in_month', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
+                                        }}
+                                        error={touched.lending_in_month && Boolean(errors.lending_in_month)}
+                                        helperText={touched.lending_in_month && errors.lending_in_month}
+                                        // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
+                                    />
+                                    {/*<div>{</div>*/}
 
-                                                }}
-                                                error={touched.lending_in_month && Boolean(errors.lending_in_month)}
-                                                helperText={touched.lending_in_month && errors.lending_in_month}
-                                                // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
-                                            />
-                                            {/*<div>{</div>*/}
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Số kỳ trả gốc<span
+                                        className={'error-message'}>*</span></div>
+                                    <NumericFormat
+                                        size={'small'}
+                                        id='principal_period'
+                                        customInput={TextField}
+                                        name='principal_period'
+                                        className={'formik-input'}
+                                        // variant="standard"
+                                        value={values.principal_period}
 
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Số kỳ trả gốc<span className={'error-message'}>*</span></div>
-                                            <NumericFormat
-                                                size={'small'}
-                                                id='principal_period'
-                                                customInput={TextField}
-                                                name='principal_period'
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                value={values.principal_period}
+                                        onValueChange={(values) => {
+                                            const {formattedValue, value, floatValue} = values;
+                                            // do something with floatValue
+                                            console.log(floatValue)
 
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    console.log(floatValue)
+                                            const re = /^[0-9\b]+$/;
+                                            if (re.test(floatValue) || floatValue === undefined) {
+                                                setFieldValue('principal_period', floatValue)
+                                            }
+                                            // setFieldValue('max_capital_value', formattedValue)
 
-                                                    const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue) || floatValue === undefined) {
-                                                        setFieldValue('principal_period', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
+                                        }}
+                                        error={touched.principal_period && Boolean(errors.principal_period)}
+                                        helperText={touched.principal_period && errors.principal_period}
+                                        // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
+                                    />
+                                    {/*<div>{</div>*/}
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Số kỳ trả lãi<span
+                                        className={'error-message'}>*</span></div>
+                                    <NumericFormat
+                                        size={'small'}
+                                        id='interest_period'
+                                        customInput={TextField}
+                                        name='interest_period'
+                                        className={'formik-input'}
+                                        // variant="standard"
+                                        value={values.interest_period}
 
-                                                }}
-                                                error={touched.principal_period && Boolean(errors.principal_period)}
-                                                helperText={touched.principal_period && errors.principal_period}
-                                                // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
-                                            />
-                                            {/*<div>{</div>*/}
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Số kỳ trả lãi<span className={'error-message'}>*</span></div>
-                                            <NumericFormat
-                                                size={'small'}
-                                                id='interest_period'
-                                                customInput={TextField}
-                                                name='interest_period'
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                value={values.interest_period}
+                                        onValueChange={(values) => {
+                                            const {formattedValue, value, floatValue} = values;
+                                            // do something with floatValue
+                                            console.log(floatValue)
 
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    console.log(floatValue)
+                                            const re = /^[0-9\b]+$/;
+                                            if (re.test(floatValue) || floatValue === undefined) {
+                                                setFieldValue('interest_period', floatValue)
+                                            }
+                                            // setFieldValue('max_capital_value', formattedValue)
 
-                                                    const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue) || floatValue === undefined) {
-                                                        setFieldValue('interest_period', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
+                                        }}
+                                        error={touched.interest_period && Boolean(errors.interest_period)}
+                                        helperText={touched.interest_period && errors.interest_period}
+                                        // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
+                                    />
+                                    {/*<div>{</div>*/}
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Lãi suất hợp đồng vay (%/năm)<span
+                                        className={'error-message'}>*</span></div>
+                                    <NumericFormat
+                                        id='interest_rate'
+                                        customInput={TextField}
+                                        name='interest_rate'
+                                        size={'small'}
+                                        className={'formik-input'}
+                                        // variant="standard"
+                                        value={values.interest_rate}
+                                        InputProps={{
 
-                                                }}
-                                                error={touched.interest_period && Boolean(errors.interest_period)}
-                                                helperText={touched.interest_period && errors.interest_period}
-                                                // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
-                                            />
-                                            {/*<div>{</div>*/}
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Lãi suất hợp đồng vay<span className={'error-message'}>*</span></div>
-                                            <NumericFormat
-                                                id='interest_rate'
-                                                customInput={TextField}
-                                                name='interest_rate'
-                                                size={'small'}
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                value={values.interest_rate}
+                                            endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                        }}
+                                        onValueChange={(values) => {
+                                            const {formattedValue, value, floatValue} = values;
+                                            // do something with floatValue
+                                            const re = /^[0-9\b]+$/;
+                                            if (re.test(floatValue) || floatValue === undefined) {
+                                                setFieldValue('interest_rate', floatValue)
+                                            }
+                                            // setFieldValue('max_capital_value', formattedValue)
 
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    console.log(floatValue)
+                                        }}
+                                        error={touched.interest_rate && Boolean(errors.interest_rate)}
+                                        helperText={touched.interest_rate && errors.interest_rate}
+                                        // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
+                                    />
+                                    {/*<div>{</div>*/}
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Thời gian ân hạn gốc (Tháng)<span
+                                        className={'error-message'}>*</span></div>
+                                    <NumericFormat
+                                        size={'small'}
+                                        id='grace_principal_in_month'
+                                        customInput={TextField}
+                                        name='grace_principal_in_month'
+                                        className={'formik-input'}
+                                        // variant="standard"
+                                        value={values.grace_principal_in_month}
 
-                                                    const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue) || floatValue === undefined) {
-                                                        setFieldValue('interest_rate', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
+                                        onValueChange={(values) => {
+                                            const {formattedValue, value, floatValue} = values;
+                                            // do something with floatValue
+                                            console.log(floatValue)
 
-                                                }}
-                                                error={touched.interest_rate && Boolean(errors.interest_rate)}
-                                                helperText={touched.interest_rate && errors.interest_rate}
-                                                // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
-                                            />
-                                            {/*<div>{</div>*/}
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Thời gian ân hạn gốc<span className={'error-message'}>*</span></div>
-                                            <NumericFormat
-                                                size={'small'}
-                                                id='grace_principal_in_month'
-                                                customInput={TextField}
-                                                name='grace_principal_in_month'
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                value={values.grace_principal_in_month}
+                                            const re = /^[0-9\b]+$/;
+                                            if (re.test(floatValue) || floatValue === undefined) {
+                                                setFieldValue('grace_principal_in_month', floatValue)
+                                            }
+                                            // setFieldValue('max_capital_value', formattedValue)
 
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    console.log(floatValue)
+                                        }}
+                                        error={touched.grace_principal_in_month && Boolean(errors.grace_principal_in_month)}
+                                        helperText={touched.grace_principal_in_month && errors.grace_principal_in_month}
+                                        // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
+                                    />
+                                    {/*<div>{</div>*/}
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Thời gian ân hạn lãi (Tháng)<span
+                                        className={'error-message'}>*</span></div>
+                                    <NumericFormat
+                                        size={'small'}
+                                        id='grace_interest_in_month'
+                                        customInput={TextField}
+                                        name='grace_interest_in_month'
+                                        className={'formik-input'}
+                                        // variant="standard"
+                                        value={values.grace_interest_in_month}
 
-                                                    const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue) || floatValue === undefined) {
-                                                        setFieldValue('grace_principal_in_month', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
+                                        onValueChange={(values) => {
+                                            const {formattedValue, value, floatValue} = values;
+                                            // do something with floatValue
+                                            console.log(floatValue)
 
-                                                }}
-                                                error={touched.grace_principal_in_month && Boolean(errors.grace_principal_in_month)}
-                                                helperText={touched.grace_principal_in_month && errors.grace_principal_in_month}
-                                                // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
-                                            />
-                                            {/*<div>{</div>*/}
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Thời gian ân hạn lãi<span className={'error-message'}>*</span></div>
-                                            <NumericFormat
-                                                size={'small'}
-                                                id='grace_interest_in_month'
-                                                customInput={TextField}
-                                                name='grace_interest_in_month'
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                value={values.grace_interest_in_month}
+                                            const re = /^[0-9\b]+$/;
+                                            if (re.test(floatValue) || floatValue === undefined) {
+                                                setFieldValue('grace_interest_in_month', floatValue)
+                                            }
+                                            // setFieldValue('max_capital_value', formattedValue)
 
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    console.log(floatValue)
-
-                                                    const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue) || floatValue === undefined) {
-                                                        setFieldValue('grace_interest_in_month', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
-
-                                                }}
-                                                error={touched.grace_interest_in_month && Boolean(errors.grace_interest_in_month)}
-                                                helperText={touched.grace_interest_in_month && errors.grace_interest_in_month}
-                                                // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
-                                            />
-                                            {/*<div>{</div>*/}
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Loại lãi suất<span className={'error-message'}>*</span></div>
-                                            <FormControl fullWidth>
-                                                <Select
-                                                    size={'small'}
-                                                    labelId="asset_type_label"
-                                                    id='interest_rate_type'
-                                                    name='interest_rate_type'
-                                                    value={values.interest_rate_type}
-                                                    onChange={handleChange}
-                                                    error={touched.interest_rate_type && Boolean(errors.interest_rate_type)}
-                                                    helperText={touched.interest_rate_type && errors.interest_rate_type}
-                                                    // size='small'
-                                                >
-                                                    <MenuItem value={'Cố định'}>Cố định</MenuItem>
-                                                    <MenuItem value={'Biên độ'}>Biên độ</MenuItem>
+                                        }}
+                                        error={touched.grace_interest_in_month && Boolean(errors.grace_interest_in_month)}
+                                        helperText={touched.grace_interest_in_month && errors.grace_interest_in_month}
+                                        // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
+                                    />
+                                    {/*<div>{</div>*/}
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Loại lãi suất<span
+                                        className={'error-message'}>*</span></div>
+                                    <FormControl fullWidth>
+                                        <Select
+                                            size={'small'}
+                                            labelId="asset_type_label"
+                                            id='interest_rate_type'
+                                            name='interest_rate_type'
+                                            value={values.interest_rate_type}
+                                            onChange={handleChange}
+                                            error={touched.interest_rate_type && Boolean(errors.interest_rate_type)}
+                                            helperText={touched.interest_rate_type && errors.interest_rate_type}
+                                            // size='small'
+                                        >
+                                            <MenuItem value={'Cố định'}>Cố định</MenuItem>
+                                            <MenuItem value={'Biên độ'}>Biên độ</MenuItem>
 
 
-                                                </Select>
-                                                <FormHelperText
-                                                    className={'error-message'}>{errors.interest_rate_type}</FormHelperText>
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Lãi suất tham chiếu<span className={'error-message'}>*</span></div>
-                                            <NumericFormat
-                                                size={'small'}
-                                                id='reference_interest_rate'
-                                                customInput={TextField}
-                                                name='reference_interest_rate'
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                value={values.reference_interest_rate}
+                                        </Select>
+                                        <FormHelperText
+                                            className={'error-message'}>{errors.interest_rate_type}</FormHelperText>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Lãi suất tham chiếu (%/năm)<span
+                                        className={'error-message'}>*</span></div>
+                                    <NumericFormat
+                                        size={'small'}
+                                        id='reference_interest_rate'
+                                        customInput={TextField}
+                                        name='reference_interest_rate'
+                                        className={'formik-input'}
+                                        // variant="standard"
+                                        value={values.reference_interest_rate}
+                                        InputProps={{
+                                            endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                        }}
+                                        onValueChange={(values) => {
+                                            const {formattedValue, value, floatValue} = values;
+                                            // do something with floatValue
+                                            console.log(floatValue)
 
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    console.log(floatValue)
+                                            const re = /^[0-9\b]+$/;
+                                            if (re.test(floatValue) || floatValue === undefined) {
+                                                setFieldValue('reference_interest_rate', floatValue)
+                                            }
+                                            // setFieldValue('max_capital_value', formattedValue)
 
-                                                    const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue) || floatValue === undefined) {
-                                                        setFieldValue('reference_interest_rate', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
+                                        }}
+                                        error={touched.reference_interest_rate && Boolean(errors.reference_interest_rate)}
+                                        helperText={touched.reference_interest_rate && errors.reference_interest_rate}
+                                        // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
+                                    />
+                                    {/*<div>{</div>*/}
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Biên độ lãi suất (%)<span
+                                        className={'error-message'}>*</span></div>
+                                    <NumericFormat
+                                        size={'small'}
+                                        id='interest_rate_rage'
+                                        customInput={TextField}
+                                        name='interest_rate_rage'
+                                        className={'formik-input'}
+                                        // variant="standard"
+                                        value={values.interest_rate_rage}
+                                        InputProps={{
+                                            endAdornment: <InputAdornment position="end">%</InputAdornment>,
+                                        }}
+                                        onValueChange={(values) => {
+                                            const {formattedValue, value, floatValue} = values;
+                                            // do something with floatValue
+                                            console.log(floatValue)
 
-                                                }}
-                                                error={touched.reference_interest_rate && Boolean(errors.reference_interest_rate)}
-                                                helperText={touched.reference_interest_rate && errors.reference_interest_rate}
-                                                // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
-                                            />
-                                            {/*<div>{</div>*/}
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Biên độ lãi suất<span className={'error-message'}>*</span></div>
-                                            <NumericFormat
-                                                size={'small'}
-                                                id='interest_rate_rage'
-                                                customInput={TextField}
-                                                name='interest_rate_rage'
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                value={values.interest_rate_rage}
+                                            const re = /^[0-9\b]+$/;
+                                            if (re.test(floatValue) || floatValue === undefined) {
+                                                setFieldValue('interest_rate_rage', floatValue)
+                                            }
+                                            // setFieldValue('max_capital_value', formattedValue)
 
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    console.log(floatValue)
+                                        }}
+                                        error={touched.interest_rate_rage && Boolean(errors.interest_rate_rage)}
+                                        helperText={touched.interest_rate_rage && errors.interest_rate_rage}
+                                        // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
+                                    />
+                                    {/*<div>{</div>*/}
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div style={{display: "flex", alignItems: "center"}}>Tập đính
+                                        kèm <ControlPointIcon style={{cursor: "pointer", marginLeft: '10px'}}
+                                                              color="primary"
+                                                              onClick={uploadFile}> </ControlPointIcon></div>
+                                    <div className={'list-file'}>
+                                        {
+                                            listFileLocal.map((e) => (
+                                                <>
+                                                    <div className={'item-file'}>
+                                                        <div className={'name-file '}>{e.name}</div>
+                                                        <div className={'delete-file'}><DeleteOutlineIcon
+                                                            style={{cursor: "pointer"}}
+                                                            color={"error"}
+                                                            onClick={() => {
+                                                                deleteFileLocal(e.name)
+                                                            }}></DeleteOutlineIcon></div>
+                                                    </div>
+                                                    <Divider light/>
+                                                </>
 
-                                                    const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue) || floatValue === undefined) {
-                                                        setFieldValue('interest_rate_rage', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
+                                            ))
+                                        }
+                                        {
+                                            listFileServer.map((e) => (
+                                                <>
+                                                    <div className={'item-file'}>
+                                                        <div className={'name-file '}>{e.file_name}</div>
+                                                        <div className={'delete-file'}><DeleteOutlineIcon
+                                                            style={{cursor: "pointer"}}
+                                                            color={"error"}
+                                                            onClick={() => {
+                                                                deleteFileServer(e.id, e.file_name)
+                                                            }}></DeleteOutlineIcon></div>
+                                                    </div>
+                                                    <Divider light/>
+                                                </>
 
-                                                }}
-                                                error={touched.interest_rate_rage && Boolean(errors.interest_rate_rage)}
-                                                helperText={touched.interest_rate_rage && errors.interest_rate_rage}
-                                                // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
-                                            />
-                                            {/*<div>{</div>*/}
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div style={{display: "flex", alignItems: "center"}}>Tập đính
-                                                kèm <ControlPointIcon style={{cursor: "pointer", marginLeft: '10px'}}
-                                                                      color="primary"
-                                                                      onClick={uploadFile}> </ControlPointIcon></div>
-                                            <div className={'list-file'}>
-                                                {
-                                                    listFileLocal.map((e) => (
-                                                        <>
-                                                            <div className={'item-file'}>
-                                                                <div className={'name-file '}>{e.name}</div>
-                                                                <div className={'delete-file'}><DeleteOutlineIcon
-                                                                    style={{cursor: "pointer"}}
-                                                                    color={"error"}
-                                                                    onClick={() => {
-                                                                        deleteFileLocal(e.name)
-                                                                    }}></DeleteOutlineIcon></div>
-                                                            </div>
-                                                            <Divider light/>
-                                                        </>
+                                            ))
+                                        }
+                                    </div>
+                                </Grid>
+                                {/*<Grid item xs={6} md={6}>*/}
+                                {/*    <input type="file"/>*/}
+                                {/*</Grid>*/}
+                                <Grid item xs={6} md={12}>
+                                    <div className={''} style={{display: "flex", justifyContent: "center"}}>
+                                        <Button style={{marginRight: '10px'}} onClick={backList}
+                                                variant="outlined">Hủy</Button>
+                                        <Button variant="contained" type='submit'>Lưu</Button>
 
-                                                    ))
-                                                }
-                                                {
-                                                    listFileServer.map((e) => (
-                                                        <>
-                                                            <div className={'item-file'}>
-                                                                <div className={'name-file '}>{e.file_name}</div>
-                                                                <div className={'delete-file'}><DeleteOutlineIcon
-                                                                    style={{cursor: "pointer"}}
-                                                                    color={"error"}
-                                                                    onClick={() => {
-                                                                        deleteFileServer(e.id, e.file_name)
-                                                                    }}></DeleteOutlineIcon></div>
-                                                            </div>
-                                                            <Divider light/>
-                                                        </>
+                                    </div>
+                                </Grid>
+                            </Grid>
+                        </Box>
 
-                                                    ))
-                                                }
-                                            </div>
-                                        </Grid>
-                                        {/*<Grid item xs={6} md={6}>*/}
-                                        {/*    <input type="file"/>*/}
-                                        {/*</Grid>*/}
-                                        <Grid item xs={6} md={12}>
-                                            <div className={''} style={{display: "flex", justifyContent: "center"}}>
-                                                <Button style={{marginRight: '10px'}} onClick={backList}
-                                                        variant="outlined">Hủy</Button>
-                                                <Button variant="contained" type='submit'>Lưu</Button>
-
-                                            </div>
-                                        </Grid>
-                                    </Grid>
-                                </Box>
-
-                            </Form>)
-                    }}
-                </Formik>
-            </div>
-        </div>)
+                    </Form>)
+                }}
+            </Formik>
+        </div>
+    </div>)
 }
 
 function NumberFormatCustom(props) {
     const {inputRef, onChange, ...other} = props;
 
     return (<NumericFormat
-            {...other}
-            getInputRef={inputRef}
-            onValueChange={values => {
-                onChange({
-                    target: {
-                        value: values.value
-                    }
-                });
-            }}
-            thousandSeparator={","}
-            decimalSeparator={"."}
-            isNumericString
-            prefix={props.prefix} //"$"
-        />);
+        {...other}
+        getInputRef={inputRef}
+        onValueChange={values => {
+            onChange({
+                target: {
+                    value: values.value
+                }
+            });
+        }}
+        thousandSeparator={","}
+        decimalSeparator={"."}
+        isNumericString
+        prefix={props.prefix} //"$"
+    />);
 }
 
 NumberFormatCustom.propTypes = {

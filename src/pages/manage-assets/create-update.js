@@ -59,7 +59,8 @@ export default function EditAssets(props) {
         capital_value: '',
         max_capital_value: '',
         current_credit_value: '',
-        list_attachments: []
+        list_attachments: [],
+        new_reference_link:''
     })
     const {isUpdate} = props
     const [idUpdate, setIdUpdate] = useState(null)
@@ -67,7 +68,10 @@ export default function EditAssets(props) {
         asset_name: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(255, 'Tối đa 255 ký tự')
+        ,
+
         // asset_type: yup
         //     .string()
         //     .trim()
@@ -80,22 +84,34 @@ export default function EditAssets(props) {
         description: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(4000, 'Tối đa 4000 ký tự')
+        ,
         // .matches( /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/,"Nhập đúng định dạng số điện thoại"),
         initial_value: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(15, 'Tối đa 15 chữ số')
+        ,
+
         capital_value: yup
             .string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(15, 'Tối đa 15 chữ số')
+        ,
+
         max_capital_value: yup.string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(15, 'Tối đa 15 chữ số')
+        ,
         current_credit_value: yup.string()
             .trim()
-            .required('Không được để trống'),
+            .required('Không được để trống')
+            .max(15, 'Tối đa 15 chữ số')
+        ,
     });
     const backList = () => {
         navigate('/assets')
@@ -275,6 +291,8 @@ export default function EditAssets(props) {
                         capital_value: info.capital_value,
                         max_capital_value: info.max_capital_value,
                         current_credit_value: info.current_credit_value,
+                        new_reference_link:info.new_reference_link
+
                     }}
                     validationSchema={validationSchema}
                     onSubmit={
@@ -295,6 +313,7 @@ export default function EditAssets(props) {
                             formData.append('capitalValue', values.capital_value)
                             formData.append('currentCreditValue', values.current_credit_value)
                             formData.append('maxCapitalValue', values.max_capital_value)
+                            formData.append('newReferenceLink', values.new_reference_link)
                             // formData.append('currentCreditValue',values.)
                             console.log(valueConvert)
                             if (isUpdate) {
@@ -436,7 +455,7 @@ export default function EditAssets(props) {
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Giá trị ban đầu<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Giá trị ban đầu (VNĐ)<span className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 size={"small"}
                                                 style={{ textAlign:"right"}}
@@ -475,7 +494,7 @@ export default function EditAssets(props) {
 
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Vốn vay<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Vốn vay (VNĐ)<span className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 size={"small"}
                                                 id='capital_value'
@@ -511,7 +530,7 @@ export default function EditAssets(props) {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Gốc vay tín dụng hiện tại<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Gốc vay tín dụng hiện tại (VNĐ)<span className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 id='current_credit_value'
                                                 name='current_credit_value'
@@ -545,7 +564,7 @@ export default function EditAssets(props) {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Số tiền vay tối đa<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Số tiền vay tối đa (VNĐ)<span className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 id='max_capital_value'
                                                 name='max_capital_value'
@@ -584,6 +603,8 @@ export default function EditAssets(props) {
                                         <Grid item xs={6} md={6}>
                                             <div className={'label-input'}>Link tài liệu<span className={'error-message'}>*</span></div>
                                             <TextField
+                                                id={'new_reference_link'}
+                                                name={'new_reference_link'}
                                                 size={"small"}
                                                 className={'formik-input'}
                                                 // variant="standard"

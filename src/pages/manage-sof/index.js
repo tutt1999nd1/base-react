@@ -65,29 +65,8 @@ export default function ManageSOF() {
     const [listCategory, setListCategory] = useState([]);
     const [statusSOF, setStatusSOF] = useState();
     const [listCategoryTree, setListCategoryTree] = useState([
-        {
-            id:'1',
-            category_name:'Một',
-            child_categories:[{
-                id:'2',
-                category_name:'Hai',
-                child_categories:[]
-            }]
-        },
-
     ]);
-    const [listCampaignTree, setListCampaignTree] = useState([
-        {
-            id:'1',
-            campaign_name:'Một',
-            child_campaigns:[{
-                id:'2',
-                campaign_name:'Hai',
-                child_campaigns:[]
-            }]
-        },
-
-    ]);
+    const [listCampaignTree, setListCampaignTree] = useState([]);
     const [loading, setLoading] = useState(false)
     const [refresh, setRefresh] = useState(false)
     const [openModalDel, setOpenModalDel] = useState(false)
@@ -533,15 +512,19 @@ export default function ManageSOF() {
         }).catch(e => {
             console.log(e)
         })
-
-    }, [])
-    useEffect(() => {
         getListCategoryTreeApi({paging: false}).then(r => {
             console.log("setListCategoryTree", r.data)
             setListCategoryTree(r.data)
         }).catch(e => {
             console.log(e)
         })
+        getListCampaignTreeApi({paging: false}).then(r => {
+            console.log("setListCategoryTree", r.data)
+            setListCampaignTree(r.data)
+        }).catch(e => {
+            console.log(e)
+        })
+
     }, [])
 
     // const { data } = useDemoData({
@@ -561,6 +544,9 @@ export default function ManageSOF() {
     }
     const getListCategoryTreeApi = (data) => {
         return apiManagerCategory.getListCategoryTree(data);
+    }
+    const getListCampaignTreeApi = (data) => {
+        return apiManagerCampaign.getListCampaignTree(data);
     }
     const getListCampaignApi = (data) => {
         return apiManagerCampaign.getListCampaign(data);
@@ -650,7 +636,7 @@ export default function ManageSOF() {
                                 dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
                                 placeholder="Mục đích vay"
                                 allowClear
-                                // treeDefaultExpandAll
+                                treeDefaultExpandAll
                                 onChange={handleChangeCampaign}
                                 filterTreeNode={(search, item) => {
                                     return item.campaign_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
@@ -682,7 +668,7 @@ export default function ManageSOF() {
                                 dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
                                 placeholder="Hạng mục"
                                 allowClear
-                                // treeDefaultExpandAll
+                                treeDefaultExpandAll
                                 onChange={handleChangeCategory}
                                 filterTreeNode={(search, item) => {
                                     return item.category_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
