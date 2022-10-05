@@ -40,8 +40,10 @@ import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import Utils, {currencyFormatter} from "../../constants/utils";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import {red} from "@mui/material/colors";
+import {useSelector} from "react-redux";
 
 export default function ManageAssets() {
+    const currentUser = useSelector(state => state.currentUser)
     const navigate = useNavigate();
     //     const localizedTextsMap = {
     //     columnMenuUnsort: "não classificado",
@@ -359,7 +361,7 @@ export default function ManageAssets() {
             setLoading(false)
             console.log(e)
         })
-    }, [listResult.page, listResult.pageSize, nameSearch, groupSearch, typeSearch, refresh])
+    }, [listResult.page, listResult.pageSize, nameSearch, groupSearch, typeSearch, refresh,currentUser])
     useEffect(() => {
         getListAssetTypeApi().then(r => {
             if (r.data.asset_types) {
@@ -383,7 +385,7 @@ export default function ManageAssets() {
         }).catch(e => {
 
         })
-    }, [])
+    }, [currentUser])
 
     // const { data } = useDemoData({
     //     dataSet: 'Commodity',

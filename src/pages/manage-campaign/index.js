@@ -41,8 +41,10 @@ import apiManagerCampaign from "../../api/manage-campaign";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {TreeSelect} from "antd";
+import {useSelector} from "react-redux";
 
 export default function ManageCategory() {
+    const currentUser = useSelector(state => state.currentUser)
     const [openSearch, setOpenSearch] = useState(true)
     const [nameSearch, setNameSearch] = useState(null)
     const [listAllResult, setListAllResult] = useState([])

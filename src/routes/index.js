@@ -23,43 +23,52 @@ import Dashboard from "../pages/dashboard";
 export default function RenderRoute() {
     return (
         <Routes>
-            <Route path="/login" element={
-                <Login></Login>
+            {/*<Route path="/login" element={*/}
+            {/*    <Login></Login>*/}
 
 
-                // <Test></Test>
-            }>
-            </Route>
+            {/*    // <Test></Test>*/}
+            {/*}>*/}
+            {/*</Route>*/}
             <Route path="/" element={
-                <Main></Main>
+                <>
+                    <AuthenticatedTemplate>
+                        <Main></Main>
+                    </AuthenticatedTemplate>
+                    <UnauthenticatedTemplate>
+                        <Login></Login>
+                    </UnauthenticatedTemplate>
+                </>
+
 
             }>
-                <Route path="/" element={<ManageAssets></ManageAssets>}/>
-                {/*<Route path="/dashboard" element={<Dashboard></Dashboard>}/>*/}
-                <Route path="/dashboard" element={<div>Dashboard</div>}/>
-                <Route path="/assets" element={<ManageAssets></ManageAssets>}/>
-                <Route path="/assets/create" element={<EditAssets isUpdate={false}></EditAssets>}/>
-                <Route path="/assets/detail" element={<DetailAsset></DetailAsset>}/>
-                <Route path="/assets/update" element={<EditAssets isUpdate={true}></EditAssets>}/>
-                <Route path="/company" element={<ManageCompany></ManageCompany>}/>
-                <Route path="/company/create" element={<EditCompany isUpdate={false}></EditCompany>}/>
-                <Route path="/company/update" element={<EditCompany isUpdate={true}></EditCompany>}/>
-                <Route path="/company/detail" element={<DetailCompany></DetailCompany>}/>
-                <Route path="/category" element={<ManageCategory></ManageCategory>}/>
-                <Route path="/category/create" element={<EditCategory isUpdate={false}></EditCategory>}/>
-                <Route path="/category/update" element={<EditCategory isUpdate={true}></EditCategory>}/>
-                <Route path="/category/detail" element={<DetailCategory></DetailCategory>}/>
-                <Route path="/campaign" element={<ManageCampaign></ManageCampaign>}/>
-                <Route path="/campaign/create" element={<EditCampaign isUpdate={false}></EditCampaign>}/>
-                <Route path="/campaign/update" element={<EditCampaign isUpdate={true}></EditCampaign>}/>
-                <Route path="/campaign/detail" element={<DetailCampaign></DetailCampaign>}/>
-                <Route path="/sof" element={<ManageSOF>Khoản vay</ManageSOF>}/>
-                <Route path="/sof/create" element={<EditSOF isUpdate={false}></EditSOF>}/>
-                <Route path="/sof/update" element={<EditSOF isUpdate={true}></EditSOF>}/>
-                <Route path="/sof/detail" element={<DetailSOF></DetailSOF>}/>
-                <Route path="/account" element={<div>Tài khoản</div>}/>
-                <Route path="/company" element={<div>Công ty vay</div>}/>
-                <Route path="/categories" element={<div>Hạng mục</div>}/>
+                <Route path="" element={<ManageAssets></ManageAssets>}/>
+                <Route path="" element={<ManageAssets></ManageAssets>}/>
+                <Route path="/dashboard" element={<Dashboard></Dashboard>}/>
+                {/*<Route path="dashboard" element={<div>Dashboard</div>}/>*/}
+                <Route path="assets" element={<ManageAssets></ManageAssets>}/>
+                <Route path="assets/create" element={<EditAssets isUpdate={false}></EditAssets>}/>
+                <Route path="assets/detail" element={<DetailAsset></DetailAsset>}/>
+                <Route path="assets/update" element={<EditAssets isUpdate={true}></EditAssets>}/>
+                <Route path="company" element={<ManageCompany></ManageCompany>}/>
+                <Route path="company/create" element={<EditCompany isUpdate={false}></EditCompany>}/>
+                <Route path="company/update" element={<EditCompany isUpdate={true}></EditCompany>}/>
+                <Route path="company/detail" element={<DetailCompany></DetailCompany>}/>
+                <Route path="category" element={<ManageCategory></ManageCategory>}/>
+                <Route path="category/create" element={<EditCategory isUpdate={false}></EditCategory>}/>
+                <Route path="category/update" element={<EditCategory isUpdate={true}></EditCategory>}/>
+                <Route path="category/detail" element={<DetailCategory></DetailCategory>}/>
+                <Route path="campaign" element={<ManageCampaign></ManageCampaign>}/>
+                <Route path="campaign/create" element={<EditCampaign isUpdate={false}></EditCampaign>}/>
+                <Route path="campaign/update" element={<EditCampaign isUpdate={true}></EditCampaign>}/>
+                <Route path="campaign/detail" element={<DetailCampaign></DetailCampaign>}/>
+                <Route path="sof" element={<ManageSOF>Khoản vay</ManageSOF>}/>
+                <Route path="sof/create" element={<EditSOF isUpdate={false}></EditSOF>}/>
+                <Route path="sof/update" element={<EditSOF isUpdate={true}></EditSOF>}/>
+                <Route path="sof/detail" element={<DetailSOF></DetailSOF>}/>
+                <Route path="account" element={<div>Tài khoản</div>}/>
+                <Route path="company" element={<div>Công ty vay</div>}/>
+                <Route path="categories" element={<div>Hạng mục</div>}/>
             </Route>
         </Routes>
     )

@@ -8,7 +8,7 @@ import {updateShowMenu} from "../store/user/userSlice";
 import {useMsal} from "@azure/msal-react";
 import Axios from 'axios'
 const Header = () => {
-    const { instance } = useMsal()
+    const { instance,accounts } = useMsal()
     // const [anchorEl, setAnchorEl] =
     const currentUser = useSelector(state => state.currentUser)
     const dispatch = useDispatch()
@@ -20,9 +20,20 @@ const Header = () => {
     const handleClose = () => {
         setAnchorEl(null);
     };
-    function handleLogout() {
-        // localStorage.clear();
-        // instance.logoutRedirect().catch(e => {
+    async function handleLogout() {
+        // const logoutHint = accounts[0].idTokenClaims.login_hint;
+        // await msalInstance.logoutPopup({ logoutHint: logoutHint });
+        let homeAccountId = currentUser.homeAccountId;
+
+        const currentAccount = instance.getAccountByHomeId(homeAccountId);
+// The account's ID Token must contain the login_hint optional claim to avoid the account picker
+         instance.logoutRedirect({account: currentAccount});
+        // const logoutRequest = {
+        //     account: instance.getAccountByHomeId(currentUser.homeAccountId),
+        //     postLogoutRedirectUri: "http://localhost:3000/login",
+        // };
+        // // localStorage.clear();
+        // instance.logoutRedirect(logoutRequest).catch(e => {
         //     console.error(e);
         // });
     }
@@ -30,17 +41,17 @@ const Header = () => {
       dispatch(updateShowMenu(!currentUser.showMenu))
     }
     const [imageUrl, setImageUrl] = useState(null)
-    useEffect(() => {
-        Axios.get('https://graph.microsoft.com/v1.0/me/photo/$value', {
-            headers: { 'Authorization': `Bearer ${currentUser.token}` },
-            responseType: 'blob'
-        }).then(o => {
-            const url = window.URL || window.webkitURL;
-            const blobUrl = url.createObjectURL(o.data);
-            console.log("blobUrl",blobUrl)
-            setImageUrl(blobUrl)
-        })
-    }, [currentUser])
+    // useEffect(() => {
+    //     Axios.get('https://graph.microsoft.com/v1.0/me/photo/$value', {
+    //         headers: { 'Authorization': `Bearer ${currentUser.token}` },
+    //         responseType: 'blob'
+    //     }).then(o => {
+    //         const url = window.URL || window.webkitURL;
+    //         const blobUrl = url.createObjectURL(o.data);
+    //         console.log("blobUrl",blobUrl)
+    //         setImageUrl(blobUrl)
+    //     })
+    // }, [currentUser])
     return (
         <header className={'header'}>
             <div style={{display:"flex",justifyContent:'space-between',width:'100%'}}>

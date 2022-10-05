@@ -13,6 +13,7 @@ export const userSlice = createSlice({
         language: 'en',
         showMenu:true,
         msalInstance:undefined,
+        homeAccountId:''
     },
     reducers: {
         updateProjectRedux: (state, action) => {
@@ -48,6 +49,9 @@ export const userSlice = createSlice({
         },
         updateShowMenu: (state, action) => {
             state.showMenu = action.payload
+        },
+        updateHomeAccountId: (state, action) => {
+            state.homeAccountId = action.payload
         },
         onMsalInstanceChange: (state, action) => {
             // alert("tuuu")
@@ -93,4 +97,4 @@ export const userSlice = createSlice({
     }
 })
 export default userSlice.reducer;
-export const {updateName,onMsalInstanceChange,updateShowMenu, updateToken, updateProjectRedux, updateLanguage, logout, updateLoading, updateRole,updateUsername } = userSlice.actions;
+export const {updateHomeAccountId,updateName,onMsalInstanceChange,updateShowMenu, updateToken, updateProjectRedux, updateLanguage, logout, updateLoading, updateRole,updateUsername } = userSlice.actions;

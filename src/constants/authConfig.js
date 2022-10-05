@@ -1,8 +1,15 @@
 export const msalConfig = {
+    // auth: {
+    //     clientId: "51bdc8d4-f5de-4d4a-97ec-ae446b32c0d2",
+    //     authority: "https://login.microsoftonline.com/a3caf050-59a6-4dd2-ac1b-2566f947dd3d", // This is a URL (e.g. https://login.microsoftonline.com/{your tenant ID})
+    //     redirectUri: "http://localhost:3000/login",
+    // },
     auth: {
-        clientId: "51bdc8d4-f5de-4d4a-97ec-ae446b32c0d2",
+        clientId: "eb78163a-2610-446e-9815-9298ffe657d8",
         authority: "https://login.microsoftonline.com/a3caf050-59a6-4dd2-ac1b-2566f947dd3d", // This is a URL (e.g. https://login.microsoftonline.com/{your tenant ID})
-        redirectUri: "http://localhost:3000/login",
+        // redirectUri: "https://cashflow.amberholdings.vn/login",
+        // redirectUri: "http://localhost:3000/login",
+        redirectUri: "http://localhost:3000/dashboard",
     },
     cache: {
         cacheLocation: "localStorage", // This configures where your cache will be stored
@@ -13,6 +20,7 @@ export const msalConfig = {
 // Add scopes here for ID token to be used at Microsoft identity platform endpoints.
 export const loginRequest = {
     scopes: ["User.Read"]
+    // scopes: ["api://eb78163a-2610-446e-9815-9298ffe657d8/user.read.info"]
 };
 
 // Add the endpoints here for Microsoft Graph API services you'd like to use.

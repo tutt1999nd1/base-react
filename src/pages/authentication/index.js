@@ -3,7 +3,13 @@ import apiManagerAuth from "../../api/manager-auth";
 import MicrosoftLogin from "react-microsoft-login";
 import {useNavigate} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {onMsalInstanceChange, updateName, updateToken, updateUsername} from "../../store/user/userSlice";
+import {
+    onMsalInstanceChange,
+    updateHomeAccountId,
+    updateName,
+    updateToken,
+    updateUsername
+} from "../../store/user/userSlice";
 import {useMsal} from "@azure/msal-react";
 import {loginRequest} from "../../constants/authConfig";
 import { useIsAuthenticated } from "@azure/msal-react";
@@ -16,45 +22,52 @@ export default function Login() {
     const [accessToken, setAccessToken] = useState(null);
     const handleLogin = () => {
         instance.loginPopup(loginRequest).then(r=>{
-            console.log("r")
+            console.log("r",r)
         }).catch(e => {
             console.error(e);
         });
     }
-    function RequestAccessToken() {
-        const request = {
-            ...loginRequest,
-            account: accounts[0]
-        };
+    // function RequestAccessToken() {
+    //     const request = {
+    //         ...loginRequest,
+    //         account: accounts[0]
+    //     };
+    //
+    //     // Silently acquires an access token which is then attached to a request for Microsoft Graph data
+    //     instance.acquireTokenSilent(request).then((response) => {
+    //         setAccessToken(response.accessToken);
+    //         dispatch(updateToken(response.accessToken));
+    //
+    //     }).catch((e) => {
+    //         instance.acquireTokenPopup(request).then((response) => {
+    //             setAccessToken(response.accessToken);
+    //             dispatch(updateToken(response.accessToken));
+    //
+    //         });
+    //     });
+    // }
+    // if (inProgress === InteractionStatus.None && isAuthenticated) {
+    //     navigate('/')
+    // }
 
-        // Silently acquires an access token which is then attached to a request for Microsoft Graph data
-        instance.acquireTokenSilent(request).then((response) => {
-            setAccessToken(response.accessToken);
-            dispatch(updateToken(response.accessToken));
-
-        }).catch((e) => {
-            instance.acquireTokenPopup(request).then((response) => {
-                setAccessToken(response.accessToken);
-                dispatch(updateToken(response.accessToken));
-
-            });
-        });
-    }
-    if (inProgress === InteractionStatus.None && isAuthenticated) {
-        navigate('/')
-    }
+    // useEffect(()=>{
+    //     console.log("accounts[0]",accounts[0])
+    //     if(isAuthenticated){
+    //         dispatch(updateUsername(accounts[0].username))
+    //         dispatch(updateName(accounts[0].name))
+    //         dispatch(updateHomeAccountId(accounts[0].homeAccountId))
+    //         RequestAccessToken();
+    //         // navigate('/dashboard')
+    //         // console.log("accounts",accounts)
+    //     }
+    //     // else {
+    //     //     localStorage.clear()
+    //     //
+    //     // }
+    // },[isAuthenticated])
     useEffect(()=>{
-        if(isAuthenticated){
-            dispatch(updateUsername(accounts[0].username))
-            dispatch(updateName(accounts[0].name))
-            RequestAccessToken();
-            navigate('/')
-            // console.log("accounts",accounts)
-        }
-    },[isAuthenticated])
-    useEffect(()=>{
-        console.log("assetToken",accessToken)
-    },[accessToken])
+        localStorage.clear();
+    },[])
     return (
         <div className={'wrapper-login'}>
             <div className={'wrapper-form-login'}>

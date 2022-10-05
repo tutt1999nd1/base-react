@@ -52,8 +52,10 @@ import apiManagerCampaign from "../../api/manage-campaign";
 
 import data from "./data.json";
 import TreeNodeCustomize from "../../components/TreeNodeCustomize";
+import {useSelector} from "react-redux";
 
 export default function ManageSOF() {
+    const currentUser = useSelector(state => state.currentUser)
     const navigate = useNavigate();
     const [value, setValue] = useState()
     const {TreeNode} = TreeSelect;

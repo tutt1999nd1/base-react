@@ -38,8 +38,10 @@ import Utils, {currencyFormatter} from "../../constants/utils";
  import apiManagerCompany from "../../api/manage-company";
  import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
  import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
+ import {useSelector} from "react-redux";
 
 export default function ManageCompany() {
+    const currentUser = useSelector(state => state.currentUser)
     const [openSearch, setOpenSearch] = useState(true)
     const [nameSearch,setNameSearch] =useState(null)
     const [contactSearch,setContactSearch] =useState(null)

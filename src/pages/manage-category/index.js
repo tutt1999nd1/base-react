@@ -40,8 +40,10 @@ import Utils, {currencyFormatter} from "../../constants/utils";
  import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
  import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
  import {TreeSelect} from "antd";
+ import {useSelector} from "react-redux";
 
 export default function ManageCategory() {
+    const currentUser = useSelector(state => state.currentUser)
     const [nameSearch,setNameSearch] =useState(null)
     const [listAllCategory,setListAllCategory] =useState([])
     const navigate = useNavigate();
