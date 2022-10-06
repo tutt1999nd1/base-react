@@ -34,7 +34,7 @@ import {GridColDef} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import Utils, {currencyFormatter} from "../../constants/utils";
+import Utils, {currencyFormatter, pending} from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import apiManagerCategory from "../../api/manage-category";
 import apiManagerCampaign from "../../api/manage-campaign";
@@ -56,7 +56,7 @@ export default function ManageCategory() {
     const [listCampaignTree, setListCampaignTree] = useState([]);
     const [listResult, setListResult] = React.useState({
         page: 0,
-        pageSize: 5,
+        pageSize: 10,
         rows: [],
         total: 0
     });
@@ -329,15 +329,17 @@ export default function ManageCategory() {
                     <Typography variant="h5" className={'main-content-tittle'}>
                         Quản lý mục đích vay
                     </Typography>
-                    <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
-                        Thêm
-                    </Button>
+                    <div>
+                        <Button onClick={pending} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
+                        <Button onClick={pending} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
+                                startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
+                        <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
+                            Thêm
+                        </Button>
+                    </div>
+
                 </div>
-                <div className={'row'}>
-                    <Button variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
-                    <Button style={{marginLeft: '10px'}} variant="text"
-                            startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
-                </div>
+
             </div>
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>

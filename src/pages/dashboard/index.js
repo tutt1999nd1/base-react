@@ -1,18 +1,63 @@
 import {Box, Divider, Grid, Tab,Tabs, Tooltip} from "@mui/material";
-import React, {useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import ReactECharts from 'echarts-for-react';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DonutLargeIcon from '@mui/icons-material/DonutLarge';
-import {a11yProps, TabPanel} from "../../constants/utils";
+import {a11yProps, convertToBarChart, convertToPieChart, currencyFormatter, sum, TabPanel} from "../../constants/utils";
+import apiManagerAssets from "../../api/manage-assets";
+import {useSelector} from "react-redux";
+import apiManagerSOF from "../../api/manage-sof";
 export default function Dashboard() {
+    const currentUser = useSelector(state => state.currentUser)
+    const [listAsset,setListAsset] = useState([])
+    const [listSOF,setListSOF] = useState([])
     const [tab, setTab] = React.useState(0);
-
+    const [keyUpdateAsset,setKeyUpdateAsset] = useState(Math.random);
+    const [keyUpdateSOF,setKeyUpdateSOF] = useState(Math.random);
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setTab(newValue);
     };
     const [typeChartAsset,setTypeChartAsset] = useState('pie');
     const [typeChartSOF,setTypeChartSOF] = useState('category');
-    const options = {
+    const [optionPieAsset,setOptionPieAsset]=useState( {
+        // title: {
+        //     text: 'Referer of a Website',
+        //     subtext: 'Fake Data',
+        //     left: 'center'
+        // },
+        tooltip: {
+            trigger: 'item'
+        },
+        legend: {
+            orient: 'vertical',
+            left: 0,
+        },
+        series: [
+            {
+                label: {
+                    formatter: '{b}: {@[' + 'Tỷ' + ']} Tỷ({d}%)'
+                },
+                encode: {
+                    value: '11',
+                    tooltip: '11'
+                },
+                type: 'pie',
+                radius: '75%',
+                data: [
+
+                    // { value: 300, name: 'Video Ads' }
+                ],
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    })
+    const [optionBarAsset,setOptionBarAsset]= useState({
         // legend: {
         //     data: ['Cho vay', 'Dự án', 'Đầu tư tài chính','Tài sản bất động sản']
         // },
@@ -25,11 +70,11 @@ export default function Dashboard() {
         xAxis: {
             triggerEvent: true,
             type: 'category',
-            data: ['Cho vay', 'Dự án','Đầu tư tài chính', 'Tài sản bất động sản'],
+            data: [],
             axisLabel: { interval: 0, rotate: 30 }
         },
         yAxis: {
-            name: 'Tiền (Triệu VNĐ)',
+            name: 'Tiền (Tỷ VNĐ)',
             type: 'value',
             // axisLabel: {
             //     formatter: '{value} Tr VNĐ'
@@ -37,7 +82,7 @@ export default function Dashboard() {
         },
         series: [
             {
-                data: [1000, 2000, 1700, 1300],
+                data: [],
                 type: 'bar',
                 smooth: true,
             },
@@ -46,8 +91,8 @@ export default function Dashboard() {
         tooltip: {
             trigger: 'axis',
         },
-    };
-    const option_pie = {
+    })
+    const [optionPieSOF,setOptionPieSOF]=useState( {
         // title: {
         //     text: 'Referer of a Website',
         //     subtext: 'Fake Data',
@@ -57,14 +102,13 @@ export default function Dashboard() {
             trigger: 'item'
         },
         legend: {
-            orient: 'horizontal',
-            bottom: 0,
+            orient: 'vertical',
+            left: 0,
         },
         series: [
             {
-                // name: 'Access From',]
                 label: {
-                    formatter: '{b}: {@[' + '1' + ']} ({d}%)'
+                    formatter: '{b}: {@[' + 'Tỷ' + ']} Tỷ({d}%)'
                 },
                 encode: {
                     value: '11',
@@ -73,10 +117,7 @@ export default function Dashboard() {
                 type: 'pie',
                 radius: '75%',
                 data: [
-                    { value: 10020, name: 'Cho vay' },
-                    { value: 2000, name: 'Dự án' },
-                    { value: 1700, name: 'Đầu tư tài chính' },
-                    { value: 1300, name: 'Tài sản bất động sản' },
+
                     // { value: 300, name: 'Video Ads' }
                 ],
                 emphasis: {
@@ -88,7 +129,98 @@ export default function Dashboard() {
                 }
             }
         ]
-    };
+    })
+    const [optionBarSOF,setOptionBarSOF]= useState({
+        // legend: {
+        //     data: ['Cho vay', 'Dự án', 'Đầu tư tài chính','Tài sản bất động sản']
+        // },
+        // title: {
+        //     text: 'Referer of a Website',
+        //     subtext: 'Fake Data',
+        //     left: 'center'
+        // },
+        // grid: {top: 8, right: 8, bottom: 80, left: 50},
+        xAxis: {
+            triggerEvent: true,
+            type: 'category',
+            data: [],
+            axisLabel: { interval: 0, rotate: 30 }
+        },
+        yAxis: {
+            name: 'Tiền (Tỷ VNĐ)',
+            type: 'value',
+            // axisLabel: {
+            //     formatter: '{value} Tr VNĐ'
+            // }
+        },
+        series: [
+            {
+                data: [],
+                type: 'bar',
+                smooth: true,
+            },
+        ]
+        ,
+        tooltip: {
+            trigger: 'axis',
+        },
+    })
+    useEffect(()=>{
+        if(currentUser.token){
+            getListAssetApi().then(r=>{
+                setListAsset(r.data.asset_aggregates)
+            })
+            getListSOFApi().then(r=>{
+                console.log("r",r)
+                // setListAsset(r.data.asset_aggregates)
+                setListSOF(r.data.sof_aggregates)
+            })
+        }
+
+    },[currentUser.token])
+    useEffect(()=>{
+        //assets
+        let arrPieChart = convertToPieChart(listAsset,'group_name')
+        let assetBar = convertToBarChart(listAsset,'group_name')
+        let option_pieAsset_copy = {...optionPieAsset};
+        option_pieAsset_copy.series[0].data = arrPieChart;
+        setOptionPieAsset(option_pieAsset_copy)
+
+        let optionBarAssetCopy = {...optionBarAsset};
+        console.log("assetBar",assetBar)
+        optionBarAssetCopy.series[0].data = assetBar.listValue;
+        optionBarAssetCopy.xAxis.data = assetBar.listName;
+        setOptionBarAsset(optionBarAssetCopy)
+
+        //sof
+
+        let arrPieChartSOF = convertToPieChart(listSOF,'category_name')
+        let sofBar = convertToBarChart(listSOF,'category_name')
+        let optionPieSOFCopy = {...optionPieSOF};
+        optionPieSOFCopy.series[0].data = arrPieChartSOF;
+        setOptionPieSOF(optionPieSOFCopy)
+
+        let optionBarSOFCopy = {...optionBarSOF};
+        console.log("assetBar",assetBar)
+        optionBarSOFCopy.series[0].data = sofBar.listValue;
+        optionBarSOFCopy.xAxis.data = sofBar.listName;
+        setOptionBarSOF(optionBarSOFCopy)
+        if(listAsset.length>0){
+            setKeyUpdateAsset(Math.random)
+        }
+        if(listSOF.length>0){
+            setKeyUpdateSOF(Math.random)
+        }
+    },[listAsset,listSOF])
+    useEffect(()=>{
+    },[optionPieAsset,optionBarAsset])
+
+    const getListAssetApi = () => {
+      return apiManagerAssets.getListAssetDashboard();
+    }
+    const getListSOFApi = () => {
+      return apiManagerSOF.getListSOFDashboard();
+    }
     return(
         <Box sx={{ width: '100%' }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -114,61 +246,53 @@ export default function Dashboard() {
                                                 Tài sản:
                                             </div>
                                             <table>
-                                                <tr>
-                                                    <th>Khoản mục</th>
-                                                    <th>Giá trị (VNĐ)</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>Dự án</td>
-                                                    <td>2000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Cho vay</td>
-                                                    <td>1000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Đầu tư tài chính</td>
-                                                    <td>1700</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Tài sản bất động sản</td>
-                                                    <td>1300</td>
-                                                </tr>
+                                                <thead>
+                                                <th>Khoản mục</th>
+                                                <th>Giá trị (VNĐ)</th>
+                                                </thead>
+                                                <tbody>
+                                                {
+                                                    listAsset.map((e)=>(
+                                                        <tr>
+                                                            <td>{e.group_name}</td>
+                                                            <td>{currencyFormatter(e.total_value)}</td>
+                                                        </tr>
+                                                    ))
+                                                }
+
+                                                </tbody>
+
                                                 <tr className={'row-total'}>
                                                     <th>Tổng</th>
-                                                    <th>100000</th>
+                                                    <th>{currencyFormatter(sum(listAsset,"total_value"))}</th>
                                                 </tr>
                                             </table>
 
                                         </div>
+
                                         <div className={'wrapper-table'}>
                                             <div className={'tittle-table'}>
                                                 Nguồn vốn:
                                             </div>
                                             <table>
-                                                <tr>
-                                                    <th>Khoản mục</th>
-                                                    <th>Giá trị (VNĐ)</th>
-                                                </tr>
-                                                <tr>
-                                                    <td>Tín dụng</td>
-                                                    <td>2000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Trái phiếu</td>
-                                                    <td>1000</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Bán cổ phần</td>
-                                                    <td>1700</td>
-                                                </tr>
-                                                <tr>
-                                                    <td>Nợ khác</td>
-                                                    <td>1300</td>
-                                                </tr>
+                                                <thead>
+                                                <th>Khoản mục</th>
+                                                <th>Giá trị (VNĐ)</th>
+                                                </thead>
+                                                <tbody>
+                                                {
+                                                    listSOF.map((e)=>(
+                                                        <tr>
+                                                            <td>{e.category_name}</td>
+                                                            <td>{currencyFormatter(e.total_value)}</td>
+                                                        </tr>
+                                                    ))
+                                                }
+
+                                                </tbody>
                                                 <tr className={'row-total'}>
                                                     <th>Tổng</th>
-                                                    <th>100000</th>
+                                                    <th>{currencyFormatter(sum(listSOF,"total_value"))}</th>
                                                 </tr>
                                             </table>
 
@@ -187,7 +311,7 @@ export default function Dashboard() {
                                     <h4>Tài sản</h4>
                                 </div>
                                 <Divider light/>
-                                <div className={'widget-content'}>
+                                <div key={keyUpdateAsset}  className={'widget-content'}>
                                     <div className={'type-bar'}>
                                         <Tooltip title={'Đồ thị thanh'}>
                                             <BarChartIcon color={`${typeChartAsset==='category'?'primary':''}`} className={'icon'} onClick={()=>{setTypeChartAsset('category')}}></BarChartIcon>
@@ -197,18 +321,17 @@ export default function Dashboard() {
                                         </Tooltip>
                                     </div>
                                     {/*<ReactECharts  />*/}
-                                    <ReactECharts  notMerge={true} option={typeChartAsset==='category'?options:option_pie} />
+                                    <ReactECharts style={{width:'100%',height:'400px'}}   notMerge={true} option={typeChartAsset==='category'?optionBarAsset:optionPieAsset} />
                                 </div>
                             </div>
-
                         </Grid>
-                        <Grid item xs={6} md={6}>
+                        <Grid item xs={12} md={6}>
                             <div className={'widget'}>
                                 <div className={'widget-tittle'}>
                                     <h4>Nguồn vốn</h4>
                                 </div>
                                 <Divider light/>
-                                <div className={'widget-content'}>
+                                <div key={keyUpdateSOF}  className={'widget-content'}>
                                     <div className={'type-bar'}>
                                         <Tooltip title={'Đồ thị thanh'}>
                                             <BarChartIcon color={`${typeChartSOF==='category'?'primary':''}`} className={'icon'} onClick={()=>{setTypeChartSOF('category')}}></BarChartIcon>
@@ -218,11 +341,30 @@ export default function Dashboard() {
                                         </Tooltip>
                                     </div>
                                     {/*<ReactECharts  />*/}
-                                    <ReactECharts  notMerge={true} option={typeChartSOF==='category'?options:option_pie} />
+                                    <ReactECharts style={{width:'100%',height:'400px'}}   notMerge={true} option={typeChartSOF==='category'?optionBarSOF:optionPieSOF} />
                                 </div>
                             </div>
-
                         </Grid>
+                        {/*<Grid item xs={6} md={6}>*/}
+                        {/*    <div className={'widget'}>*/}
+                        {/*        <div className={'widget-tittle'}>*/}
+                        {/*            <h4>Nguồn vốn</h4>*/}
+                        {/*        </div>*/}
+                        {/*        <Divider light/>*/}
+                        {/*        <div className={'widget-content'}>*/}
+                        {/*            <div className={'type-bar'}>*/}
+                        {/*                <Tooltip title={'Đồ thị thanh'}>*/}
+                        {/*                    <BarChartIcon color={`${typeChartSOF==='category'?'primary':''}`} className={'icon'} onClick={()=>{setTypeChartSOF('category')}}></BarChartIcon>*/}
+                        {/*                </Tooltip>*/}
+                        {/*                <Tooltip title={'Đồ thị tròn'}>*/}
+                        {/*                    <DonutLargeIcon color={`${typeChartSOF==='pie'?'primary':''}`} className={'icon'} onClick={()=>{setTypeChartSOF('pie')}}></DonutLargeIcon>*/}
+                        {/*                </Tooltip>*/}
+                        {/*            </div>*/}
+                        {/*            /!*<ReactECharts  />*!/*/}
+                        {/*            <ReactECharts  notMerge={true} option={typeChartSOF==='category'?options:optionPieAsset} />*/}
+                        {/*        </div>*/}
+                        {/*    </div>*/}
+                        {/*</Grid>*/}
                     </Grid>
                 </Box>
             </TabPanel>

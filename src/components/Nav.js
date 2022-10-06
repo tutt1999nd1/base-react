@@ -13,12 +13,15 @@ import AssignmentIcon from '@mui/icons-material/Assignment';
 import {useDispatch,useSelector} from "react-redux";
 export default function Nav() {
     const { pathname } = useLocation();
+    const navigate = useNavigate()
     const currentUser = useSelector(state => state.currentUser)
     const [open, setOpen] = useState(true)
     const handleClickCollapse = () => {
         setOpen(!open);
     };
-
+    useEffect(() => {
+        if (pathname == '/') navigate('/dashboard')
+    }, [pathname])
     return (
         <nav className={`nav ${currentUser.showMenu?'':'hidden'}`}>
             <div style={{margin: '10px'}}>
@@ -27,7 +30,7 @@ export default function Nav() {
             <hr/>
             <div style={{marginTop: "10px"}}>
                 <ul>
-                    <NavLink className={'nav-link'} to={'dashboard'}>
+                    <NavLink className={'nav-link'} isActive={true} to={'dashboard'}>
                         <li>
                             <div className={'nav-item'}>
                                 <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>

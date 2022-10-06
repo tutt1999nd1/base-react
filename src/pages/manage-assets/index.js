@@ -37,7 +37,7 @@ import {GridColDef} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import Utils, {currencyFormatter} from "../../constants/utils";
+import Utils, {currencyFormatter, pending} from "../../constants/utils";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import {red} from "@mui/material/colors";
 import {useSelector} from "react-redux";
@@ -65,7 +65,7 @@ export default function ManageAssets() {
     const [openSearch, setOpenSearch] = useState(true)
     const [listResult, setListResult] = React.useState({
         page: 0,
-        pageSize: 5,
+        pageSize: 10,
         rows: [
             // {
             //     id:1,
@@ -431,15 +431,17 @@ export default function ManageAssets() {
                     <Typography variant="h5" className={'main-content-tittle'}>
                         Quản lý tài sản
                     </Typography>
-                    <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
-                        Thêm
-                    </Button>
+                    <div>
+                        <Button onClick={pending} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
+                        <Button onClick={pending} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
+                                startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
+                        <Button  onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
+                            Thêm
+                        </Button>
+                    </div>
+
                 </div>
-                <div className={'row'}>
-                    <Button variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
-                    <Button style={{marginLeft: '10px'}} variant="text"
-                            startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
-                </div>
+
             </div>
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>

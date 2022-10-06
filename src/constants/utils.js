@@ -51,6 +51,32 @@ export const currencyFormatter = (value) => {
     }
     return arr;
 }
+export const convertToPieChart = (arr,name) => {
+    for (let i = 0; i < arr.length; i++) {
+        arr[i].name=arr[i][name];
+        arr[i].value= Math.round(arr[i].total_value/1000000000 * 100) / 100;    }
+    return arr;
+}
+export const sum = function (arr,prop) {
+    var total = 0
+    for ( var i = 0, _len = arr.length; i < _len; i++ ) {
+        total += arr[i][prop]
+    }
+    return total
+}
+export const pending = function () {
+    alert("Tính năng đang phát triển")
+}
+
+export const convertToBarChart = (arr,name) => {
+    let listValue = [];
+    let listName =[]
+    for (let i = 0; i < arr.length; i++) {
+        listName.push(arr[i][name]);
+        listValue.push(Math.round(arr[i].total_value/1000000000 * 100) / 100)
+    }
+    return {listName:listName,listValue:listValue};
+}
 export const convertTo = () => {
 
 }

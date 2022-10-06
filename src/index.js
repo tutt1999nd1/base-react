@@ -8,17 +8,31 @@ import {persistStore} from "redux-persist";
 import store from "./store/store";
 import {PersistGate} from "redux-persist/integration/react";
 import {BrowserRouter} from "react-router-dom";
+import { PublicClientApplication } from "@azure/msal-browser";
+import { MsalProvider } from "@azure/msal-react";
+import {msalConfig} from "./constants/authConfig";
+const msalInstance = new PublicClientApplication(msalConfig);
 let persistor = persistStore(store);
 const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-    <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-            <BrowserRouter>
-                <App/>
-            </BrowserRouter>
-        </PersistGate>
-    </Provider>,
-);
+if (window.location.hash !== ''){
+    console.log("hash found" + window.location.hash);
+}
+else {
+    root.render(
+        <Provider store={store}>
+            <PersistGate loading={null} persistor={persistor}>
+                <BrowserRouter>
+                    <MsalProvider instance={msalInstance}>
+                        <App/>
+
+                    </MsalProvider>
+                </BrowserRouter>
+            </PersistGate>
+        </Provider>,
+    );
+}
+
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

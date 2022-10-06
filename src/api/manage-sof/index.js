@@ -5,6 +5,9 @@ class ApiManagerSOF{
     getListSOF = (data) => {
         return axiosClient.post(API_MAP.GET_LIST_SOF,data)
     }
+    getListSOFDashboard = (data) => {
+        return axiosClient.get(API_MAP.GET_LIST_SOF_DASHBOARD,data)
+    }
     createSOF = (data) => {
         return axiosClient.post(API_MAP.CREATE_SOF,data,{
             // params: description,

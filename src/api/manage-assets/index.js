@@ -23,6 +23,9 @@ class ApiManagerAssets{
     getAssetType = () => {
         return axiosClient.get(API_MAP.GET_ASSETS_TYPE)
     }
+    getListAssetDashboard = (data) => {
+        return axiosClient.get(API_MAP.GET_LIST_ASSETS_DASHBOARD,data)
+    }
     // deleteBackup = (data) => {
     //     return axiosClient.post(API_MAP.DELETE_BACKUP ,data)
     // }

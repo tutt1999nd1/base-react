@@ -42,8 +42,7 @@ export default function RenderRoute() {
 
 
             }>
-                <Route path="" element={<ManageAssets></ManageAssets>}/>
-                <Route path="" element={<ManageAssets></ManageAssets>}/>
+                <Route path="" element={<Dashboard></Dashboard>}/>
                 <Route path="/dashboard" element={<Dashboard></Dashboard>}/>
                 {/*<Route path="dashboard" element={<div>Dashboard</div>}/>*/}
                 <Route path="assets" element={<ManageAssets></ManageAssets>}/>

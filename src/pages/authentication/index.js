@@ -21,7 +21,7 @@ export default function Login() {
     const { instance, accounts, inProgress } = useMsal();
     const [accessToken, setAccessToken] = useState(null);
     const handleLogin = () => {
-        instance.loginPopup(loginRequest).then(r=>{
+        instance.loginPopup({...loginRequest,prompt:'consent'}).then(r=>{
             console.log("r",r)
         }).catch(e => {
             console.error(e);
@@ -74,16 +74,16 @@ export default function Login() {
                 <div className={'logo'}>
                     <img src={require('../../assets/img/new-logo.png')} alt=""/>
                 </div>
-                <div className={'login-with'}>
-                    Login with
-                </div>
+                {/*<div className={'login-with'}>*/}
+                {/*    Login with*/}
+                {/*</div>*/}
                 <div className={'options-login'}>
                     <div className={'button-login'} onClick={handleLogin}>
                         <div className={'icon-microsoft'}>
                             <img src={require('../../assets/img/microsoft.png')} alt=""/>
                         </div>
                         <div className={'tittle-button-login'}>
-                            Microsoft
+                            Sign in with Microsoft
                         </div>
                     </div>
 
