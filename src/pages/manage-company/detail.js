@@ -49,6 +49,7 @@ export default function DetailCategory(props) {
 
     const [info,setInfo] =useState({
         company_name:'',
+        company_code:'',
         address:'',
         contact_detail:'',
         tax_number:'',
@@ -165,6 +166,16 @@ export default function DetailCategory(props) {
                     </div>
                     <div className={'text-info-content'}>
                         {info.company_name}
+                    </div>
+                </div>
+                <Divider></Divider>
+
+                <div className={'row-detail'}>
+                    <div className={'text-info-tittle'}>
+                        Mã công ty
+                    </div>
+                    <div className={'text-info-content'}>
+                        {info.company_code}
                     </div>
                 </div>
                 <Divider></Divider>

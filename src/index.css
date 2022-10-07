@@ -6,8 +6,12 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: #f9fafc;
-    zoom:75%;
     height: 100%;
+}
+@media only screen and (max-width: 1600px) {
+    body {
+        zoom:75%;
+    }
 }
 html{
     margin: 0;
@@ -254,7 +258,7 @@ hr {
 }
 
 .main-content-body-result {
-    height: 60vh;
+    height: 90vh;
 }
 
 .main-content-detail {
@@ -284,6 +288,7 @@ h6 {
     line-height: 1.57;
     color: black;
     font-size: 16px;
+    white-space: pre;
 
 }
 
@@ -314,13 +319,9 @@ h6 {
 .item-file {
     display: flex;
     align-items: center;
+    height: 49px;
 }
 
-.list-file {
-    margin-top: 10px;
-    overflow-y: auto;
-    height: 100px;
-}
 
 .delete-file {
     margin-left: 5px;
@@ -400,6 +401,7 @@ p::first-letter, .uppercase::first-letter {
 .content-column{
     width: 100%;
     word-break: break-all;
+    white-space: pre-wrap;
 }
 .text-decoration{
     text-decoration: underline;
@@ -670,4 +672,14 @@ height: 45px;
     font-size: 1rem;
     line-height: 1.5;
     letter-spacing: 0.00938em;
+}
+.text-field-link{
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+.list-file{
+    margin-top: 10px;
+    height: 200px;
+    overflow-y: auto;
 }

@@ -110,8 +110,8 @@ export default function ManageSOF() {
         },
         {
             sortable: false,
-            field: 'id',
-            headerName: 'ID',
+            field: 'sof_code',
+            headerName: 'Mã khoản vay',
             maxWidth: 75,
             filterable: false,
             headerClassName: 'super-app-theme--header',
@@ -580,7 +580,7 @@ export default function ManageSOF() {
                                  submitDelete={submitDelete}></ModalConfirmDel>
                 <div className={'row'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
-                        Quản lý khoản vay
+                        Quản lý nguồn vốn
                     </Typography>
                     <div>
                         <Button onClick={pending} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>

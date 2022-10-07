@@ -56,7 +56,7 @@ export default function Nav() {
                     <NavLink className={'nav-link'} to={'sof'}>
                         <li>
                             <div className={'nav-item'}>
-                                <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý khoản vay</div>
+                                <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý nguồn vốn</div>
                             </div>
                         </li>
                     </NavLink>

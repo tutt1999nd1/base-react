@@ -62,11 +62,18 @@ export default function EditCategory(props) {
         charter_capital:'',
         founding_date:new dayjs,
         capital_limit:'',
+        company_code:''
     })
     const {isUpdate} = props
     const [idUpdate,setIdUpdate] = useState(null)
     const validationSchema = yup.object({
         company_name: yup
+            .string()
+            .trim()
+            .required('Không được để trống')
+            .max(255, 'Tối đa 255 ký tự')
+        ,
+        company_code: yup
             .string()
             .trim()
             .required('Không được để trống')
@@ -176,6 +183,7 @@ export default function EditCategory(props) {
                         charter_capital:info.charter_capital,
                         founding_date:isUpdate?dayjs(info.founding_date,'DD-MM-YYYY'):info.founding_date,
                         capital_limit:info.capital_limit,
+                        company_code:info.company_code,
                     }}
                     validationSchema={validationSchema}
                     onSubmit={
@@ -265,6 +273,21 @@ export default function EditCategory(props) {
                                                 onChange={handleChange}
                                                 error={touched.company_name && Boolean(errors.company_name)}
                                                 helperText={touched.company_name && errors.company_name}
+
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Mã công ty<span className={'error-message'}>*</span></div>
+                                            <TextField
+                                                size={"small"}
+                                                id='company_code'
+                                                name='company_code'
+                                                className={'formik-input'}
+                                                // variant="standard"
+                                                value={values.company_code}
+                                                onChange={handleChange}
+                                                error={touched.company_code && Boolean(errors.company_code)}
+                                                helperText={touched.company_code && errors.company_code}
 
                                             />
                                         </Grid>

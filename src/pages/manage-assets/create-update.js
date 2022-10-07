@@ -37,7 +37,8 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
-import {capitalizeFirstLetter, currencyFormatter,VNnum2words} from "../../constants/utils";
+import {capitalizeFirstLetter, currencyFormatter, VNnum2words} from "../../constants/utils";
+import TextFieldLink from "../../components/TextFieldLink";
 
 export default function EditAssets(props) {
     const navigate = useNavigate();
@@ -48,6 +49,9 @@ export default function EditAssets(props) {
     const [groupDefault, setGroupDefault] = useState(0)
     const [listFileLocal, setListFileLocal] = useState([])
     const [listFileServer, setListFileServer] = useState([])
+    const [listLink, setListLink] = useState([])
+    const [listLinkServer, setListLinkServer] = useState([])
+    const [listDeleteLinkServer, setListDeleteLinkServer] = useState([])
     const [listDeletedAttachment, setListDeletedAttachment] = useState([])
     const [info, setInfo] = useState({
         asset_name: '',
@@ -59,7 +63,7 @@ export default function EditAssets(props) {
         max_capital_value: '',
         current_credit_value: '',
         list_attachments: [],
-        new_reference_link:''
+        new_reference_link: ''
     })
     const {isUpdate} = props
     const [idUpdate, setIdUpdate] = useState(null)
@@ -114,6 +118,25 @@ export default function EditAssets(props) {
     });
     const backList = () => {
         navigate('/assets')
+    }
+    const addNewLink = () => {
+        setListLink([...listLink, {download_link: '', attachment_type: ''}])
+    }
+    const changeValueLink = (value, index) => {
+        setListLink([...listLink.slice(0, index), {
+            ...listLink[index],
+            download_link: value
+        }, ...listLink.slice(index + 1)
+        ])
+    }
+    const deleteValueLink = (index,item) => {
+        setListLink([...listLink.slice(0, index), ...listLink.slice(index + 1)
+        ])
+    }
+    const deleteValueLinkServer = (index,item) => {
+        setListLinkServer([...listLinkServer.slice(0, index), ...listLinkServer.slice(index + 1)
+        ])
+        setListDeleteLinkServer([...listDeleteLinkServer,item.id])
     }
     useEffect(() => {
         if (isUpdate) {
@@ -175,7 +198,12 @@ export default function EditAssets(props) {
     }
     useEffect(() => {
         console.log("listFile", listFileLocal)
-        setListFileServer(info.list_attachments)
+        let arrLocal = [...info.list_attachments];
+        arrLocal = arrLocal.filter(e=>e.attachment_type==='LOCAL')
+        setListFileServer(arrLocal)
+        let arrServer = [...info.list_attachments]
+        arrServer = arrServer.filter(e=>e.attachment_type!='LOCAL')
+        setListLinkServer(arrServer)
     }, [info])
 
     useEffect(() => {
@@ -290,7 +318,7 @@ export default function EditAssets(props) {
                         capital_value: info.capital_value,
                         max_capital_value: info.max_capital_value,
                         current_credit_value: info.current_credit_value,
-                        new_reference_link:info.new_reference_link
+                        new_reference_link: info.new_reference_link
 
                     }}
                     validationSchema={validationSchema}
@@ -306,13 +334,15 @@ export default function EditAssets(props) {
                             for (let i = 0; i < listFileLocal.length; i++) {
                                 formData.append('newAttachment', listFileLocal[i])
                             }
+                            for (let i = 0; i < listLink.length; i++) {
+                                formData.append('newReferenceLink', listLink[i].download_link)
+                            }
                             formData.append('assetName', values.asset_name)
                             formData.append('assetGroupId', values.asset_group)
                             formData.append('initialValue', values.initial_value)
                             formData.append('capitalValue', values.capital_value)
                             formData.append('currentCreditValue', values.current_credit_value)
                             formData.append('maxCapitalValue', values.max_capital_value)
-                            formData.append('newReferenceLink', values.new_reference_link)
                             // formData.append('currentCreditValue',values.)
                             console.log(valueConvert)
                             if (isUpdate) {
@@ -320,6 +350,9 @@ export default function EditAssets(props) {
                                 console.log("listDeletedAttachment", listDeletedAttachment)
                                 for (let i = 0; i < listDeletedAttachment.length; i++) {
                                     formData.append('listDeletedAttachment', listDeletedAttachment[i])
+                                }
+                                for (let i = 0; i < listDeleteLinkServer.length; i++) {
+                                    formData.append('listDeletedAttachment', listDeleteLinkServer[i])
                                 }
                                 updateAssetApi(formData).then(r => {
                                     toast.success('Cập nhật thành công', {
@@ -357,8 +390,10 @@ export default function EditAssets(props) {
                                         pauseOnHover: true,
                                         draggable: true,
                                     });
+
                                     setTimeout(() => {
-                                        navigate('/assets')
+                                        console.log("r.data.id",r.data.id)
+                                        navigate(`/assets/detail?id=${r.data.id}`)
                                     }, 1050);
 
                                 }).catch(e => {
@@ -389,7 +424,8 @@ export default function EditAssets(props) {
                                 <Box sx={{flexGrow: 1}} className={'form-content'}>
                                     <Grid container spacing={4}>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Tên tài sản <span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Tên tài sản <span
+                                                className={'error-message'}>*</span></div>
                                             <TextField
                                                 size={"small"}
                                                 id='asset_name'
@@ -403,7 +439,8 @@ export default function EditAssets(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Nhóm tài sản <span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Nhóm tài sản <span
+                                                className={'error-message'}>*</span></div>
                                             <FormControl fullWidth>
                                                 <Select
                                                     size={"small"}
@@ -428,7 +465,8 @@ export default function EditAssets(props) {
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Loại tài sản  <span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Loại tài sản <span
+                                                className={'error-message'}>*</span></div>
                                             <FormControl fullWidth>
                                                 <Select
                                                     size={"small"}
@@ -454,10 +492,11 @@ export default function EditAssets(props) {
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Giá trị ban đầu (VNĐ)<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Giá trị ban đầu (VNĐ)<span
+                                                className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 size={"small"}
-                                                style={{ textAlign:"right"}}
+                                                style={{textAlign: "right"}}
                                                 id='initial_value'
                                                 customInput={TextField}
                                                 name='initial_value'
@@ -493,7 +532,8 @@ export default function EditAssets(props) {
 
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Vốn vay (VNĐ)<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Vốn vay (VNĐ)<span
+                                                className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 size={"small"}
                                                 id='capital_value'
@@ -529,7 +569,8 @@ export default function EditAssets(props) {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Gốc vay tín dụng hiện tại (VNĐ)<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Gốc vay tín dụng hiện tại (VNĐ)<span
+                                                className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 id='current_credit_value'
                                                 name='current_credit_value'
@@ -563,7 +604,25 @@ export default function EditAssets(props) {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Số tiền vay tối đa (VNĐ)<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Thông tin<span
+                                                className={'error-message'}>*</span></div>
+                                            <TextField
+                                                className={'formik-input'}
+                                                // variant="standard"
+                                                id='description'
+                                                name='description'
+                                                multiline
+                                                rows={5}
+                                                value={values.description}
+                                                onChange={handleChange}
+                                                error={touched.description && Boolean(errors.description)}
+                                                helperText={touched.description && errors.description}
+
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Số tiền vay tối đa (VNĐ)<span
+                                                className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 id='max_capital_value'
                                                 name='max_capital_value'
@@ -599,34 +658,42 @@ export default function EditAssets(props) {
                                                 {values.max_capital_value ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.max_capital_value))} đồng` : ''}
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Link tài liệu<span className={'error-message'}>*</span></div>
-                                            <TextField
-                                                id={'new_reference_link'}
-                                                name={'new_reference_link'}
-                                                size={"small"}
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Thông tin<span className={'error-message'}>*</span></div>
-                                            <TextField
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                id='description'
-                                                name='description'
-                                                multiline
-                                                rows={5}
-                                                value={values.description}
-                                                onChange={handleChange}
-                                                error={touched.description && Boolean(errors.description)}
-                                                helperText={touched.description && errors.description}
 
-                                            />
-                                        </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div style={{display: "flex", alignItems: "center"}}>Tập đính
+                                            <div className={'label-input'} style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                // justifyContent: 'space-between'
+                                            }}>Link tài liệu<ControlPointIcon
+                                                style={{cursor: "pointer", marginLeft: '10px'}}
+                                                color="primary"
+                                                onClick={addNewLink}
+                                            > </ControlPointIcon></div>
+                                            <div className={'list-file'}>
+                                                {
+                                                    listLinkServer.map((e, index) => (
+                                                        <TextFieldLink disable={true} index={index}
+                                                                       deleteValueLink={deleteValueLinkServer}
+                                                                       item={e}></TextFieldLink>
+                                                    ))
+                                                }
+                                                {
+                                                    listLink.map((e, index) => (
+                                                        <TextFieldLink disable={false} changeValue={changeValueLink} index={index}
+                                                                       deleteValueLink={deleteValueLink}
+                                                                       item={e}></TextFieldLink>
+                                                    ))
+                                                }
+                                            </div>
+
+                                        </Grid>
+
+                                        <Grid item xs={6} md={6}>
+                                            <div className={'label-input'} style={{
+                                                display: "flex",
+                                                alignItems: "center",
+                                                // justifyContent: 'space-between'
+                                            }}>Tập đính
                                                 kèm <ControlPointIcon style={{cursor: "pointer", marginLeft: '10px'}}
                                                                       color="primary"
                                                                       onClick={uploadFile}> </ControlPointIcon></div>

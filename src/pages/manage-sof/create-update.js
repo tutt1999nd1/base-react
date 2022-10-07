@@ -53,6 +53,7 @@ import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import {TreeSelect} from "antd";
+import TextFieldLink from "../../components/TextFieldLink";
 
 export default function EditSOF(props) {
     const navigate = useNavigate();
@@ -66,6 +67,9 @@ export default function EditSOF(props) {
     const [typeDefault, setTypeDefault] = useState(0)
     const [groupDefault, setGroupDefault] = useState(0)
     const [listFileLocal, setListFileLocal] = useState([])
+    const [listLink, setListLink] = useState([])
+    const [listLinkServer, setListLinkServer] = useState([])
+    const [listDeleteLinkServer, setListDeleteLinkServer] = useState([])
     const [listFileServer, setListFileServer] = useState([])
     const [currentAmount, setCurrentAmount] = useState(0)
     const [listDeletedAttachment, setListDeletedAttachment] = useState([])
@@ -255,6 +259,25 @@ export default function EditSOF(props) {
         }
 
     }
+    const addNewLink = () => {
+        setListLink([...listLink, {download_link: '', attachment_type: ''}])
+    }
+    const deleteValueLink = (index,item) => {
+        setListLink([...listLink.slice(0, index), ...listLink.slice(index + 1)
+        ])
+    }
+    const deleteValueLinkServer = (index,item) => {
+        setListLinkServer([...listLinkServer.slice(0, index), ...listLinkServer.slice(index + 1)
+        ])
+        setListDeleteLinkServer([...listDeleteLinkServer,item.id])
+    }
+    const changeValueLink = (value, index) => {
+        setListLink([...listLink.slice(0, index), {
+            ...listLink[index],
+            download_link: value
+        }, ...listLink.slice(index + 1)
+        ])
+    }
     const deleteFileServer = (id, name) => {
         let arr = [...listFileServer]
         console.log("Arr", arr)
@@ -326,14 +349,13 @@ export default function EditSOF(props) {
             draggable
             pauseOnHover
         />
-        <Button onClick={back} style={{marginBottom: '10px'}} variant="text" startIcon={<KeyboardBackspaceIcon/>}>Khoản
-            vay
+        <Button onClick={back} style={{marginBottom: '10px'}} variant="text" startIcon={<KeyboardBackspaceIcon/>}>Nguồn vốn
         </Button>
 
         <div className={'main-content-header'}>
             <div className={'row'} style={{justifyContent: 'space-between'}}>
                 <Typography variant="h5" className={'main-content-tittle'}>
-                    Quản lý khoản vay
+                    Quản lý nguồn vốn
                 </Typography>
             </div>
         </div>
@@ -375,6 +397,9 @@ export default function EditSOF(props) {
                         for (let i = 0; i < listFileLocal.length; i++) {
                             formData.append('newAttachment', listFileLocal[i])
                         }
+                        for (let i = 0; i < listLink.length; i++) {
+                            formData.append('newReferenceLink', listLink[i].download_link)
+                        }
                         dayjs(values.founding_date).format('DD-MM-YYYY')
                         formData.append('capitalCampaignId', values.capital_campaign_id)
                         formData.append('capitalCategoryId', values.capital_category_id)
@@ -399,6 +424,9 @@ export default function EditSOF(props) {
                             console.log("listDeletedAttachment", listDeletedAttachment)
                             for (let i = 0; i < listDeletedAttachment.length; i++) {
                                 formData.append('listDeletedAttachment', listDeletedAttachment[i])
+                            }
+                            for (let i = 0; i < listDeleteLinkServer.length; i++) {
+                                formData.append('listDeletedAttachment', listDeleteLinkServer[i])
                             }
                             updateSOFApi(formData).then(r => {
                                 toast.success('Cập nhật thành công', {
@@ -946,6 +974,35 @@ export default function EditSOF(props) {
                                     />
                                     {/*<div>{</div>*/}
                                 </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'} style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        // justifyContent: 'space-between'
+                                    }}>Link tài liệu<ControlPointIcon
+                                        style={{cursor: "pointer", marginLeft: '10px'}}
+                                        color="primary"
+                                        onClick={addNewLink}
+                                    > </ControlPointIcon></div>
+                                    <div className={'list-file'}>
+                                        {
+                                            listLinkServer.map((e, index) => (
+                                                <TextFieldLink disable={true} index={index}
+                                                               deleteValueLink={deleteValueLinkServer}
+                                                               item={e}></TextFieldLink>
+                                            ))
+                                        }
+                                        {
+                                            listLink.map((e, index) => (
+                                                <TextFieldLink disable={false} changeValue={changeValueLink} index={index}
+                                                               deleteValueLink={deleteValueLink}
+                                                               item={e}></TextFieldLink>
+                                            ))
+                                        }
+                                    </div>
+
+                                </Grid>
+
                                 <Grid item xs={6} md={6}>
                                     <div style={{display: "flex", alignItems: "center"}}>Tập đính
                                         kèm <ControlPointIcon style={{cursor: "pointer", marginLeft: '10px'}}

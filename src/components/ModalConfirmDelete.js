@@ -24,6 +24,10 @@ export default function ModalConfirmDel(props) {
         // alert(name)
 
     }, [openModalDel])
+    useEffect(()=>{
+        console.log("valueInput",valueInput)
+        console.log("name", name)
+    },[valueInput])
     return (
         <div>
             <Dialog open={openModalDel} onClose={handleCloseModalDel}>
@@ -69,9 +73,9 @@ export default function ModalConfirmDel(props) {
                         Hủy
                     </Button>
                     {
-                        !(valueInput == name) ?   <Button variant={'contained'} className={`vmp-btn ${!(valueInput == name) ? 'not-allowed' : ''}`}>Xóa</Button>
+                        !(valueInput.trim() ==(name?name.trim():name)) ?   <Button disabled={true} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>
                         :
-                            <Button  onClick={submit} variant={'contained'} className={`vmp-btn ${!(valueInput == name) ? 'not-allowed' : ''}`}>Xóa</Button>
+                            <Button  onClick={submit} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>
                     }
                 </DialogActions>
             </Dialog>

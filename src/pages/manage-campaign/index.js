@@ -79,15 +79,6 @@ export default function ManageCategory() {
         {
             filterable: false,
             sortable: false,
-            field: 'id',
-            headerName: 'ID',
-            headerClassName: 'super-app-theme--header',
-            maxWidth: 70,
-        },
-
-        {
-            filterable: false,
-            sortable: false,
             field: 'campaign_name',
             headerName: 'Tên mục đích vay',
             headerClassName: 'super-app-theme--header',

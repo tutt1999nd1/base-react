@@ -269,8 +269,8 @@ export default function DetailAsset(props) {
                     info.list_attachments.map((e, i) => (
                         <div style={{cursor: "pointer"}} className={'row-detail'}
                              onClick={() => downloadFile(e.download_link)}>
-                            <div className={'text-info-content'}>
-                                {e.file_name}
+                            <div className={'text-info-content text-decoration'}>
+                                {e.file_name||e.download_link}
                             </div>
                         </div>
                     ))

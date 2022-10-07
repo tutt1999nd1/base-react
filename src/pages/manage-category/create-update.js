@@ -79,7 +79,7 @@ export default function EditCompany(props) {
         description: yup
             .string()
             .trim()
-            .required('Không được để trống')
+            // .required('Không được để trống')
             .max(4000, 'Tối đa 4000 ký tự')
         ,
 
@@ -284,7 +284,7 @@ export default function EditCompany(props) {
 
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Ghi chú<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Ghi chú</div>
                                             <TextField
                                                 className={'formik-input'}
                                                 // variant="standard"

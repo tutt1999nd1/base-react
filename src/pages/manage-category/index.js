@@ -75,14 +75,14 @@ export default function ManageCategory() {
 
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'id',
-            headerName: 'ID',
-            headerClassName: 'super-app-theme--header',
-            maxWidth: 70,
-        },
+        // {
+        //     filterable: false,
+        //     sortable: false,
+        //     field: 'id',
+        //     headerName: 'ID',
+        //     headerClassName: 'super-app-theme--header',
+        //     maxWidth: 70,
+        // },
 
         {
             filterable: false,
@@ -145,6 +145,7 @@ export default function ManageCategory() {
                 }
                 const deleteBtn = (e) => {
                     e.stopPropagation();
+                    console.log("del",params.row)
                     setOpenModalDel(true)
                     setInfoDel(params.row)
                 }

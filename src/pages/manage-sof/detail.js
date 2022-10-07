@@ -147,7 +147,7 @@ export default function DetailSOF(props) {
             {/*    <ClipLoader*/}
             {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
             {/*</div>*/}
-            <ModalConfirmDel name={info.id} openModalDel={openModalDel}
+            <ModalConfirmDel name={info.id+""} openModalDel={openModalDel}
                              handleCloseModalDel={handleCloseModalDel} submitDelete={submitDelete}></ModalConfirmDel>
 
             <ToastContainer
@@ -162,7 +162,7 @@ export default function DetailSOF(props) {
                 pauseOnHover
             />
             <Button onClick={backList} style={{marginBottom: '10px'}} variant="text"
-                    startIcon={<KeyboardBackspaceIcon/>}>Khoản vay</Button>
+                    startIcon={<KeyboardBackspaceIcon/>}>Nguồn vốn</Button>
 
             <div className={'main-content-header'}>
                 <div className={'row'} style={{justifyContent: 'space-between'}}>
@@ -336,8 +336,8 @@ export default function DetailSOF(props) {
                     info.list_attachments.map((e, i) => (
                         <div style={{cursor: "pointer"}} className={'row-detail'}
                              onClick={() => downloadFile(e.download_link)}>
-                            <div className={'text-info-content'}>
-                                {e.file_name}
+                            <div className={'text-info-content text-decoration'}>
+                                {e.file_name||e.download_link}
                             </div>
                         </div>
                     ))

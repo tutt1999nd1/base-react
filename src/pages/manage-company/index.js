@@ -87,7 +87,21 @@ export default function ManageCompany() {
                 </div>;
             },
         },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'company_code',
+            headerName: 'Mã công ty',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 120,
+            flex:1,
+            renderCell: (params) => {
 
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+        },
         {
             filterable: false,
             sortable: false,
