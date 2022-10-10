@@ -105,6 +105,20 @@ export default function ManageCompany() {
         {
             filterable: false,
             sortable: false,
+            field: 'company_type',
+            headerName: 'Loại công ty',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 120,
+            flex:1,
+            renderCell: (params) => {
+                return <div className='content-column'>
+                    {params.value==='SUPPLIER'?'Công ty cho vay':'Công ty vay'}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
             field: 'contact_detail',
             headerName: 'Thông tin liên hệ',
             headerClassName: 'super-app-theme--header',

@@ -44,7 +44,13 @@ import {useNavigate, useSearchParams} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
-import {capitalizeFirstLetter, convertToAutoComplete, currencyFormatter,VNnum2words} from "../../constants/utils";
+import {
+    capitalizeFirstLetter,
+    convertToAutoComplete,
+    currencyFormatter,
+    listOptionMonth,
+    VNnum2words
+} from "../../constants/utils";
 import apiManagerSOF from "../../api/manage-sof";
 import apiManagerCompany from "../../api/manage-company";
 import apiManagerCategory from "../../api/manage-category";
@@ -62,6 +68,7 @@ export default function EditSOF(props) {
     const [listGroup, setListGroup] = useState([]);
     const [listType, setListType] = useState([]);
     const [listCompany, setListCompany] = useState([]);
+    const [listCompanySupplier, setListCompanySupplier] = useState([]);
     const [listCampaign, setListCampaign] = useState([]);
     const [listCategory, setListCategory] = useState([]);
     const [typeDefault, setTypeDefault] = useState(0)
@@ -76,13 +83,15 @@ export default function EditSOF(props) {
     const [listCategoryTree, setListCategoryTree] = useState([]);
     const [categorySearch, setCategorySearch] = useState()
     const [campaignSearch, setCampaignSearch] = useState()
+    const [lendingInMonth, setLendingInMonth] = useState({id:1,label:'1'})
     const [listCampaignTree, setListCampaignTree] = useState([]);
     const [info, setInfo] = useState({
         id: '',
         capital_company: {},
         capital_category: {},
         capital_campaign: {},
-
+        supplier_company:{},
+        supplier_company_id:'',
         capital_company_id: '',
         capital_category_id: '',
         capital_campaign_id: '',
@@ -187,11 +196,21 @@ export default function EditSOF(props) {
     }, [])
     useEffect(() => {
 
-        getListCompanyApi({lending_amount: currentAmount || 0}).then(r => {
-            console.log("r.data.companies",r.data);
-            if (r.data)
-                setListCompany(convertToAutoComplete(r.data, 'company_name'))
-            else setListCompany([])
+        getListCompanyApi({paging:false}).then(r => {
+            console.log("r tutt",r.data)
+            // console.log("r.data.companies",r.data);
+
+            if (r.data.companies){
+                let arr = r.data.companies.filter(e=> e.company_type==='SUPPLIER')
+                let arrSupplier = r.data.companies.filter(e=> e.company_type!=='SUPPLIER')
+                setListCompany(convertToAutoComplete(arrSupplier, 'company_name'))
+                setListCompanySupplier(convertToAutoComplete(arr, 'company_name'))
+
+            }
+            else {
+                setListCompany([])
+                setListCompanySupplier([])
+            }
 
         }).catch(e => {
 
@@ -218,7 +237,7 @@ export default function EditSOF(props) {
         return apiManagerSOF.getListSOF(data);
     }
     const getListCompanyApi = (data) => {
-        return apiManagerCompany.getListCompanyAvai(data);
+        return apiManagerCompany.getListCompany(data);
     }
     const getListCategoryApi = (data) => {
         return apiManagerCategory.getListCategory(data);
@@ -370,6 +389,7 @@ export default function EditSOF(props) {
                     capital_company_id: idUpdate ? info.capital_company.id : info.capital_company_id,
                     capital_category_id: idUpdate ? info.capital_category.id : info.capital_category_id,
                     capital_campaign_id: idUpdate ? info.capital_campaign.id : info.capital_campaign_id,
+                    supplier_company_id: idUpdate ? info.supplier_company.id : info.supplier_company_id,
                     // asset_group:info.asset_group.id,
                     lending_amount: info.lending_amount,
                     owner_full_name: info.owner_full_name,
@@ -417,6 +437,7 @@ export default function EditSOF(props) {
                         formData.append('interestRateType', values.interest_rate_type)
                         formData.append('referenceInterestRate', values.reference_interest_rate)
                         formData.append('interestRateRage', values.interest_rate_rage)
+                        formData.append('supplierCompanyId', values.supplier_company_id)
 
                         // formData.append('currentCreditValue',values.)
                         if (isUpdate) {
@@ -529,6 +550,28 @@ export default function EditSOF(props) {
                                             // size='small'
                                         >
                                             {listCompany.map((e) => (
+                                                <MenuItem value={e.id}>{e.company_name}</MenuItem>))}
+
+                                        </Select>
+                                        <FormHelperText
+                                            className={'error-message'}>{errors.capital_company_id}</FormHelperText>
+                                    </FormControl>
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Công ty cho vay<span className={'error-message'}>*</span>
+                                    </div>
+                                    <FormControl fullWidth>
+                                        <Select
+                                            size={'small'}
+                                            id='supplier_company_id'
+                                            name='supplier_company_id'
+                                            value={values.supplier_company_id}
+                                            onChange={handleChange}
+                                            error={touched.supplier_company_id && Boolean(errors.supplier_company_id)}
+                                            helperText={touched.supplier_company_id && errors.supplier_company_id}
+                                            // size='small'
+                                        >
+                                            {listCompanySupplier.map((e) => (
                                                 <MenuItem value={e.id}>{e.company_name}</MenuItem>))}
 
                                         </Select>
@@ -707,33 +750,60 @@ export default function EditSOF(props) {
                                 <Grid item xs={6} md={6}>
                                     <div className={'label-input'}>Thời gian vay (Tháng)<span
                                         className={'error-message'}>*</span></div>
-                                    <NumericFormat
-                                        size={'small'}
-                                        id='lending_in_month'
-                                        customInput={TextField}
-                                        name='lending_in_month'
-                                        className={'formik-input'}
-                                        // variant="standard"
-                                        value={values.lending_in_month}
+                                    {/*<NumericFormat*/}
+                                    {/*    size={'small'}*/}
+                                    {/*    id='lending_in_month'*/}
+                                    {/*    customInput={TextField}*/}
+                                    {/*    name='lending_in_month'*/}
+                                    {/*    className={'formik-input'}*/}
+                                    {/*    // variant="standard"*/}
+                                    {/*    value={values.lending_in_month}*/}
 
-                                        onValueChange={(values) => {
-                                            const {formattedValue, value, floatValue} = values;
+                                    {/*    onValueChange={(values) => {*/}
+                                    {/*        const {formattedValue, value, floatValue} = values;*/}
+                                    {/*        // do something with floatValue*/}
+                                    {/*        console.log(floatValue)*/}
+
+                                    {/*        const re = /^[0-9\b]+$/;*/}
+                                    {/*        if (re.test(floatValue) || floatValue === undefined) {*/}
+                                    {/*            setFieldValue('lending_in_month', floatValue)*/}
+                                    {/*        }*/}
+                                    {/*        // setFieldValue('max_capital_value', formattedValue)*/}
+
+                                    {/*    }}*/}
+                                    {/*    error={touched.lending_in_month && Boolean(errors.lending_in_month)}*/}
+                                    {/*    helperText={touched.lending_in_month && errors.lending_in_month}*/}
+                                    {/*    // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}*/}
+                                    {/*/>*/}
+                                    <Autocomplete
+                                        value={isUpdate?{id:info.id,label:info.id+''}:listOptionMonth[0]}
+                                        id="free-solo-demo"
+                                        size={"small"}
+                                        freeSolo
+                                        inputValue={values.lending_in_month}
+                                        options={listOptionMonth}
+                                        onInputChange={(event, value) => {
+                                            // console.log("value",value)}
                                             // do something with floatValue
-                                            console.log(floatValue)
 
                                             const re = /^[0-9\b]+$/;
-                                            if (re.test(floatValue) || floatValue === undefined) {
-                                                setFieldValue('lending_in_month', floatValue)
+                                            if (re.test(value) || value === '') {
+                                                setFieldValue('lending_in_month', value)
                                             }
-                                            // setFieldValue('max_capital_value', formattedValue)
+                                            // setFieldValue('lending_in_month', value)
+                                        }
+                                        }
 
-                                        }}
-                                        error={touched.lending_in_month && Boolean(errors.lending_in_month)}
-                                        helperText={touched.lending_in_month && errors.lending_in_month}
-                                        // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
+                                        renderInput={(params) =>
+                                            <TextField
+                                                size={"small"}
+                                            {...params}
+                                            error={touched.lending_in_month && Boolean(errors.lending_in_month)}
+                                            helperText={touched.lending_in_month && errors.lending_in_month}
+                                                //     helperText={touched.lending_in_month && errors.lending_in_month}
+                                        />
+                                    }
                                     />
-                                    {/*<div>{</div>*/}
-
                                 </Grid>
                                 <Grid item xs={6} md={6}>
                                     <div className={'label-input'}>Số kỳ trả gốc<span
@@ -829,62 +899,71 @@ export default function EditSOF(props) {
                                 <Grid item xs={6} md={6}>
                                     <div className={'label-input'}>Thời gian ân hạn gốc (Tháng)<span
                                         className={'error-message'}>*</span></div>
-                                    <NumericFormat
-                                        size={'small'}
-                                        id='grace_principal_in_month'
-                                        customInput={TextField}
-                                        name='grace_principal_in_month'
-                                        className={'formik-input'}
-                                        // variant="standard"
-                                        value={values.grace_principal_in_month}
-
-                                        onValueChange={(values) => {
-                                            const {formattedValue, value, floatValue} = values;
+                                    <Autocomplete
+                                        value={isUpdate?{id:info.id,label:info.id+''}:listOptionMonth[0]}
+                                        id="free-solo-demo"
+                                        size={"small"}
+                                        freeSolo
+                                        inputValue={values.grace_principal_in_month}
+                                        options={listOptionMonth}
+                                        onInputChange={(event, value) => {
+                                            // console.log("value",value)}
                                             // do something with floatValue
-                                            console.log(floatValue)
 
                                             const re = /^[0-9\b]+$/;
-                                            if (re.test(floatValue) || floatValue === undefined) {
-                                                setFieldValue('grace_principal_in_month', floatValue)
+                                            if (re.test(value) || value === '') {
+                                                setFieldValue('grace_principal_in_month', value)
                                             }
-                                            // setFieldValue('max_capital_value', formattedValue)
+                                            // setFieldValue('lending_in_month', value)
+                                        }
+                                        }
 
-                                        }}
-                                        error={touched.grace_principal_in_month && Boolean(errors.grace_principal_in_month)}
-                                        helperText={touched.grace_principal_in_month && errors.grace_principal_in_month}
-                                        // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
+                                        renderInput={(params) =>
+                                            <TextField
+                                                size={"small"}
+                                                {...params}
+                                                error={touched.grace_principal_in_month && Boolean(errors.grace_principal_in_month)}
+                                                helperText={touched.grace_principal_in_month && errors.grace_principal_in_month}
+                                                //     helperText={touched.lending_in_month && errors.lending_in_month}
+                                            />
+                                        }
                                     />
-                                    {/*<div>{</div>*/}
+
                                 </Grid>
                                 <Grid item xs={6} md={6}>
                                     <div className={'label-input'}>Thời gian ân hạn lãi (Tháng)<span
                                         className={'error-message'}>*</span></div>
-                                    <NumericFormat
-                                        size={'small'}
-                                        id='grace_interest_in_month'
-                                        customInput={TextField}
-                                        name='grace_interest_in_month'
-                                        className={'formik-input'}
-                                        // variant="standard"
-                                        value={values.grace_interest_in_month}
-
-                                        onValueChange={(values) => {
-                                            const {formattedValue, value, floatValue} = values;
+                                    <Autocomplete
+                                        value={isUpdate?{id:info.id,label:info.id+''}:listOptionMonth[0]}
+                                        id="free-solo-demo"
+                                        size={"small"}
+                                        freeSolo
+                                        inputValue={values.grace_interest_in_month}
+                                        options={listOptionMonth}
+                                        onInputChange={(event, value) => {
+                                            // console.log("value",value)}
                                             // do something with floatValue
-                                            console.log(floatValue)
 
                                             const re = /^[0-9\b]+$/;
-                                            if (re.test(floatValue) || floatValue === undefined) {
-                                                setFieldValue('grace_interest_in_month', floatValue)
+                                            if (re.test(value) || value === '') {
+                                                setFieldValue('grace_interest_in_month', value)
                                             }
-                                            // setFieldValue('max_capital_value', formattedValue)
+                                            // setFieldValue('lending_in_month', value)
+                                        }
+                                        }
 
-                                        }}
-                                        error={touched.grace_interest_in_month && Boolean(errors.grace_interest_in_month)}
-                                        helperText={touched.grace_interest_in_month && errors.grace_interest_in_month}
-                                        // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}
+                                        renderInput={(params) =>
+                                            <TextField
+                                                size={"small"}
+                                                {...params}
+                                                error={touched.grace_interest_in_month && Boolean(errors.grace_interest_in_month)}
+                                                helperText={touched.grace_interest_in_month && errors.grace_interest_in_month}
+                                                //     helperText={touched.lending_in_month && errors.lending_in_month}
+                                            />
+                                        }
                                     />
-                                    {/*<div>{</div>*/}
+
+
                                 </Grid>
                                 <Grid item xs={6} md={6}>
                                     <div className={'label-input'}>Loại lãi suất<span

@@ -63,6 +63,7 @@ export default function ManageSOF() {
         setValue(newValue);
     };
     const [listCompany, setListCompany] = useState([]);
+    const [listCompanySupplier, setListCompanySupplier] = useState([]);
     const [listCampaign, setListCampaign] = useState([]);
     const [listCategory, setListCategory] = useState([]);
     const [statusSOF, setStatusSOF] = useState();
@@ -75,6 +76,7 @@ export default function ManageSOF() {
     const [categorySearch, setCategorySearch] = useState()
     const [campaignSearch, setCampaignSearch] = useState()
     const [companySearch, setCompanySearch] = useState(0)
+    const [companySupplierSearch, setCompanySupplierSearch] = useState(0)
     const [statusSearch, setStatusSearch] = useState(0)
     const [openSearch, setOpenSearch] = useState(true)
     const [listResult, setListResult] = React.useState({
@@ -472,6 +474,7 @@ export default function ManageSOF() {
             'page_index': listResult.page + 1,
             'paging': true,
             'capital_company_id': companySearch === 0 ? null : companySearch,
+            'supplier_company_id': companySupplierSearch === 0 ? null : companySupplierSearch,
             'capital_category_id': categorySearch ? categorySearch : null,
             'capital_campaign_id': campaignSearch ? campaignSearch : null,
             'status': statusSearch === 0 ? null : statusSearch,
@@ -488,7 +491,7 @@ export default function ManageSOF() {
             setLoading(false)
             console.log(e)
         })
-    }, [listResult.page, listResult.pageSize, campaignSearch, categorySearch, companySearch, statusSearch, refresh])
+    }, [listResult.page, listResult.pageSize, campaignSearch, categorySearch, companySearch,companySupplierSearch, statusSearch, refresh])
     useEffect(() => {
         getListCategoryApi({paging: false}).then(r => {
             if (r.data.categories) {
@@ -508,8 +511,14 @@ export default function ManageSOF() {
         })
         getListCompanyApi({paging: false}).then(r => {
             if (r.data.companies) {
-                setListCompany(convertToAutoComplete(r.data.companies, 'company_name'))
-            } else setListCompany([])
+                let arr = r.data.companies.filter(e=> e.company_type==='SUPPLIER')
+                let arrSupplier = r.data.companies.filter(e=> e.company_type!=='SUPPLIER')
+                setListCompany(convertToAutoComplete(arrSupplier, 'company_name'))
+                setListCompanySupplier(convertToAutoComplete(arr, 'company_name'))
+            } else {
+                setListCompany([])
+                setListCompanySupplier([])
+            }
 
         }).catch(e => {
             console.log(e)
@@ -626,6 +635,24 @@ export default function ManageSOF() {
                                     if (newValue)
                                         setCompanySearch(newValue.id)
                                     else setCompanySearch(null)
+                                }}
+                            />
+                        </div>
+                        <div style={{width: '20%',marginLeft: '20px'}}>
+                            <div className={'label-input'}>Công ty cho vay</div>
+                            <Autocomplete
+                                disablePortal
+                                id="combo-box-demo"
+                                options={listCompanySupplier}
+                                // sx={{ width: 300 }}
+                                // onChange={}
+                                renderInput={(params) => < TextField {...params} placeholder="Công ty vay"/>}
+                                size={"small"}
+                                onChange={(event, newValue) => {
+                                    console.log("new_value", newValue)
+                                    if (newValue)
+                                        setCompanySupplierSearch(newValue.id)
+                                    else setCompanySupplierSearch(null)
                                 }}
                             />
                         </div>

@@ -62,7 +62,8 @@ export default function EditCategory(props) {
         charter_capital:'',
         founding_date:new dayjs,
         capital_limit:'',
-        company_code:''
+        company_code:'',
+        company_type:'CAPITAL'
     })
     const {isUpdate} = props
     const [idUpdate,setIdUpdate] = useState(null)
@@ -183,7 +184,8 @@ export default function EditCategory(props) {
                         charter_capital:info.charter_capital,
                         founding_date:isUpdate?dayjs(info.founding_date,'DD-MM-YYYY'):info.founding_date,
                         capital_limit:info.capital_limit,
-                        company_code:info.company_code,
+                        company_code:info.company_code||'',
+                        company_type:info.company_type,
                     }}
                     validationSchema={validationSchema}
                     onSubmit={
@@ -231,7 +233,7 @@ export default function EditCategory(props) {
                                         draggable: true,
                                     });
                                     setTimeout(() => {
-                                        navigate('/company')
+                                        navigate('/company/detail?id='+r.data.id)
                                     }, 1050);
 
                                 }).catch(e=>{
@@ -290,6 +292,22 @@ export default function EditCategory(props) {
                                                 helperText={touched.company_code && errors.company_code}
 
                                             />
+                                        </Grid>
+                                        <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Loại công ty<span className={'error-message'}>*</span></div>
+                                            <FormControl fullWidth >
+                                                <Select
+                                                    labelId="asset_type_label"
+                                                    id='company_type'
+                                                    name='company_type'
+                                                    value={values.company_type}
+                                                    onChange={handleChange}
+                                                    size={"small"}
+                                                >
+                                                    <MenuItem value={'CAPITAL'}>Công ty vay</MenuItem>
+                                                    <MenuItem value={'SUPPLIER'}>Công ty cho vay</MenuItem>
+                                                </Select>
+                                            </FormControl>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
                                             <div className={'label-input'}>Địa chỉ<span className={'error-message'}>*</span></div>

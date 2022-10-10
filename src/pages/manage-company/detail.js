@@ -56,6 +56,7 @@ export default function DetailCategory(props) {
         charter_capital:'',
         capital_limit:'',
         founding_date:'',
+        company_type:''
     })
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
@@ -169,7 +170,15 @@ export default function DetailCategory(props) {
                     </div>
                 </div>
                 <Divider></Divider>
-
+                <div className={'row-detail'}>
+                    <div className={'text-info-tittle'}>
+                        Loại công ty
+                    </div>
+                    <div className={'text-info-content'}>
+                        {info.company_type==='SUPPLIER'?'Công ty cho vay':'Công ty vay'}
+                    </div>
+                </div>
+                <Divider></Divider>
                 <div className={'row-detail'}>
                     <div className={'text-info-tittle'}>
                         Mã công ty
