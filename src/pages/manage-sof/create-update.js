@@ -9,45 +9,25 @@ import {
     FormHelperText,
     Grid,
     InputAdornment,
-    InputLabel,
     MenuItem,
-    Paper,
     Select,
     TextField,
-    Tooltip,
     Typography
 } from "@mui/material";
-
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import {NumericFormat} from 'react-number-format';
-import AddIcon from '@mui/icons-material/Add';
-import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
-import SearchIcon from '@mui/icons-material/Search';
+
 import {toast, ToastContainer} from "react-toastify";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
-import {
-    DataGrid,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector,
-    GridToolbarExport,
-    GridToolbarFilterButton
-} from "@mui/x-data-grid";
-import {GridRowsProp} from "@mui/x-data-grid";
-import {GridColDef} from "@mui/x-data-grid";
 import * as yup from 'yup';
 import {Form, Formik} from 'formik';
 import {useNavigate, useSearchParams} from "react-router-dom";
-import apiManagerAssets from "../../api/manage-assets";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
 import {
     capitalizeFirstLetter,
     convertToAutoComplete,
-    currencyFormatter,
+    convertToAutoCompleteMail,
     listOptionMonth,
     VNnum2words
 } from "../../constants/utils";
@@ -60,6 +40,8 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import {TreeSelect} from "antd";
 import TextFieldLink from "../../components/TextFieldLink";
+import Axios from "axios";
+import {useSelector} from "react-redux";
 
 export default function EditSOF(props) {
     const navigate = useNavigate();
@@ -83,20 +65,23 @@ export default function EditSOF(props) {
     const [listCategoryTree, setListCategoryTree] = useState([]);
     const [categorySearch, setCategorySearch] = useState()
     const [campaignSearch, setCampaignSearch] = useState()
-    const [lendingInMonth, setLendingInMonth] = useState({id:1,label:'1'})
+    const [lendingInMonth, setLendingInMonth] = useState({id: 1, label: '1'})
     const [listCampaignTree, setListCampaignTree] = useState([]);
+    const currentUser = useSelector(state => state.currentUser)
+    const [listUser,setListUser] = useState([{id:'1','label':'1'}])
     const [info, setInfo] = useState({
         id: '',
         capital_company: {},
         capital_category: {},
         capital_campaign: {},
-        supplier_company:{},
-        supplier_company_id:'',
+        supplier_company: {},
+        supplier_company_id: '',
         capital_company_id: '',
         capital_category_id: '',
         capital_campaign_id: '',
         lending_amount: '',
         owner_full_name: '',
+        approve_name: '',
         lending_start_date: new dayjs,
         status: '',
         lending_in_month: '',
@@ -122,6 +107,10 @@ export default function EditSOF(props) {
             .trim()
             .required('Không được để trống'),
         capital_category_id: yup
+            .string()
+            .trim()
+            .required('Không được để trống'),
+        approve_name: yup
             .string()
             .trim()
             .required('Không được để trống'),
@@ -193,21 +182,30 @@ export default function EditSOF(props) {
             console.log(e)
         })
 
+        Axios.get('https://graph.microsoft.com/v1.0/users?$top=999', {
+            headers: { 'Authorization': `Bearer ${currentUser.tokenGraphApi}` },
+            // responseType: 'blob'
+        }).then(users => {
+            console.log('users.value',users.data.value)
+            let arrConvert = convertToAutoCompleteMail(users.data.value,'mail')
+            setListUser(arrConvert)
+        }).catch(e=>{
+            alert(JSON.stringify(e))
+        })
     }, [])
     useEffect(() => {
 
-        getListCompanyApi({paging:false}).then(r => {
-            console.log("r tutt",r.data)
+        getListCompanyApi({paging: false}).then(r => {
+            console.log("r tutt", r.data)
             // console.log("r.data.companies",r.data);
 
-            if (r.data.companies){
-                let arr = r.data.companies.filter(e=> e.company_type==='SUPPLIER')
-                let arrSupplier = r.data.companies.filter(e=> e.company_type!=='SUPPLIER')
+            if (r.data.companies) {
+                let arr = r.data.companies.filter(e => e.company_type === 'SUPPLIER')
+                let arrSupplier = r.data.companies.filter(e => e.company_type !== 'SUPPLIER')
                 setListCompany(convertToAutoComplete(arrSupplier, 'company_name'))
                 setListCompanySupplier(convertToAutoComplete(arr, 'company_name'))
 
-            }
-            else {
+            } else {
                 setListCompany([])
                 setListCompanySupplier([])
             }
@@ -227,6 +225,9 @@ export default function EditSOF(props) {
             })
         }
     }, [idUpdate])
+    useEffect(()=>{
+        console.log("listUser",listUser)
+    },[listUser])
     const createSOFApi = (data) => {
         return apiManagerSOF.createSOF(data);
     }
@@ -245,7 +246,6 @@ export default function EditSOF(props) {
     const getListCampaignApi = (data) => {
         return apiManagerCampaign.getListCampaign(data);
     }
-
     const getListCategoryTreeApi = (data) => {
         return apiManagerCategory.getListCategoryTree(data);
     }
@@ -256,19 +256,17 @@ export default function EditSOF(props) {
         navigate('/sof')
     }
     useEffect(() => {
-        console.log(info)
+        console.log('info', {id: info.grace_interest_in_month, label: info.grace_interest_in_month + ''})
         setListFileServer(info.list_attachments)
 
         setCategorySearch(info.capital_category.id)
         setCampaignSearch(info.capital_campaign.id)
-        setCompanySearch({id:info.capital_company.id,label:info.capital_company.company_name})
+        setCompanySearch({id: info.capital_company.id, label: info.capital_company.company_name})
 
     }, [info])
-
     useEffect(() => {
         console.log(VNnum2words(10000));
     }, [listFileServer])
-
     const deleteFileLocal = (name) => {
         let arr = [...listFileLocal]
         let indexRemove = listFileLocal.findIndex(e => e.name === name)
@@ -281,14 +279,14 @@ export default function EditSOF(props) {
     const addNewLink = () => {
         setListLink([...listLink, {download_link: '', attachment_type: ''}])
     }
-    const deleteValueLink = (index,item) => {
+    const deleteValueLink = (index, item) => {
         setListLink([...listLink.slice(0, index), ...listLink.slice(index + 1)
         ])
     }
-    const deleteValueLinkServer = (index,item) => {
+    const deleteValueLinkServer = (index, item) => {
         setListLinkServer([...listLinkServer.slice(0, index), ...listLinkServer.slice(index + 1)
         ])
-        setListDeleteLinkServer([...listDeleteLinkServer,item.id])
+        setListDeleteLinkServer([...listDeleteLinkServer, item.id])
     }
     const changeValueLink = (value, index) => {
         setListLink([...listLink.slice(0, index), {
@@ -368,7 +366,8 @@ export default function EditSOF(props) {
             draggable
             pauseOnHover
         />
-        <Button onClick={back} style={{marginBottom: '10px'}} variant="text" startIcon={<KeyboardBackspaceIcon/>}>Nguồn vốn
+        <Button onClick={back} style={{marginBottom: '10px'}} variant="text" startIcon={<KeyboardBackspaceIcon/>}>Nguồn
+            vốn
         </Button>
 
         <div className={'main-content-header'}>
@@ -400,6 +399,7 @@ export default function EditSOF(props) {
                     lending_in_month: info.lending_in_month,
                     interest_period: info.interest_period,
                     interest_rate: info.interest_rate,
+                    approve_name:info.approve_name,
                     grace_principal_in_month: info.grace_principal_in_month,
                     grace_interest_in_month: info.grace_interest_in_month,
                     interest_rate_type: info.interest_rate_type,
@@ -426,12 +426,14 @@ export default function EditSOF(props) {
                         formData.append('capitalCompanyId', values.capital_company_id)
                         formData.append('status', values.status)
                         formData.append('ownerFullName', values.owner_full_name)
+                        formData.append('createdBy', currentUser.username)
                         formData.append('lendingStartDate', dayjs(values.lending_start_date).format('DD-MM-YYYY'))
                         formData.append('lendingInMonth', values.lending_in_month)
                         formData.append('principalPeriod', values.principal_period)
                         formData.append('interestPeriod', values.interest_period)
                         formData.append('interestRate', values.interest_rate)
                         formData.append('lendingAmount', values.lending_amount)
+                        formData.append('approveName', values.approve_name)
                         formData.append('gracePrincipalInMonth', values.grace_principal_in_month)
                         formData.append('graceInterestInMonth', values.grace_interest_in_month)
                         formData.append('interestRateType', values.interest_rate_type)
@@ -486,7 +488,7 @@ export default function EditSOF(props) {
                                     draggable: true,
                                 });
                                 setTimeout(() => {
-                                    navigate('/sof')
+                                    navigate(`/sof/detail?id=${r.data.id}`)
                                 }, 1050);
 
                             }).catch(e => {
@@ -558,7 +560,8 @@ export default function EditSOF(props) {
                                     </FormControl>
                                 </Grid>
                                 <Grid item xs={6} md={6}>
-                                    <div className={'label-input'}>Công ty cho vay<span className={'error-message'}>*</span>
+                                    <div className={'label-input'}>Công ty cho vay<span
+                                        className={'error-message'}>*</span>
                                     </div>
                                     <FormControl fullWidth>
                                         <Select
@@ -731,20 +734,80 @@ export default function EditSOF(props) {
                                     </Typography>
 
                                 </Grid>
-                                <Grid item xs={6} md={6}>
-                                    <div className={'label-input'}>Người quản lý<span
-                                        className={'error-message'}>*</span></div>
-                                    <TextField
-                                        size={'small'}
-                                        id='owner_full_name'
-                                        name='owner_full_name'
-                                        className={'formik-input'}
-                                        // variant="standard"
-                                        value={values.owner_full_name}
-                                        onChange={handleChange}
-                                        error={touched.owner_full_name && Boolean(errors.owner_full_name)}
-                                        helperText={touched.owner_full_name && errors.owner_full_name}
+                                {/*<Grid item xs={6} md={6}>*/}
+                                {/*    <div className={'label-input'}>Người quản lý<span*/}
+                                {/*        className={'error-message'}>*</span></div>*/}
+                                {/*    <TextField*/}
+                                {/*        size={'small'}*/}
+                                {/*        id='owner_full_name'*/}
+                                {/*        name='owner_full_name'*/}
+                                {/*        className={'formik-input'}*/}
+                                {/*        // variant="standard"*/}
+                                {/*        value={values.owner_full_name}*/}
+                                {/*        onChange={handleChange}*/}
+                                {/*        error={touched.owner_full_name && Boolean(errors.owner_full_name)}*/}
+                                {/*        helperText={touched.owner_full_name && errors.owner_full_name}*/}
 
+                                {/*    />*/}
+                                {/*</Grid>*/}
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Người quản lý <span
+                                        className={'error-message'}>*</span></div>
+                                    <Autocomplete
+                                        value={{
+                                            id: values.owner_full_name,
+                                            label: values.owner_full_name + ''
+                                        }
+                                        }
+                                        size={"small"}
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={listUser}
+                                        renderInput={(params) =>
+                                            <TextField
+                                                size={"small"}
+                                                {...params}
+                                                error={touched.owner_full_name && Boolean(errors.owner_full_name)}
+                                                helperText={touched.owner_full_name && errors.owner_full_name}
+                                            />
+                                        }
+
+                                        onChange={(event, newValue) => {
+                                            console.log("new-value",newValue)
+                                            if (newValue){
+                                                setFieldValue('owner_full_name', newValue.label)
+                                            }
+                                        }}
+                                    />
+                                </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Người phê duyệt <span
+                                        className={'error-message'}>*</span></div>
+                                    <Autocomplete
+                                        value={{
+                                            id: values.approve_name,
+                                            label: values.approve_name + ''
+                                        }
+                                        }
+                                        size={"small"}
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={listUser}
+                                        renderInput={(params) =>
+                                            <TextField
+                                                size={"small"}
+                                                {...params}
+                                                error={touched.approve_name && Boolean(errors.approve_name)}
+                                                helperText={touched.approve_name && errors.approve_name}
+                                            />
+                                        }
+
+                                        onChange={(event, newValue) => {
+                                            console.log("new-value",newValue)
+                                            if (newValue){
+                                                setFieldValue('approve_name', newValue.label)
+                                            }
+                                        }}
                                     />
                                 </Grid>
                                 <Grid item xs={6} md={6}>
@@ -776,7 +839,10 @@ export default function EditSOF(props) {
                                     {/*    // helperText={VNnum2words(values.initial_value)==='không'?'':`${VNnum2words(values.initial_value)} đồng`}*/}
                                     {/*/>*/}
                                     <Autocomplete
-                                        value={isUpdate?{id:info.id,label:info.id+''}:listOptionMonth[0]}
+                                        value={isUpdate ? {
+                                            id: values.lending_in_month,
+                                            label: values.lending_in_month + ''
+                                        } : listOptionMonth[0]}
                                         id="free-solo-demo"
                                         size={"small"}
                                         freeSolo
@@ -797,12 +863,12 @@ export default function EditSOF(props) {
                                         renderInput={(params) =>
                                             <TextField
                                                 size={"small"}
-                                            {...params}
-                                            error={touched.lending_in_month && Boolean(errors.lending_in_month)}
-                                            helperText={touched.lending_in_month && errors.lending_in_month}
+                                                {...params}
+                                                error={touched.lending_in_month && Boolean(errors.lending_in_month)}
+                                                helperText={touched.lending_in_month && errors.lending_in_month}
                                                 //     helperText={touched.lending_in_month && errors.lending_in_month}
-                                        />
-                                    }
+                                            />
+                                        }
                                     />
                                 </Grid>
                                 <Grid item xs={6} md={6}>
@@ -900,7 +966,11 @@ export default function EditSOF(props) {
                                     <div className={'label-input'}>Thời gian ân hạn gốc (Tháng)<span
                                         className={'error-message'}>*</span></div>
                                     <Autocomplete
-                                        value={isUpdate?{id:info.id,label:info.id+''}:listOptionMonth[0]}
+                                        value={isUpdate ? {
+                                            id: values.grace_principal_in_month,
+                                            label: values.grace_principal_in_month + ''
+                                        } : listOptionMonth[0]}
+
                                         id="free-solo-demo"
                                         size={"small"}
                                         freeSolo
@@ -934,7 +1004,11 @@ export default function EditSOF(props) {
                                     <div className={'label-input'}>Thời gian ân hạn lãi (Tháng)<span
                                         className={'error-message'}>*</span></div>
                                     <Autocomplete
-                                        value={isUpdate?{id:info.id,label:info.id+''}:listOptionMonth[0]}
+                                        value={isUpdate ? {
+                                            id: values.grace_interest_in_month,
+                                            label: values.grace_interest_in_month + ''
+                                        } : listOptionMonth[0]}
+
                                         id="free-solo-demo"
                                         size={"small"}
                                         freeSolo
@@ -1073,7 +1147,8 @@ export default function EditSOF(props) {
                                         }
                                         {
                                             listLink.map((e, index) => (
-                                                <TextFieldLink disable={false} changeValue={changeValueLink} index={index}
+                                                <TextFieldLink disable={false} changeValue={changeValueLink}
+                                                               index={index}
                                                                deleteValueLink={deleteValueLink}
                                                                item={e}></TextFieldLink>
                                             ))

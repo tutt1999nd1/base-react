@@ -241,10 +241,12 @@ hr {
     display: flex;
     width: 90%;
     justify-content: space-between;
+    /*justify-content: center;*/
 }
 
-.icon-action svg {
+.icon-action>svg {
     cursor: pointer;
+    /*margin-left: 5px;*/
 }
 
 .formik-input {
@@ -258,7 +260,7 @@ hr {
 }
 
 .main-content-body-result {
-    height: 90vh;
+    height: 70vh;
 }
 
 .main-content-detail {
@@ -527,7 +529,7 @@ height: 45px;
 .wrapper-login{
     display: flex;
     /*background: red;*/
-    height: 100vh;
+    height: 100%;
     background-image: url('assets/img/background.jpg');
     /*transition: all 1s ease 0s;*/
     background-size: cover;
@@ -535,6 +537,7 @@ height: 45px;
 }
 
 .wrapper-form-login{
+    height: 100%;
     width: 30%;
     background: white;
     margin-left: auto;
@@ -680,6 +683,11 @@ height: 45px;
 }
 .list-file{
     margin-top: 10px;
-    height: 200px;
+    max-height:200px ;
     overflow-y: auto;
 }
+
+/*.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-pape{*/
+/*    left: unset !important;*/
+/*    right: 0px !important;*/
+/*}*/

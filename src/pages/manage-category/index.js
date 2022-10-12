@@ -1,46 +1,30 @@
- import React, {useEffect, useState} from "react";
-import {ClipLoader, HashLoader} from "react-spinners";
- import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import React, {useEffect, useState} from "react";
+import {ClipLoader} from "react-spinners";
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
-import {
-    Button, Collapse, css,
-    Divider,
-    FormControl, FormHelperText, IconButton,
-    InputAdornment,
-    InputLabel, MenuItem,
-    Paper, Select,
-    TextField,
-    Tooltip,
-    Typography
-} from "@mui/material";
+import {Button, Collapse, css, Divider, IconButton, TextField, Tooltip, Typography} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
-import SearchIcon from '@mui/icons-material/Search';
 import {toast, ToastContainer} from "react-toastify";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import {
     DataGrid,
-    viVN,
+    GridColDef,
     GridToolbarColumnsButton,
     GridToolbarContainer,
-    GridToolbarDensitySelector, GridToolbarExport,
-    GridToolbarFilterButton
+    GridToolbarDensitySelector,
+    viVN
 } from "@mui/x-data-grid";
-import {GridRowsProp} from "@mui/x-data-grid";
-import {GridColDef} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
-import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import Utils, {currencyFormatter, pending} from "../../constants/utils";
- import apiManagerCompany from "../../api/manage-company";
- import apiManagerCategory from "../../api/manage-category";
- import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
- import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
- import {TreeSelect} from "antd";
- import {useSelector} from "react-redux";
+import {pending} from "../../constants/utils";
+import apiManagerCategory from "../../api/manage-category";
+import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
+import {TreeSelect} from "antd";
+import {useSelector} from "react-redux";
 
 export default function ManageCategory() {
     const currentUser = useSelector(state => state.currentUser)
@@ -230,22 +214,25 @@ export default function ManageCategory() {
     }
 
     useEffect(() => {
-        getListCategoryApi({
-            'page_size': listResult.pageSize,
-            'page_index': listResult.page + 1,
-            'paging': true,
-            'category_name': nameSearch === '' ? null : nameSearch,
-            'parent_id': categorySearch ? categorySearch : null,
-        }).then(r => {
-            setLoading(false)
-            console.log("r", r)
-            let arr = convertArr(r.data.categories)
-            setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
-        }).catch(e => {
-            setLoading(false)
-            console.log(e)
-        })
-    }, [listResult.page, listResult.pageSize,nameSearch ,refresh,categorySearch])
+        if(currentUser.token){
+            getListCategoryApi({
+                'page_size': listResult.pageSize,
+                'page_index': listResult.page + 1,
+                'paging': true,
+                'category_name': nameSearch === '' ? null : nameSearch,
+                'parent_id': categorySearch ? categorySearch : null,
+            }).then(r => {
+                setLoading(false)
+                console.log("r", r)
+                let arr = convertArr(r.data.categories)
+                setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
+            }).catch(e => {
+                setLoading(false)
+                console.log(e)
+            })
+        }
+
+    }, [listResult.page, listResult.pageSize,nameSearch ,refresh,categorySearch,currentUser.token])
 
     useEffect(()=>{
         getListCategoryTreeApi({paging: false}).then(r => {

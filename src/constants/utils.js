@@ -51,6 +51,19 @@ export const currencyFormatter = (value) => {
     }
     return arr;
 }
+export const convertToAutoCompleteMail = (arr,name) => {
+    let newArr = []
+    for (let i = 0; i < arr.length; i++) {
+        if(arr[i][name]){
+            newArr.push({
+                id:arr[i][name],
+                label:arr[i][name]
+            })
+        }
+
+    }
+    return newArr;
+}
 export const listOptionMonth = [
     {id:1,label:'1'},
     {id:2,label:'2'},

@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import {ClipLoader, HashLoader} from "react-spinners";
 import Collapse from "@mui/material/Collapse";
 import 'react-dropdown-tree-select/dist/styles.css'
 // import 'antd/dist/antd.css';
@@ -7,13 +6,12 @@ import {TreeSelect} from 'antd';
 
 import {
     Autocomplete,
-    Badge,
-    Button, css,
+    Button,
     Divider,
-    FormControl, FormHelperText, IconButton,
-    InputAdornment,
-    InputLabel, MenuItem,
-    Paper, Select,
+    FormControl,
+    IconButton,
+    MenuItem,
+    Select,
     TextField,
     Tooltip,
     Typography
@@ -24,36 +22,20 @@ import AddIcon from '@mui/icons-material/Add';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
-import SearchIcon from '@mui/icons-material/Search';
 import {toast, ToastContainer} from "react-toastify";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
-import {
-    DataGrid,
-    viVN,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector, GridToolbarExport,
-    GridToolbarFilterButton
-} from "@mui/x-data-grid";
-import {GridRowsProp} from "@mui/x-data-grid";
-import {GridColDef} from "@mui/x-data-grid";
+import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, viVN} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
-import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import Utils, {convertToAutoComplete, currencyFormatter, pending} from "../../constants/utils";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import {red} from "@mui/material/colors";
+import {convertToAutoComplete, currencyFormatter, pending} from "../../constants/utils";
 import apiManagerSOF from "../../api/manage-sof";
 import apiManagerCompany from "../../api/manage-company";
 import apiManagerCategory from "../../api/manage-category";
 import apiManagerCampaign from "../../api/manage-campaign";
-
-import data from "./data.json";
-import TreeNodeCustomize from "../../components/TreeNodeCustomize";
 import {useSelector} from "react-redux";
-
+import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
+import CancelPresentationOutlinedIcon from '@mui/icons-material/CancelPresentationOutlined';
 export default function ManageSOF() {
     const currentUser = useSelector(state => state.currentUser)
     const navigate = useNavigate();
@@ -114,7 +96,7 @@ export default function ManageSOF() {
             sortable: false,
             field: 'sof_code',
             headerName: 'Mã khoản vay',
-            maxWidth: 75,
+            minWidth: 150,
             filterable: false,
             headerClassName: 'super-app-theme--header',
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
@@ -194,6 +176,35 @@ export default function ManageSOF() {
             sortable: false,
             field: 'owner_full_name',
             headerName: 'Người quản lý',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'approve_name',
+            headerName: 'Người phê duyệt',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+
+        },{
+            filterable: false,
+            sortable: false,
+            field: 'created_by',
+            headerName: 'Người tạo',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             renderCell: (params) => {
@@ -337,7 +348,8 @@ export default function ManageSOF() {
                 </div>;
             },
 
-        }, , {
+        },
+        {
             filterable: false,
             sortable: false,
             field: 'interest_rate_rage',
@@ -347,6 +359,21 @@ export default function ManageSOF() {
             flex: 1,
             renderCell: (params) => {
 
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'status_approve',
+            headerName: 'Trạng thái phê duyệt',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            flex: 1,
+            renderCell: (params) => {
                 return <div className='content-column'>
                     {params.value}
                 </div>;
@@ -381,7 +408,37 @@ export default function ManageSOF() {
                     navigate(`/sof/update?id=${params.id}`)
                     // });
                 }
+                const sendBtn = (e) => {
+                    e.stopPropagation();
+                    sendApproveSOFApi({id:params.id}).then(r=>{
+                        setRefresh(!refresh)
+                    }).catch(err=>{
+
+                    })
+                    console.log(params.row.status_approve)
+                }
+                const cancelBtn = (e) => {
+                    e.stopPropagation();
+                    cancelApproveSOFApi({id:params.id}).then(r=>{
+                        setRefresh(!refresh)
+                    }).catch(err=>{
+
+                    })
+                    console.log(params.row.status_approve)
+                }
                 return <div className='icon-action'>
+                    {
+                        params.row.status_approve=='Tạo mới'|| params.row.status_approve=='Đã từ chối'?
+                        <Tooltip title="Đề xuát phê duyệt" >
+                            <CheckBoxOutlinedIcon onClick={sendBtn} style={{color: "rgb(107, 114, 128)"}}></CheckBoxOutlinedIcon>
+                        </Tooltip> :
+                            params.row.status_approve=='Đang chờ phê duyệt'?
+                            <Tooltip title="Hủy phê duyệt" >
+                                <CancelPresentationOutlinedIcon onClick={cancelBtn} style={{color: "rgb(107, 114, 128)"}}></CancelPresentationOutlinedIcon>
+                            </Tooltip>:''
+                    }
+
+
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
                         <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
                     </Tooltip>
@@ -453,6 +510,18 @@ export default function ManageSOF() {
             } else if (arr[i].status === 'PRINCIPAL_OFF_UNPAID_INTEREST') {
                 arr[i].status = "Đã off gốc, chưa trả lãi"
             }
+            if(arr[i].status_approve==='DRAFT'){
+                arr[i].status_approve="Tạo mới"
+            }
+            else if(arr[i].status_approve==='APPROVING'){
+                arr[i].status_approve="Đang chờ duyệt"
+            }
+            else if(arr[i].status_approve==='APPROVED'){
+                arr[i].status_approve="Đã duyệt"
+            }
+            else if(arr[i].status_approve==='REJECTED'){
+                arr[i].status_approve="Đã từ chối"
+            }
         }
         return arr;
     }
@@ -491,7 +560,7 @@ export default function ManageSOF() {
             setLoading(false)
             console.log(e)
         })
-    }, [listResult.page, listResult.pageSize, campaignSearch, categorySearch, companySearch,companySupplierSearch, statusSearch, refresh])
+    }, [listResult.page, listResult.pageSize, campaignSearch, categorySearch, companySearch,companySupplierSearch, statusSearch, refresh,currentUser.token])
     useEffect(() => {
         getListCategoryApi({paging: false}).then(r => {
             if (r.data.categories) {
@@ -515,7 +584,7 @@ export default function ManageSOF() {
                 let arrSupplier = r.data.companies.filter(e=> e.company_type!=='SUPPLIER')
                 setListCompany(convertToAutoComplete(arrSupplier, 'company_name'))
                 setListCompanySupplier(convertToAutoComplete(arr, 'company_name'))
-            } else {
+                } else {
                 setListCompany([])
                 setListCompanySupplier([])
             }
@@ -536,7 +605,7 @@ export default function ManageSOF() {
             console.log(e)
         })
 
-    }, [])
+    }, [currentUser.token])
 
     // const { data } = useDemoData({
     //     dataSet: 'Commodity',
@@ -565,6 +634,12 @@ export default function ManageSOF() {
     const deleteSOFApi = (id) => {
         return apiManagerSOF.deleteSOF(id);
     }
+    const sendApproveSOFApi = (data) => {
+        return apiManagerSOF.sendApproveSOF(data);
+    }
+    const cancelApproveSOFApi = (data) => {
+        return apiManagerSOF.cancelApproveSOF(data);
+    }
     return (
         <div className={'main-content'}>
             {/*<div className={`loading ${true ? '' : ''}`}>*/}
@@ -584,7 +659,7 @@ export default function ManageSOF() {
                 pauseOnHover
             />
             <div className={'main-content-header'}>
-                <ModalConfirmDel name={infoDel.id} openModalDel={openModalDel}
+                <ModalConfirmDel name={infoDel.id+''} openModalDel={openModalDel}
                                  handleCloseModalDel={handleCloseModalDel}
                                  submitDelete={submitDelete}></ModalConfirmDel>
                 <div className={'row'} style={{justifyContent: 'space-between'}}>

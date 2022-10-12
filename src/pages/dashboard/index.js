@@ -1,5 +1,5 @@
-import {Box, Divider, Grid, Tab,Tabs, Tooltip} from "@mui/material";
-import React, {useEffect, useRef, useState} from "react";
+import {Box, Divider, Grid, Tab, Tabs, Tooltip} from "@mui/material";
+import React, {useEffect, useState} from "react";
 import ReactECharts from 'echarts-for-react';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DonutLargeIcon from '@mui/icons-material/DonutLarge';
@@ -7,6 +7,7 @@ import {a11yProps, convertToBarChart, convertToPieChart, currencyFormatter, sum,
 import apiManagerAssets from "../../api/manage-assets";
 import {useSelector} from "react-redux";
 import apiManagerSOF from "../../api/manage-sof";
+
 export default function Dashboard() {
     const currentUser = useSelector(state => state.currentUser)
     const [listAsset,setListAsset] = useState([])
@@ -233,6 +234,47 @@ export default function Dashboard() {
             <TabPanel value={tab} index={0}>
                 <Box>
                     <Grid container spacing={4} style={{padding:'20px'}} >
+
+                        <Grid item xs={12} md={6}>
+                            <div className={'widget'}>
+                                <div className={'widget-tittle'}>
+                                    <h4>Tài sản</h4>
+                                </div>
+                                <Divider light/>
+                                <div key={keyUpdateAsset}  className={'widget-content'}>
+                                    <div className={'type-bar'}>
+                                        <Tooltip title={'Đồ thị thanh'}>
+                                            <BarChartIcon color={`${typeChartAsset==='category'?'primary':''}`} className={'icon'} onClick={()=>{setTypeChartAsset('category')}}></BarChartIcon>
+                                        </Tooltip>
+                                        <Tooltip title={'Đồ thị tròn'}>
+                                            <DonutLargeIcon color={`${typeChartAsset==='pie'?'primary':''}`} className={'icon'} onClick={()=>{setTypeChartAsset('pie')}}></DonutLargeIcon>
+                                        </Tooltip>
+                                    </div>
+                                    {/*<ReactECharts  />*/}
+                                    <ReactECharts style={{width:'100%',height:'400px'}}   notMerge={true} option={typeChartAsset==='category'?optionBarAsset:optionPieAsset} />
+                                </div>
+                            </div>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                            <div className={'widget'}>
+                                <div className={'widget-tittle'}>
+                                    <h4>Nguồn vốn</h4>
+                                </div>
+                                <Divider light/>
+                                <div key={keyUpdateSOF}  className={'widget-content'}>
+                                    <div className={'type-bar'}>
+                                        <Tooltip title={'Đồ thị thanh'}>
+                                            <BarChartIcon color={`${typeChartSOF==='category'?'primary':''}`} className={'icon'} onClick={()=>{setTypeChartSOF('category')}}></BarChartIcon>
+                                        </Tooltip>
+                                        <Tooltip title={'Đồ thị tròn'}>
+                                            <DonutLargeIcon color={`${typeChartSOF==='pie'?'primary':''}`} className={'icon'} onClick={()=>{setTypeChartSOF('pie')}}></DonutLargeIcon>
+                                        </Tooltip>
+                                    </div>
+                                    {/*<ReactECharts  />*/}
+                                    <ReactECharts style={{width:'100%',height:'400px'}}   notMerge={true} option={typeChartSOF==='category'?optionBarSOF:optionPieSOF} />
+                                </div>
+                            </div>
+                        </Grid>
                         <Grid item xs={6} md={12}>
                             <div className={'widget'}>
                                 <div className={'widget-tittle'}>
@@ -305,46 +347,6 @@ export default function Dashboard() {
 
                         </Grid>
 
-                        <Grid item xs={12} md={6}>
-                            <div className={'widget'}>
-                                <div className={'widget-tittle'}>
-                                    <h4>Tài sản</h4>
-                                </div>
-                                <Divider light/>
-                                <div key={keyUpdateAsset}  className={'widget-content'}>
-                                    <div className={'type-bar'}>
-                                        <Tooltip title={'Đồ thị thanh'}>
-                                            <BarChartIcon color={`${typeChartAsset==='category'?'primary':''}`} className={'icon'} onClick={()=>{setTypeChartAsset('category')}}></BarChartIcon>
-                                        </Tooltip>
-                                        <Tooltip title={'Đồ thị tròn'}>
-                                            <DonutLargeIcon color={`${typeChartAsset==='pie'?'primary':''}`} className={'icon'} onClick={()=>{setTypeChartAsset('pie')}}></DonutLargeIcon>
-                                        </Tooltip>
-                                    </div>
-                                    {/*<ReactECharts  />*/}
-                                    <ReactECharts style={{width:'100%',height:'400px'}}   notMerge={true} option={typeChartAsset==='category'?optionBarAsset:optionPieAsset} />
-                                </div>
-                            </div>
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                            <div className={'widget'}>
-                                <div className={'widget-tittle'}>
-                                    <h4>Nguồn vốn</h4>
-                                </div>
-                                <Divider light/>
-                                <div key={keyUpdateSOF}  className={'widget-content'}>
-                                    <div className={'type-bar'}>
-                                        <Tooltip title={'Đồ thị thanh'}>
-                                            <BarChartIcon color={`${typeChartSOF==='category'?'primary':''}`} className={'icon'} onClick={()=>{setTypeChartSOF('category')}}></BarChartIcon>
-                                        </Tooltip>
-                                        <Tooltip title={'Đồ thị tròn'}>
-                                            <DonutLargeIcon color={`${typeChartSOF==='pie'?'primary':''}`} className={'icon'} onClick={()=>{setTypeChartSOF('pie')}}></DonutLargeIcon>
-                                        </Tooltip>
-                                    </div>
-                                    {/*<ReactECharts  />*/}
-                                    <ReactECharts style={{width:'100%',height:'400px'}}   notMerge={true} option={typeChartSOF==='category'?optionBarSOF:optionPieSOF} />
-                                </div>
-                            </div>
-                        </Grid>
                         {/*<Grid item xs={6} md={6}>*/}
                         {/*    <div className={'widget'}>*/}
                         {/*        <div className={'widget-tittle'}>*/}

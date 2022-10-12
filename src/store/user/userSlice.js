@@ -4,6 +4,7 @@ export const userSlice = createSlice({
     name: 'user',
     initialState: {
         token: '',
+        tokenGraphApi: '',
         email: '',
         name: '',
         username:'',
@@ -37,6 +38,11 @@ export const userSlice = createSlice({
             state.token = action.payload;
             // state.isSignIn = true;
             localStorage.setItem('token', action.payload)
+        },
+        updateTokenGraphApi: (state, action) => {
+            state.tokenGraphApi = action.payload;
+            // state.isSignIn = true;
+            localStorage.setItem('tokenGraphApi', action.payload)
         },
         updateRole: (state, action) => {
             state.roles = action.payload
@@ -97,4 +103,4 @@ export const userSlice = createSlice({
     }
 })
 export default userSlice.reducer;
-export const {updateHomeAccountId,updateName,onMsalInstanceChange,updateShowMenu, updateToken, updateProjectRedux, updateLanguage, logout, updateLoading, updateRole,updateUsername } = userSlice.actions;
+export const {updateTokenGraphApi,updateHomeAccountId,updateName,onMsalInstanceChange,updateShowMenu, updateToken, updateProjectRedux, updateLanguage, logout, updateLoading, updateRole,updateUsername } = userSlice.actions;

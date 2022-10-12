@@ -1,19 +1,9 @@
 import React, {useEffect, useState} from "react";
-import apiManagerAuth from "../../api/manager-auth";
-import MicrosoftLogin from "react-microsoft-login";
 import {useNavigate} from "react-router-dom";
-import {useDispatch, useSelector} from "react-redux";
-import {
-    onMsalInstanceChange,
-    updateHomeAccountId,
-    updateName,
-    updateToken,
-    updateUsername
-} from "../../store/user/userSlice";
-import {useMsal} from "@azure/msal-react";
+import {useDispatch} from "react-redux";
+import {useIsAuthenticated, useMsal} from "@azure/msal-react";
 import {loginRequest} from "../../constants/authConfig";
-import { useIsAuthenticated } from "@azure/msal-react";
-import {InteractionStatus} from "@azure/msal-browser";
+
 export default function Login() {
     const isAuthenticated = useIsAuthenticated();
     const navigate = useNavigate();

@@ -1,48 +1,13 @@
 import React, {useEffect, useState} from "react";
-import {
-    Box,
-    Button,
-    Divider,
-    FormControl, FormHelperText,
-    Grid,
-    InputAdornment, InputLabel, MenuItem,
-    Paper, Select,
-    TextField,
-    Tooltip,
-    Typography
-} from "@mui/material";
+import {Box, Button, Divider, Grid, InputAdornment, TextField, Typography} from "@mui/material";
 import {NumericFormat} from 'react-number-format';
-import AddIcon from '@mui/icons-material/Add';
-import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
-import SearchIcon from '@mui/icons-material/Search';
 import {toast, ToastContainer} from "react-toastify";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
-import {
-    DataGrid,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector, GridToolbarExport,
-    GridToolbarFilterButton
-} from "@mui/x-data-grid";
-import {GridRowsProp} from "@mui/x-data-grid";
-import {GridColDef} from "@mui/x-data-grid";
 import * as yup from 'yup';
 import {Form, Formik} from 'formik';
 import {useNavigate, useSearchParams} from "react-router-dom";
-import apiManagerAssets from "../../api/manage-assets";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
-import {capitalizeFirstLetter, currencyFormatter,VNnum2words} from "../../constants/utils";
-import apiManagerCompany from "../../api/manage-company";
-import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
-import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
-import moment from "moment/moment";
-import dateFormat from "dateformat";
-import dayjs from "dayjs";
-import apiManagerCategory from "../../api/manage-category";
+import {capitalizeFirstLetter, VNnum2words} from "../../constants/utils";
 import apiManagerCampaign from "../../api/manage-campaign";
 import {TreeSelect} from "antd";
 
@@ -105,6 +70,7 @@ export default function EditCampaign(props) {
     useEffect(() => {
         if (isUpdate && idUpdate) {
             getListCampaignApi({id: idUpdate, page_size: 1}).then(r => {
+                console.log("r.data.campaigns",r)
                 setInfo(r.data.campaigns[0])
                 console.log(r.data.campaigns[0])
             }).catch(e => {
@@ -130,6 +96,7 @@ export default function EditCampaign(props) {
     }
     useEffect(() => {
         console.log("info", info)
+        if(info.parent_campaign)
         setCampaignSearch(info.parent_campaign.id)
     }, [info])
     useEffect(() => {
@@ -221,7 +188,7 @@ export default function EditCampaign(props) {
                                         draggable: true,
                                     });
                                     setTimeout(() => {
-                                        navigate('/campaign')
+                                        navigate(`/campaign/detail?id=${r.data.id}`)
                                     }, 1050);
 
                                 }).catch(e => {

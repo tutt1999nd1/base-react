@@ -1,14 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {ClipLoader, HashLoader} from "react-spinners";
 import Collapse from "@mui/material/Collapse";
 import {
-    Badge,
-    Button, css,
+    Button,
     Divider,
-    FormControl, FormHelperText, IconButton,
-    InputAdornment,
-    InputLabel, MenuItem,
-    Paper, Select,
+    FormControl,
+    IconButton,
+    MenuItem,
+    Select,
     TextField,
     Tooltip,
     Typography
@@ -19,27 +17,14 @@ import AddIcon from '@mui/icons-material/Add';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
-import SearchIcon from '@mui/icons-material/Search';
 import {toast, ToastContainer} from "react-toastify";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
-import {
-    DataGrid,
-    viVN,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector, GridToolbarExport,
-    GridToolbarFilterButton
-} from "@mui/x-data-grid";
-import {GridRowsProp} from "@mui/x-data-grid";
-import {GridColDef} from "@mui/x-data-grid";
+import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, viVN} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import Utils, {currencyFormatter, pending} from "../../constants/utils";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import {red} from "@mui/material/colors";
+import {currencyFormatter, pending} from "../../constants/utils";
 import {useSelector} from "react-redux";
 
 export default function ManageAssets() {
@@ -323,7 +308,7 @@ export default function ManageAssets() {
                 arr[i].status="Đang duyệt"
             }
             else if(arr[i].status==='APPROVED'){
-                arr[i].status="Đã Duyệt"
+                arr[i].status="Đã duyệt"
             }
             else if(arr[i].status==='REJECTED'){
                 arr[i].status="Đã từ chối"

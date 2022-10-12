@@ -41,17 +41,18 @@ const Header = () => {
       dispatch(updateShowMenu(!currentUser.showMenu))
     }
     const [imageUrl, setImageUrl] = useState(null)
-    // useEffect(() => {
-    //     Axios.get('https://graph.microsoft.com/v1.0/me/photo/$value', {
-    //         headers: { 'Authorization': `Bearer ${currentUser.token}` },
-    //         responseType: 'blob'
-    //     }).then(o => {
-    //         const url = window.URL || window.webkitURL;
-    //         const blobUrl = url.createObjectURL(o.data);
-    //         console.log("blobUrl",blobUrl)
-    //         setImageUrl(blobUrl)
-    //     })
-    // }, [currentUser])
+    useEffect(() => {
+        Axios.get('https://graph.microsoft.com/v1.0/me/photo/$value', {
+            headers: { 'Authorization': `Bearer ${currentUser.tokenGraphApi}` },
+            responseType: 'blob'
+        }).then(o => {
+            const url = window.URL || window.webkitURL;
+            const blobUrl = url.createObjectURL(o.data);
+            console.log("blobUrl",blobUrl)
+            setImageUrl(blobUrl)
+        })
+
+    }, [currentUser])
     return (
         <header className={'header'}>
             <div style={{display:"flex",justifyContent:'space-between',width:'100%'}}>

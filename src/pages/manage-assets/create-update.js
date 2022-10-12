@@ -3,41 +3,27 @@ import {
     Box,
     Button,
     Divider,
-    FormControl, FormHelperText,
+    FormControl,
+    FormHelperText,
     Grid,
-    InputAdornment, InputLabel, MenuItem,
-    Paper, Select,
+    InputAdornment,
+    MenuItem,
+    Select,
     TextField,
-    Tooltip,
     Typography
 } from "@mui/material";
 
 import ControlPointIcon from '@mui/icons-material/ControlPoint';
 import {NumericFormat} from 'react-number-format';
-import AddIcon from '@mui/icons-material/Add';
-import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
-import SearchIcon from '@mui/icons-material/Search';
 import {toast, ToastContainer} from "react-toastify";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
-import {
-    DataGrid,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector, GridToolbarExport,
-    GridToolbarFilterButton
-} from "@mui/x-data-grid";
-import {GridRowsProp} from "@mui/x-data-grid";
-import {GridColDef} from "@mui/x-data-grid";
 import * as yup from 'yup';
 import {Form, Formik} from 'formik';
 import {useNavigate, useSearchParams} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
-import {capitalizeFirstLetter, currencyFormatter, VNnum2words} from "../../constants/utils";
+import {capitalizeFirstLetter, VNnum2words} from "../../constants/utils";
 import TextFieldLink from "../../components/TextFieldLink";
 
 export default function EditAssets(props) {

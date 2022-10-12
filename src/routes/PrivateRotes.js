@@ -1,9 +1,6 @@
-import { ROLES } from "../constants/roles"
-import {
-    Navigate,
-    Outlet,
-  } from 'react-router-dom';
-import { useSelector } from "react-redux";
+import {Navigate,} from 'react-router-dom';
+import {useSelector} from "react-redux";
+
 const PrivateRoutes = ({role, redirectPath='/login',children})=>{
     const currentUser = useSelector(state => state.currentUser)
     if(!currentUser?.roles.includes(role)){

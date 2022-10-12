@@ -17,9 +17,10 @@ import ManageSOF from "../pages/manage-sof";
 import EditSOF from "../pages/manage-sof/create-update";
 import DetailSOF from "../pages/manage-sof/detail";
 import Login from "../pages/authentication";
-import Test from "../pages/authentication/test";
-import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
+import {AuthenticatedTemplate, UnauthenticatedTemplate} from "@azure/msal-react";
 import Dashboard from "../pages/dashboard";
+import ManageApprove from "../pages/manage-approve";
+
 export default function RenderRoute() {
     return (
         <Routes>
@@ -61,12 +62,14 @@ export default function RenderRoute() {
                 <Route path="campaign/create" element={<EditCampaign isUpdate={false}></EditCampaign>}/>
                 <Route path="campaign/update" element={<EditCampaign isUpdate={true}></EditCampaign>}/>
                 <Route path="campaign/detail" element={<DetailCampaign></DetailCampaign>}/>
+                <Route path="approve" element={<ManageApprove></ManageApprove>}/>
                 <Route path="sof" element={<ManageSOF>Khoản vay</ManageSOF>}/>
                 <Route path="sof/create" element={<EditSOF isUpdate={false}></EditSOF>}/>
                 <Route path="sof/update" element={<EditSOF isUpdate={true}></EditSOF>}/>
                 <Route path="sof/detail" element={<DetailSOF></DetailSOF>}/>
                 <Route path="account" element={<div>Tài khoản</div>}/>
                 <Route path="company" element={<div>Công ty vay</div>}/>
+                <Route path="categories" element={<div>Hạng mục</div>}/>
                 <Route path="categories" element={<div>Hạng mục</div>}/>
             </Route>
         </Routes>

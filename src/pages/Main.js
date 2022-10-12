@@ -1,13 +1,17 @@
-import React, {useEffect, useLayoutEffect, useState} from "react";
-import {Outlet, useNavigate, useSearchParams} from 'react-router-dom';
+import React, {useEffect, useState} from "react";
+import {Outlet, useNavigate} from 'react-router-dom';
 import Header from "../../../base-react/src/components/Header";
 import Nav from "../../../base-react/src/components/Nav";
-import Footer from "../../../base-react/src/components/Footer";
 import {useIsAuthenticated, useMsal} from "@azure/msal-react";
-import {InteractionStatus} from "@azure/msal-browser";
 import {loginRequest} from "../constants/authConfig";
 import {useDispatch, useSelector} from "react-redux";
-import {updateHomeAccountId, updateName, updateToken, updateUsername} from "../store/user/userSlice";
+import {
+    updateHomeAccountId,
+    updateName,
+    updateToken,
+    updateTokenGraphApi,
+    updateUsername
+} from "../store/user/userSlice";
 
 export default function Main() {
     const navigate = useNavigate();
@@ -25,7 +29,10 @@ export default function Main() {
             ...loginRequest,
             account: accounts[0]
         };
-
+        const requestGraphApi = {
+            scopes: ["User.Read.All"],
+            account: accounts[0]
+        };
         // Silently acquires an access token which is then attached to a request for Microsoft Graph data
         instance.acquireTokenSilent(request).then((response) => {
             setAccessToken(response.accessToken);
@@ -33,16 +40,21 @@ export default function Main() {
 
         }).catch((e) => {
             instance.acquireTokenPopup(request).then((response) => {
-                setAccessToken(response.accessToken);
                 dispatch(updateToken(response.accessToken));
 
             });
         });
-        // instance.acquireTokenPopup(request).then((response) => {
-        //     setAccessToken(response.accessToken);
-        //     dispatch(updateToken(response.accessToken));
-        //
-        // });
+        instance.acquireTokenSilent(requestGraphApi).then((response) => {
+            setAccessToken(response.accessToken);
+            dispatch(updateTokenGraphApi(response.accessToken));
+
+        }).catch((e) => {
+            instance.acquireTokenPopup(requestGraphApi).then((response) => {
+                dispatch(updateTokenGraphApi(response.accessToken));
+
+            });
+        });
+
     }
     useEffect(()=>{
         console.log("accounts[0]",accounts[0])

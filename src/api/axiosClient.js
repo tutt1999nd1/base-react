@@ -34,20 +34,20 @@ axiosClient.interceptors.response.use((response) => {
 }, (error) => {
     // alert("errorr :", JSON.stringify(error.response))
     // Handle errors
-    // if (error.response) {
-    //     if (error.response.status === 400) {
-    //         if (error.response.data.detail == "Wrong Token" || error.response.data.detail == "account is logout") {
-    //             localStorage.clear();
-    //             window.location.href = "/login"
-    //         } else {
-    //             localStorage.clear();
-    //             window.location.href = "/login"
-    //         }
-    //     } else {
-    //         localStorage.clear();
-    //         window.location.href = "/login"
-    //     }
-    // }
+    if (error.response) {
+        if (error.response.status === 400) {
+            if (error.response.data.status.code == "permission_denied" ) {
+                toast.error('Bạn không có quyền thực hiện', {
+                                            position: "top-right",
+                                            autoClose: 5000,
+                                            hideProgressBar: true,
+                                            closeOnClick: true,
+                                            pauseOnHover: true,
+                                            draggable: true,
+                                        });
+            }
+        }
+    }
     // let url = new URL(window.location.href);
     // let paramDomain =  url.searchParams.get("domain")
     // if (error.response) {

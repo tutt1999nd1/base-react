@@ -1,10 +1,10 @@
 // const API_DOMAIN = 'http://10.190.180.251:8088/'
 // const API_DOMAIN = 'http://10.190.160.20:8088/'
-const API_DOMAIN = 'http://localhost:8443/'
+// const API_DOMAIN = 'http://localhost:8443/'
 // const API_DOMAIN = 'http://103.151.238.62:8088/'
 // const API_DOMAIN = 'http://103.151.238.62:8089/'
 // const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
-// const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
+const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
 const API_MAP = {
     GET_LIST_ASSETS: API_DOMAIN + 'asset/search',
     GET_LIST_ASSETS_DASHBOARD: API_DOMAIN + 'dashboard/asset_aggregate',
@@ -30,9 +30,14 @@ const API_MAP = {
     UPDATE_CAMPAIGNS: API_DOMAIN + 'capital_campaign',
     DELETE_CAMPAIGNS: API_DOMAIN + 'capital_campaign',
     GET_LIST_SOF: API_DOMAIN + 'source_of_fund/search',
+    GET_LIST_SOF_APPROVE: API_DOMAIN + 'source_of_fund/search_approve',
     CREATE_SOF: API_DOMAIN + 'source_of_fund/create',
     UPDATE_SOF: API_DOMAIN + 'source_of_fund',
     DELETE_SOF: API_DOMAIN + 'source_of_fund',
-    LOGIN:API_DOMAIN+'capital_campaign/test'
+    LOGIN:API_DOMAIN+'capital_campaign/test',
+    SEND_APPROVE_SOF:API_DOMAIN+'source_of_fund/send-approve-sof',
+    CANCEL_APPROVE_SOF:API_DOMAIN+'source_of_fund/cancel-approve-sof',
+    CONFIRM_APPROVE_SOF:API_DOMAIN+'source_of_fund/confirm-approve-sof',
+    REJECT_APPROVE_SOF:API_DOMAIN+'source_of_fund/reject-approve-sof'
 }
 export default API_MAP;

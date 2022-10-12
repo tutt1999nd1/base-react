@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Link, NavLink, useLocation, useNavigate} from 'react-router-dom';
+import {NavLink, useLocation, useNavigate} from 'react-router-dom';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import DashboardIcon from '@mui/icons-material/Dashboard';
@@ -10,7 +10,8 @@ import {Collapse} from "@mui/material";
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ClassIcon from '@mui/icons-material/Class';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import {useDispatch,useSelector} from "react-redux";
+import {useSelector} from "react-redux";
+
 export default function Nav() {
     const { pathname } = useLocation();
     const navigate = useNavigate()
@@ -57,6 +58,13 @@ export default function Nav() {
                         <li>
                             <div className={'nav-item'}>
                                 <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý nguồn vốn</div>
+                            </div>
+                        </li>
+                    </NavLink>
+                    <NavLink className={'nav-link'} to={'approve'}>
+                        <li>
+                            <div className={'nav-item'}>
+                                <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý phê duyệt</div>
                             </div>
                         </li>
                     </NavLink>
