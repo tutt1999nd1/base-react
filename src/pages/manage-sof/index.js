@@ -118,6 +118,20 @@ export default function ManageSOF() {
         {
             filterable: false,
             sortable: false,
+            field: 'supplier_name',
+            headerName: 'Đối tượng cung cấp vốn',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
             field: 'capital_category_name',
             headerName: 'Hạng mục',
             headerClassName: 'super-app-theme--header',
@@ -419,6 +433,7 @@ export default function ManageSOF() {
                 }
                 const cancelBtn = (e) => {
                     e.stopPropagation();
+
                     cancelApproveSOFApi({id:params.id}).then(r=>{
                         setRefresh(!refresh)
                     }).catch(err=>{
@@ -428,7 +443,7 @@ export default function ManageSOF() {
                 }
                 return <div className='icon-action'>
                     {
-                        params.row.status_approve=='Tạo mới'|| params.row.status_approve=='Đã từ chối'?
+                        params.row.created_by !== currentUser.username?'': params.row.status_approve=='Tạo mới'|| params.row.status_approve=='Đã từ chối'?
                         <Tooltip title="Đề xuát phê duyệt" >
                             <CheckBoxOutlinedIcon onClick={sendBtn} style={{color: "rgb(107, 114, 128)"}}></CheckBoxOutlinedIcon>
                         </Tooltip> :
@@ -495,7 +510,13 @@ export default function ManageSOF() {
             } else arr[i].capital_category_name = ''
             if (arr[i].capital_campaign) {
                 arr[i].capital_campaign_name = arr[i].capital_campaign.campaign_name
-            } else arr[i].capital_campaign_name = ''
+            }
+            else arr[i].capital_campaign_name = ''
+
+            if (arr[i].supplier) {
+                arr[i].supplier_name = arr[i].supplier.supplier_name
+            }
+            else arr[i].capital_campaign_name = ''
             // arr[i].asset_type_name = arr[i].asset_type?.asset_type_name;
             // arr[i].initial_value = currencyFormatter(arr[i].initial_value)
             // arr[i].capital_value = currencyFormatter(arr[i].capital_value)
@@ -514,7 +535,7 @@ export default function ManageSOF() {
                 arr[i].status_approve="Tạo mới"
             }
             else if(arr[i].status_approve==='APPROVING'){
-                arr[i].status_approve="Đang chờ duyệt"
+                arr[i].status_approve="Đang chờ phê duyệt"
             }
             else if(arr[i].status_approve==='APPROVED'){
                 arr[i].status_approve="Đã duyệt"

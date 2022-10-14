@@ -42,6 +42,7 @@ const Header = () => {
     }
     const [imageUrl, setImageUrl] = useState(null)
     useEffect(() => {
+        if(localStorage.getItem('tokenGraphApi'))
         Axios.get('https://graph.microsoft.com/v1.0/me/photo/$value', {
             headers: { 'Authorization': `Bearer ${currentUser.tokenGraphApi}` },
             responseType: 'blob'
@@ -50,6 +51,9 @@ const Header = () => {
             const blobUrl = url.createObjectURL(o.data);
             console.log("blobUrl",blobUrl)
             setImageUrl(blobUrl)
+        }).catch(e=>{
+            // window.location.reload();
+            // localStorage.clear()
         })
 
     }, [currentUser])
@@ -70,12 +74,14 @@ const Header = () => {
                 <div className={'header-right'}>
                     <Tooltip title="Thông báo">
                         <IconButton color="primary"  component="label" style={{marginRight:'10px'}}>
-                            <Badge badgeContent={4}  color={'primary'} sx={{
+                            <Badge badgeContent={4}  color={'primary'}
+                                   sx={{
                                 "& .MuiBadge-badge": {
                                     color: "white",
                                     backgroundColor: "#D14343"
                                 }
-                            }}>
+                            }}
+                            >
                                 <NotificationsIcon style={{ color: "#6b7280" }}></NotificationsIcon>
                             </Badge>
                         </IconButton>
@@ -91,6 +97,13 @@ const Header = () => {
                     />
 
                     <Menu
+                        sx={{
+                            "& .MuiPaper-root": {
+                                left:'unset !important',
+                                right:'20px'
+                            }
+
+                        }}
                         id="basic-menu"
                         anchorEl={anchorEl}
                         open={open}

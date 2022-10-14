@@ -7,7 +7,7 @@ import {loginRequest} from "../constants/authConfig";
 import {useDispatch, useSelector} from "react-redux";
 import {
     updateHomeAccountId,
-    updateName,
+    updateName, updateRole,
     updateToken,
     updateTokenGraphApi,
     updateUsername
@@ -19,6 +19,8 @@ export default function Main() {
     const dispatch = useDispatch();
     const { instance, accounts, inProgress } = useMsal();
     const [accessToken, setAccessToken] = useState(null);
+    const [countInterval, setCountInterval] = useState(0);
+
     // const isAuthenticated = useIsAuthenticated();
     // useEffect(()=>{
     //     if(!isAuthenticated)navigate('/login')
@@ -60,12 +62,21 @@ export default function Main() {
         console.log("accounts[0]",accounts[0])
         if(isAuthenticated){
             dispatch(updateUsername(accounts[0].username))
+            if(accounts[0].idTokenClaims.roles){
+                dispatch(updateRole(accounts[0].idTokenClaims.roles))
+            }
             dispatch(updateName(accounts[0].name))
             dispatch(updateHomeAccountId(accounts[0].homeAccountId))
             RequestAccessToken();
             // navigate('/dashboard')
             // console.log("accounts",accounts)
         }
+        const intervalId = setInterval(() => {
+            setCountInterval(prevCount => prevCount + 1);
+            RequestAccessToken();
+
+        }, 300000);
+        return () => clearInterval(intervalId);
         // else {
         //     localStorage.clear()
         //

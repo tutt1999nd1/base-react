@@ -75,11 +75,10 @@ export default function ManageCompany() {
         {
             filterable: false,
             sortable: false,
-            field: 'company_code',
-            headerName: 'Mã công ty',
+            field: 'tax_number',
+            headerName: 'Mã số thuế',
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
-            flex:1,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -90,14 +89,14 @@ export default function ManageCompany() {
         {
             filterable: false,
             sortable: false,
-            field: 'company_type',
-            headerName: 'Loại công ty',
+            field: 'capital_limit',
+            headerName: 'Số tiền vay tối đa',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120,
             flex:1,
             renderCell: (params) => {
+
                 return <div className='content-column'>
-                    {params.value==='SUPPLIER'?'Công ty cho vay':'Công ty vay'}
+                    {params.value}
                 </div>;
             },
         },
@@ -120,17 +119,19 @@ export default function ManageCompany() {
         {
             filterable: false,
             sortable: false,
-            field: 'tax_number',
-            headerName: 'Mã số thuế',
+            field: 'collateral',
+            headerName: 'Tài sản đảm bảo',
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
+            flex:1,
             renderCell: (params) => {
-
                 return <div className='content-column'>
                     {params.value}
                 </div>;
             },
         },
+
+
         {
             filterable: false,
             sortable: false,
@@ -159,20 +160,7 @@ export default function ManageCompany() {
                 </div>;
             },
         },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'capital_limit',
-            headerName: 'Số tiền vay tối đa',
-            headerClassName: 'super-app-theme--header',
-            flex:1,
-            renderCell: (params) => {
 
-                return <div className='content-column'>
-                    {params.value}
-                </div>;
-            },
-        },
         // {filterable: false,sortable: false, field: 'document', headerName: 'Tài liệu',headerClassName: 'super-app-theme--header' ,minWidth: 120},
 
         {

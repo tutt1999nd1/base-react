@@ -240,13 +240,13 @@ hr {
 .icon-action {
     display: flex;
     width: 90%;
-    justify-content: space-between;
-    /*justify-content: center;*/
+    /*justify-content: space-between;*/
+    justify-content: center;
 }
 
 .icon-action>svg {
     cursor: pointer;
-    /*margin-left: 5px;*/
+    margin-left: 10px;
 }
 
 .formik-input {
@@ -686,7 +686,9 @@ height: 45px;
     max-height:200px ;
     overflow-y: auto;
 }
-
+.modal-reject{
+    width: 100%;
+}
 /*.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-pape{*/
 /*    left: unset !important;*/
 /*    right: 0px !important;*/

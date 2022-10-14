@@ -42,6 +42,7 @@ import {TreeSelect} from "antd";
 import TextFieldLink from "../../components/TextFieldLink";
 import Axios from "axios";
 import {useSelector} from "react-redux";
+import apiManagerSupplier from "../../api/manage-supplier";
 
 export default function EditSOF(props) {
     const navigate = useNavigate();
@@ -74,8 +75,8 @@ export default function EditSOF(props) {
         capital_company: {},
         capital_category: {},
         capital_campaign: {},
-        supplier_company: {},
-        supplier_company_id: '',
+        supplier: {},
+        supplier_id: '',
         capital_company_id: '',
         capital_category_id: '',
         capital_campaign_id: '',
@@ -90,7 +91,7 @@ export default function EditSOF(props) {
         interest_rate: '',
         grace_principal_in_month: '',
         grace_interest_in_month: '',
-        interest_rate_type: '',
+        interest_rate_type: 'Cố định',
         reference_interest_rate: '',
         interest_rate_rage: '',
         list_attachments: []
@@ -107,6 +108,10 @@ export default function EditSOF(props) {
             .trim()
             .required('Không được để trống'),
         capital_category_id: yup
+            .string()
+            .trim()
+            .required('Không được để trống'),
+        supplier_id: yup
             .string()
             .trim()
             .required('Không được để trống'),
@@ -150,12 +155,7 @@ export default function EditSOF(props) {
         interest_rate_type: yup.string()
             .trim()
             .required('Không được để trống'),
-        reference_interest_rate: yup.string()
-            .trim()
-            .required('Không được để trống'),
-        interest_rate_rage: yup.string()
-            .trim()
-            .required('Không được để trống'),
+
     });
     const backList = () => {
         navigate('/sof')
@@ -190,7 +190,8 @@ export default function EditSOF(props) {
             let arrConvert = convertToAutoCompleteMail(users.data.value,'mail')
             setListUser(arrConvert)
         }).catch(e=>{
-            alert(JSON.stringify(e))
+            // window.location.reload();
+            localStorage.clear()
         })
     }, [])
     useEffect(() => {
@@ -200,21 +201,28 @@ export default function EditSOF(props) {
             // console.log("r.data.companies",r.data);
 
             if (r.data.companies) {
-                let arr = r.data.companies.filter(e => e.company_type === 'SUPPLIER')
-                let arrSupplier = r.data.companies.filter(e => e.company_type !== 'SUPPLIER')
-                setListCompany(convertToAutoComplete(arrSupplier, 'company_name'))
-                setListCompanySupplier(convertToAutoComplete(arr, 'company_name'))
+                setListCompany(convertToAutoComplete(r.data.companies, 'company_name'))
 
             } else {
                 setListCompany([])
-                setListCompanySupplier([])
             }
 
         }).catch(e => {
 
         })
+        getListSupplierApi({paging: false}).then(r => {
+            if (r.data.suppliers) {
+                    setListCompanySupplier(convertToAutoComplete(r.data.suppliers, 'supplier_name'))
+
+            } else {
+                setListCompanySupplier([])
+            }
+        }).catch(e => {
+            console.log(e)
+        })
 
     }, [currentAmount])
+
     useEffect(() => {
         if (isUpdate && idUpdate) {
             getListSOFApi({id: idUpdate, page_size: 1}).then(r => {
@@ -239,6 +247,10 @@ export default function EditSOF(props) {
     }
     const getListCompanyApi = (data) => {
         return apiManagerCompany.getListCompany(data);
+    }
+
+    const getListSupplierApi = (data) => {
+        return apiManagerSupplier.getListSupplier(data);
     }
     const getListCategoryApi = (data) => {
         return apiManagerCategory.getListCategory(data);
@@ -388,7 +400,7 @@ export default function EditSOF(props) {
                     capital_company_id: idUpdate ? info.capital_company.id : info.capital_company_id,
                     capital_category_id: idUpdate ? info.capital_category.id : info.capital_category_id,
                     capital_campaign_id: idUpdate ? info.capital_campaign.id : info.capital_campaign_id,
-                    supplier_company_id: idUpdate ? info.supplier_company.id : info.supplier_company_id,
+                    supplier_id: idUpdate ? info.supplier.id : info.supplier_id,
                     // asset_group:info.asset_group.id,
                     lending_amount: info.lending_amount,
                     owner_full_name: info.owner_full_name,
@@ -439,7 +451,7 @@ export default function EditSOF(props) {
                         formData.append('interestRateType', values.interest_rate_type)
                         formData.append('referenceInterestRate', values.reference_interest_rate)
                         formData.append('interestRateRage', values.interest_rate_rage)
-                        formData.append('supplierCompanyId', values.supplier_company_id)
+                        formData.append('supplierId', values.supplier_id)
 
                         // formData.append('currentCreditValue',values.)
                         if (isUpdate) {
@@ -560,26 +572,26 @@ export default function EditSOF(props) {
                                     </FormControl>
                                 </Grid>
                                 <Grid item xs={6} md={6}>
-                                    <div className={'label-input'}>Công ty cho vay<span
+                                    <div className={'label-input'}>Đối tượng cung cấp vốn<span
                                         className={'error-message'}>*</span>
                                     </div>
                                     <FormControl fullWidth>
                                         <Select
                                             size={'small'}
-                                            id='supplier_company_id'
-                                            name='supplier_company_id'
-                                            value={values.supplier_company_id}
+                                            id='supplier_id'
+                                            name='supplier_id'
+                                            value={values.supplier_id}
                                             onChange={handleChange}
-                                            error={touched.supplier_company_id && Boolean(errors.supplier_company_id)}
-                                            helperText={touched.supplier_company_id && errors.supplier_company_id}
+                                            error={touched.supplier_id && Boolean(errors.supplier_id)}
+                                            helperText={touched.supplier_id && errors.supplier_id}
                                             // size='small'
                                         >
                                             {listCompanySupplier.map((e) => (
-                                                <MenuItem value={e.id}>{e.company_name}</MenuItem>))}
+                                                <MenuItem value={e.id}>{e.supplier_name}</MenuItem>))}
 
                                         </Select>
                                         <FormHelperText
-                                            className={'error-message'}>{errors.capital_company_id}</FormHelperText>
+                                            className={'error-message'}>{errors.supplier_id}</FormHelperText>
                                     </FormControl>
                                 </Grid>
 
@@ -935,6 +947,7 @@ export default function EditSOF(props) {
                                     <div className={'label-input'}>Lãi suất hợp đồng vay (%/năm)<span
                                         className={'error-message'}>*</span></div>
                                     <NumericFormat
+                                        disabled={values.interest_rate_type==='Biên độ'}
                                         id='interest_rate'
                                         customInput={TextField}
                                         name='interest_rate'
@@ -1063,7 +1076,7 @@ export default function EditSOF(props) {
                                             className={'error-message'}>{errors.interest_rate_type}</FormHelperText>
                                     </FormControl>
                                 </Grid>
-                                <Grid item xs={6} md={6}>
+                                <Grid className={`${values.interest_rate_type==='Cố định'?'hidden':''}`} item xs={6} md={6}>
                                     <div className={'label-input'}>Lãi suất tham chiếu (%/năm)<span
                                         className={'error-message'}>*</span></div>
                                     <NumericFormat
@@ -1077,14 +1090,15 @@ export default function EditSOF(props) {
                                         InputProps={{
                                             endAdornment: <InputAdornment position="end">%</InputAdornment>,
                                         }}
-                                        onValueChange={(values) => {
-                                            const {formattedValue, value, floatValue} = values;
+                                        onValueChange={(value) => {
+                                            const {floatValue} = value;
                                             // do something with floatValue
                                             console.log(floatValue)
 
                                             const re = /^[0-9\b]+$/;
                                             if (re.test(floatValue) || floatValue === undefined) {
                                                 setFieldValue('reference_interest_rate', floatValue)
+                                                    setFieldValue('interest_rate',(values.interest_rate_rage||0)+(floatValue||0))
                                             }
                                             // setFieldValue('max_capital_value', formattedValue)
 
@@ -1095,7 +1109,7 @@ export default function EditSOF(props) {
                                     />
                                     {/*<div>{</div>*/}
                                 </Grid>
-                                <Grid item xs={6} md={6}>
+                                <Grid className={`${values.interest_rate_type==='Cố định'?'hidden':''}`} item xs={6} md={6}>
                                     <div className={'label-input'}>Biên độ lãi suất (%)<span
                                         className={'error-message'}>*</span></div>
                                     <NumericFormat
@@ -1109,14 +1123,15 @@ export default function EditSOF(props) {
                                         InputProps={{
                                             endAdornment: <InputAdornment position="end">%</InputAdornment>,
                                         }}
-                                        onValueChange={(values) => {
-                                            const {formattedValue, value, floatValue} = values;
+                                        onValueChange={(value) => {
+                                            const { floatValue} = value;
                                             // do something with floatValue
-                                            console.log(floatValue)
 
                                             const re = /^[0-9\b]+$/;
                                             if (re.test(floatValue) || floatValue === undefined) {
                                                 setFieldValue('interest_rate_rage', floatValue)
+                                                setFieldValue('interest_rate',(values.reference_interest_rate||0)+(floatValue||0))
+
                                             }
                                             // setFieldValue('max_capital_value', formattedValue)
 

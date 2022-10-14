@@ -23,6 +23,7 @@ export default function DetailSOF(props) {
         capital_company: {id: 0},
         capital_category: {id: 0},
         capital_campaign: {id: 0},
+        supplier: {id: 0},
         lending_amount: null,
         owner_full_name: null,
         owner_user_id: null,
@@ -165,6 +166,15 @@ export default function DetailSOF(props) {
                     </div>
                     <div className={'text-info-content'}>
                         {info.capital_company.company_name}
+                    </div>
+                </div>
+                <Divider></Divider>
+                <div className={'row-detail'}>
+                    <div className={'text-info-tittle'}>
+                        Đối tượng cung cấp vốn
+                    </div>
+                    <div className={'text-info-content'}>
+                        {info.supplier.supplier_name}
                     </div>
                 </div>
                 <Divider></Divider>

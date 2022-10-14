@@ -20,14 +20,13 @@ export default function DetailCategory(props) {
 
     const [info,setInfo] =useState({
         company_name:'',
-        company_code:'',
         address:'',
         contact_detail:'',
         tax_number:'',
         charter_capital:'',
         capital_limit:'',
         founding_date:'',
-        company_type:''
+        collateral:''
     })
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
@@ -152,10 +151,10 @@ export default function DetailCategory(props) {
                 <Divider></Divider>
                 <div className={'row-detail'}>
                     <div className={'text-info-tittle'}>
-                        Mã công ty
+                        Tài sản đảm bảo
                     </div>
                     <div className={'text-info-content'}>
-                        {info.company_code}
+                        {info.collateral}
                     </div>
                 </div>
                 <Divider></Divider>

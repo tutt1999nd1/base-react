@@ -1,6 +1,7 @@
 import axios from 'axios';
 import queryString from 'query-string';
 import { toast, ToastContainer } from "react-toastify";
+import {useSelector} from "react-redux";
 // Set up default config for http requests here
 // Please have a look at here `https://github.com/axios/axios#request- config` for the full list of configs
 const axiosClient = axios.create({
@@ -46,6 +47,9 @@ axiosClient.interceptors.response.use((response) => {
                                             draggable: true,
                                         });
             }
+        }
+        else if(error.response.status===401){
+            // localStorage.clear()
         }
     }
     // let url = new URL(window.location.href);

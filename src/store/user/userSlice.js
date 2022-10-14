@@ -15,6 +15,7 @@ export const userSlice = createSlice({
         showMenu:true,
         msalInstance:undefined,
         homeAccountId:''
+
     },
     reducers: {
         updateProjectRedux: (state, action) => {

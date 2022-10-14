@@ -20,7 +20,6 @@ export default function DetailAsset(props) {
 
     const [info, setInfo] = useState({
         asset_name: '',
-        asset_type: {id: 0},
         asset_group: {id: 0},
         description: '',
         initial_value: '',
@@ -164,16 +163,7 @@ export default function DetailAsset(props) {
                         {info.asset_group.group_name}
                     </div>
                 </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Loại tài sản
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.asset_type.asset_type_name}
 
-                    </div>
-                </div>
                 <Divider></Divider>
                 <div className={'row-detail'}>
                     <div className={'text-info-tittle'}>

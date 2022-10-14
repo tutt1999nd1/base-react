@@ -112,21 +112,6 @@ export default function ManageAssets() {
         {
             filterable: false,
             sortable: false,
-            field: 'asset_type_name',
-            headerName: 'Loại tài sản',
-            headerClassName: 'super-app-theme--header',
-            minWidth:150,
-
-            renderCell: (params) => {
-
-                return <div className='content-column'>
-                    {params.value}
-                </div>;
-            },
-        },
-        {
-            filterable: false,
-            sortable: false,
             field: 'initial_value',
             headerName: 'Gía trị ban đầu',
             headerClassName: 'super-app-theme--header',
@@ -488,28 +473,7 @@ export default function ManageAssets() {
                             </FormControl>
 
                         </div>
-                        <div style={{width: '20%',marginLeft: '20px'}}>
-                            <div className={'label-input'}>Loại tài sản</div>
-                            <FormControl fullWidth>
-                                <Select
-                                    size={"small"}
-                                    labelId="asset_type_label"
-                                    id='asset_type'
-                                    name='asset_type'
-                                    value={typeSearch}
 
-                                    onChange={handleChangeAssetType}
-                                >
-                                    <MenuItem value={0}>Tất cả</MenuItem>
-
-                                    {
-                                        listType.map((e) => (
-                                            <MenuItem value={e.id}>{e.asset_type_name}</MenuItem>
-                                        ))
-                                    }
-                                </Select>
-                            </FormControl>
-                        </div>
 
                     </div>
 

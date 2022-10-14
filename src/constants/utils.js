@@ -1,5 +1,7 @@
 import { getText } from 'number-to-text-vietnamese';
 import {Box, Typography} from "@mui/material";
+import {makeStyles} from "@mui/styles";
+import {Theme} from "@mui/material";
 const Utils= {
     localizedTextsMap :{
         columnMenuHideColumn: "Ẩn",
@@ -65,18 +67,12 @@ export const convertToAutoCompleteMail = (arr,name) => {
     return newArr;
 }
 export const listOptionMonth = [
-    {id:1,label:'1'},
-    {id:2,label:'2'},
-    {id:3,label:'3'},
-    {id:4,label:'4'},
-    {id:5,label:'5'},
     {id:6,label:'6'},
-    {id:7,label:'7'},
-    {id:8,label:'8'},
-    {id:9,label:'9'},
-    {id:10,label:'10'},
-    {id:11,label:'11'},
     {id:12,label:'12'},
+    {id:24,label:'24'},
+    {id:36,label:'36'},
+    {id:120,label:'120'},
+
 
 ]
 export const convertToPieChart = (arr,name) => {

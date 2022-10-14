@@ -45,7 +45,8 @@ export default function EditCategory(props) {
         founding_date:new dayjs,
         capital_limit:'',
         company_code:'',
-        company_type:'CAPITAL'
+        company_type:'CAPITAL',
+        collateral:''
     })
     const {isUpdate} = props
     const [idUpdate,setIdUpdate] = useState(null)
@@ -56,27 +57,11 @@ export default function EditCategory(props) {
             .required('Không được để trống')
             .max(255, 'Tối đa 255 ký tự')
         ,
-        company_code: yup
-            .string()
-            .trim()
-            .required('Không được để trống')
-            .max(255, 'Tối đa 255 ký tự')
-        ,
-        contact_detail: yup
-            .string()
-            .trim()
-            .required('Không được để trống')
-            .max(255, 'Tối đa 255 ký tự'),
         tax_number: yup
             .string()
             .trim()
             .required('Không được để trống')
             .max(255, 'Tối đa 255 ký tự'),
-        charter_capital: yup
-            .string()
-            .trim()
-            .required('Không được để trống')
-            .max(15, 'Tối đa 15 chữ số'),
         founding_date: yup
             .string()
             .trim()
@@ -166,8 +151,7 @@ export default function EditCategory(props) {
                         charter_capital:info.charter_capital,
                         founding_date:isUpdate?dayjs(info.founding_date,'DD-MM-YYYY'):info.founding_date,
                         capital_limit:info.capital_limit,
-                        company_code:info.company_code||'',
-                        company_type:info.company_type,
+                        collateral:info.collateral
                     }}
                     validationSchema={validationSchema}
                     onSubmit={
@@ -261,83 +245,6 @@ export default function EditCategory(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Mã công ty<span className={'error-message'}>*</span></div>
-                                            <TextField
-                                                size={"small"}
-                                                id='company_code'
-                                                name='company_code'
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                value={values.company_code}
-                                                onChange={handleChange}
-                                                error={touched.company_code && Boolean(errors.company_code)}
-                                                helperText={touched.company_code && errors.company_code}
-
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Loại công ty<span className={'error-message'}>*</span></div>
-                                            <FormControl fullWidth >
-                                                <Select
-                                                    labelId="asset_type_label"
-                                                    id='company_type'
-                                                    name='company_type'
-                                                    value={values.company_type}
-                                                    onChange={handleChange}
-                                                    size={"small"}
-                                                >
-                                                    <MenuItem value={'CAPITAL'}>Công ty vay</MenuItem>
-                                                    <MenuItem value={'SUPPLIER'}>Công ty cho vay</MenuItem>
-                                                </Select>
-                                            </FormControl>
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Địa chỉ<span className={'error-message'}>*</span></div>
-                                            <TextField
-                                                size={"small"}
-                                                id='address'
-                                                name='address'
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                value={values.address}
-                                                onChange={handleChange}
-                                                error={touched.address && Boolean(errors.address)}
-                                                helperText={touched.address && errors.address}
-
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Thông tin liên hệ<span className={'error-message'}>*</span></div>
-                                            <TextField
-                                                size={"small"}
-                                                id='contact_detail'
-                                                name='contact_detail'
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                value={values.contact_detail}
-                                                onChange={handleChange}
-                                                error={touched.address && Boolean(errors.address)}
-                                                helperText={touched.address && errors.address}
-
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Mã số thuế<span className={'error-message'}>*</span></div>
-                                            <TextField
-                                                size={"small"}
-                                                id='tax_number'
-                                                name='tax_number'
-                                                className={'formik-input'}
-
-                                                // variant="standard"
-                                                value={values.tax_number}
-                                                onChange={handleChange}
-                                                error={touched.tax_number && Boolean(errors.tax_number)}
-                                                helperText={touched.tax_number && errors.tax_number}
-
-                                            />
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
                                             <div className={'label-input'}>Khoản vay tối đa (VNĐ)<span className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 size={"small"}
@@ -371,9 +278,72 @@ export default function EditCategory(props) {
                                                 {values.capital_limit?`*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.capital_limit))} đồng`:''}
                                             </Typography>
                                         </Grid>
+                                        <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Mã số thuế<span className={'error-message'}>*</span></div>
+                                            <TextField
+                                                size={"small"}
+                                                id='tax_number'
+                                                name='tax_number'
+                                                className={'formik-input'}
+
+                                                // variant="standard"
+                                                value={values.tax_number}
+                                                onChange={handleChange}
+                                                error={touched.tax_number && Boolean(errors.tax_number)}
+                                                helperText={touched.tax_number && errors.tax_number}
+
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Tài sản thế chấp</div>
+                                            <TextField
+                                                size={"small"}
+                                                id='collateral'
+                                                name='collateral'
+                                                className={'formik-input'}
+                                                // variant="standard"
+                                                value={values.collateral}
+                                                onChange={handleChange}
+                                                error={touched.collateral && Boolean(errors.collateral)}
+                                                helperText={touched.collateral && errors.collateral}
+
+                                            />
+                                        </Grid>
+                                        <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Địa chỉ</div>
+                                            <TextField
+                                                size={"small"}
+                                                id='address'
+                                                name='address'
+                                                className={'formik-input'}
+                                                // variant="standard"
+                                                value={values.address}
+                                                onChange={handleChange}
+                                                error={touched.address && Boolean(errors.address)}
+                                                helperText={touched.address && errors.address}
+
+                                            />
+                                        </Grid>
 
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Vốn điều lệ (VNĐ)<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Thông tin liên hệ</div>
+                                            <TextField
+                                                size={"small"}
+                                                id='contact_detail'
+                                                name='contact_detail'
+                                                className={'formik-input'}
+                                                // variant="standard"
+                                                value={values.contact_detail}
+                                                onChange={handleChange}
+                                                error={touched.address && Boolean(errors.address)}
+                                                helperText={touched.address && errors.address}
+
+                                            />
+                                        </Grid>
+
+
+                                        <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Vốn điều lệ (VNĐ)</div>
                                             <NumericFormat
                                                 size={"small"}
                                                 id='charter_capital'
@@ -419,7 +389,7 @@ export default function EditCategory(props) {
                                             {/*    helperText={touched.founding_date && errors.founding_date}*/}
 
                                             {/*/>*/}
-                                            <div className={'label-input'}>Ngày thành lập<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Ngày thành lập</div>
                                             <LocalizationProvider style={{width:'100%'}} dateAdapter={AdapterDayjs} >
                                                 <DesktopDatePicker
                                                     style={{width:'100% !important',height:'30px'}}

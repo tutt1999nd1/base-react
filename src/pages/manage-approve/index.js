@@ -2,38 +2,20 @@ import React, {useEffect, useState} from "react";
 import Collapse from "@mui/material/Collapse";
 import 'react-dropdown-tree-select/dist/styles.css'
 // import 'antd/dist/antd.css';
-
-import {
-    Box,
-    Divider,
-    FormControl,
-    Grid,
-    IconButton,
-    MenuItem,
-    Select,
-    Tab,
-    Tabs,
-    Tooltip,
-    Typography
-} from "@mui/material";
+import {Box, Divider, FormControl, IconButton, MenuItem, Select, Tab, Tabs, Tooltip} from "@mui/material";
 import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import {ToastContainer} from "react-toastify";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, viVN} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
-import {a11yProps, currencyFormatter, sum, TabPanel} from "../../constants/utils";
+import {a11yProps, currencyFormatter, TabPanel} from "../../constants/utils";
 import apiManagerSOF from "../../api/manage-sof";
 import {useSelector} from "react-redux";
-import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
-import CancelPresentationOutlinedIcon from '@mui/icons-material/CancelPresentationOutlined';
 import CheckIcon from '@mui/icons-material/Check';
 import DoDisturbIcon from '@mui/icons-material/DoDisturb';
-import BarChartIcon from "@mui/icons-material/BarChart";
-import DonutLargeIcon from "@mui/icons-material/DonutLarge";
-import ReactECharts from "echarts-for-react";
+import ModalReject from "./ModalReject";
+
 export default function ManageApprove() {
     const currentUser = useSelector(state => state.currentUser)
     const navigate = useNavigate();
@@ -41,7 +23,12 @@ export default function ManageApprove() {
     const [refresh, setRefresh] = useState(false)
     const [statusSearch, setStatusSearch] = useState(0)
     const [openSearch, setOpenSearch] = useState(true)
+    const [openModalReject, setOpenModalReject] = useState(false)
     const [tab, setTab] = React.useState(0);
+    const [idReject, setIdReject] = React.useState(0);
+    const handleCloseModalReject = () => {
+        setOpenModalReject(false);
+    }
     const handleChangeTab = (event: React.SyntheticEvent, newValue: number) => {
         setTab(newValue);
     };
@@ -406,11 +393,13 @@ export default function ManageApprove() {
                 }
                 const rejectBtn = (e) => {
                     e.stopPropagation();
-                    rejectApproveSOFApi({id:params.id}).then(r=>{
-                        setRefresh(!refresh)
-                    }).catch(err=>{
-
-                    })
+                    setIdReject(params.id);
+                    setOpenModalReject(true)
+                    // rejectApproveSOFApi({id:params.id}).then(r=>{
+                    //     setRefresh(!refresh)
+                    // }).catch(err=>{
+                    //
+                    // })
                     console.log(params.row.status_approve)
                 }
                 return <div className='icon-action'>
@@ -518,7 +507,13 @@ export default function ManageApprove() {
         setLoading(true)
         return apiManagerSOF.getListSOFApprove(data);
     }
+    const submitReject = (e) => {
+        // alert(JSON.stringify(e))
+        rejectApproveSOFApi({id:e.id}).then(r=>{
+            setRefresh(!refresh)
+        }).catch(err=>{
 
+        })    }
     const sendApproveSOFApi = (data) => {
         return apiManagerSOF.sendApproveSOF(data);
     }
@@ -547,6 +542,7 @@ export default function ManageApprove() {
                     {/*    <ClipLoader*/}
                     {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
                     {/*</div>*/}
+                    <ModalReject idReject={idReject} handleCloseModalReject={handleCloseModalReject} submitReject={submitReject} openModalReject={openModalReject}></ModalReject>
                     <ToastContainer
                         position="top-right"
                         autoClose={5000}

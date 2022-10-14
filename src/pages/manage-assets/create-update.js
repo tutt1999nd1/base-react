@@ -41,7 +41,6 @@ export default function EditAssets(props) {
     const [listDeletedAttachment, setListDeletedAttachment] = useState([])
     const [info, setInfo] = useState({
         asset_name: '',
-        asset_type: {id: 0},
         asset_group: {id: 0},
         description: '',
         initial_value: '',
@@ -153,15 +152,6 @@ export default function EditAssets(props) {
     }
     useEffect(() => {
 
-        getListAssetTypeApi().then(r => {
-            setListType(r.data.asset_types)
-            if (!isUpdate)
-                if (r.data.asset_types.length > 0) {
-                    setTypeDefault(r.data.asset_types[0].id)
-                }
-        }).catch(e => {
-
-        })
         getListAssetGroupApi().then(r => {
             setListGroup(r.data.asset_groups)
             if (!isUpdate)
@@ -176,9 +166,7 @@ export default function EditAssets(props) {
     const getListAssetGroupApi = (data) => {
         return apiManagerAssets.getAssetGroup(data);
     }
-    const getListAssetTypeApi = (data) => {
-        return apiManagerAssets.getAssetType(data);
-    }
+
     const back = () => {
         navigate('/assets')
     }
@@ -295,7 +283,6 @@ export default function EditAssets(props) {
                     enableReinitialize
                     initialValues={{
                         asset_name: info.asset_name,
-                        asset_type: isUpdate ? info.asset_type.id : typeDefault,
                         asset_group: isUpdate ? info.asset_group.id : groupDefault,
                         // asset_type:info.asset_type.id,
                         // asset_group:info.asset_group.id,
@@ -315,7 +302,6 @@ export default function EditAssets(props) {
                             console.log('values', values)
                             let valueConvert = values;
                             let formData = new FormData();
-                            formData.append('assetTypeId', values.asset_type)
                             formData.append('description', values.description)
                             for (let i = 0; i < listFileLocal.length; i++) {
                                 formData.append('newAttachment', listFileLocal[i])
@@ -450,32 +436,6 @@ export default function EditAssets(props) {
                                             </FormControl>
                                         </Grid>
 
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Loại tài sản <span
-                                                className={'error-message'}>*</span></div>
-                                            <FormControl fullWidth>
-                                                <Select
-                                                    size={"small"}
-                                                    labelId="asset_type_label"
-                                                    id='asset_type'
-                                                    name='asset_type'
-                                                    value={values.asset_type}
-                                                    onChange={handleChange}
-                                                    error={touched.asset_type && Boolean(errors.asset_type)}
-                                                    helperText={touched.asset_type && errors.asset_type}
-                                                    // size='small'
-                                                >
-                                                    {
-                                                        listType.map((e) => (
-                                                            <MenuItem value={e.id}>{e.asset_type_name}</MenuItem>
-                                                        ))
-                                                    }
-
-                                                </Select>
-                                                <FormHelperText
-                                                    className={'error-message'}>{errors.asset_type}</FormHelperText>
-                                            </FormControl>
-                                        </Grid>
 
                                         <Grid item xs={6} md={6}>
                                             <div className={'label-input'}>Giá trị ban đầu (VNĐ)<span
@@ -589,23 +549,7 @@ export default function EditAssets(props) {
                                                 {values.current_credit_value ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.current_credit_value))} đồng` : ''}
                                             </Typography>
                                         </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Thông tin<span
-                                                className={'error-message'}>*</span></div>
-                                            <TextField
-                                                className={'formik-input'}
-                                                // variant="standard"
-                                                id='description'
-                                                name='description'
-                                                multiline
-                                                rows={5}
-                                                value={values.description}
-                                                onChange={handleChange}
-                                                error={touched.description && Boolean(errors.description)}
-                                                helperText={touched.description && errors.description}
 
-                                            />
-                                        </Grid>
                                         <Grid item xs={6} md={6}>
                                             <div className={'label-input'}>Số tiền vay tối đa (VNĐ)<span
                                                 className={'error-message'}>*</span></div>
@@ -644,7 +588,23 @@ export default function EditAssets(props) {
                                                 {values.max_capital_value ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.max_capital_value))} đồng` : ''}
                                             </Typography>
                                         </Grid>
+                                        <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Thông tin<span
+                                                className={'error-message'}>*</span></div>
+                                            <TextField
+                                                className={'formik-input'}
+                                                // variant="standard"
+                                                id='description'
+                                                name='description'
+                                                multiline
+                                                rows={5}
+                                                value={values.description}
+                                                onChange={handleChange}
+                                                error={touched.description && Boolean(errors.description)}
+                                                helperText={touched.description && errors.description}
 
+                                            />
+                                        </Grid>
                                         <Grid item xs={6} md={6}>
                                             <div className={'label-input'} style={{
                                                 display: "flex",
