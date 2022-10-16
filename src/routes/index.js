@@ -20,6 +20,12 @@ import Login from "../pages/authentication";
 import {AuthenticatedTemplate, UnauthenticatedTemplate} from "@azure/msal-react";
 import Dashboard from "../pages/dashboard";
 import ManageApprove from "../pages/manage-approve";
+import EditSupplier from "../pages/manage-supplier/create-update";
+import DetailSupplier from "../pages/manage-supplier/detail";
+import ManageSupplier from "../pages/manage-supplier";
+import ManageAssetGroup from "../pages/manage-asset-group";
+import EditAssetGroup from "../pages/manage-asset-group/create-update";
+import DetailAssetGroup from "../pages/manage-asset-group/detail";
 
 export default function RenderRoute() {
     return (
@@ -54,10 +60,21 @@ export default function RenderRoute() {
                 <Route path="company/create" element={<EditCompany isUpdate={false}></EditCompany>}/>
                 <Route path="company/update" element={<EditCompany isUpdate={true}></EditCompany>}/>
                 <Route path="company/detail" element={<DetailCompany></DetailCompany>}/>
+                <Route path="supplier" element={<ManageSupplier ></ManageSupplier>}/>
+                <Route path="supplier/create" element={<EditSupplier isUpdate={false}></EditSupplier>}/>
+                <Route path="supplier/update" element={<EditSupplier isUpdate={true}></EditSupplier>}/>
+                <Route path="supplier/detail" element={<DetailSupplier></DetailSupplier>}/>
                 <Route path="category" element={<ManageCategory></ManageCategory>}/>
                 <Route path="category/create" element={<EditCategory isUpdate={false}></EditCategory>}/>
                 <Route path="category/update" element={<EditCategory isUpdate={true}></EditCategory>}/>
                 <Route path="category/detail" element={<DetailCategory></DetailCategory>}/>
+
+                <Route path="asset-group" element={<ManageAssetGroup></ManageAssetGroup>}/>
+                <Route path="asset-group/create" element={<EditAssetGroup isUpdate={false}></EditAssetGroup>}/>
+                <Route path="asset-group/update" element={<EditAssetGroup isUpdate={true}></EditAssetGroup>}/>
+                <Route path="asset-group/detail" element={<DetailAssetGroup></DetailAssetGroup>}/>
+
+
                 <Route path="campaign" element={<ManageCampaign></ManageCampaign>}/>
                 <Route path="campaign/create" element={<EditCampaign isUpdate={false}></EditCampaign>}/>
                 <Route path="campaign/update" element={<EditCampaign isUpdate={true}></EditCampaign>}/>

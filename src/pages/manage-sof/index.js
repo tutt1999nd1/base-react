@@ -36,6 +36,7 @@ import apiManagerCampaign from "../../api/manage-campaign";
 import {useSelector} from "react-redux";
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import CancelPresentationOutlinedIcon from '@mui/icons-material/CancelPresentationOutlined';
+import apiManagerSupplier from "../../api/manage-supplier";
 export default function ManageSOF() {
     const currentUser = useSelector(state => state.currentUser)
     const navigate = useNavigate();
@@ -564,6 +565,7 @@ export default function ManageSOF() {
             'page_index': listResult.page + 1,
             'paging': true,
             'capital_company_id': companySearch === 0 ? null : companySearch,
+            // 'supplier_id': companySupplierSearch === 0 ? null : companySupplierSearch,
             'supplier_company_id': companySupplierSearch === 0 ? null : companySupplierSearch,
             'capital_category_id': categorySearch ? categorySearch : null,
             'capital_campaign_id': campaignSearch ? campaignSearch : null,
@@ -601,15 +603,21 @@ export default function ManageSOF() {
         })
         getListCompanyApi({paging: false}).then(r => {
             if (r.data.companies) {
-                let arr = r.data.companies.filter(e=> e.company_type==='SUPPLIER')
-                let arrSupplier = r.data.companies.filter(e=> e.company_type!=='SUPPLIER')
-                setListCompany(convertToAutoComplete(arrSupplier, 'company_name'))
-                setListCompanySupplier(convertToAutoComplete(arr, 'company_name'))
+                setListCompany(convertToAutoComplete(r.data.companies, 'company_name'))
                 } else {
                 setListCompany([])
-                setListCompanySupplier([])
             }
 
+        }).catch(e => {
+            console.log(e)
+        })
+        getListSupplierApi({paging: false}).then(r => {
+            if (r.data.suppliers) {
+                setListCompanySupplier(convertToAutoComplete(r.data.suppliers, 'supplier_name'))
+
+            } else {
+                setListCompanySupplier([])
+            }
         }).catch(e => {
             console.log(e)
         })
@@ -633,6 +641,9 @@ export default function ManageSOF() {
     //     rowLength: 20,
     //     maxColumns: 5,
     // });
+    const getListSupplierApi = (data) => {
+        return apiManagerSupplier.getListSupplier(data);
+    }
     const getListSOFsApi = (data) => {
         setLoading(true)
         return apiManagerSOF.getListSOF(data);
@@ -735,14 +746,14 @@ export default function ManageSOF() {
                             />
                         </div>
                         <div style={{width: '20%',marginLeft: '20px'}}>
-                            <div className={'label-input'}>Công ty cho vay</div>
+                            <div className={'label-input'}>Đối tượng cung cấp vốn</div>
                             <Autocomplete
                                 disablePortal
                                 id="combo-box-demo"
                                 options={listCompanySupplier}
                                 // sx={{ width: 300 }}
                                 // onChange={}
-                                renderInput={(params) => < TextField {...params} placeholder="Công ty vay"/>}
+                                renderInput={(params) => < TextField {...params} placeholder="Đối tượng cung cấp vốn"/>}
                                 size={"small"}
                                 onChange={(event, newValue) => {
                                     console.log("new_value", newValue)

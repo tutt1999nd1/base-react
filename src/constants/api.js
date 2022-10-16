@@ -43,5 +43,11 @@ const API_MAP = {
     CREATE_SUPPLIER: API_DOMAIN + 'sof_supplier/create',
     UPDATE_SUPPLIER: API_DOMAIN + 'sof_supplier',
     DELETE_SUPPLIER: API_DOMAIN + 'sof_supplier',
+    GET_LIST_ASSET_GROUP: API_DOMAIN + 'asset_group/search',
+    CREATE_ASSET_GROUP: API_DOMAIN + 'asset_group/create',
+    UPDATE_ASSET_GROUP: API_DOMAIN + 'asset_group',
+    DELETE_ASSET_GROUP: API_DOMAIN + 'asset_group',
+    GET_LIST_ASSET_GROUP_TREE: API_DOMAIN + 'asset_group/search-tree',
+
 }
 export default API_MAP;

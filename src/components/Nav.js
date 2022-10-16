@@ -111,6 +111,21 @@ export default function Nav() {
                                     </div>
                                 </li>
                             </NavLink>
+                            <NavLink className={'nav-link'} to={'supplier'}>
+                                <li>
+                                    <div className={'nav-item li-child'}>
+                                        <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Đới tượng cung cấp
+                                        </div>
+                                    </div>
+                                </li>
+                            </NavLink>
+                            <NavLink className={'nav-link'} to={'asset-group'}>
+                                <li>
+                                    <div className={'nav-item li-child'}>
+                                        <div className={'nav-item-name'}><ClassIcon></ClassIcon>Nhóm tài sản</div>
+                                    </div>
+                                </li>
+                            </NavLink>
                         </ul>
                     </Collapse>
 

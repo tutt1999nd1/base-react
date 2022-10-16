@@ -25,6 +25,9 @@ import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
 import {capitalizeFirstLetter, VNnum2words} from "../../constants/utils";
 import TextFieldLink from "../../components/TextFieldLink";
+import {TreeSelect} from "antd";
+import apiManagerCampaign from "../../api/manage-campaign";
+import apiManagerAssetGroup from "../../api/manage-asset-group";
 
 export default function EditAssets(props) {
     const navigate = useNavigate();
@@ -39,9 +42,13 @@ export default function EditAssets(props) {
     const [listLinkServer, setListLinkServer] = useState([])
     const [listDeleteLinkServer, setListDeleteLinkServer] = useState([])
     const [listDeletedAttachment, setListDeletedAttachment] = useState([])
+    const [assetGroupSearch, setAssetGroupSearch] = useState();
+    const [listAssetGroupTree, setListAssetGroupTree] = useState([]);
+
     const [info, setInfo] = useState({
         asset_name: '',
         asset_group: {id: 0},
+        asset_group_id: '',
         description: '',
         initial_value: '',
         capital_value: '',
@@ -141,6 +148,11 @@ export default function EditAssets(props) {
             })
         }
     }, [idUpdate])
+    useEffect(() => {
+
+        // setCategorySearch(info.capital_category.id)
+
+    }, [info])
     const createAssetApi = (data) => {
         return apiManagerAssets.createAsset(data);
     }
@@ -151,18 +163,15 @@ export default function EditAssets(props) {
         return apiManagerAssets.getListAsset(data);
     }
     useEffect(() => {
-
-        getListAssetGroupApi().then(r => {
-            setListGroup(r.data.asset_groups)
-            if (!isUpdate)
-                if (r.data.asset_groups.length > 0) {
-                    setGroupDefault(r.data.asset_groups[0].id)
-                }
+        getListAssetGroupTreeApi({paging: false}).then(r => {
+            setListAssetGroupTree(r.data)
         }).catch(e => {
-
+            console.log(e)
         })
     }, [])
-
+    const getListAssetGroupTreeApi = (data) => {
+        return apiManagerAssetGroup.getListAssetGroupTree(data);
+    }
     const getListAssetGroupApi = (data) => {
         return apiManagerAssets.getAssetGroup(data);
     }
@@ -284,6 +293,7 @@ export default function EditAssets(props) {
                     initialValues={{
                         asset_name: info.asset_name,
                         asset_group: isUpdate ? info.asset_group.id : groupDefault,
+                        asset_group_id: idUpdate ? info.asset_group.id : info.asset_group_id,
                         // asset_type:info.asset_type.id,
                         // asset_group:info.asset_group.id,
                         description: info.description,
@@ -315,6 +325,7 @@ export default function EditAssets(props) {
                             formData.append('capitalValue', values.capital_value)
                             formData.append('currentCreditValue', values.current_credit_value)
                             formData.append('maxCapitalValue', values.max_capital_value)
+                            formData.append('assetGroupId', values.asset_group_id)
                             // formData.append('currentCreditValue',values.)
                             console.log(valueConvert)
                             if (isUpdate) {
@@ -413,28 +424,27 @@ export default function EditAssets(props) {
                                         <Grid item xs={6} md={6}>
                                             <div className={'label-input'}>Nhóm tài sản <span
                                                 className={'error-message'}>*</span></div>
-                                            <FormControl fullWidth>
-                                                <Select
-                                                    size={"small"}
-                                                    id='asset_group'
-                                                    name='asset_group'
-                                                    value={values.asset_group}
-                                                    onChange={handleChange}
-                                                    error={touched.asset_group && Boolean(errors.asset_group)}
-                                                    helperText={touched.asset_group && errors.asset_group}
-                                                    // size='small'
-                                                >
-                                                    {
-                                                        listGroup.map((e) => (
-                                                            <MenuItem value={e.id}>{e.group_name}</MenuItem>
-                                                        ))
-                                                    }
-
-                                                </Select>
-                                                <FormHelperText
-                                                    className={'error-message'}>{errors.asset_group}</FormHelperText>
-                                            </FormControl>
-                                        </Grid>
+                                            <TreeSelect
+                                                style={{width: '100%'}}
+                                                showSearch
+                                                value={assetGroupSearch}
+                                                treeData={listAssetGroupTree}
+                                                dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                                                placeholder="Nhóm tài sản"
+                                                allowClear
+                                                treeDefaultExpandAll
+                                                onChange={(values) => {
+                                                    setAssetGroupSearch(values)
+                                                    setFieldValue('asset_group_id', values)
+                                                }}
+                                                filterTreeNode={(search, item) => {
+                                                    return item.category_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
+                                                }}
+                                                fieldNames={{label: 'group_name', value: 'id', children: 'child_asset_groups'}}
+                                            >
+                                            </TreeSelect>
+                                            <FormHelperText style={{marginLeft: '15px'}}
+                                                            className={'error-message'}>{assetGroupSearch ? '' : 'Không được để trống'}</FormHelperText>                                        </Grid>
 
 
                                         <Grid item xs={6} md={6}>
