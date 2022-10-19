@@ -8,6 +8,12 @@ class ApiManagerCompany{
     getListCompanyAvai = (data) => {
         return axiosClient.post(API_MAP.GET_LIST_COMPANY_AVAI,data)
     }
+    importCompany = (data) => {
+        return axiosClient.post(API_MAP.IMPORT_COMPANY,data,{
+            // params: description,
+            headers: {'content-type': 'multipart/form-data'}
+        })
+    }
     createCompany = (data) => {
         return axiosClient.post(API_MAP.CREATE_COMPANY,data)
     }

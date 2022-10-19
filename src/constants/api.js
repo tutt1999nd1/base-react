@@ -3,8 +3,8 @@
 // const API_DOMAIN = 'http://localhost:8443/'
 // const API_DOMAIN = 'http://103.151.238.62:8088/'
 // const API_DOMAIN = 'http://103.151.238.62:8089/'
-const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
 // const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
+const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
 const API_MAP = {
     GET_LIST_ASSETS: API_DOMAIN + 'asset/search',
     GET_LIST_ASSETS_DASHBOARD: API_DOMAIN + 'dashboard/asset_aggregate',
@@ -13,7 +13,9 @@ const API_MAP = {
     UPDATE_ASSETS: API_DOMAIN + 'asset',
     DELETE_ASSETS: API_DOMAIN + 'asset',
     IMPORT_ASSETS: API_DOMAIN + 'asset/import-excel',
+    IMPORT_COMPANY: API_DOMAIN + 'capital_company/import-excel',
     DOWN_TEMPLATE_ASSETS: API_DOMAIN + 'template/import_asset_template',
+    DOWN_TEMPLATE_COMPANY: API_DOMAIN + 'template/import_company_template',
     GET_ASSETS_TYPE: API_DOMAIN + 'asset_type',
     GET_ASSETS_GROUP: API_DOMAIN + 'asset_group',
     GET_LIST_COMPANY: API_DOMAIN + 'capital_company/search',
@@ -56,6 +58,7 @@ const API_MAP = {
     DELETE_LIST_CAMPAIGN: API_DOMAIN + 'capital_campaign/delete',
     DELETE_LIST_CATEGORY: API_DOMAIN + 'capital_category/delete',
     DELETE_LIST_SOF: API_DOMAIN + 'source_of_fund/delete',
-    DELETE_LIST_COMPANY: API_DOMAIN + 'capital_company/delete'
+    DELETE_LIST_COMPANY: API_DOMAIN + 'capital_company/delete',
+    GET_LIST_CHARGING_EST: API_DOMAIN + 'charging_est/search'
 }
 export default API_MAP;

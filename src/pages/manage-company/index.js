@@ -25,6 +25,10 @@ import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {useSelector} from "react-redux";
 import apiManagerAssets from "../../api/manage-assets";
+import Axios from "axios";
+import API_MAP from "../../constants/api";
+import FileDownload from "js-file-download";
+import SimCardDownloadIcon from "@mui/icons-material/SimCardDownload";
 
 export default function ManageCompany() {
     const currentUser = useSelector(state => state.currentUser)
@@ -337,8 +341,67 @@ export default function ManageCompany() {
                 });
             })
         }
+    }
+    const uploadFile = () => {
+        var el = window._protected_reference = document.createElement("INPUT");
+        el.type = "file";
+        el.accept = ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
+        // el.multiple = "multiple";
+        el.addEventListener('change', function (ev2) {
+
+            new Promise(function (resolve) {
+                setTimeout(function () {
+                    if(el.files.length > 0) {
+                        console.log(el.files);
+                        let formData = new FormData();
+                        formData.append('file', el.files[0])
+                        importCompanyApi(formData).then(r=>{
+                            console.log(r);
+                            toast.success('Nhập dữ liệu thành công', {
+                                position: "top-right",
+                                autoClose: 1500,
+                                hideProgressBar: true,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                            });
+                            setRefresh(!refresh)
+
+                        }).catch(err => {
+                            toast.error('Có lỗi xảy ra', {
+                                position: "top-right",
+                                autoClose: 1500,
+                                hideProgressBar: true,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                            });
+                        })
+                    }
+                    resolve();
+
+                }, 1000);
 
 
+            })
+                .then(function () {
+                    // clear / free reference
+                    el = window._protected_reference = undefined;
+                });
+        });
+
+        el.click();
+    }
+    const downTemplate = () => {
+        Axios.get(API_MAP.DOWN_TEMPLATE_COMPANY, {
+            headers: { 'Authorization': `Bearer ${currentUser.token}` },
+            responseType: 'blob'
+        }).then(response => {
+            let nameFile = response.headers['content-disposition'].split(`"`)[1]
+            FileDownload(response.data,nameFile);
+
+        }).catch(e=>{
+        })
     }
     const deleteListBtn = () => {
         setIsDelList(true)
@@ -348,7 +411,9 @@ export default function ManageCompany() {
     const deleteListApi = (data) => {
         return apiManagerCompany.deleteListCompany(data);
     }
-
+    const importCompanyApi = (data) => {
+        return apiManagerCompany.importCompany(data);
+    }
     const getListCompanyApi = (data) => {
         setLoading(true)
         return apiManagerCompany.getListCompany(data);
@@ -384,7 +449,13 @@ export default function ManageCompany() {
                         Quản lý công ty
                     </Typography>
                     <div>
-                        <Button onClick={pending} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
+                        <Tooltip title={'Tải file mẫu'}>
+                            <IconButton style={{cursor: 'pointer'}} color="primary"
+                                        onClick={downTemplate}>
+                                <SimCardDownloadIcon></SimCardDownloadIcon>
+                            </IconButton>
+                        </Tooltip>
+                        <Button onClick={uploadFile} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
                         <Button onClick={pending} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
                                 startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
                         <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
