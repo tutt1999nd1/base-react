@@ -102,11 +102,7 @@ export default function EditAssets(props) {
             .required('Không được để trống')
             .max(15, 'Tối đa 15 chữ số')
         ,
-        current_credit_value: yup.string()
-            .trim()
-            .required('Không được để trống')
-            .max(15, 'Tối đa 15 chữ số')
-        ,
+
     });
     const backList = () => {
         navigate('/assets')
@@ -320,7 +316,6 @@ export default function EditAssets(props) {
                                 formData.append('newReferenceLink', listLink[i].download_link)
                             }
                             formData.append('assetName', values.asset_name)
-                            formData.append('assetGroupId', values.asset_group)
                             formData.append('initialValue', values.initial_value)
                             formData.append('capitalValue', values.capital_value)
                             formData.append('currentCreditValue', values.current_credit_value)

@@ -26,6 +26,7 @@ import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {TreeSelect} from "antd";
 import {useSelector} from "react-redux";
 import apiManagerAssetGroup from "../../api/manage-asset-group";
+import apiManagerAssets from "../../api/manage-assets";
 
 export default function ManageCategory() {
     const currentUser = useSelector(state => state.currentUser)
@@ -37,10 +38,10 @@ export default function ManageCategory() {
     const [refresh, setRefresh] = useState(false)
     const [openModalDel, setOpenModalDel] = useState(false)
     const [openSearch, setOpenSearch] = useState(true)
-    const [listAssetGroupTree, setListAssetGroupTree] = useState([
-    ]);
+    const [listAssetGroupTree, setListAssetGroupTree] = useState([]);
     const [assetGroupSearch, setAssetGroupSearch] = useState()
-
+    const [listDelete, setListDelete] = useState([]);
+    const [isDelList, setIsDelList] = useState(false)
     const [listResult, setListResult] = React.useState({
         page: 0,
         pageSize: 10,
@@ -132,6 +133,7 @@ export default function ManageCategory() {
                 const deleteBtn = (e) => {
                     e.stopPropagation();
                     console.log("del",params.row)
+                    setIsDelList(false)
                     setOpenModalDel(true)
                     setInfoDel(params.row)
                 }
@@ -168,32 +170,7 @@ export default function ManageCategory() {
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
-    const submitDelete = () => {
-        // alert("tutt20")
-        deleteAssetGroupApi(infoDel.id).then(r => {
-            toast.success('Xóa thành công', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            setLoading(false)
-            setRefresh(!refresh);
-        }).catch(e => {
-            setLoading(false)
-            toast.error('Có lỗi xảy ra', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-        })
 
-    }
     const redirectAddPage = () => {
         navigate('/asset-group/create')
     }
@@ -244,6 +221,75 @@ export default function ManageCategory() {
             console.log(e)
         })
     },[refresh])
+    function CustomToolbar() {
+        return (
+            <GridToolbarContainer>
+                <GridToolbarColumnsButton/>
+                {/*<GridToolbarDensitySelector/>*/}
+                {listDelete.length > 0 ?
+                    <Tooltip title="Xóa">
+                        <Button onClick={deleteListBtn} variant={"outlined"} style={{right:"20px",position:'absolute'}} color={"error"}>Xóa</Button>
+                    </Tooltip> : ''}
+            </GridToolbarContainer>
+        );
+    }
+    const submitDelete = () => {
+        if(isDelList){
+            deleteListApi({list_id:listDelete}).then(r => {
+                setRefresh(!refresh)
+                toast.success('Xóa thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            }).catch(e => {
+                toast.error('Có lỗi xảy ra', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            })
+        }else{
+            deleteAssetGroupApi(infoDel.id).then(r => {
+                toast.success('Xóa thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                setLoading(false)
+                setRefresh(!refresh);
+            }).catch(e => {
+                setLoading(false)
+                toast.error('Có lỗi xảy ra', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            })
+        }
+
+
+    }
+    const deleteListBtn = () => {
+        setIsDelList(true)
+        setOpenModalDel(true)
+    }
+
+    const deleteListApi = (data) => {
+        return apiManagerAssetGroup.deleteListAssetGroup(data);
+    }
     const getListAssetGroupApi = (data) => {
         setLoading(true)
         return apiManagerAssetGroup.getListAssetGroup(data);
@@ -260,11 +306,11 @@ export default function ManageCategory() {
     };
     return (
         <div className={'main-content'}>
-            <div className={`loading ${loading ? '' : 'hidden'}`}>
-                {/*<div className={`loading    `}>*/}
-                <ClipLoader
-                    color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />
-            </div>
+            {/*<div className={`loading ${loading ? '' : 'hidden'}`}>*/}
+            {/*    /!*<div className={`loading    `}>*!/*/}
+            {/*    <ClipLoader*/}
+            {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
+            {/*</div>*/}
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
@@ -282,7 +328,7 @@ export default function ManageCategory() {
                                  submitDelete={submitDelete}></ModalConfirmDel>
                 <div className={'row'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
-                        Quản lý nhón tài sản
+                        Quản lý nhóm tài sản
                     </Typography>
                     <div>
                         <Button onClick={pending} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
@@ -370,10 +416,14 @@ export default function ManageCategory() {
                             // onPageSizeChange={(pageSize) =>
                             //    setCurrentSize(pageSize)
                             // }
+                            onSelectionModelChange={(newSelectionModel) => {
+                                setListDelete(newSelectionModel)
+                            }}
                             onPageChange={(page) => setListResult((prev) => ({...prev, page}))}
                             onPageSizeChange={(pageSize) =>
                                 setListResult((prev) => ({...prev, pageSize}))
                             }
+                            checkboxSelection
                             loading={loading}
                             rowsPerPageOptions={[5, 10, 25]}
                             disableSelectionOnClick
@@ -397,11 +447,3 @@ export default function ManageCategory() {
     )
 }
 
-function CustomToolbar() {
-    return (
-        <GridToolbarContainer>
-            <GridToolbarColumnsButton/>
-            <GridToolbarDensitySelector/>
-        </GridToolbarContainer>
-    );
-}

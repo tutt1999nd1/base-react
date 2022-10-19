@@ -17,6 +17,9 @@ class ApiManagerCategory{
     deleteCategory = (id) => {
         return axiosClient.delete(API_MAP.DELETE_CATEGORY+`/${id}`)
     }
+    deleteListCategory= (data) => {
+        return axiosClient.post(API_MAP.DELETE_LIST_CATEGORY,data)
+    }
 }
 
 const apiManagerCategory = new ApiManagerCategory();

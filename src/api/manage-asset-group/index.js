@@ -17,6 +17,9 @@ class ApiManagerAssetGroup{
     deleteAssetGroup = (id) => {
         return axiosClient.delete(API_MAP.DELETE_ASSET_GROUP+`/${id}`)
     }
+    deleteListAssetGroup= (data) => {
+        return axiosClient.post(API_MAP.DELETE_LIST_ASSET_GROUP,data)
+    }
 }
 
 const apiManagerAssetGroup = new ApiManagerAssetGroup();

@@ -17,6 +17,9 @@ class ApiManagerCampaign{
     deleteCampaign = (id) => {
         return axiosClient.delete(API_MAP.DELETE_CAMPAIGNS+`/${id}`)
     }
+    deleteListCampaign= (data) => {
+        return axiosClient.post(API_MAP.DELETE_LIST_CAMPAIGN,data)
+    }
 }
 
 const apiManagerCampaign = new ApiManagerCampaign();

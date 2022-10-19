@@ -25,11 +25,14 @@ import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {useSelector} from "react-redux";
 import apiManagerSupplier from "../../api/manage-supplier";
+import apiManagerAssets from "../../api/manage-assets";
 
 export default function ManageAssetGroup() {
     const currentUser = useSelector(state => state.currentUser)
     const [openSearch, setOpenSearch] = useState(true)
     const [nameSearch, setNameSearch] = useState(null)
+    const [listDelete, setListDelete] = useState([]);
+    const [isDelList,setIsDelList] =  useState(false)
     const [contactSearch, setContactSearch] = useState(null)
     const [taxSearch, setTaxSearch] = useState(null)
     const [] = useState(null)
@@ -110,6 +113,7 @@ export default function ManageAssetGroup() {
                 }
                 const deleteBtn = (e) => {
                     e.stopPropagation();
+                    setIsDelList(false)
                     setOpenModalDel(true)
                     setInfoDel(params.row)
                 }
@@ -142,32 +146,7 @@ export default function ManageAssetGroup() {
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
-    const submitDelete = () => {
-        // alert("tutt20")
-        deleteSupplierApi(infoDel.id).then(r => {
-            toast.success('Xóa thành công', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            setLoading(false)
-            setRefresh(!refresh);
-        }).catch(e => {
-            setLoading(false)
-            toast.error('Có lỗi xảy ra', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-        })
 
-    }
     const redirectAddPage = () => {
         navigate('/supplier/create')
     }
@@ -206,7 +185,75 @@ export default function ManageAssetGroup() {
 
     }, [listResult.page, listResult.pageSize, nameSearch, refresh, currentUser.token])
 
+    function CustomToolbar() {
+        return (
+            <GridToolbarContainer>
+                <GridToolbarColumnsButton/>
+                {/*<GridToolbarDensitySelector/>*/}
+                {listDelete.length > 0 ?
+                    <Tooltip title="Xóa">
+                        <Button onClick={deleteListBtn} variant={"outlined"} style={{right:"20px",position:'absolute'}} color={"error"}>Xóa</Button>
+                    </Tooltip> : ''}
+            </GridToolbarContainer>
+        );
+    }
+    const submitDelete = () => {
+        if(isDelList){
+            deleteListApi({list_id:listDelete}).then(r => {
+                setRefresh(!refresh)
+                toast.success('Xóa thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            }).catch(e => {
+                toast.error('Có lỗi xảy ra', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            })
+        }else{
+            deleteSupplierApi(infoDel.id).then(r => {
+                toast.success('Xóa thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                setLoading(false)
+                setRefresh(!refresh);
+            }).catch(e => {
+                setLoading(false)
+                toast.error('Có lỗi xảy ra', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            })
+        }
 
+
+    }
+    const deleteListBtn = () => {
+        setIsDelList(true)
+        setOpenModalDel(true)
+    }
+
+    const deleteListApi = (data) => {
+        return apiManagerSupplier.deleteListSupplier(data);
+    }
     const getListSupplierApi = (data) => {
         setLoading(true)
         return apiManagerSupplier.getListSupplier(data);
@@ -217,11 +264,11 @@ export default function ManageAssetGroup() {
     }
     return (
         <div className={'main-content'}>
-            <div className={`loading ${loading ? '' : 'hidden'}`}>
-                {/*<div className={`loading    `}>*/}
-                <ClipLoader
-                    color={'#1d78d3'} size={50} css={css`color: #1d78d3`}/>
-            </div>
+            {/*<div className={`loading ${loading ? '' : 'hidden'}`}>*/}
+            {/*    /!*<div className={`loading    `}>*!/*/}
+            {/*    <ClipLoader*/}
+            {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`}/>*/}
+            {/*</div>*/}
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
@@ -312,6 +359,10 @@ export default function ManageAssetGroup() {
                             onPageSizeChange={(pageSize) =>
                                 setListResult((prev) => ({...prev, pageSize}))
                             }
+                            onSelectionModelChange={(newSelectionModel) => {
+                                setListDelete(newSelectionModel)
+                            }}
+                            checkboxSelection
                             loading={loading}
                             rowsPerPageOptions={[5, 10, 25]}
                             disableSelectionOnClick
@@ -336,11 +387,3 @@ export default function ManageAssetGroup() {
     )
 }
 
-function CustomToolbar() {
-    return (
-        <GridToolbarContainer>
-            <GridToolbarColumnsButton/>
-            <GridToolbarDensitySelector/>
-        </GridToolbarContainer>
-    );
-}

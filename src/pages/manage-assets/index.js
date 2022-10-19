@@ -26,8 +26,13 @@ import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import {currencyFormatter, pending} from "../../constants/utils";
 import {useSelector} from "react-redux";
-
+import {TreeSelect} from "antd";
+import apiManagerAssetGroup from "../../api/manage-asset-group";
+import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
+import Axios from "axios";
+import API_MAP from "../../constants/api";
 export default function ManageAssets() {
+    const FileDownload = require('js-file-download');
     const currentUser = useSelector(state => state.currentUser)
     const navigate = useNavigate();
     //     const localizedTextsMap = {
@@ -38,16 +43,18 @@ export default function ManageAssets() {
     //     columnMenuHideColumn: "Ocultar",
     //     columnMenuShowColumns: "Mostrar colunas"
     // };
-
+    const [listDelete, setListDelete] = useState([]);
+    const [isDelList,setIsDelList] =  useState(false)
     const [listGroup, setListGroup] = useState([]);
     const [listType, setListType] = useState([]);
     const [loading, setLoading] = useState(false)
     const [refresh, setRefresh] = useState(false)
     const [openModalDel, setOpenModalDel] = useState(false)
     const [nameSearch, setNameSearch] = useState('')
-    const [groupSearch, setGroupSearch] = useState(0)
+    const [groupSearch, setGroupSearch] = useState()
     const [typeSearch, setTypeSearch] = useState(0)
     const [openSearch, setOpenSearch] = useState(true)
+    const [listAssetGroupTree, setListAssetGroupTree] = useState([]);
     const [listResult, setListResult] = React.useState({
         page: 0,
         pageSize: 10,
@@ -85,7 +92,7 @@ export default function ManageAssets() {
             field: 'asset_name',
             headerName: 'Tên tài sản',
             headerClassName: 'super-app-theme--header',
-            minWidth:150,
+            minWidth: 150,
 
             renderCell: (params) => {
 
@@ -100,7 +107,7 @@ export default function ManageAssets() {
             field: 'asset_group_name',
             headerName: 'Nhóm tài sản',
             headerClassName: 'super-app-theme--header',
-            minWidth:150,
+            minWidth: 150,
 
             renderCell: (params) => {
 
@@ -115,7 +122,7 @@ export default function ManageAssets() {
             field: 'initial_value',
             headerName: 'Gía trị ban đầu',
             headerClassName: 'super-app-theme--header',
-            minWidth:150,
+            minWidth: 150,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -129,7 +136,7 @@ export default function ManageAssets() {
             field: 'capital_value',
             headerName: 'Vốn vay',
             headerClassName: 'super-app-theme--header',
-            minWidth:150,
+            minWidth: 150,
 
             renderCell: (params) => {
 
@@ -144,7 +151,7 @@ export default function ManageAssets() {
             field: 'current_credit_value',
             headerName: 'Gốc vay tín dụng hiện tại',
             headerClassName: 'super-app-theme--header',
-            minWidth:150,
+            minWidth: 150,
 
             renderCell: (params) => {
 
@@ -160,7 +167,7 @@ export default function ManageAssets() {
             field: 'max_capital_value',
             headerName: 'Số tiền vay tối đa',
             headerClassName: 'super-app-theme--header',
-            minWidth:150,
+            minWidth: 150,
 
             renderCell: (params) => {
 
@@ -175,7 +182,7 @@ export default function ManageAssets() {
             field: 'status',
             headerName: 'Trạng thái',
             headerClassName: 'super-app-theme--header',
-            minWidth:150,
+            minWidth: 150,
 
             flex: 1,
             renderCell: (params) => {
@@ -223,6 +230,7 @@ export default function ManageAssets() {
                 }
                 const deleteBtn = (e) => {
                     e.stopPropagation();
+                    setIsDelList(false)
                     setOpenModalDel(true)
                     setInfoDel(params.row)
                 }
@@ -246,34 +254,60 @@ export default function ManageAssets() {
         },
         // { field: 'document', headerName: 'Nhóm tài sản' },
     ];
+    const uploadFile = () => {
+        var el = window._protected_reference = document.createElement("INPUT");
+        el.type = "file";
+        el.accept = ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
+        // el.multiple = "multiple";
+        el.addEventListener('change', function (ev2) {
 
+            new Promise(function (resolve) {
+                setTimeout(function () {
+                    if(el.files.length > 0) {
+                        console.log(el.files);
+                        let formData = new FormData();
+                        formData.append('file', el.files[0])
+                        importAssetApi(formData).then(r=>{
+                            console.log(r);
+                            toast.success('Nhập dữ liệu thành công', {
+                                position: "top-right",
+                                autoClose: 1500,
+                                hideProgressBar: true,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                            });
+                            setRefresh(!refresh)
+
+                        }).catch(err => {
+                            toast.error('Có lỗi xảy ra', {
+                                position: "top-right",
+                                autoClose: 1500,
+                                hideProgressBar: true,
+                                closeOnClick: true,
+                                pauseOnHover: true,
+                                draggable: true,
+                            });
+                        })
+                    }
+                    resolve();
+
+                }, 1000);
+
+
+            })
+                .then(function () {
+                    // clear / free reference
+                    el = window._protected_reference = undefined;
+                });
+        });
+
+        el.click();
+    }
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
-    const submitDelete = () => {
-        // alert("tutt20")
-        deleteAssetApi(infoDel.id).then(r => {
-            toast.success('Xóa thành công', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            setRefresh(!refresh);
-        }).catch(e => {
-            toast.error('Có lỗi xảy ra', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-        })
 
-    }
     const redirectAddPage = () => {
         navigate('/assets/create')
     }
@@ -286,17 +320,14 @@ export default function ManageAssets() {
             arr[i].capital_value = currencyFormatter(arr[i].capital_value)
             arr[i].max_capital_value = currencyFormatter(arr[i].max_capital_value)
             arr[i].current_credit_value = currencyFormatter(arr[i].current_credit_value)
-            if(arr[i].status==='DRAFT'){
-                arr[i].status="Tạo mới"
-            }
-            else if(arr[i].status==='APPROVING'){
-                arr[i].status="Đang duyệt"
-            }
-            else if(arr[i].status==='APPROVED'){
-                arr[i].status="Đã duyệt"
-            }
-            else if(arr[i].status==='REJECTED'){
-                arr[i].status="Đã từ chối"
+            if (arr[i].status === 'DRAFT') {
+                arr[i].status = "Tạo mới"
+            } else if (arr[i].status === 'APPROVING') {
+                arr[i].status = "Đang duyệt"
+            } else if (arr[i].status === 'APPROVED') {
+                arr[i].status = "Đã duyệt"
+            } else if (arr[i].status === 'REJECTED') {
+                arr[i].status = "Đã từ chối"
             }
         }
         return arr;
@@ -305,7 +336,7 @@ export default function ManageAssets() {
         setNameSearch(e.target.value)
     }
     const handleChangeAssetGroup = (e) => {
-        setGroupSearch(e.target.value)
+        setGroupSearch(e)
     };
     const handleChangeAssetType = (e) => {
         setTypeSearch(e.target.value)
@@ -316,8 +347,7 @@ export default function ManageAssets() {
             'page_index': listResult.page + 1,
             'paging': true,
             'asset_name': nameSearch === '' ? null : nameSearch,
-            'asset_group_id': groupSearch === 0 ? null : groupSearch,
-            'asset_type_id': typeSearch === 0 ? null : typeSearch,
+            'asset_group_id': groupSearch,
         }).then(r => {
             setLoading(false)
             console.log("r", r)
@@ -331,49 +361,112 @@ export default function ManageAssets() {
             setLoading(false)
             console.log(e)
         })
-    }, [listResult.page, listResult.pageSize, nameSearch, groupSearch, typeSearch, refresh,currentUser])
+    }, [listResult.page, listResult.pageSize, nameSearch, groupSearch, typeSearch, refresh, currentUser])
     useEffect(() => {
-        getListAssetTypeApi().then(r => {
-            if (r.data.asset_types) {
-                setListType(r.data.asset_types)
-            } else setListType([])
 
-            if (r.data.asset_types.length > 0) {
-                // setTypeSearch(r.data.asset_types[0].id)
-            }
+        getListAssetGroupTreeApi({paging: false}).then(r => {
+            console.log("setListCategoryTree", r.data)
+            setListAssetGroupTree(r.data)
         }).catch(e => {
-
-        })
-        getListAssetGroupApi().then(r => {
-            console.log("r-list group", listGroup)
-            if (r.data.asset_groups)
-                setListGroup(r.data.asset_groups)
-            else setListGroup([])
-            if (r.data.asset_groups.length > 0) {
-                // setGroupSearch(r.data.asset_groups[0].id)
-            }
-        }).catch(e => {
-
+            console.log(e)
         })
     }, [currentUser])
 
-    // const { data } = useDemoData({
-    //     dataSet: 'Commodity',
-    //     rowLength: 20,
-    //     maxColumns: 5,
-    // });
+    function CustomToolbar() {
+        return (
+            <GridToolbarContainer>
+                <GridToolbarColumnsButton/>
+                {/*<GridToolbarDensitySelector/>*/}
+                {listDelete.length > 0 ?
+                    <Tooltip title="Xóa">
+                        <Button onClick={deleteListBtn} variant={"outlined"} style={{right:"20px",position:'absolute'}} color={"error"}>Xóa</Button>
+                    </Tooltip> : ''}
+            </GridToolbarContainer>
+        );
+    }
+    const submitDelete = () => {
+        if(isDelList){
+            deleteListApi({list_id:listDelete}).then(r => {
+                setRefresh(!refresh)
+                toast.success('Xóa thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            }).catch(e => {
+                toast.error('Có lỗi xảy ra', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            })
+        }else{
+            deleteAssetApi(infoDel.id).then(r => {
+                toast.success('Xóa thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                setLoading(false)
+                setRefresh(!refresh);
+            }).catch(e => {
+                setLoading(false)
+                toast.error('Có lỗi xảy ra', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            })
+        }
+
+
+    }
+    const deleteListBtn = () => {
+        setIsDelList(true)
+        setOpenModalDel(true)
+    }
+    const downTemplate = () => {
+        Axios.get(API_MAP.DOWN_TEMPLATE_ASSETS, {
+            headers: { 'Authorization': `Bearer ${currentUser.token}` },
+            responseType: 'blob'
+        }).then(response => {
+            let nameFile = response.headers['content-disposition'].split(`"`)[1]
+            FileDownload(response.data,nameFile);
+
+        }).catch(e=>{
+        })
+    }
+    const deleteListApi = (data) => {
+        return apiManagerAssets.deleteListAsset(data);
+    }
+    const getListAssetGroupTreeApi = (data) => {
+        return apiManagerAssetGroup.getListAssetGroupTree(data);
+    }
     const getListAssetsApi = (data) => {
         setLoading(true)
         return apiManagerAssets.getListAsset(data);
     }
-    const getListAssetGroupApi = (data) => {
-        return apiManagerAssets.getAssetGroup(data);
-    }
-    const getListAssetTypeApi = (data) => {
-        return apiManagerAssets.getAssetType(data);
-    }
+
     const deleteAssetApi = (id) => {
         return apiManagerAssets.deleteAsset(id);
+    }
+    const importAssetApi = (data) => {
+        return apiManagerAssets.importAsset(data);
+    }
+    const downTemplateAssetApi = (data) => {
+        return apiManagerAssets.downTemplateAsset(data);
     }
     return (
         <div className={'main-content'}>
@@ -402,10 +495,18 @@ export default function ManageAssets() {
                         Quản lý tài sản
                     </Typography>
                     <div>
-                        <Button onClick={pending} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
-                        <Button onClick={pending} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
+                        <Tooltip title={'Tải file mẫu'}>
+                            <IconButton style={{cursor: 'pointer'}} color="primary"
+                                        onClick={downTemplate}>
+                                <SimCardDownloadIcon></SimCardDownloadIcon>
+                            </IconButton>
+                        </Tooltip>
+
+                        <Button onClick={uploadFile} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
+                        <Button onClick={pending} style={{marginLeft: '10px', marginRight: '10px'}} variant="text"
                                 startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
-                        <Button  onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
+
+                        <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
                             Thêm
                         </Button>
                     </div>
@@ -450,27 +551,24 @@ export default function ManageAssets() {
                                 // variant="standard"
                             />
                         </div>
-                        <div style={{width: '20%',marginLeft: '20px'}}>
-                            <div className={'label-input'}>Nhóm tài sản </div>
-                            <FormControl fullWidth>
-                                <Select
-                                    size={"small"}
-
-                                    id='asset_group'
-                                    name='asset_group'
-                                    value={groupSearch}
-                                    onChange={handleChangeAssetGroup}
-                                >
-                                    <MenuItem value={0}>Tất cả</MenuItem>
-
-                                    {
-                                        listGroup.map((e) => (
-                                            <MenuItem value={e.id}>{e.group_name}</MenuItem>
-                                        ))
-                                    }
-
-                                </Select>
-                            </FormControl>
+                        <div style={{width: '20%', marginLeft: '20px'}}>
+                            <div className={'label-input'}>Nhóm tài sản</div>
+                            <TreeSelect
+                                style={{width: '100%'}}
+                                showSearch
+                                value={groupSearch}
+                                treeData={listAssetGroupTree}
+                                dropdownStyle={{maxHeight: 400, overflow: 'auto'}}
+                                placeholder="Nhóm tài sản"
+                                allowClear
+                                treeDefaultExpandAll
+                                onChange={handleChangeAssetGroup}
+                                filterTreeNode={(search, item) => {
+                                    return item.group_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
+                                }}
+                                fieldNames={{label: 'group_name', value: 'id', children: 'child_asset_groups'}}
+                            >
+                            </TreeSelect>
 
                         </div>
 
@@ -499,6 +597,10 @@ export default function ManageAssets() {
                             onPageSizeChange={(pageSize) =>
                                 setListResult((prev) => ({...prev, pageSize}))
                             }
+                            onSelectionModelChange={(newSelectionModel) => {
+                                setListDelete(newSelectionModel)
+                            }}
+                            checkboxSelection
                             loading={loading}
                             rowsPerPageOptions={[5, 10, 25]}
                             disableSelectionOnClick
@@ -524,11 +626,3 @@ export default function ManageAssets() {
     )
 }
 
-function CustomToolbar() {
-    return (
-        <GridToolbarContainer>
-            <GridToolbarColumnsButton/>
-            {/*<GridToolbarDensitySelector/>*/}
-        </GridToolbarContainer>
-    );
-}

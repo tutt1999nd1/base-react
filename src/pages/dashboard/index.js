@@ -1,14 +1,43 @@
-import {Box, Divider, Grid, Tab, Tabs, Tooltip} from "@mui/material";
+import {Box, css, Divider, Grid, Tab, Tabs, Tooltip} from "@mui/material";
 import React, {useEffect, useState} from "react";
 import ReactECharts from 'echarts-for-react';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import DonutLargeIcon from '@mui/icons-material/DonutLarge';
-import {a11yProps, convertToBarChart, convertToPieChart, currencyFormatter, sum, TabPanel} from "../../constants/utils";
+import {
+    a11yProps,
+    convertToBarChart,
+    convertToPieChart,
+    convertToTreeTable,
+    currencyFormatter,
+    sum,
+    TabPanel
+} from "../../constants/utils";
 import apiManagerAssets from "../../api/manage-assets";
 import {useSelector} from "react-redux";
 import apiManagerSOF from "../../api/manage-sof";
-
+import { TreeTable, TreeState } from 'cp-react-tree-table';
+import { Table } from 'antd';
+import {ClipLoader} from "react-spinners";
+const MOCK_DATA = [
+        {
+            data: { name: 'Company I', expenses: '105,000', employees: '22', contact: 'Makenzie Higgs' },
+            childs: [
+                {
+                    data: { name: 'Department 1', expenses: '75,000', employees: '18', contact: 'Florence Carter' },
+                },
+            ]
+        },
+    {
+        data: { name: 'Company 2', expenses: '105,000', employees: '22', contact: 'Makenzie Higgs' },
+        childs: [
+            {
+                data: { name: 'Department 1', expenses: '75,000', employees: '18', contact: 'Florence Carter' },
+            },
+        ]
+    },
+];
 export default function Dashboard() {
+    const [treeValue,setTreeValue] = useState(TreeState.create(MOCK_DATA));
     const currentUser = useSelector(state => state.currentUser)
     const [listAsset,setListAsset] = useState([])
     const [listSOF,setListSOF] = useState([])
@@ -169,12 +198,13 @@ export default function Dashboard() {
     useEffect(()=>{
         if(currentUser.token){
             getListAssetApi().then(r=>{
-                setListAsset(r.data.asset_aggregates)
+                let arr = convertToTreeTable(r.data.asset_aggregates)
+                setListAsset(arr)
             })
             getListSOFApi().then(r=>{
-                console.log("r",r)
-                // setListAsset(r.data.asset_aggregates)
-                setListSOF(r.data.sof_aggregates)
+                let arr = convertToTreeTable(r.data.sof_aggregates)
+                console.log("arr2",arr)
+                setListSOF(arr)
             })
         }
 
@@ -212,9 +242,7 @@ export default function Dashboard() {
         if(listSOF.length>0){
             setKeyUpdateSOF(Math.random)
         }
-    },[listAsset,listSOF])
-    useEffect(()=>{
-    },[optionPieAsset,optionBarAsset])
+    },[listAsset,listSOF,currentUser.token])
 
     const getListAssetApi = () => {
       return apiManagerAssets.getListAssetDashboard();
@@ -222,8 +250,42 @@ export default function Dashboard() {
     const getListSOFApi = () => {
       return apiManagerSOF.getListSOFDashboard();
     }
+
+    const columnsAsset = [
+        {
+            title: 'Nhóm tài sản',
+            dataIndex: 'group_name',
+            key: 'group_name',
+        },
+
+        {
+            title: 'Gía trị (VNĐ)',
+            dataIndex: 'total_value',
+            width: '30%',
+            key: 'total_value',
+            render: text => <div>{currencyFormatter(text)}</div>,
+        },
+    ];
+    const columnsSOF = [
+        {
+            title: 'Khoản mục',
+            dataIndex: 'category_name',
+            key: 'category_name',
+        },
+
+        {
+            title: 'Gía trị (VNĐ)',
+            dataIndex: 'total_value',
+            width: '30%',
+            key: 'total_value',
+            render: text => <div>{currencyFormatter(text)}</div>,
+        },
+    ];
+
+
+
     return(
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: '100%',height:"100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={tab} onChange={handleChangeTab} aria-label="basic tabs example">
                     <Tab label="Dashboard" {...a11yProps(0)} />
@@ -275,6 +337,7 @@ export default function Dashboard() {
                                 </div>
                             </div>
                         </Grid>
+
                         <Grid item xs={6} md={12}>
                             <div className={'widget'}>
                                 <div className={'widget-tittle'}>
@@ -287,28 +350,20 @@ export default function Dashboard() {
                                             <div className={'tittle-table'}>
                                                 Tài sản:
                                             </div>
-                                            <table>
-                                                <thead>
-                                                <th>Khoản mục</th>
-                                                <th>Giá trị (VNĐ)</th>
-                                                </thead>
-                                                <tbody>
-                                                {
-                                                    listAsset.map((e)=>(
-                                                        <tr>
-                                                            <td>{e.group_name}</td>
-                                                            <td>{currencyFormatter(e.total_value)}</td>
-                                                        </tr>
-                                                    ))
-                                                }
-
-                                                </tbody>
-
-                                                <tr className={'row-total'}>
-                                                    <th>Tổng</th>
-                                                    <th>{currencyFormatter(sum(listAsset,"total_value"))}</th>
-                                                </tr>
-                                            </table>
+                                            <Table key={keyUpdateAsset} rowKey="id" columns={columnsAsset} dataSource={listAsset} pagination={false} expandable={{expandRowByClick:true,defaultExpandAllRows: true,childrenColumnName: "childs" }}
+                                                    summary={pageData => {
+                                                        return (
+                                                            <>
+                                                                <Table.Summary.Row>
+                                                                    <Table.Summary.Cell><th style={{color:"#1976d2"}}>Tổng</th></Table.Summary.Cell>
+                                                                    <Table.Summary.Cell>
+                                                                        <th style={{color:"#1976d2"}}>{currencyFormatter(sum(listAsset,"total_value"))} </th>
+                                                                    </Table.Summary.Cell>
+                                                                </Table.Summary.Row>
+                                                            </>
+                                                        );
+                                                    }}
+                                            />
 
                                         </div>
 
@@ -316,28 +371,20 @@ export default function Dashboard() {
                                             <div className={'tittle-table'}>
                                                 Nguồn vốn:
                                             </div>
-                                            <table>
-                                                <thead>
-                                                <th>Khoản mục</th>
-                                                <th>Giá trị (VNĐ)</th>
-                                                </thead>
-                                                <tbody>
-                                                {
-                                                    listSOF.map((e)=>(
-                                                        <tr>
-                                                            <td>{e.category_name}</td>
-                                                            <td>{currencyFormatter(e.total_value)}</td>
-                                                        </tr>
-                                                    ))
-                                                }
-
-                                                </tbody>
-                                                <tr className={'row-total'}>
-                                                    <th>Tổng</th>
-                                                    <th>{currencyFormatter(sum(listSOF,"total_value"))}</th>
-                                                </tr>
-                                            </table>
-
+                                            <Table key={keyUpdateAsset} rowKey="id" columns={columnsSOF} dataSource={listSOF} pagination={false} expandable={{expandRowByClick:true,defaultExpandAllRows: true,childrenColumnName: "childs" }}
+                                                    summary={pageData => {
+                                                        return (
+                                                            <>
+                                                                <Table.Summary.Row>
+                                                                    <Table.Summary.Cell><th style={{color:"#1976d2"}}>Tổng</th></Table.Summary.Cell>
+                                                                    <Table.Summary.Cell>
+                                                                        <th style={{color:"#1976d2"}}>{currencyFormatter(sum(listSOF,"total_value"))} </th>
+                                                                    </Table.Summary.Cell>
+                                                                </Table.Summary.Row>
+                                                            </>
+                                                        );
+                                                    }}
+                                            />
                                         </div>
                                     </div>
 

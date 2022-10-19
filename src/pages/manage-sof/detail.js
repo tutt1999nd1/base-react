@@ -7,6 +7,9 @@ import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import {currencyFormatter} from "../../constants/utils";
 import apiManagerSOF from "../../api/manage-sof";
+import Axios from "axios";
+import FileDownload from "js-file-download";
+import {useSelector} from "react-redux";
 
 export default function DetailSOF(props) {
     const navigate = useNavigate();
@@ -17,6 +20,7 @@ export default function DetailSOF(props) {
     const [groupDefault, setGroupDefault] = useState(0)
     const [idDetail, setIdDetail] = useState(null)
     const [openModalDel, setOpenModalDel] = useState(false)
+    const currentUser = useSelector(state => state.currentUser)
 
     const [info, setInfo] = useState({
         id: '',
@@ -105,11 +109,16 @@ export default function DetailSOF(props) {
     const deleteSOFApi = (id) => {
         return apiManagerSOF.deleteSOF(id);
     }
-    useEffect(() => {
-        console.log("info", info)
-    }, [info])
+
     const downloadFile = (url) => {
-        window.open(url, '_blank');
+        Axios.get(url, {
+            headers: { 'Authorization': `Bearer ${currentUser.token}` },
+            responseType: 'blob'
+        }).then(response => {
+            let nameFile = response.headers['content-disposition'].split(`"`)[1]
+            FileDownload(response.data,nameFile);
+        }).catch(e=>{
+        })
     }
     return (
         <div className={'main-content main-content-detail'}>

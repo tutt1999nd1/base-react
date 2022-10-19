@@ -51,32 +51,22 @@ export default function ModalConfirmDel(props) {
                 <DialogContent dividers className={"model-project"}>
                     <div className="form-input">
                         <div className="label confirm-delete-dataset">
-                            <div>Để xác nhận xóa, vui lòng nhập lại thông tin sau</div>
-                            <strong className={"text-bold"}>{name}</strong>
+                            <div>Bạn có chắc chắn muốn xóa bản ghi này?</div>
+                            {/*<strong className={"text-bold"}>{name}</strong>*/}
                         </div>
-                        <TextField
-                            // disabled={!isModalCreateMeeting}
-                            fullWidth
-                            autoFocus={true}
-                            id="roomName"
-                            name="roomName"
-                            value={valueInput}
-                            onChange={handleChangeInput}
-                            size="small"
-                            // placeholder={t('placeholder.enterInfor')}
 
-                        />
                     </div>
                 </DialogContent>
                 <DialogActions>
                     <Button variant="outlined" autoFocus onClick={handleCloseModalDel}>
                         Hủy
                     </Button>
-                    {
-                        !(valueInput.trim() ==(name?name.trim():name)) ?   <Button disabled={true} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>
-                        :
-                            <Button  onClick={submit} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>
-                    }
+                    {/*{*/}
+                    {/*    !(valueInput.trim() ==(name?name.trim():name)) ?   <Button disabled={true} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>*/}
+                    {/*    :*/}
+                    {/*        <Button  onClick={submit} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>*/}
+                    {/*}*/}
+                    <Button  onClick={submit} variant={'contained'} color={"error"}>Xóa</Button>
                 </DialogActions>
             </Dialog>
         </div>

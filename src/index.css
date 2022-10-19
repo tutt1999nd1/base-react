@@ -10,7 +10,7 @@ body {
 }
 @media only screen and (max-width: 1600px) {
     body {
-        zoom:75%;
+        /*zoom:75%;*/
     }
 }
 html{
@@ -634,17 +634,17 @@ height: 45px;
     /*font-family: arial, sans-serif;*/
     border-collapse: collapse;
     width: 100%;
+    border: 1px solid #dddddd;
+
 }
 
 .widget-content td,.widget-content th {
-    border: 1px solid #dddddd;
+    /*border: 1px solid #dddddd;*/
     text-align: left;
     padding: 8px;
 }
 
-.widget-content tr:nth-child(even) {
-    background-color: #f5f5f5;
-}
+
 .row-total{
     color: #1976d2 ;
     background-color: unset !important;
@@ -693,3 +693,9 @@ height: 45px;
 /*    left: unset !important;*/
 /*    right: 0px !important;*/
 /*}*/
+.MuiDataGrid-columnHeadersInner{
+    background-color: #fbbd2c;
+}
+.MuiDataGrid-toolbarContainer{
+    height: 47px;
+}

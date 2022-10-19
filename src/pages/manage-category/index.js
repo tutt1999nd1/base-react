@@ -25,10 +25,13 @@ import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {TreeSelect} from "antd";
 import {useSelector} from "react-redux";
+import apiManagerAssets from "../../api/manage-assets";
 
 export default function ManageCategory() {
     const currentUser = useSelector(state => state.currentUser)
     const [nameSearch,setNameSearch] =useState(null)
+    const [listDelete, setListDelete] = useState([]);
+    const [isDelList,setIsDelList] =  useState(false)
     const [listAllCategory,setListAllCategory] =useState([])
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
@@ -130,6 +133,7 @@ export default function ManageCategory() {
                 const deleteBtn = (e) => {
                     e.stopPropagation();
                     console.log("del",params.row)
+                    setIsDelList(false)
                     setOpenModalDel(true)
                     setInfoDel(params.row)
                 }
@@ -166,32 +170,7 @@ export default function ManageCategory() {
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
-    const submitDelete = () => {
-        // alert("tutt20")
-        deleteCategoryApi(infoDel.id).then(r => {
-            toast.success('Xóa thành công', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            setLoading(false)
-            setRefresh(!refresh);
-        }).catch(e => {
-            setLoading(false)
-            toast.error('Có lỗi xảy ra', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-        })
 
-    }
     const redirectAddPage = () => {
         navigate('/category/create')
     }
@@ -242,6 +221,75 @@ export default function ManageCategory() {
             console.log(e)
         })
     },[refresh])
+    function CustomToolbar() {
+        return (
+            <GridToolbarContainer>
+                <GridToolbarColumnsButton/>
+                {/*<GridToolbarDensitySelector/>*/}
+                {listDelete.length > 0 ?
+                    <Tooltip title="Xóa">
+                        <Button onClick={deleteListBtn} variant={"outlined"} style={{right:"20px",position:'absolute'}} color={"error"}>Xóa</Button>
+                    </Tooltip> : ''}
+            </GridToolbarContainer>
+        );
+    }
+    const submitDelete = () => {
+        if(isDelList){
+            deleteListApi({list_id:listDelete}).then(r => {
+                setRefresh(!refresh)
+                toast.success('Xóa thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            }).catch(e => {
+                toast.error('Có lỗi xảy ra', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            })
+        }else{
+            deleteCategoryApi(infoDel.id).then(r => {
+                toast.success('Xóa thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                setLoading(false)
+                setRefresh(!refresh);
+            }).catch(e => {
+                setLoading(false)
+                toast.error('Có lỗi xảy ra', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            })
+        }
+
+
+    }
+    const deleteListBtn = () => {
+        setIsDelList(true)
+        setOpenModalDel(true)
+    }
+
+    const deleteListApi = (data) => {
+        return apiManagerCategory.deleteListCategory(data);
+    }
     const getListCategoryApi = (data) => {
         setLoading(true)
         return apiManagerCategory.getListCategory(data);
@@ -258,11 +306,11 @@ export default function ManageCategory() {
     };
     return (
         <div className={'main-content'}>
-            <div className={`loading ${loading ? '' : 'hidden'}`}>
-                {/*<div className={`loading    `}>*/}
-                <ClipLoader
-                    color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />
-            </div>
+            {/*<div className={`loading ${loading ? '' : 'hidden'}`}>*/}
+            {/*    /!*<div className={`loading    `}>*!/*/}
+            {/*    <ClipLoader*/}
+            {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
+            {/*</div>*/}
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
@@ -375,6 +423,10 @@ export default function ManageCategory() {
                             loading={loading}
                             rowsPerPageOptions={[5, 10, 25]}
                             disableSelectionOnClick
+                            onSelectionModelChange={(newSelectionModel) => {
+                                setListDelete(newSelectionModel)
+                            }}
+                            checkboxSelection
                             sx={{
                                 // boxShadow: 2,
                                 border: 1,
@@ -395,11 +447,3 @@ export default function ManageCategory() {
     )
 }
 
-function CustomToolbar() {
-    return (
-        <GridToolbarContainer>
-            <GridToolbarColumnsButton/>
-            <GridToolbarDensitySelector/>
-        </GridToolbarContainer>
-    );
-}

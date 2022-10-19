@@ -17,6 +17,9 @@ class ApiManagerCompany{
     deleteCompany = (id) => {
         return axiosClient.delete(API_MAP.DELETE_COMPANY+`/${id}`)
     }
+    deleteListCompany= (data) => {
+        return axiosClient.post(API_MAP.DELETE_LIST_COMPANY,data)
+    }
 }
 
 const apiManagerCompany = new ApiManagerCompany();

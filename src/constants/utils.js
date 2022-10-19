@@ -53,6 +53,16 @@ export const currencyFormatter = (value) => {
     }
     return arr;
 }
+export const convertToTreeTable = (arr) => {
+    for (let i = 0; i < arr.length; i++) {
+        if(arr[i].childs.length==0){
+            delete arr[i].childs;
+        }
+        else convertToTreeTable(arr[i].childs)
+    }
+    return arr;
+
+}
 export const convertToAutoCompleteMail = (arr,name) => {
     let newArr = []
     for (let i = 0; i < arr.length; i++) {

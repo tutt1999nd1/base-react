@@ -238,7 +238,7 @@ export default function EditCompany(props) {
                                                 filterTreeNode={(search, item) => {
                                                     return item.group_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
                                                 }}
-                                                fieldNames={{label: 'group_name', value: 'id', children: 'parent_asset_group'}}
+                                                fieldNames={{label: 'group_name', value: 'id', children: 'child_asset_groups'}}
                                             >
                                             </TreeSelect>
                                             {/*<FormHelperText style={{marginLeft:'15px'}}*/}

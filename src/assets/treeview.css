@@ -25402,3 +25402,6 @@ div.ant-typography-edit-content.ant-typography-rtl {
 .ant-select-arrow{
     display: none!important;
 }
+.ant-table{
+    font-size: unset !important;
+}

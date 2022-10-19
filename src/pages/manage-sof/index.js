@@ -37,8 +37,11 @@ import {useSelector} from "react-redux";
 import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import CancelPresentationOutlinedIcon from '@mui/icons-material/CancelPresentationOutlined';
 import apiManagerSupplier from "../../api/manage-supplier";
+import apiManagerAssets from "../../api/manage-assets";
 export default function ManageSOF() {
     const currentUser = useSelector(state => state.currentUser)
+    const [listDelete, setListDelete] = useState([]);
+    const [isDelList,setIsDelList] =  useState(false)
     const navigate = useNavigate();
     const [value, setValue] = useState()
     const {TreeNode} = TreeSelect;
@@ -415,6 +418,7 @@ export default function ManageSOF() {
                 }
                 const deleteBtn = (e) => {
                     e.stopPropagation();
+                    setIsDelList(false)
                     setOpenModalDel(true)
                     setInfoDel(params.row)
                 }
@@ -473,30 +477,7 @@ export default function ManageSOF() {
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
-    const submitDelete = () => {
-        // alert("tutt20")
-        deleteSOFApi(infoDel.id).then(r => {
-            toast.success('Xóa thành công', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            setRefresh(!refresh);
-        }).catch(e => {
-            toast.error('Có lỗi xảy ra', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-        })
 
-    }
     const redirectAddPage = () => {
         navigate('/sof/create')
     }
@@ -641,6 +622,75 @@ export default function ManageSOF() {
     //     rowLength: 20,
     //     maxColumns: 5,
     // });
+    function CustomToolbar() {
+        return (
+            <GridToolbarContainer>
+                <GridToolbarColumnsButton/>
+                {/*<GridToolbarDensitySelector/>*/}
+                {listDelete.length > 0 ?
+                    <Tooltip title="Xóa">
+                        <Button onClick={deleteListBtn} variant={"outlined"} style={{right:"20px",position:'absolute'}} color={"error"}>Xóa</Button>
+                    </Tooltip> : ''}
+            </GridToolbarContainer>
+        );
+    }
+    const submitDelete = () => {
+        if(isDelList){
+            deleteListApi({list_id:listDelete}).then(r => {
+                setRefresh(!refresh)
+                toast.success('Xóa thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            }).catch(e => {
+                toast.error('Có lỗi xảy ra', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            })
+        }else{
+            deleteSOFApi(infoDel.id).then(r => {
+                toast.success('Xóa thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                setLoading(false)
+                setRefresh(!refresh);
+            }).catch(e => {
+                setLoading(false)
+                toast.error('Có lỗi xảy ra', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            })
+        }
+
+
+    }
+    const deleteListBtn = () => {
+        setIsDelList(true)
+        setOpenModalDel(true)
+    }
+
+    const deleteListApi = (data) => {
+        return apiManagerSOF.deleteListSOF(data);
+    }
     const getListSupplierApi = (data) => {
         return apiManagerSupplier.getListSupplier(data);
     }
@@ -863,6 +913,10 @@ export default function ManageSOF() {
                             loading={loading}
                             rowsPerPageOptions={[5, 10, 25]}
                             disableSelectionOnClick
+                            onSelectionModelChange={(newSelectionModel) => {
+                                setListDelete(newSelectionModel)
+                            }}
+                            checkboxSelection
                             sx={{
                                 overflowX: 'scroll',
                                 // boxShadow: 2,
@@ -885,11 +939,3 @@ export default function ManageSOF() {
     )
 }
 
-function CustomToolbar() {
-    return (
-        <GridToolbarContainer>
-            <GridToolbarColumnsButton/>
-            {/*<GridToolbarDensitySelector/>*/}
-        </GridToolbarContainer>
-    );
-}

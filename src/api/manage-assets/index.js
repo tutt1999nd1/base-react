@@ -11,6 +11,12 @@ class ApiManagerAssets{
             headers: {'content-type': 'multipart/form-data'}
         })
     }
+    importAsset = (data) => {
+        return axiosClient.post(API_MAP.IMPORT_ASSETS,data,{
+            // params: description,
+            headers: {'content-type': 'multipart/form-data'}
+        })
+    }
     updateAsset = (id,data) => {
         return axiosClient.put(API_MAP.UPDATE_ASSETS+`/${id}`,data)
     }
@@ -19,6 +25,9 @@ class ApiManagerAssets{
     }
     getAssetGroup = () => {
         return axiosClient.get(API_MAP.GET_ASSETS_GROUP)
+    }
+    downTemplateAsset= () => {
+        return axiosClient.get(API_MAP.DOWN_TEMPLATE_ASSETS)
     }
     getAssetType = () => {
         return axiosClient.get(API_MAP.GET_ASSETS_TYPE)
@@ -29,6 +38,9 @@ class ApiManagerAssets{
     // deleteBackup = (data) => {
     //     return axiosClient.post(API_MAP.DELETE_BACKUP ,data)
     // }
+    deleteListAsset= (data) => {
+        return axiosClient.post(API_MAP.DELETE_LIST_ASSET,data)
+    }
 }
 
 const apiManagerAssets = new ApiManagerAssets();

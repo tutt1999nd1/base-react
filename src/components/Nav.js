@@ -68,6 +68,13 @@ export default function Nav() {
                             </div>
                         </li>
                     </NavLink>
+                    <NavLink className={'nav-link'} to={'approve'}>
+                        <li>
+                            <div className={'nav-item'}>
+                                <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Tính lãi</div>
+                            </div>
+                        </li>
+                    </NavLink>
                     {/*<NavLink className={'nav-link'} to={''}>*/}
                     {/*    <li onClick={handleClickCollapse}>*/}
                     {/*        <div className={'nav-item'} style={{width:'100%'}}>*/}
@@ -86,12 +93,11 @@ export default function Nav() {
 
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <ul>
-                            <NavLink className={'nav-link'} to={'account'}>
+                            <NavLink className={'nav-link hidden'} to={'account'}>
                                 <li>
                                     <div className={'nav-item li-child'}>
                                         <div className={'nav-item-name'}><SwitchAccountIcon></SwitchAccountIcon>Tài khoản
                                         </div>
-
                                     </div>
                                 </li>
                             </NavLink>

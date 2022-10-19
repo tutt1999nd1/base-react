@@ -7,6 +7,10 @@ import apiManagerAssets from "../../api/manage-assets";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import {currencyFormatter} from "../../constants/utils";
+import Axios from "axios";
+import API_MAP from "../../constants/api";
+import FileDownload from "js-file-download";
+import {useSelector} from "react-redux";
 
 export default function DetailAsset(props) {
     const navigate = useNavigate();
@@ -17,6 +21,7 @@ export default function DetailAsset(props) {
     const [groupDefault, setGroupDefault] = useState(0)
     const [idDetail, setIdDetail] = useState(null)
     const [openModalDel, setOpenModalDel] = useState(false)
+    const currentUser = useSelector(state => state.currentUser)
 
     const [info, setInfo] = useState({
         asset_name: '',
@@ -103,8 +108,38 @@ export default function DetailAsset(props) {
     useEffect(() => {
         console.log("info", info)
     }, [info])
+
     const downloadFile = (url) => {
-        window.open(url, '_blank');
+        Axios.get(url, {
+            headers: { 'Authorization': `Bearer ${currentUser.token}` },
+            responseType: 'blob'
+        }).then(response => {
+            console.log('response.data',response.headers)
+            let nameFile ;
+            if(response.headers['content-disposition']){
+                nameFile = response.headers['content-disposition'].split(`"`)[1]
+                console.log("1",nameFile)
+
+            }
+            if(response.headers['Content-Disposition']){
+                nameFile = response.headers['Content-Disposition'].split(`"`)[1]
+                console.log("2",nameFile)
+
+            }
+            console.log("3",nameFile)
+            const url = window.URL || window.webkitURL;
+            const href = url.createObjectURL(response.data);
+            const link = document.createElement('a');
+            link.href = href;
+            link.setAttribute('download', nameFile); //or any other extension
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            // FileDownload(response.data,nameFile);
+        }).catch(e=>{
+            console.log(e)
+        })
     }
     return (
         <div className={'main-content main-content-detail'}>

@@ -25,17 +25,20 @@ import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {TreeSelect} from "antd";
 import {useSelector} from "react-redux";
+import apiManagerAssets from "../../api/manage-assets";
 
 export default function ManageCategory() {
     const currentUser = useSelector(state => state.currentUser)
     const [openSearch, setOpenSearch] = useState(true)
     const [nameSearch, setNameSearch] = useState(null)
     const [listAllResult, setListAllResult] = useState([])
+    const [listDelete, setListDelete] = useState([]);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
     const [campaignSearch, setCampaignSearch] = useState()
     const [refresh, setRefresh] = useState(false)
     const [openModalDel, setOpenModalDel] = useState(false)
+    const [isDelList, setIsDelList] = useState(false)
     const [listCampaignTree, setListCampaignTree] = useState([]);
     const [listResult, setListResult] = React.useState({
         page: 0,
@@ -135,6 +138,7 @@ export default function ManageCategory() {
                 }
                 const deleteBtn = (e) => {
                     e.stopPropagation();
+                    setIsDelList(false)
                     setOpenModalDel(true)
                     setInfoDel(params.row)
                 }
@@ -169,32 +173,7 @@ export default function ManageCategory() {
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
-    const submitDelete = () => {
-        // alert("tutt20")
-        deleteCampaignApi(infoDel.id).then(r => {
-            toast.success('Xóa thành công', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            setLoading(false)
-            setRefresh(!refresh);
-        }).catch(e => {
-            setLoading(false)
-            toast.error('Có lỗi xảy ra', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-        })
 
-    }
     const redirectAddPage = () => {
         navigate('/campaign/create')
     }
@@ -238,27 +217,9 @@ export default function ManageCategory() {
     }, [listResult.page, listResult.pageSize, nameSearch, refresh, campaignSearch,currentUser.token])
 
     useEffect(() => {
-        // getListCampaignApi({
-        //     'page_size': 0,
-        //     // 'page_index': listResult.page + 1,
-        //     'paging': false,
-        //     // 'company_name': nameSearch === '' ? null : nameSearch,
-        //     // 'contact_detail': contactSearch === 0 ? null : contactSearch,
-        //     // 'tax_number': taxSearch === 0 ? null : taxSearch,
-        // }).then(r => {
-        //     setLoading(false)
-        //     setListAllResult(r.data.campaigns)
-        // }).catch(e => {
-        //     setLoading(false)
-        //     console.log(e)
-        // })
         getListCampaignTreeApi({
             'page_size': 0,
-            // 'page_index': listResult.page + 1,
             'paging': false,
-            // 'company_name': nameSearch === '' ? null : nameSearch,
-            // 'contact_detail': contactSearch === 0 ? null : contactSearch,
-            // 'tax_number': taxSearch === 0 ? null : taxSearch,
         }).then(r => {
             setLoading(false)
             setListCampaignTree(r.data)
@@ -268,6 +229,76 @@ export default function ManageCategory() {
         })
 
     }, [refresh])
+
+    function CustomToolbar() {
+        return (
+            <GridToolbarContainer>
+                <GridToolbarColumnsButton/>
+                {/*<GridToolbarDensitySelector/>*/}
+                {listDelete.length > 0 ?
+                    <Tooltip title="Xóa">
+                        <Button onClick={deleteListBtn} variant={"outlined"} style={{right:"20px",position:'absolute'}} color={"error"}>Xóa</Button>
+                    </Tooltip> : ''}
+            </GridToolbarContainer>
+        );
+    }
+    const submitDelete = () => {
+        if(isDelList){
+            deleteListApi({list_id:listDelete}).then(r => {
+                setRefresh(!refresh)
+                toast.success('Xóa thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            }).catch(e => {
+                toast.error('Có lỗi xảy ra', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            })
+        }else{
+            deleteCampaignApi(infoDel.id).then(r => {
+                toast.success('Xóa thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                setLoading(false)
+                setRefresh(!refresh);
+            }).catch(e => {
+                setLoading(false)
+                toast.error('Có lỗi xảy ra', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+            })
+        }
+
+
+    }
+    const deleteListBtn = () => {
+        setIsDelList(true)
+        setOpenModalDel(true)
+    }
+
+    const deleteListApi = (data) => {
+        return apiManagerCampaign.deleteListCampaign(data);
+    }
     const getListCampaignApi = (data) => {
         setLoading(true)
         return apiManagerCampaign.getListCampaign(data);
@@ -282,11 +313,11 @@ export default function ManageCategory() {
 
     return (
         <div className={'main-content'}>
-            <div className={`loading ${loading ? '' : 'hidden'}`}>
-                {/*<div className={`loading    `}>*/}
-                <ClipLoader
-                    color={'#1d78d3'} size={50} css={css`color: #1d78d3`}/>
-            </div>
+            {/*<div className={`loading ${loading ? '' : 'hidden'}`}>*/}
+            {/*    /!*<div className={`loading    `}>*!/*/}
+            {/*    <ClipLoader*/}
+            {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`}/>*/}
+            {/*</div>*/}
             <ToastContainer
                 position="top-right"
                 autoClose={5000}
@@ -399,6 +430,10 @@ export default function ManageCategory() {
                             onPageSizeChange={(pageSize) =>
                                 setListResult((prev) => ({...prev, pageSize}))
                             }
+                            onSelectionModelChange={(newSelectionModel) => {
+                                setListDelete(newSelectionModel)
+                            }}
+                            checkboxSelection
                             loading={loading}
                             rowsPerPageOptions={[5, 10, 25]}
                             disableSelectionOnClick

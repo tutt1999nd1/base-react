@@ -449,13 +449,14 @@ export default function EditSOF(props) {
                         formData.append('gracePrincipalInMonth', values.grace_principal_in_month)
                         formData.append('graceInterestInMonth', values.grace_interest_in_month)
                         formData.append('interestRateType', values.interest_rate_type)
+                        if(values.reference_interest_rate)
                         formData.append('referenceInterestRate', values.reference_interest_rate)
+                        if(values.interest_rate_rage)
                         formData.append('interestRateRage', values.interest_rate_rage)
                         formData.append('supplierId', values.supplier_id)
 
                         // formData.append('currentCreditValue',values.)
                         if (isUpdate) {
-                            formData.append('description', values.description)
                             console.log("listDeletedAttachment", listDeletedAttachment)
                             for (let i = 0; i < listDeletedAttachment.length; i++) {
                                 formData.append('listDeletedAttachment', listDeletedAttachment[i])
