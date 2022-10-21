@@ -68,7 +68,7 @@ export default function Nav() {
                             </div>
                         </li>
                     </NavLink>
-                    <NavLink className={'nav-link'} to={'approve'}>
+                    <NavLink className={'nav-link '} to={'charging_est'}>
                         <li>
                             <div className={'nav-item'}>
                                 <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Tính lãi</div>

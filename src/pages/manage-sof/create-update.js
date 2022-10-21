@@ -692,7 +692,7 @@ export default function EditSOF(props) {
                                     <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
                                         <DesktopDatePicker
                                             style={{width: '100% !important'}}
-                                            inputFormat="MM-DD-YYYY"
+                                            inputFormat="DD-MM-YYYY"
                                             value={values.lending_start_date}
                                             // onChange={(values) => {
                                             //     console.log(values)
@@ -963,11 +963,11 @@ export default function EditSOF(props) {
                                         onValueChange={(values) => {
                                             const {formattedValue, value, floatValue} = values;
                                             // do something with floatValue
-                                            const re = /^[0-9\b]+$/;
-                                            if (re.test(floatValue) || floatValue === undefined) {
-                                                setFieldValue('interest_rate', floatValue)
-                                            }
+
+                                            setFieldValue('interest_rate', floatValue)
+
                                             // setFieldValue('max_capital_value', formattedValue)
+                                            // alert(floatValue)
 
                                         }}
                                         error={touched.interest_rate && Boolean(errors.interest_rate)}
@@ -1097,10 +1097,12 @@ export default function EditSOF(props) {
                                             console.log(floatValue)
 
                                             const re = /^[0-9\b]+$/;
-                                            if (re.test(floatValue) || floatValue === undefined) {
-                                                setFieldValue('reference_interest_rate', floatValue)
-                                                    setFieldValue('interest_rate',(values.interest_rate_rage||0)+(floatValue||0))
-                                            }
+                                            // if (re.test(floatValue) || floatValue === undefined) {
+                                            //     setFieldValue('reference_interest_rate', floatValue)
+                                            //         setFieldValue('interest_rate',(values.interest_rate_rage||0)+(floatValue||0))
+                                            // }
+                                            setFieldValue('reference_interest_rate', floatValue)
+                                            setFieldValue('interest_rate',((values.interest_rate_rage||0)+(floatValue||0)).toFixed(2))
                                             // setFieldValue('max_capital_value', formattedValue)
 
                                         }}
@@ -1114,6 +1116,7 @@ export default function EditSOF(props) {
                                     <div className={'label-input'}>Biên độ lãi suất (%)<span
                                         className={'error-message'}>*</span></div>
                                     <NumericFormat
+                                        style={{width: '200px'}}
                                         size={'small'}
                                         id='interest_rate_rage'
                                         customInput={TextField}
@@ -1130,10 +1133,10 @@ export default function EditSOF(props) {
 
                                             const re = /^[0-9\b]+$/;
                                             if (re.test(floatValue) || floatValue === undefined) {
-                                                setFieldValue('interest_rate_rage', floatValue)
-                                                setFieldValue('interest_rate',(values.reference_interest_rate||0)+(floatValue||0))
 
                                             }
+                                            setFieldValue('interest_rate_rage', floatValue)
+                                            setFieldValue('interest_rate',((values.reference_interest_rate||0)+(floatValue||0)).toFixed(2))
                                             // setFieldValue('max_capital_value', formattedValue)
 
                                         }}

@@ -24,7 +24,7 @@ import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 
-export default function EditCategory(props) {
+export default function EditSofChargingEst(props) {
     const navigate = useNavigate();
     const [location,setLocation] = useSearchParams();
     const [listGroup,setListGroup] =useState([]);

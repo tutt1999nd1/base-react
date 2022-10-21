@@ -43,11 +43,11 @@ export default function EditCampaign(props) {
             .trim()
             .required('Không được để trống')
             .max(255, 'Tối đa 255 ký tự'),
-        amount: yup
-            .string()
-            .trim()
-            .required('Không được để trống')
-        .max(15, 'Tối đa 15 chữ số'),
+        // amount: yup
+        //     .string()
+        //     .trim()
+        //     .required('Không được để trống')
+        // .max(15, 'Tối đa 15 chữ số'),
         description: yup
             .string()
             .trim()
@@ -139,7 +139,7 @@ export default function EditCampaign(props) {
                     enableReinitialize
                     initialValues={{
                         campaign_name: info.campaign_name,
-                        amount: info.amount,
+                        // amount: info.amount,
                         description: info.description,
                         status: info.status,
                         parent_id: info.parent_id == null ? 0 : info.parent_id,
@@ -256,44 +256,6 @@ export default function EditCampaign(props) {
                                                 fieldNames={{label: 'campaign_name', value: 'id', children: 'child_campaigns'}}
                                             >
                                             </TreeSelect>
-                                        </Grid>
-                                        <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Số tiền vay (VNĐ)<span
-                                                className={'error-message'}>*</span></div>
-                                            <NumericFormat
-                                                size={"small"}
-                                                id='amount'
-                                                name='amount'
-                                                className={'formik-input text-right'}
-                                                // type={"number"}
-                                                // variant="standard"
-                                                value={values.amount}
-                                                // onChange={handleChange}
-                                                customInput={TextField}
-                                                error={touched.amount && Boolean(errors.amount)}
-                                                helperText={touched.amount && errors.amount}
-                                                InputProps={{
-                                                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
-
-                                                }}
-                                                thousandSeparator={"."}
-                                                decimalSeparator={","}
-                                                onValueChange={(values) => {
-                                                    const {formattedValue, value, floatValue} = values;
-                                                    // do something with floatValue
-                                                    const re = /^[0-9\b]+$/;
-                                                    if (re.test(floatValue)) {
-                                                        console.log(floatValue)
-                                                        setFieldValue('amount', floatValue)
-                                                    }
-                                                    // setFieldValue('max_capital_value', formattedValue)
-
-                                                }}
-                                            />
-                                            <Typography className={'uppercase'} variant="caption" display="block"
-                                                        gutterBottom>
-                                                {values.amount ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.amount))} đồng` : ''}
-                                            </Typography>
                                         </Grid>
 
                                         <Grid item xs={6} md={6}>

@@ -26,6 +26,9 @@ import ManageSupplier from "../pages/manage-supplier";
 import ManageAssetGroup from "../pages/manage-asset-group";
 import EditAssetGroup from "../pages/manage-asset-group/create-update";
 import DetailAssetGroup from "../pages/manage-asset-group/detail";
+import ManageSofChargingEst from "../pages/manage-sof-charging-est";
+import DetailSofChargingEst from "../pages/manage-sof-charging-est/detail";
+import EditSofChargingEst from "../pages/manage-sof-charging-est/create-update";
 
 export default function RenderRoute() {
     return (
@@ -46,8 +49,6 @@ export default function RenderRoute() {
                         <Login></Login>
                     </UnauthenticatedTemplate>
                 </>
-
-
             }>
                 <Route path="" element={<Dashboard></Dashboard>}/>
                 <Route path="/dashboard" element={<Dashboard></Dashboard>}/>
@@ -68,13 +69,10 @@ export default function RenderRoute() {
                 <Route path="category/create" element={<EditCategory isUpdate={false}></EditCategory>}/>
                 <Route path="category/update" element={<EditCategory isUpdate={true}></EditCategory>}/>
                 <Route path="category/detail" element={<DetailCategory></DetailCategory>}/>
-
                 <Route path="asset-group" element={<ManageAssetGroup></ManageAssetGroup>}/>
                 <Route path="asset-group/create" element={<EditAssetGroup isUpdate={false}></EditAssetGroup>}/>
                 <Route path="asset-group/update" element={<EditAssetGroup isUpdate={true}></EditAssetGroup>}/>
                 <Route path="asset-group/detail" element={<DetailAssetGroup></DetailAssetGroup>}/>
-
-
                 <Route path="campaign" element={<ManageCampaign></ManageCampaign>}/>
                 <Route path="campaign/create" element={<EditCampaign isUpdate={false}></EditCampaign>}/>
                 <Route path="campaign/update" element={<EditCampaign isUpdate={true}></EditCampaign>}/>
@@ -84,6 +82,12 @@ export default function RenderRoute() {
                 <Route path="sof/create" element={<EditSOF isUpdate={false}></EditSOF>}/>
                 <Route path="sof/update" element={<EditSOF isUpdate={true}></EditSOF>}/>
                 <Route path="sof/detail" element={<DetailSOF></DetailSOF>}/>
+
+                <Route path="charging_est/update" element={<EditSofChargingEst isUpdate={true}></EditSofChargingEst>}/>
+                <Route path="charging_est/detail" element={<DetailSofChargingEst></DetailSofChargingEst>}/>
+                <Route path="charging_est" element={<ManageSofChargingEst></ManageSofChargingEst>}/>
+
+
                 <Route path="account" element={<div>Tài khoản</div>}/>
                 <Route path="company" element={<div>Công ty vay</div>}/>
                 <Route path="categories" element={<div>Hạng mục</div>}/>

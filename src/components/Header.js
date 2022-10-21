@@ -72,20 +72,20 @@ const Header = () => {
                     {/*</Breadcrumbs>*/}
                 </div>
                 <div className={'header-right'}>
-                    <Tooltip title="Thông báo">
-                        <IconButton color="primary"  component="label" style={{marginRight:'10px'}}>
-                            <Badge badgeContent={4}  color={'primary'}
-                                   sx={{
-                                "& .MuiBadge-badge": {
-                                    color: "white",
-                                    backgroundColor: "#D14343"
-                                }
-                            }}
-                            >
-                                <NotificationsIcon style={{ color: "#6b7280" }}></NotificationsIcon>
-                            </Badge>
-                        </IconButton>
-                    </Tooltip>
+                    {/*<Tooltip title="Thông báo">*/}
+                    {/*    <IconButton color="primary"  component="label" style={{marginRight:'10px'}}>*/}
+                    {/*        <Badge badgeContent={4}  color={'primary'}*/}
+                    {/*               sx={{*/}
+                    {/*            "& .MuiBadge-badge": {*/}
+                    {/*                color: "white",*/}
+                    {/*                backgroundColor: "#D14343"*/}
+                    {/*            }*/}
+                    {/*        }}*/}
+                    {/*        >*/}
+                    {/*            <NotificationsIcon style={{ color: "#6b7280" }}></NotificationsIcon>*/}
+                    {/*        </Badge>*/}
+                    {/*    </IconButton>*/}
+                    {/*</Tooltip>*/}
                     <Avatar
                         id={"basic-menu"}
                         alt="Avatar"
