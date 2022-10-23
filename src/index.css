@@ -161,6 +161,7 @@ hr {
 
 .row {
     display: flex;
+    margin-top: 20px;
 }
 
 .main-content {
@@ -733,12 +734,10 @@ height: 45px;
 .table-custom th{
     color: rgb(55, 65, 81);
     border-bottom: none;
-    font-weight: 600;
     text-transform: uppercase;
     background-color: #fbbd2c;
     height: 50px;
     font-family: "Roboto","Helvetica","Arial",sans-serif;
-    font-weight: bold;
     font-size: 1rem;
     line-height: 1.5;
     letter-spacing: 0.00938em;
@@ -799,8 +798,37 @@ height: 45px;
     color: #212529;
     background-color: #fff;
     border:solid 2px #1976d2;
-
     outline: 0;
     /*box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);*/
 }
 
+.item-dashboard{
+    border: solid 1px #dddddd;
+    border-radius: 5px;
+    /*box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);*/
+    transition: 0.7s;
+    background-color: white;
+    width: 275px;
+    height: 125px;
+    color: black;
+}
+.item-dashboard .item-dashboard-tittle{
+    color: black;
+}
+
+.item-dashboard .item-dashboard-content{
+}
+.item-dashboard .item-dashboard-content{
+}
+.item-dashboard-content h6{
+    font-weight: 500 !important;
+    color: #1a75bb;
+}
+.item-dashboard{
+    align-items: center;
+    padding-left: 20px;
+    margin-right: 100px;
+}
+.item-dashboard{
+    display: flex;
+}

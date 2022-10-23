@@ -4,29 +4,23 @@ import 'bootstrap-daterangepicker/daterangepicker.css';
 
 import {
     Autocomplete,
-    Button,
+    Button, CircularProgress,
     Collapse,
     Divider,
-    IconButton, InputAdornment,
+    IconButton,
     Table,
     TableBody,
-    TableCell, TableContainer,
+    TableCell,
+    TableContainer,
     TableHead,
-    TablePagination,
     TableRow,
     TextField,
     Tooltip,
     Typography
 } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
-import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
 import {toast, ToastContainer} from "react-toastify";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import {GridToolbarColumnsButton, GridToolbarContainer, GridToolbarDensitySelector} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
-import {convertToAutoComplete, currencyFormatter, pending} from "../../constants/utils";
+import {convertToAutoComplete, convertToAutoCompleteMail, currencyFormatter, pending} from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
@@ -34,7 +28,7 @@ import {useSelector} from "react-redux";
 import Axios from "axios";
 import API_MAP from "../../constants/api";
 import FileDownload from "js-file-download";
-import SimCardDownloadIcon from "@mui/icons-material/SimCardDownload";
+import ForwardToInboxIcon from '@mui/icons-material/ForwardToInbox';
 import apiManagerChargingEst from "../../api/manage-charging-est";
 import DateRangePicker from "react-bootstrap-daterangepicker";
 import moment from "moment";
@@ -44,13 +38,25 @@ import CloseIcon from "@mui/icons-material/Close";
 import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import {NumericFormat} from "react-number-format";
+import ItemDashboard from "../../components/ItemDashboard";
+import VerticalAlignBottomIcon from "@mui/icons-material/VerticalAlignBottom";
 
 export default function ManageSofChargingEst() {
     const currentUser = useSelector(state => state.currentUser)
     const [openSearch, setOpenSearch] = useState(true)
+    const [openTotal, setOpenTotal] = useState(true)
+    const [loadingEmail, setLoadingEmail] = useState(false)
     const navigate = useNavigate();
-    const [infoUpdate,setInfoUpdate] = useState({id:'',amount:0})
+    const [infoUpdate, setInfoUpdate] = useState({id: '', amount: 0})
     const [openModalEdit, setOpenModalEdit] = useState(false)
+    const [openModalEmail, setOpenModalEmail] = useState(false)
+    const [listUser, setListUser] = useState([{id: '1', 'label': '1'}])
+    const [email, setEmail] = useState("")
+    const [total, setTotal] = useState({
+        charging_amount: 0,
+        principal: 0,
+        GRACE_INTEREST: 0,
+    })
     const [timeSearch, setTimeSearch] = useState(
         {
             start: moment().startOf('day').toDate(),
@@ -69,52 +75,54 @@ export default function ManageSofChargingEst() {
         total: 0
     });
 
-    const handleChangePage = (event: unknown, page: number) => {
-        setListResult((prev) => ({...prev, page}))
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        let pageSize = parseInt(event.target.value, 10);
-        setListResult((prev) => ({...prev, pageSize}))
-
-    };
-    const redirectAddPage = () => {
-        navigate('/company/create')
-    }
     const handleCloseModalEdit = () => {
         setOpenModalEdit(false)
     }
+    const handleCloseModalEmail = () => {
+        setOpenModalEmail(false)
+    }
     const convertArr = (arr) => {
+        let total = {
+            charging_amount: 0,
+            principal: 0,
+            GRACE_INTEREST: 0,
+        }
 
         let listConvert = [];
         for (let i = 0; i < arr.length; i++) {
-            let key = arr[i].company.company_name+arr[i].charging_date;
+            total.principal = total.principal + arr[i].principal;
+            if (arr[i].charging_type === "GRACE_INTEREST") {
+                total.GRACE_INTEREST = total.GRACE_INTEREST + arr[i].charging_amount;
+            }
+            let key = arr[i].company.company_name + arr[i].charging_date;
             if (listConvert.filter(e => e.key === key).length === 0) {
                 listConvert.push({
                     key: key,
-                    chargingDate:arr[i].charging_date ,
-                    companyName:arr[i].company.company_name,
+                    chargingDate: arr[i].charging_date,
+                    companyName: arr[i].company.company_name,
                     sof: [arr[i]],
-                    total:arr[i].charging_amount
+                    total: arr[i].charging_amount
                 })
             } else
                 for (let j = 0; j < listConvert.length; j++) {
                     if (listConvert[j].key === key) {
                         listConvert[j].sof.push(arr[i]);
-                        listConvert[j].total = listConvert[j].total+arr[i].charging_amount;
+                        listConvert[j].total = listConvert[j].total + arr[i].charging_amount;
                     }
 
                 }
         }
         console.log("listConvert", listConvert)
         for (let i = 0; i < listConvert.length; i++) {
+            total.charging_amount = total.charging_amount + listConvert[i].total;
             listConvert[i].total = currencyFormatter(listConvert[i].total);
             for (let j = 0; j < listConvert[i].sof.length; j++) {
                 listConvert[i].sof[j].principal = currencyFormatter(listConvert[i].sof[j].principal)
                 listConvert[i].sof[j].charging_amount = currencyFormatter(listConvert[i].sof[j].charging_amount)
-                listConvert[i].sof[j].charging_type = listConvert[i].sof[j].charging_type==='INTEREST'?'Tiền lãi':listConvert[i].sof[j].charging_type==='PRINCIPAL'?'Tiền gốc':'Tiền lãi ân hạn';
+                listConvert[i].sof[j].charging_type = listConvert[i].sof[j].charging_type === 'INTEREST' ? 'Tiền lãi' : listConvert[i].sof[j].charging_type === 'PRINCIPAL' ? 'Tiền gốc' : 'Tiền lãi ân hạn';
             }
         }
+        setTotal(total)
         return listConvert;
     }
 
@@ -124,8 +132,8 @@ export default function ManageSofChargingEst() {
                 'page_size': listResult.pageSize,
                 'page_index': listResult.page + 1,
                 'paging': false,
-                // 'charging_date_from':moment(timeSearch.start).format('DD-MM-YYYY'),
-                // 'charging_date_to':moment(timeSearch.end).format('DD-MM-YYYY'),
+                'charging_date_from':moment(timeSearch.start).format('DD-MM-YYYY'),
+                'charging_date_to':moment(timeSearch.end).format('DD-MM-YYYY'),
                 // 'company_name': nameSearch === '' ? null : nameSearch,
                 // 'contact_detail': contactSearch === 0 ? null : contactSearch,
                 // 'tax_number': taxSearch === 0 ? null : taxSearch,
@@ -134,10 +142,9 @@ export default function ManageSofChargingEst() {
                 setLoading(false)
                 console.log("r", r)
                 let arr;
-                if(r.data.sof_charging_ests){
+                if (r.data.sof_charging_ests) {
                     arr = convertArr(r.data.sof_charging_ests)
-                }
-                else arr = []
+                } else arr = convertArr([])
                 setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
             }).catch(e => {
                 setLoading(false)
@@ -145,7 +152,7 @@ export default function ManageSofChargingEst() {
             })
         }
 
-    }, [listResult.page, listResult.pageSize,companySearch,timeSearch, refresh, currentUser.token])
+    }, [listResult.page, listResult.pageSize, companySearch, timeSearch, refresh, currentUser.token])
     useEffect(() => {
         getListCompanyApi({paging: false}).then(r => {
             if (r.data.companies) {
@@ -156,20 +163,68 @@ export default function ManageSofChargingEst() {
         }).catch(e => {
             console.log(e)
         })
-    },[currentUser.token])
+        Axios.get('https://graph.microsoft.com/v1.0/users?$top=999', {
+            headers: {'Authorization': `Bearer ${currentUser.tokenGraphApi}`},
+            // responseType: 'blob'
+        }).then(users => {
+            console.log('users.value', users.data.value)
+            let arrConvert = convertToAutoCompleteMail(users.data.value, 'mail')
+            setListUser(arrConvert)
+        }).catch(e => {
+            // window.location.reload();
+            localStorage.clear()
+        })
+    }, [currentUser.token])
     useEffect(() => {
         console.log(listResult)
-    },[listResult])
+    }, [listResult])
     const handleChangeDateRange = (event, picker) => {
-        setTimeSearch({ start: picker.startDate, end: picker.endDate })
+        setTimeSearch({start: picker.startDate, end: picker.endDate})
     }
-    const updateChargingEstBtn = (id,amount) => {
-        setInfoUpdate({id:id,amount:amount})
+    const updateChargingEstBtn = (id, amount) => {
+        setInfoUpdate({id: id, amount: amount})
         setOpenModalEdit(true)
     }
-    const submitUpdate = ()=>{
-
-        updateChargingEstApi(infoUpdate.id,{charging_amount:infoUpdate.amount}).then(r=>{
+    const sendEmail = () => {
+        sendEmailApi({
+            'email': email,
+            'page_size': listResult.pageSize,
+            'page_index': listResult.page + 1,
+            'paging': false,
+            'charging_date_from':moment(timeSearch.start).format('DD-MM-YYYY'),
+            'charging_date_to':moment(timeSearch.end).format('DD-MM-YYYY'),
+            // 'company_name': nameSearch === '' ? null : nameSearch,
+            // 'contact_detail': contactSearch === 0 ? null : contactSearch,
+            // 'tax_number': taxSearch === 0 ? null : taxSearch,
+            'capital_company_id': companySearch === 0 ? null : companySearch,
+        }).then(r=>{
+            setLoadingEmail(false)
+            toast.success('Gửi báo cáo thành công, vui lòng kiểm tra email.', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            setOpenModalEmail(false)
+            console.log(r)
+        }).catch(err => {
+            setLoadingEmail(false)
+            toast.error('Có lỗi xảy ra', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            setOpenModalEmail(false)
+            console.log(err)
+        })
+    }
+    const submitUpdate = () => {
+        updateChargingEstApi(infoUpdate.id, {charging_amount: infoUpdate.amount}).then(r => {
             toast.success('Cập nhật thành công', {
                 position: "top-right",
                 autoClose: 1500,
@@ -180,7 +235,7 @@ export default function ManageSofChargingEst() {
             });
             handleCloseModalEdit();
             setRefresh(!refresh)
-        }).catch(e=>{
+        }).catch(e => {
             handleCloseModalEdit();
             toast.error('Có lỗi xảy ra', {
                 position: "top-right",
@@ -199,7 +254,6 @@ export default function ManageSofChargingEst() {
         el.accept = ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
         // el.multiple = "multiple";
         el.addEventListener('change', function (ev2) {
-
             new Promise(function (resolve) {
                 setTimeout(function () {
                     if (el.files.length > 0) {
@@ -243,8 +297,18 @@ export default function ManageSofChargingEst() {
 
         el.click();
     }
-    const downTemplate = () => {
-        Axios.get(API_MAP.DOWN_TEMPLATE_COMPANY, {
+    const exportChargingEst = () => {
+        Axios.post(API_MAP.EXPORT_CHARGING_EST,{
+            'page_size': listResult.pageSize,
+            'page_index': listResult.page + 1,
+            'paging': false,
+            'charging_date_from':moment(timeSearch.start).format('DD-MM-YYYY'),
+            'charging_date_to':moment(timeSearch.end).format('DD-MM-YYYY'),
+            // 'company_name': nameSearch === '' ? null : nameSearch,
+            // 'contact_detail': contactSearch === 0 ? null : contactSearch,
+            // 'tax_number': taxSearch === 0 ? null : taxSearch,
+            'capital_company_id': companySearch === 0 ? null : companySearch,
+        }, {
             headers: {'Authorization': `Bearer ${currentUser.token}`},
             responseType: 'blob'
         }).then(response => {
@@ -254,8 +318,18 @@ export default function ManageSofChargingEst() {
         }).catch(e => {
         })
     }
+    const sendEmailBtn = () => {
+        setOpenModalEmail(true)
+    }
     const redirectToSof = (id) => {
-      navigate('/sof/detail?id=' + id)
+        navigate('/sof/detail?id=' + id)
+    }
+    const sendEmailApi = (data) => {
+        setLoadingEmail(true)
+        return apiManagerChargingEst.sendEmailChargingEst(data);
+    }
+    const exportApi = (data) => {
+        return apiManagerChargingEst.exportChargingEst(data);
     }
     const getListCompanyApi = (data) => {
         return apiManagerCompany.getListCompany(data);
@@ -267,8 +341,8 @@ export default function ManageSofChargingEst() {
         setLoading(true)
         return apiManagerChargingEst.getListChargingEst(data);
     }
-    const updateChargingEstApi = (id,data) => {
-        return apiManagerChargingEst.updateChargingEst(id,data);
+    const updateChargingEstApi = (id, data) => {
+        return apiManagerChargingEst.updateChargingEst(id, data);
     }
 
     return (
@@ -278,7 +352,7 @@ export default function ManageSofChargingEst() {
             {/*    <ClipLoader*/}
             {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
             {/*</div>*/}
-            <Dialog  open={openModalEdit} onClose={handleCloseModalEdit}>
+            <Dialog open={openModalEdit} onClose={handleCloseModalEdit}>
                 <DialogTitle>
                     <div className={'vmp-tittle'}>
                         Cập nhật
@@ -296,7 +370,7 @@ export default function ManageSofChargingEst() {
                         <CloseIcon/>
                     </IconButton>
                 </DialogTitle>
-                <DialogContent style={{width:'450px',height:'75px'}}  dividers className={"model-project"}>
+                <DialogContent style={{width: '450px', height: '75px'}} dividers className={"model-project"}>
                     <div className="form-input">
                         <div className={'label-input'}>Số tiền phải trả(VNĐ)<span
                             className={'error-message'}>*</span></div>
@@ -309,8 +383,8 @@ export default function ManageSofChargingEst() {
                             decimalSeparator={","}
                             value={infoUpdate.amount}
                             onValueChange={(value) => {
-                                const { floatValue} = value;
-                                setInfoUpdate({...infoUpdate,amount:floatValue})
+                                const {floatValue} = value;
+                                setInfoUpdate({...infoUpdate, amount: floatValue})
                                 // setFieldValue('max_capital_value', formattedValue)
                             }}
 
@@ -319,7 +393,7 @@ export default function ManageSofChargingEst() {
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="outlined"  onClick={handleCloseModalEdit}>
+                    <Button variant="outlined" onClick={handleCloseModalEdit}>
                         Hủy
                     </Button>
                     {/*{*/}
@@ -328,8 +402,75 @@ export default function ManageSofChargingEst() {
                     {/*        <Button  onClick={submit} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>*/}
                     {/*}*/}
                     <Button
-                            onClick={submitUpdate}
-                             variant={'contained'} color={"primary"}>Cập nhật</Button>
+                        onClick={submitUpdate}
+                        variant={'contained'} color={"primary"}>Cập nhật</Button>
+                </DialogActions>
+            </Dialog>
+            <Dialog open={openModalEmail} onClose={handleCloseModalEmail}>
+                <DialogTitle>
+                    <div className={'vmp-tittle'}>
+                        Nhận báo cáo về email
+                    </div>
+                    <IconButton
+                        aria-label="close"
+                        onClick={handleCloseModalEmail}
+                        sx={{
+                            position: 'absolute',
+                            right: 8,
+                            top: 8,
+                            color: (theme) => theme.palette.grey[500],
+                        }}
+                    >
+                        <CloseIcon/>
+                    </IconButton>
+                </DialogTitle>
+                <DialogContent style={{width: '450px', height: '150px'}} dividers className={"model-project"}>
+                    <div className="form-input">
+                        <div className={'label-input'}>Email<span
+                            className={'error-message'}>*</span></div>
+                        <Autocomplete
+                            value={{
+                                id: email,
+                                label: email
+                            }
+                            }
+                            size={"small"}
+                            disablePortal
+                            options={listUser}
+                            freeSolo
+                            inputValue={email}
+                            renderInput={(params) =>
+                                <TextField
+                                    size={"small"}
+                                    {...params}
+                                />
+                            }
+
+                            onInputChange={(event, value) => {
+                                setEmail(value)
+
+                            }
+                            }
+                        />
+
+                    </div>
+                </DialogContent>
+                <DialogActions>
+                    <Button variant="outlined" onClick={handleCloseModalEmail}>
+                        Hủy
+                    </Button>
+                    {/*{*/}
+                    {/*    !(valueInput.trim() ==(name?name.trim():name)) ?   <Button disabled={true} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>*/}
+                    {/*    :*/}
+                    {/*        <Button  onClick={submit} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>*/}
+                    {/*}*/}
+                    {
+                        loadingEmail ?<CircularProgress size={30}></CircularProgress>:
+                            <Button
+                            onClick={sendEmail}
+                            variant={'contained'} color={"primary"}>Gửi</Button>
+                    }
+
                 </DialogActions>
             </Dialog>
 
@@ -345,27 +486,43 @@ export default function ManageSofChargingEst() {
                 pauseOnHover
             />
             <div className={'main-content-header'}>
-
                 <div className={'row'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
                         Tính lãi
                     </Typography>
                     <div>
-                        <Tooltip title={'Tải file mẫu'}>
-                            <IconButton style={{cursor: 'pointer'}} color="primary"
-                                        onClick={downTemplate}>
-                                <SimCardDownloadIcon></SimCardDownloadIcon>
-                            </IconButton>
-                        </Tooltip>
-                        <Button onClick={uploadFile} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
-                        <Button onClick={pending} style={{marginLeft: '10px', marginRight: '10px'}} variant="text"
+                        <Button onClick={exportChargingEst} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
                                 startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
-                        <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
-                            Thêm
-                        </Button>
+                        <Button onClick={sendEmailBtn} variant="text" startIcon={<ForwardToInboxIcon/>}>Gửi thống kê về
+                            email</Button>
                     </div>
                 </div>
+                <div className={'main-content-body'}>
+                    <div className={'main-content-body-tittle'}>
+                        <h4>Thống kê</h4>
+                        {openTotal ? <IconButton color="primary" style={{cursor: 'pointer'}}
+                                                 onClick={() => setOpenTotal(false)}>
+                                <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>
+                            </IconButton> :
+                            <IconButton style={{cursor: 'pointer'}} color="primary"
+                                        onClick={() => setOpenTotal(true)}>
+                                <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
+                            </IconButton>
+                        }
+                    </div>
+                    <Divider light/>
+                    <Collapse in={openTotal} timeout="auto" unmountOnExit>
+                        <div className={'row'} style={{padding: '0 50px 50px 50px'}}>
+                            <ItemDashboard tittle={'Tổng tiền phái trả'}
+                                           content={total.charging_amount}></ItemDashboard>
+                            <ItemDashboard tittle={'Tổng tiền gốc'} content={total.principal}></ItemDashboard>
+                            <ItemDashboard tittle={'Tổng tiền lãi ân hạn'}
+                                           content={total.GRACE_INTEREST}></ItemDashboard>
+                        </div>
+                    </Collapse>
 
+
+                </div>
             </div>
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
@@ -402,10 +559,10 @@ export default function ManageSofChargingEst() {
                                 }}
                             />
                         </div>
-                        <div style={{width: '20%',marginLeft:'20px'}}>
+                        <div style={{width: '20%', marginLeft: '20px'}}>
                             <div className={'label-input'}>Khoảng thời gian</div>
                             <div className={'time-search'}>
-                                <img src={require('../../assets/img/icon-calendar.svg').default} alt="" />
+                                <img src={require('../../assets/img/icon-calendar.svg').default} alt=""/>
                                 <DateRangePicker
                                     initialSettings={{
                                         timePicker: true,
@@ -418,12 +575,10 @@ export default function ManageSofChargingEst() {
                                     }}
                                     onApply={handleChangeDateRange}
                                 >
-                                    <input type="text" className="form-control col input-date-range" />
+                                    <input type="text" className="form-control col input-date-range"/>
                                 </DateRangePicker>
                             </div>
                         </div>
-
-
 
 
                     </div>
@@ -431,11 +586,11 @@ export default function ManageSofChargingEst() {
                 </Collapse>
                 <Divider light/>
                 <div className={'main-content-body-result'}>
-                    <TableContainer  style={{height:'100%', width: '100%',overflow:"auto"}}>
-                    {/*<div style={{height: '100%', width: '100%'}}>*/}
-                        <Table stickyHeader  className={"table-custom"}>
-                            <TableHead >
-                                <TableRow >
+                    <TableContainer style={{height: '100%', width: '100%', overflow: "auto"}}>
+                        {/*<div style={{height: '100%', width: '100%'}}>*/}
+                        <Table stickyHeader className={"table-custom"}>
+                            <TableHead>
+                                <TableRow>
                                     <TableCell align="center">Ngày trả lãi</TableCell>
                                     <TableCell align="center">Công ty vay</TableCell>
                                     <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
@@ -461,8 +616,11 @@ export default function ManageSofChargingEst() {
                                     <TableCell align="center">Thao tác</TableCell>
                                 </TableRow>
                             </TableHead>
-                            <TableBody style={{overflowY:"auto"}}>
-                                <div className={`message-table-empty ${listResult.rows.length===0?'':'hidden'}`}>Không có dữ liệu</div>
+                            <TableBody style={{overflowY: "auto"}}>
+                                <div
+                                    className={`message-table-empty ${listResult.rows.length === 0 ? '' : 'hidden'}`}>Không
+                                    có dữ liệu
+                                </div>
                                 {listResult.rows.map(item => (
                                     <>
                                         <TableRow>
@@ -480,15 +638,21 @@ export default function ManageSofChargingEst() {
                                         </TableRow>
                                         {item.sof.map(detail => (
                                             <TableRow>
-                                                <TableCell><div className={'text-decoration'} onClick={()=>redirectToSof(detail.sof_id)}>{detail.sof_code}</div></TableCell>
-                                                <TableCell><div >{detail.principal}</div></TableCell>
+                                                <TableCell>
+                                                    <div className={'text-decoration'}
+                                                         onClick={() => redirectToSof(detail.sof_id)}>{detail.sof_code}</div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div>{detail.principal}</div>
+                                                </TableCell>
                                                 <TableCell>{detail.start_date}</TableCell>
                                                 <TableCell>{detail.end_date}</TableCell>
                                                 <TableCell>{detail.nums_of_interest_day}</TableCell>
                                                 <TableCell>{detail.interest_rate}</TableCell>
-                                                <TableCell><div className={'error-message'}>
-                                                    {detail.charging_amount}
-                                                </div>
+                                                <TableCell>
+                                                    <div className={'error-message'}>
+                                                        {detail.charging_amount}
+                                                    </div>
                                                 </TableCell>
                                                 <TableCell>{detail.charging_type}</TableCell>
                                                 <TableCell>{detail.interest_period}</TableCell>
@@ -496,7 +660,8 @@ export default function ManageSofChargingEst() {
                                                 <TableCell>
                                                     <div className='icon-action'>
                                                         <Tooltip title="Cập nhật">
-                                                            <EditOutlinedIcon onClick={()=>updateChargingEstBtn(detail.id,detail.charging_amount)}
+                                                            <EditOutlinedIcon
+                                                                onClick={() => updateChargingEstBtn(detail.id, detail.charging_amount)}
                                                                 style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
                                                         </Tooltip>
                                                     </div>
@@ -526,11 +691,3 @@ export default function ManageSofChargingEst() {
     )
 }
 
-function CustomToolbar() {
-    return (
-        <GridToolbarContainer>
-            <GridToolbarColumnsButton/>
-            <GridToolbarDensitySelector/>
-        </GridToolbarContainer>
-    );
-}

@@ -1,9 +1,9 @@
 // const API_DOMAIN = 'http://10.190.180.251:8088/'
 // const API_DOMAIN = 'http://10.190.160.20:8088/'
-const API_DOMAIN = 'http://localhost:8443/'
+// const API_DOMAIN = 'http://localhost:8443/'
 // const API_DOMAIN = 'http://103.151.238.62:8088/'
 // const API_DOMAIN = 'http://103.151.238.62:8089/'
-// const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
+const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
 // const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
 const API_MAP = {
     GET_LIST_ASSETS: API_DOMAIN + 'asset/search',
@@ -60,6 +60,8 @@ const API_MAP = {
     DELETE_LIST_SOF: API_DOMAIN + 'source_of_fund/delete',
     DELETE_LIST_COMPANY: API_DOMAIN + 'capital_company/delete',
     GET_LIST_CHARGING_EST: API_DOMAIN + 'charging_est/search',
-    UPDATE_CHARGING_EST: API_DOMAIN + 'charging_est'
+    SEND_EMAIL_CHARGING_EST: API_DOMAIN + 'charging_est/send_email',
+    UPDATE_CHARGING_EST: API_DOMAIN + 'charging_est',
+    EXPORT_CHARGING_EST: API_DOMAIN + 'charging_est/export_excel'
 }
 export default API_MAP;
