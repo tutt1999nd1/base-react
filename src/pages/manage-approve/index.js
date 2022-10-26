@@ -531,7 +531,7 @@ export default function ManageApprove() {
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={tab} onChange={handleChangeTab} aria-label="basic tabs example">
                     <Tab label="Phê duyệt nguồn vốn" {...a11yProps(0)} />
-                    <Tab label="Phê duyệt tài sản" {...a11yProps(1)} />
+                    {/*<Tab label="Phê duyệt tài sản" {...a11yProps(1)} />*/}
                     {/*<Tab label="Item Three" {...a11yProps(2)} />*/}
                 </Tabs>
             </Box>

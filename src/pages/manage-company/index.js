@@ -58,7 +58,7 @@ export default function ManageCompany() {
             sortable: false,
             field: 'index',
             headerName: 'STT',
-            maxWidth: 75,
+            maxWidth: 60,
             filterable: false,
             headerClassName: 'super-app-theme--header',
 
@@ -70,7 +70,7 @@ export default function ManageCompany() {
             field: 'company_name',
             headerName: 'Tên công ty',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120,
+            minWidth: 250,
             flex:1,
             renderCell: (params) => {
 
@@ -99,10 +99,25 @@ export default function ManageCompany() {
             field: 'capital_limit',
             headerName: 'Số tiền vay tối đa',
             headerClassName: 'super-app-theme--header',
+            minWidth: 150,
             flex:1,
             renderCell: (params) => {
 
-                return <div className='content-column'>
+                return <div className='content-column number'>
+                    {params.value}
+                </div>;
+            },
+        },        {
+            filterable: false,
+            sortable: false,
+            field: 'remain_capital',
+            headerName: 'Số tiền vay còn lại',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            flex:1,
+            renderCell: (params) => {
+
+                return <div className='content-column number'>
                     {params.value}
                 </div>;
             },
@@ -113,7 +128,7 @@ export default function ManageCompany() {
             field: 'contact_detail',
             headerName: 'Thông tin liên hệ',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120,
+            minWidth: 150,
             flex:1,
             renderCell: (params) => {
 
@@ -145,10 +160,11 @@ export default function ManageCompany() {
             field: 'charter_capital',
             headerName: 'Vốn điều lệ',
             headerClassName: 'super-app-theme--header',
+            minWidth: 150,
             flex:1,
             renderCell: (params) => {
 
-                return <div className='content-column'>
+                return <div className='content-column number'>
                     {params.value}
                 </div>;
             },
@@ -159,6 +175,7 @@ export default function ManageCompany() {
             field: 'founding_date',
             headerName: 'Ngày thành lập',
             headerClassName: 'super-app-theme--header',
+            minWidth: 150,
             flex:1,
             renderCell: (params) => {
 
@@ -176,7 +193,7 @@ export default function ManageCompany() {
             field: 'address',
             headerName: 'Địa chỉ',
             headerClassName: 'super-app-theme--header',
-            minWidth: 120,
+            minWidth: 200,
             flex:1,
             renderCell: (params) => {
 
@@ -258,6 +275,7 @@ export default function ManageCompany() {
             // arr[i].max_capital_value = currencyFormatter(arr[i].max_capital_value)
             arr[i].capital_limit = currencyFormatter(arr[i].capital_limit)
             arr[i].charter_capital = currencyFormatter(arr[i].charter_capital)
+            arr[i].remain_capital = currencyFormatter(arr[i].remain_capital)
         }
         return arr;
     }
@@ -308,14 +326,7 @@ export default function ManageCompany() {
                     draggable: true,
                 });
             }).catch(e => {
-                toast.error('Có lỗi xảy ra', {
-                    position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+                console.log(e)
             })
         }else{
             deleteCompanyApi(infoDel.id).then(r => {
@@ -331,14 +342,7 @@ export default function ManageCompany() {
                 setRefresh(!refresh);
             }).catch(e => {
                 setLoading(false)
-                toast.error('Có lỗi xảy ra', {
-                    position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+                console.log(e)
             })
         }
     }
@@ -368,14 +372,7 @@ export default function ManageCompany() {
                             setRefresh(!refresh)
 
                         }).catch(err => {
-                            toast.error('Có lỗi xảy ra', {
-                                position: "top-right",
-                                autoClose: 1500,
-                                hideProgressBar: true,
-                                closeOnClick: true,
-                                pauseOnHover: true,
-                                draggable: true,
-                            });
+                            console.log(err)
                         })
                     }
                     resolve();

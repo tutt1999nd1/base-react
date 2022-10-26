@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {
-    Button,
-    Divider,
+    Button, Collapse,
+    Divider, IconButton,
     Table, TableBody,
     TableCell,
     TableContainer,
@@ -27,6 +27,9 @@ import CancelPresentationOutlinedIcon from "@mui/icons-material/CancelPresentati
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
+import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
+import ItemDashboard from "../../components/ItemDashboard";
 
 export default function DetailSOF(props) {
     const navigate = useNavigate();
@@ -34,6 +37,7 @@ export default function DetailSOF(props) {
     const [listCharging, setListCharging] = useState([]);
     const [idDetail, setIdDetail] = useState(null)
     const [openModalDel, setOpenModalDel] = useState(false)
+    const [openDetail, setOpenDetail] = useState(false)
     const currentUser = useSelector(state => state.currentUser)
     const [listResult, setListResult] = React.useState({
         page: 0,
@@ -167,14 +171,7 @@ export default function DetailSOF(props) {
             }, 1050);
 
         }).catch(e => {
-            toast.error('Có lỗi xảy ra', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
+            console.log(e)
         })
 
     }
@@ -245,170 +242,182 @@ export default function DetailSOF(props) {
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
                     <h4>Thông tin chi tiết</h4>
+                    {openDetail ? <IconButton color="primary" style={{cursor: 'pointer'}}
+                                             onClick={() => setOpenDetail(false)}>
+                            <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>
+                        </IconButton> :
+                        <IconButton style={{cursor: 'pointer'}} color="primary"
+                                    onClick={() => setOpenDetail(true)}>
+                            <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
+                        </IconButton>
+                    }
                 </div>
-                <Divider light/>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        ID
+                <Collapse in={openDetail} timeout="auto" unmountOnExit>
+                    <Divider light/>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            ID
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.id}
+                        </div>
                     </div>
-                    <div className={'text-info-content'}>
-                        {info.id}
-                    </div>
-                </div>
-                <Divider></Divider>
+                    <Divider></Divider>
 
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Công ty vay
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            Công ty vay
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.capital_company.company_name}
+                        </div>
                     </div>
-                    <div className={'text-info-content'}>
-                        {info.capital_company.company_name}
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            Đối tượng cung cấp vốn
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.supplier.supplier_name}
+                        </div>
                     </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Đối tượng cung cấp vốn
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.supplier.supplier_name}
-                    </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>Hạng mục</div>
-                    <div className={'text-info-content'}>
-                        {info.capital_category.category_name}
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>Hạng mục</div>
+                        <div className={'text-info-content'}>
+                            {info.capital_category.category_name}
 
+                        </div>
                     </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Mục đích vay
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            Mục đích vay
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.capital_campaign.campaign_name}
+                        </div>
                     </div>
-                    <div className={'text-info-content'}>
-                        {info.capital_campaign.campaign_name}
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            Trạng thái
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.status == 'UNPAID' ? 'Chưa tất toán' : info.status == 'PAID' ? 'Đã tất toán' : info.status === 'A_PART_PRINCIPAL_OFF' ? 'Off 1 phần gốc' : 'Đã off gốc, chưa trả lã'}
+                        </div>
                     </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Trạng thái
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>Số tiền vay</div>
+                        <div className={'text-info-content'}>
+                            {currencyFormatter(info.lending_amount)}
+                        </div>
                     </div>
-                    <div className={'text-info-content'}>
-                        {info.status == 'UNPAID' ? 'Chưa tất toán' : info.status == 'PAID' ? 'Đã tất toán' : info.status === 'A_PART_PRINCIPAL_OFF' ? 'Off 1 phần gốc' : 'Đã off gốc, chưa trả lã'}
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            Người quản lý
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.owner_full_name}
+                        </div>
                     </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>Số tiền vay</div>
-                    <div className={'text-info-content'}>
-                        {currencyFormatter(info.lending_amount)}
-                    </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Người quản lý
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.owner_full_name}
-                    </div>
-                </div>
-                {/*<div className={'row-detail'}>*/}
-                {/*    <div className={'text-info-tittle'}>*/}
-                {/*        Trạng thái*/}
-                {/*    </div>*/}
-                {/*    <div className={'text-info-content'}>*/}
+                    {/*<div className={'row-detail'}>*/}
+                    {/*    <div className={'text-info-tittle'}>*/}
+                    {/*        Trạng thái*/}
+                    {/*    </div>*/}
+                    {/*    <div className={'text-info-content'}>*/}
 
-                {/*    </div>*/}
-                {/*</div>*/}
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Ngày vay
+                    {/*    </div>*/}
+                    {/*</div>*/}
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            Ngày vay
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.lending_start_date}
+                        </div>
                     </div>
-                    <div className={'text-info-content'}>
-                        {info.lending_start_date}
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            Thời gian vay
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.lending_in_month}
+                        </div>
                     </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Thời gian vay
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>Số kỳ trả gốc</div>
+                        <div className={'text-info-content'}>
+                            {info.principal_period}
+                        </div>
                     </div>
-                    <div className={'text-info-content'}>
-                        {info.lending_in_month}
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            Số kỳ trả lãi
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.interest_period}
+                        </div>
                     </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>Số kỳ trả gốc</div>
-                    <div className={'text-info-content'}>
-                        {info.principal_period}
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            Lãi suất hợp đồng vay
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.interest_rate}
+                        </div>
                     </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Số kỳ trả lãi
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>Thời gian ân hạn gốc</div>
+                        <div className={'text-info-content'}>
+                            {info.grace_principal_in_month}
+                        </div>
                     </div>
-                    <div className={'text-info-content'}>
-                        {info.interest_period}
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            Thời gian ân hạn lãi
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.grace_interest_in_month}
+                        </div>
                     </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Lãi suất hợp đồng vay
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            Loại lãi suất
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.interest_rate_type}
+                        </div>
                     </div>
-                    <div className={'text-info-content'}>
-                        {info.interest_rate}
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>Lãi suất tham chiếu</div>
+                        <div className={'text-info-content'}>
+                            {info.reference_interest_rate}
+                        </div>
                     </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>Thời gian ân hạn gốc</div>
-                    <div className={'text-info-content'}>
-                        {info.grace_principal_in_month}
+                    <Divider></Divider>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>
+                            Biên độ lãi suất
+                        </div>
+                        <div className={'text-info-content'}>
+                            {info.interest_rate_rage}
+                        </div>
                     </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Thời gian ân hạn lãi
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.grace_interest_in_month}
-                    </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Loại lãi suất
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.interest_rate_type}
-                    </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>Lãi suất tham chiếu</div>
-                    <div className={'text-info-content'}>
-                        {info.reference_interest_rate}
-                    </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Biên độ lãi suất
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.interest_rate_rage}
-                    </div>
-                </div>
-                <Divider></Divider>
+                    <Divider></Divider>
+                </Collapse>
+
 
 
             </div>
@@ -429,6 +438,9 @@ export default function DetailSOF(props) {
 
                                     <TableCell align="center">Giá trị vay(VNĐ)</TableCell>
                                     {/*start_date*/}
+                                    <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
+                                    {/*charging_type*/}
+                                    <TableCell align="center">Loại tiền lãi</TableCell>
                                     <TableCell align="center">Ngày vay</TableCell>
                                     {/*end_date*/}
                                     <TableCell align="center">Ngày trả gốc</TableCell>
@@ -437,9 +449,7 @@ export default function DetailSOF(props) {
                                     {/*interest_rate*/}
                                     <TableCell align="center">Lãi xuất(%)</TableCell>
                                     {/*//charging_amount*/}
-                                    <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
-                                    {/*charging_type*/}
-                                    <TableCell align="center">Loại tiền lãi</TableCell>
+
                                     {/*interest_period*/}
                                     <TableCell align="center">Số kỳ trả lãi</TableCell>
                                     {/*principal_period*/}
@@ -465,16 +475,17 @@ export default function DetailSOF(props) {
                                         </TableRow>
                                         {item.sof.map(detail => (
                                             <TableRow>
-                                                <TableCell><div >{detail.principal}</div></TableCell>
-                                                <TableCell>{detail.start_date}</TableCell>
-                                                <TableCell>{detail.end_date}</TableCell>
-                                                <TableCell>{detail.nums_of_interest_day}</TableCell>
-                                                <TableCell>{detail.interest_rate}</TableCell>
                                                 <TableCell><div className={'error-message'}>
                                                     {detail.charging_amount}
                                                 </div>
                                                 </TableCell>
                                                 <TableCell>{detail.charging_type}</TableCell>
+                                                <TableCell><div >{detail.principal}</div></TableCell>
+                                                <TableCell>{detail.start_date}</TableCell>
+                                                <TableCell>{detail.end_date}</TableCell>
+                                                <TableCell>{detail.nums_of_interest_day}</TableCell>
+                                                <TableCell>{detail.interest_rate}</TableCell>
+
                                                 <TableCell>{detail.interest_period}</TableCell>
                                                 <TableCell>{detail.principal_period}</TableCell>
                                             </TableRow>

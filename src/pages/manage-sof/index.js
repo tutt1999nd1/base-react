@@ -91,7 +91,7 @@ export default function ManageSOF() {
             sortable: false,
             field: 'index',
             headerName: 'STT',
-            maxWidth: 75,
+            maxWidth: 60,
             filterable: false,
             headerClassName: 'super-app-theme--header',
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
@@ -111,7 +111,7 @@ export default function ManageSOF() {
             field: 'capital_company_name',
             headerName: 'Công ty vay',
             headerClassName: 'super-app-theme--header',
-            minWidth: 150,
+            minWidth: 250,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -153,7 +153,7 @@ export default function ManageSOF() {
             field: 'capital_campaign_name',
             headerName: 'Mục đích vay',
             headerClassName: 'super-app-theme--header',
-            minWidth: 150,
+            minWidth: 250,
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -184,7 +184,7 @@ export default function ManageSOF() {
             minWidth: 150,
             renderCell: (params) => {
 
-                return <div className='content-column'>
+                return <div className='content-column number'>
                     {params.value}
                 </div>;
             },
@@ -647,14 +647,7 @@ export default function ManageSOF() {
                     draggable: true,
                 });
             }).catch(e => {
-                toast.error('Có lỗi xảy ra', {
-                    position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+                console.log(e)
             })
         }else{
             deleteSOFApi(infoDel.id).then(r => {
@@ -670,14 +663,7 @@ export default function ManageSOF() {
                 setRefresh(!refresh);
             }).catch(e => {
                 setLoading(false)
-                toast.error('Có lỗi xảy ra', {
-                    position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+                console.log(e)
             })
         }
 

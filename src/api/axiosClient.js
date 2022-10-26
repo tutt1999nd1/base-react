@@ -35,17 +35,53 @@ axiosClient.interceptors.response.use((response) => {
 }, (error) => {
     // alert("errorr :", JSON.stringify(error.response))
     // Handle errors
+    let options = {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+    }
     if (error.response) {
         if (error.response.status === 400) {
             if (error.response.data.status.code == "permission_denied" ) {
-                toast.error('Bạn không có quyền thực hiện', {
-                                            position: "top-right",
-                                            autoClose: 5000,
-                                            hideProgressBar: true,
-                                            closeOnClick: true,
-                                            pauseOnHover: true,
-                                            draggable: true,
-                                        });
+                toast.error('Bạn không có quyền thực hiện', options);
+            }
+            else if(error.response.data.status.code == "not_support"){
+                toast.error('Không hỗ trợ', options);
+            } else if(error.response.data.status.code == "action_not_allow"){
+                toast.error('Thao tác không hợp lệ', options);
+            } else if(error.response.data.status.code == "invalid_data_type"){
+                toast.error('Loại dữ liệu không hợp lệ', options);
+            } else if(error.response.data.status.code == "cannot_read_file"){
+                toast.error('Không thể đọc file dữ liệu', options);
+            } else if(error.response.data.status.code == "cannot_delete_file"){
+                toast.error('Không thể xóa file dữ liệu', options);
+            } else if(error.response.data.status.code == "file_already_exist"){
+                toast.error('File dữ liệu đã tồn tại', options);
+            } else if(error.response.data.status.code == "cannot_move_file"){
+                toast.error('Không thể di chuyển file dữ liệu', options);
+            } else if(error.response.data.status.code == "folder_does_not_exist"){
+                toast.error('Thư mục không tồn tại', options);
+            } else if(error.response.data.status.code == "cannot_delete_folder"){
+                toast.error('Không thể xóa thư mục', options);
+            } else if(error.response.data.status.code == "move_folder_error"){
+                toast.error('Không thể di chuyển thư mục', options);
+            } else if(error.response.data.status.code == "cannot_rename_file"){
+                toast.error('Không thể đổi tên file dữ liệu', options);
+            } else if(error.response.data.status.code == "file_does_not_exist"){
+                toast.error('File dữ liệu không tồn tại', options);
+            } else if(error.response.data.status.code == "cannot_create_file"){
+                toast.error('Không thể tạo file dữ liệu', options);
+            } else if(error.response.data.status.code == "cannot_create_folder"){
+                toast.error('Không thể tạo thư mục dữ liệu', options);
+            } else if(error.response.data.status.code == "invalid_status"){
+                toast.error('Trạng thái không hợp lệ', options);
+            } else if(error.response.data.status.code == "invalid_sof_data"){
+                toast.error('Dữ liệu hợp đồng vay không hợp lệ', options);
+            }  else {
+                toast.error('Có lỗi xảy ra', options);
             }
         }
         else if(error.response.status===401){

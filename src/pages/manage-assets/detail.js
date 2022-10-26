@@ -71,14 +71,7 @@ export default function DetailAsset(props) {
             }, 1050);
 
         }).catch(e => {
-            toast.error('Có lỗi xảy ra', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
+            console.log(e)
         })
 
     }

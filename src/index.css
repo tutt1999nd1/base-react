@@ -7,12 +7,11 @@ body {
     -moz-osx-font-smoothing: grayscale;
     background-color: #f9fafc;
     height: 100%;
+    /*zoom:75%;*/
+    /*transform: scale(0.8);*/
+    /*transform-origin: 0 0;*/
 }
-@media only screen and (max-width: 1600px) {
-    body {
-        /*zoom:75%;*/
-    }
-}
+
 html{
     margin: 0;
     height: 100%;
@@ -38,7 +37,7 @@ hr {
 
 .nav {
     /*float: left;*/
-
+    overflow-y: auto;
     background: #111827;
     width: 280px;
     height: 100%;
@@ -265,7 +264,7 @@ hr {
 }
 
 .main-content-detail {
-    width: 60%;
+    width: 80%;
     margin: 0 auto;
 }
 
@@ -353,19 +352,7 @@ p::first-letter, .uppercase::first-letter {
 
 }
 
-.super-app-theme--header {
-    color: rgb(55, 65, 81);
-    border-bottom: none;
-    /*font-weight: 600;*/
-    text-transform: uppercase;
-    background-color: #fbbd2c;
-    height: 50px;
-    font-family: "Roboto","Helvetica","Arial",sans-serif;
-    font-weight: bold;
-    font-size: 1rem;
-    line-height: 1.5;
-    letter-spacing: 0.00938em;
-}
+
 
 .MuiDataGrid-iconSeparator {
     display: none
@@ -670,14 +657,7 @@ height: 45px;
     margin-bottom: 10px;
 }
 
-.MuiDataGrid-cell--textLeft{
-    color: rgb(18, 24, 40);
-    font-family: "Roboto","Helvetica","Arial",sans-serif;
-    font-weight: 400;
-    font-size: 1rem;
-    line-height: 1.5;
-    letter-spacing: 0.00938em;
-}
+
 .text-field-link{
     display: flex;
     align-items: center;
@@ -717,17 +697,18 @@ height: 45px;
 .table-custom td,.table-custom th {
     text-align: left;
     border-left: 1px solid #dddddd;
-
+    padding-top: 8px!important;
+    padding-bottom: 8px!important;
     /*padding: 8px;*/
     color: rgb(18, 24, 40);
     font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-weight: 400;
-    font-size: 1rem;
-    min-width: 150px;
+    font-size: 0.8rem;
+    min-width: 100px;
     max-width: 150px;
     min-height: auto;
     max-height: none;
-    width: 100%;
+    /*width: 100%;*/
     word-break: break-all;
     white-space: pre-wrap;
 }
@@ -736,21 +717,22 @@ height: 45px;
     border-bottom: none;
     text-transform: uppercase;
     background-color: #fbbd2c;
-    height: 50px;
+    /*height: 20px;*/
     font-family: "Roboto","Helvetica","Arial",sans-serif;
-    font-size: 1rem;
-    line-height: 1.5;
-    letter-spacing: 0.00938em;
+    /*font-size: 1rem;*/
+    /*line-height: 1.5;*/
+    /*letter-spacing: 0.00938em;*/
     font-weight: 500;
 }
 .table-custom{
     /*height: 100%;*/
     /*height: 40vh;*/
+    /*position:relative;*/
     overflow: auto;
     color: rgb(18, 24, 40);
     font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-weight: 400;
-    font-size: 1rem !important;
+    font-size: 1rem ;
     line-height: 1.5;
     letter-spacing: 0.00938em;
 }
@@ -772,7 +754,7 @@ height: 45px;
 }
 .time-search img {
     position: absolute;
-    margin: 8px 10px 0 5px
+    margin: 8px 10px 0 8px
 }
 .input-date-range {
     width: 100%;
@@ -807,28 +789,93 @@ height: 45px;
     border-radius: 5px;
     /*box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);*/
     transition: 0.7s;
-    background-color: white;
+    /*background-color: white;*/
+    background-color:#4b8fc3;
     width: 275px;
     height: 125px;
     color: black;
-}
-.item-dashboard .item-dashboard-tittle{
-    color: black;
-}
-
-.item-dashboard .item-dashboard-content{
-}
-.item-dashboard .item-dashboard-content{
-}
-.item-dashboard-content h6{
-    font-weight: 500 !important;
-    color: #1a75bb;
-}
-.item-dashboard{
     align-items: center;
     padding-left: 20px;
-    margin-right: 100px;
-}
-.item-dashboard{
+    justify-content: space-between;
     display: flex;
+}
+.item-dashboard .item-dashboard-tittle{
+    color: white;
+}
+
+.item-dashboard-content h6{
+    font-weight: 500 !important;
+    /*color: #1a75bb;*/
+    color: white;
+}
+
+.form-input{
+    margin-bottom: 20px;
+}
+.number{
+    text-align: right;
+}
+.super-app-theme--header {
+    color: rgb(55, 65, 81);
+    border-bottom: none;
+    /*font-weight: 600;*/
+    text-transform: uppercase;
+    background-color: #fbbd2c;
+    height: 50px;
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-weight: bold;
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+}
+.MuiDataGrid-cell--textLeft{
+    color: rgb(18, 24, 40);
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.5;
+    letter-spacing: 0.00938em;
+}
+@media only screen and (max-width: 1600px) {
+    .MuiDataGrid-cell--textLeft{
+        font-size: 0.75rem;
+    }
+    .super-app-theme--header {
+        height: 30px;
+        font-weight: bold;
+        font-size: 0.7rem;
+
+    }
+    .main-content-body-result .MuiSvgIcon-root{
+        font-size: 0.8rem;
+
+    }
+    .nav-item{
+        font-size: 0.7rem;
+    }
+    .nav-item .MuiSvgIcon-root{
+        font-size: 0.8rem;
+    }
+    .nav {
+        width: 207px;
+    }
+    .table-custom{
+        font-size: 0.8rem !important;
+    }
+    .item-dashboard{
+        font-size: 0.8rem ;
+        width: 20%;
+    }
+    .item-dashboard-content h6{
+        font-size: 1rem ;
+    }
+    .main-content{
+        padding: 15px;
+    }
+    /*body {*/
+    /*    !*zoom:50%;*!*/
+    /*    zoom: 0.8;*/
+    /*    -moz-transform: scale(0.8);*/
+    /*    -moz-transform-origin: 0 0;*/
+    /*}*/
 }

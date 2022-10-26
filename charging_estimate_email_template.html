@@ -1,0 +1,178 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/xhtml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<!--[if gte mso 16]>
+<xml>
+    <o:OfficeDocumentSettings>
+        <o:AllowPNG/>
+        <o:PixelsPerInch>96</o:PixelsPerInch>
+    </o:OfficeDocumentSettings>
+</xml>
+<![endif]-->
+<head>
+    <title>Spring boot eamil teplate with Thymeleaf</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link href='http://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'/>
+    <!-- use the font -->
+    <style>
+        #outlook a {padding:0;}
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-size: 18px;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-around;
+            align-content: center;
+            width: 100%;
+        }
+
+        tr{
+            display: flex;
+            justify-content: space-around;
+        }
+        td{
+            align-items: center;
+            display: flex;
+            border: solid 1px #dddddd;
+            border-radius: 5px;
+            /*box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);*/
+            transition: 0.7s;
+            /*background-color: white;*/
+            background-color: #4b8fc3;
+            width: 200px;
+            height: 100px;
+            color: white;
+            padding-left: 20px;
+        }
+        .tittle {
+            margin-top: 5px;
+            font-size: 12px;
+        }
+
+    </style>
+</head>
+<body>
+
+<p>Kính gửi Ban Lãnh đạo,</p>
+<br/>
+<p th:text="${'Ban đầu tư xin gửi thông tin về nguồn cần chuẩn bị ' + timeStr}"></p>
+<table>
+    <tr>
+        <td>
+            <div>
+                <div class="amount" th:text="${totalChargingAmount + ' VNĐ'}">100000</div>
+                <div class="tittle">Tổng tiền phải trả</div>
+            </div>
+        </td>
+        <td>
+            <div>
+                <div class="amount" th:text="${totalPrincipal + ' VNĐ'}">100000</div>
+                <div class="tittle">Tổng tiền gốc</div>
+            </div>
+        </td>
+        <td>
+            <div>
+                <div class="amount" th:text="${totalInterest + ' VNĐ'}">100000000</div>
+                <div class="tittle">Tổng tiền lãi</div>
+            </div>
+        </td>
+        <td>
+            <div>
+                <div class="amount" th:text="${totalGraceInterest + ' VNĐ'}">100000</div>
+                <div class="tittle">Tổng tiền lãi ân hạn</div>
+            </div>
+        </td>
+    </tr>
+</table>
+<br/>
+<!--<div class="list-item" id="list_item">-->
+<!--    <div class="item" height="60%">-->
+<!--        <div>-->
+<!--            <div class="amount" th:text="${totalChargingAmount + ' VNĐ'}"></div>-->
+<!--            <div class="tittle">Tổng tiền phải trả</div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="item">-->
+<!--        <div>-->
+<!--            <div class="amount" th:text="${totalPrincipal + ' VNĐ'}"></div>-->
+<!--            <div class="tittle">Tổng tiền gốc</div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="item">-->
+<!--        <div>-->
+<!--            <div class="amount" th:text="${totalInterest + ' VNĐ'}"></div>-->
+<!--            <div class="tittle">Tổng tiền lãi</div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    <div class="item">-->
+<!--        <div>-->
+<!--            <div class="amount" th:text="${totalGraceInterest + ' VNĐ'}"></div>-->
+<!--            <div class="tittle">Tổng tiền lãi ân hạn</div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<br/>
+<p>Trân trọng,</p>
+<p>amberApp phát triển bởi Ban Công nghệ</p>
+</body>
+
+<!--<script th:inline="javascript">-->
+<!--    // let totalChargingAmount = [[${totalChargingAmount}]];-->
+<!--    // let totalPrincipal = [[${totalPrincipal}]];-->
+<!--    // let totalInterest = [[${totalInterest}]];-->
+<!--    // let totalGraceInterest = [[${totalGraceInterest}]];-->
+<!--    let totalChargingAmount = 324523452345;-->
+<!--    let totalPrincipal = 23452345;-->
+<!--    let totalInterest = 23452345;-->
+<!--    let totalGraceInterest = 234523452345;-->
+<!--    const currencyFormatter = (value) => {-->
+<!--        const options = {-->
+<!--            significantDigits: 1,-->
+<!--            thousandsSeparator: '.',-->
+<!--            decimalSeparator: ',',-->
+<!--            symbol: ''-->
+<!--        }-->
+<!--        if (typeof value !== 'number') value = 0.0-->
+<!--        value = value.toFixed(options.significantDigits)-->
+
+<!--        const [currency, decimal] = value.split('.')-->
+<!--        return ` ${currency.replace(-->
+<!--            /\B(?=(\d{3})+(?!\d))/g,-->
+<!--            options.thousandsSeparator-->
+<!--        )}`-->
+<!--        // )}${options.decimalSeparator}${decimal} ${options.symbol}`-->
+<!--    }-->
+<!--    document.getElementById("x_list_item").innerHTML =-->
+<!--        ` <div class="item">-->
+<!--            <div>-->
+<!--                <div class="amount">${currencyFormatter(totalChargingAmount)} VNĐ</div>-->
+<!--                <div class="tittle">Tổng tiền phải trả</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="item">-->
+<!--            <div>-->
+<!--                <div class="amount">${currencyFormatter(totalPrincipal)} VNĐ</div>-->
+<!--                <div class="tittle">Tổng tiền gốc</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="item">-->
+<!--            <div>-->
+<!--                <div class="amount">${currencyFormatter(totalInterest)} VNĐ</div>-->
+<!--                <div class="tittle">Tổng tiền lãi</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--          <div class="item">-->
+<!--            <div>-->
+<!--                <div class="amount">${currencyFormatter(totalGraceInterest)} VNĐ</div>-->
+<!--                <div class="tittle">Tổng tiền lãi ân hạn</div>-->
+<!--            </div>-->
+<!--          </div>-->
+<!--        `-->
+
+
+<!--</script>-->
+</html>

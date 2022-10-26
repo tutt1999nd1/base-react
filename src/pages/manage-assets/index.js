@@ -81,7 +81,7 @@ export default function ManageAssets() {
             sortable: false,
             field: 'index',
             headerName: 'STT',
-            maxWidth: 75,
+            maxWidth: 60,
             filterable: false,
             headerClassName: 'super-app-theme--header',
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
@@ -125,7 +125,7 @@ export default function ManageAssets() {
             minWidth: 150,
             renderCell: (params) => {
 
-                return <div className='content-column'>
+                return <div className='content-column number'>
                     {params.value}
                 </div>;
             },
@@ -140,7 +140,7 @@ export default function ManageAssets() {
 
             renderCell: (params) => {
 
-                return <div className='content-column'>
+                return <div className='content-column number'>
                     {params.value}
                 </div>;
             },
@@ -155,7 +155,7 @@ export default function ManageAssets() {
 
             renderCell: (params) => {
 
-                return <div className='content-column'>
+                return <div className='content-column number'>
                     {params.value}
                 </div>;
             },
@@ -171,7 +171,7 @@ export default function ManageAssets() {
 
             renderCell: (params) => {
 
-                return <div className='content-column'>
+                return <div className='content-column number'>
                     {params.value}
                 </div>;
             },
@@ -280,14 +280,7 @@ export default function ManageAssets() {
                             setRefresh(!refresh)
 
                         }).catch(err => {
-                            toast.error('Có lỗi xảy ra', {
-                                position: "top-right",
-                                autoClose: 1500,
-                                hideProgressBar: true,
-                                closeOnClick: true,
-                                pauseOnHover: true,
-                                draggable: true,
-                            });
+                            console.log(err)
                         })
                     }
                     resolve();
@@ -397,14 +390,7 @@ export default function ManageAssets() {
                     draggable: true,
                 });
             }).catch(e => {
-                toast.error('Có lỗi xảy ra', {
-                    position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+                console.log(e)
             })
         }else{
             deleteAssetApi(infoDel.id).then(r => {
@@ -420,14 +406,7 @@ export default function ManageAssets() {
                 setRefresh(!refresh);
             }).catch(e => {
                 setLoading(false)
-                toast.error('Có lỗi xảy ra', {
-                    position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+                console.log(e)
             })
         }
 

@@ -255,14 +255,7 @@ export default function ManageCategory() {
                     draggable: true,
                 });
             }).catch(e => {
-                toast.error('Có lỗi xảy ra', {
-                    position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+                console.log(e)
             })
         }else{
             deleteCampaignApi(infoDel.id).then(r => {
@@ -278,14 +271,7 @@ export default function ManageCategory() {
                 setRefresh(!refresh);
             }).catch(e => {
                 setLoading(false)
-                toast.error('Có lỗi xảy ra', {
-                    position: "top-right",
-                    autoClose: 1500,
-                    hideProgressBar: true,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                });
+                console.log(e)
             })
         }
 

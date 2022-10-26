@@ -27,7 +27,7 @@ import PropTypes from "prop-types";
 import {
     capitalizeFirstLetter,
     convertToAutoComplete,
-    convertToAutoCompleteMail,
+    convertToAutoCompleteMail, currencyFormatter,
     listOptionMonth,
     VNnum2words
 } from "../../constants/utils";
@@ -48,14 +48,10 @@ export default function EditSOF(props) {
     const navigate = useNavigate();
     const [location, setLocation] = useSearchParams();
     const [companySearch, setCompanySearch] = useState();
-    const [listGroup, setListGroup] = useState([]);
-    const [listType, setListType] = useState([]);
+    const [companyCurrent, setCompanyCurrent] = useState({})
+    const [idCompanyCurrent, setIdCompanyCurrent] = useState(0);
     const [listCompany, setListCompany] = useState([]);
     const [listCompanySupplier, setListCompanySupplier] = useState([]);
-    const [listCampaign, setListCampaign] = useState([]);
-    const [listCategory, setListCategory] = useState([]);
-    const [typeDefault, setTypeDefault] = useState(0)
-    const [groupDefault, setGroupDefault] = useState(0)
     const [listFileLocal, setListFileLocal] = useState([])
     const [listLink, setListLink] = useState([])
     const [listLinkServer, setListLinkServer] = useState([])
@@ -69,7 +65,7 @@ export default function EditSOF(props) {
     const [lendingInMonth, setLendingInMonth] = useState({id: 1, label: '1'})
     const [listCampaignTree, setListCampaignTree] = useState([]);
     const currentUser = useSelector(state => state.currentUser)
-    const [listUser,setListUser] = useState([{id:'1','label':'1'}])
+    const [listUser, setListUser] = useState([{id: '1', 'label': '1'}])
     const [info, setInfo] = useState({
         id: '',
         capital_company: {},
@@ -183,13 +179,13 @@ export default function EditSOF(props) {
         })
 
         Axios.get('https://graph.microsoft.com/v1.0/users?$top=999', {
-            headers: { 'Authorization': `Bearer ${currentUser.tokenGraphApi}` },
+            headers: {'Authorization': `Bearer ${currentUser.tokenGraphApi}`},
             // responseType: 'blob'
         }).then(users => {
-            console.log('users.value',users.data.value)
-            let arrConvert = convertToAutoCompleteMail(users.data.value,'mail')
+            console.log('users.value', users.data.value)
+            let arrConvert = convertToAutoCompleteMail(users.data.value, 'mail')
             setListUser(arrConvert)
-        }).catch(e=>{
+        }).catch(e => {
             // window.location.reload();
             localStorage.clear()
         })
@@ -212,7 +208,7 @@ export default function EditSOF(props) {
         })
         getListSupplierApi({paging: false}).then(r => {
             if (r.data.suppliers) {
-                    setListCompanySupplier(convertToAutoComplete(r.data.suppliers, 'supplier_name'))
+                setListCompanySupplier(convertToAutoComplete(r.data.suppliers, 'supplier_name'))
 
             } else {
                 setListCompanySupplier([])
@@ -233,9 +229,9 @@ export default function EditSOF(props) {
             })
         }
     }, [idUpdate])
-    useEffect(()=>{
-        console.log("listUser",listUser)
-    },[listUser])
+    useEffect(() => {
+        console.log("listUser", listUser)
+    }, [listUser])
     const createSOFApi = (data) => {
         return apiManagerSOF.createSOF(data);
     }
@@ -270,15 +266,23 @@ export default function EditSOF(props) {
     useEffect(() => {
         console.log('info', {id: info.grace_interest_in_month, label: info.grace_interest_in_month + ''})
         setListFileServer(info.list_attachments)
-
         setCategorySearch(info.capital_category.id)
         setCampaignSearch(info.capital_campaign.id)
         setCompanySearch({id: info.capital_company.id, label: info.capital_company.company_name})
 
     }, [info])
     useEffect(() => {
-        console.log(VNnum2words(10000));
-    }, [listFileServer])
+        getListCompanyApi({id:idCompanyCurrent,paging: false}).then(r => {
+            if (r.data.companies) {
+                console.log("r.data.companies",r.data.companies)
+                setCompanyCurrent(r.data.companies[0])
+            } else {
+                setCompanyCurrent(null)
+            }
+        }).catch(e => {
+
+        })
+    }, [idCompanyCurrent])
     const deleteFileLocal = (name) => {
         let arr = [...listFileLocal]
         let indexRemove = listFileLocal.findIndex(e => e.name === name)
@@ -400,7 +404,9 @@ export default function EditSOF(props) {
                     capital_company_id: idUpdate ? info.capital_company.id : info.capital_company_id,
                     capital_category_id: idUpdate ? info.capital_category.id : info.capital_category_id,
                     capital_campaign_id: idUpdate ? info.capital_campaign.id : info.capital_campaign_id,
+                    capital_campaign_name: info.capital_company.company_name||'',
                     supplier_id: idUpdate ? info.supplier.id : info.supplier_id,
+                    supplier_name: info.supplier.supplier_name||'',
                     // asset_group:info.asset_group.id,
                     lending_amount: info.lending_amount,
                     owner_full_name: info.owner_full_name,
@@ -411,7 +417,7 @@ export default function EditSOF(props) {
                     lending_in_month: info.lending_in_month,
                     interest_period: info.interest_period,
                     interest_rate: info.interest_rate,
-                    approve_name:info.approve_name,
+                    approve_name: info.approve_name,
                     grace_principal_in_month: info.grace_principal_in_month,
                     grace_interest_in_month: info.grace_interest_in_month,
                     interest_rate_type: info.interest_rate_type,
@@ -449,10 +455,10 @@ export default function EditSOF(props) {
                         formData.append('gracePrincipalInMonth', values.grace_principal_in_month)
                         formData.append('graceInterestInMonth', values.grace_interest_in_month)
                         formData.append('interestRateType', values.interest_rate_type)
-                        if(values.reference_interest_rate)
-                        formData.append('referenceInterestRate', values.reference_interest_rate)
-                        if(values.interest_rate_rage)
-                        formData.append('interestRateRage', values.interest_rate_rage)
+                        if (values.reference_interest_rate)
+                            formData.append('referenceInterestRate', values.reference_interest_rate)
+                        if (values.interest_rate_rage)
+                            formData.append('interestRateRage', values.interest_rate_rage)
                         formData.append('supplierId', values.supplier_id)
 
                         // formData.append('currentCreditValue',values.)
@@ -478,14 +484,7 @@ export default function EditSOF(props) {
                                 }, 1050);
 
                             }).catch(e => {
-                                toast.error('Có lỗi xảy ra', {
-                                    position: "top-right",
-                                    autoClose: 1500,
-                                    hideProgressBar: true,
-                                    closeOnClick: true,
-                                    pauseOnHover: true,
-                                    draggable: true,
-                                });
+                                console.log(e)
                             })
 
 
@@ -505,14 +504,7 @@ export default function EditSOF(props) {
                                 }, 1050);
 
                             }).catch(e => {
-                                toast.error('Có lỗi xảy ra', {
-                                    position: "top-right",
-                                    autoClose: 1500,
-                                    hideProgressBar: true,
-                                    closeOnClick: true,
-                                    pauseOnHover: true,
-                                    draggable: true,
-                                });
+                                console.log(e)
                             })
                         }
                     }
@@ -530,70 +522,120 @@ export default function EditSOF(props) {
                                 <Grid item xs={6} md={6}>
                                     <div className={'label-input'}>Công ty vay<span className={'error-message'}>*</span>
                                     </div>
-                                    {/*<div>{JSON.stringify({id:info.capital_company.id,tittle:info.capital_company.company_name})}</div>*/}
-                                    {/*<Autocomplete*/}
-                                    {/*    disablePortal*/}
-                                    {/*    id="combo-box-demo"*/}
-                                    {/*    options={listCompany}*/}
-                                    {/*    defaultValue={[{id:info.capital_company.id,label:info.capital_company.company_name}]}*/}
-                                    {/*    // sx={{ width: 300 }}*/}
-                                    {/*    // onChange={}*/}
-                                    {/*    renderInput={(params) => < TextField  {...params} id='capital_company_id'*/}
-                                    {/*                                         name='capital_company_id'*/}
-                                    {/*                                         placeholder="Công ty vay"*/}
-                                    {/*                                         error={touched.capital_company_id && Boolean(errors.capital_company_id)}*/}
-                                    {/*                                         helperText={touched.capital_company_id && errors.capital_company_id}/>}*/}
-                                    {/*    size={"small"}*/}
-                                    {/*    onChange={(event, newValue) => {*/}
-                                    {/*        alert(newValue)*/}
-                                    {/*        setCompanySearch(newValue)*/}
-                                    {/*        console.log("new_value", newValue)*/}
-                                    {/*        if (newValue)*/}
-                                    {/*        setFieldValue('capital_company_id', newValue.id)*/}
-                                    {/*        else setFieldValue('capital_company_id', null)*/}
-                                    {/*    }}*/}
-                                    {/*/>*/}
-                                    <FormControl fullWidth>
-                                        <Select
-                                            size={'small'}
-                                            id='capital_company_id'
-                                            name='capital_company_id'
-                                            value={values.capital_company_id}
-                                            onChange={handleChange}
-                                            error={touched.capital_company_id && Boolean(errors.capital_company_id)}
-                                            helperText={touched.capital_company_id && errors.capital_company_id}
-                                            // size='small'
-                                        >
-                                            {listCompany.map((e) => (
-                                                <MenuItem value={e.id}>{e.company_name}</MenuItem>))}
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={listCompany}
+                                        value={{
+                                                    id: values.capital_company_id,
+                                                    label: values.capital_campaign_name
+                                        }
+                                        }
 
-                                        </Select>
-                                        <FormHelperText
-                                            className={'error-message'}>{errors.capital_company_id}</FormHelperText>
-                                    </FormControl>
+                                        renderInput={(params) => < TextField  {...params} id='capital_company_id'
+                                                                              name='capital_company_id'
+                                                                              placeholder="Công ty vay"
+                                                                              error={touched.capital_company_id && Boolean(errors.capital_company_id)}
+                                                                              helperText={touched.capital_company_id && errors.capital_company_id}/>}
+                                        size={"small"}
+                                        onChange={(event, newValue) => {
+                                            // setCompanySearch(newValue)
+                                            console.log("new_value", newValue)
+                                            if (newValue){
+                                                setFieldValue('capital_company_id', newValue.id)
+                                                setFieldValue('capital_campaign_name', newValue.label)
+                                                setIdCompanyCurrent(newValue.id)
+                                            }
+                                            else{
+                                                setFieldValue('capital_company_id', '')
+                                                setFieldValue('capital_campaign_name', '')
+                                                setIdCompanyCurrent(0)
+                                            }
+                                        }}
+                                    />
+                                    <Typography style={{marginTop:'5px'}} variant="caption" display="block"
+                                                gutterBottom>
+                                        {
+                                            companyCurrent?
+                                                `Số tiền vay còn lại ${currencyFormatter(companyCurrent.remain_capital)} VNĐ`:''
+                                        }
+                                    </Typography>
+                                    {/*<FormControl fullWidth>*/}
+                                    {/*    <Select*/}
+                                    {/*        size={'small'}*/}
+                                    {/*        id='capital_company_id'*/}
+                                    {/*        name='capital_company_id'*/}
+                                    {/*        value={values.capital_company_id}*/}
+                                    {/*        onChange={handleChange}*/}
+                                    {/*        error={touched.capital_company_id && Boolean(errors.capital_company_id)}*/}
+                                    {/*        helperText={touched.capital_company_id && errors.capital_company_id}*/}
+                                    {/*        // size='small'*/}
+                                    {/*    >*/}
+                                    {/*        {listCompany.map((e) => (*/}
+                                    {/*            <MenuItem value={e.id}>{e.company_name}</MenuItem>))}*/}
+
+                                    {/*    </Select>*/}
+                                    {/*    <FormHelperText*/}
+                                    {/*        className={'error-message'}>{errors.capital_company_id}</FormHelperText>*/}
+                                    {/*</FormControl>*/}
                                 </Grid>
                                 <Grid item xs={6} md={6}>
                                     <div className={'label-input'}>Đối tượng cung cấp vốn<span
                                         className={'error-message'}>*</span>
                                     </div>
-                                    <FormControl fullWidth>
-                                        <Select
-                                            size={'small'}
-                                            id='supplier_id'
-                                            name='supplier_id'
-                                            value={values.supplier_id}
-                                            onChange={handleChange}
-                                            error={touched.supplier_id && Boolean(errors.supplier_id)}
-                                            helperText={touched.supplier_id && errors.supplier_id}
-                                            // size='small'
-                                        >
-                                            {listCompanySupplier.map((e) => (
-                                                <MenuItem value={e.id}>{e.supplier_name}</MenuItem>))}
+                                    <Autocomplete
+                                        disablePortal
+                                        id="combo-box-demo"
+                                        options={listCompanySupplier}
+                                        value={{
+                                            id: values.supplier_id,
+                                            label: values.supplier_name
+                                        }
+                                        }
+                                        // defaultValue={[{
+                                        //     id: info.id: info.capital_company.id,,
+                                        //     label: info.capital_company.company_name
+                                        // }]}
+                                        // sx={{ width: 300 }}
+                                        // onChange={}
+                                        renderInput={(params) => < TextField  {...params} id='capital_company_id'
+                                                                              name='capital_company_id'
+                                                                              placeholder="Đối tượng cung cấp vốn"
+                                                                              error={touched.supplier_id && Boolean(errors.supplier_id)}
+                                                                              helperText={touched.supplier_id && errors.supplier_id}/>}
+                                        size={"small"}
+                                        onChange={(event, newValue) => {
+                                            // setCompanySearch(newValue)
+                                            console.log("new_value", newValue)
+                                            if (newValue){
+                                                setFieldValue('supplier_id', newValue.id)
+                                                setFieldValue('supplier_name', newValue.label)
 
-                                        </Select>
-                                        <FormHelperText
-                                            className={'error-message'}>{errors.supplier_id}</FormHelperText>
-                                    </FormControl>
+                                            }
+                                            else{
+                                                setFieldValue('supplier_id', '')
+                                                setFieldValue('supplier_name', '')
+                                            }
+                                        }}
+                                    />
+                                    {/*<FormControl fullWidth>*/}
+                                    {/*    <Select*/}
+                                    {/*        size={'small'}*/}
+                                    {/*        id='supplier_id'*/}
+                                    {/*        name='supplier_id'*/}
+                                    {/*        value={values.supplier_id}*/}
+                                    {/*        onChange={handleChange}*/}
+                                    {/*        error={touched.supplier_id && Boolean(errors.supplier_id)}*/}
+                                    {/*        helperText={touched.supplier_id && errors.supplier_id}*/}
+                                    {/*        // size='small'*/}
+                                    {/*    >*/}
+                                    {/*        {listCompanySupplier.map((e) => (*/}
+                                    {/*            <MenuItem value={e.id}>{e.supplier_name}</MenuItem>))}*/}
+
+                                    {/*    </Select>*/}
+                                    {/*    <FormHelperText*/}
+                                    {/*        className={'error-message'}>{errors.supplier_id}</FormHelperText>*/}
+                                    {/*</FormControl>*/}
                                 </Grid>
 
                                 <Grid item xs={6} md={6}>
@@ -687,7 +729,7 @@ export default function EditSOF(props) {
                                     {/*    helperText={touched.founding_date && errors.founding_date}*/}
 
                                     {/*/>*/}
-                                    <div className={'label-input'}>Ngày vay<span className={'error-message'}>*</span>
+                                    <div className={'label-input'}>Ngày vay(DD-MM-YYYY)<span className={'error-message'}>*</span>
                                     </div>
                                     <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
                                         <DesktopDatePicker
@@ -786,8 +828,8 @@ export default function EditSOF(props) {
                                         }
 
                                         onChange={(event, newValue) => {
-                                            console.log("new-value",newValue)
-                                            if (newValue){
+                                            console.log("new-value", newValue)
+                                            if (newValue) {
                                                 setFieldValue('owner_full_name', newValue.label)
                                             }
                                         }}
@@ -816,8 +858,8 @@ export default function EditSOF(props) {
                                         }
 
                                         onChange={(event, newValue) => {
-                                            console.log("new-value",newValue)
-                                            if (newValue){
+                                            console.log("new-value", newValue)
+                                            if (newValue) {
                                                 setFieldValue('approve_name', newValue.label)
                                             }
                                         }}
@@ -948,7 +990,7 @@ export default function EditSOF(props) {
                                     <div className={'label-input'}>Lãi suất hợp đồng vay (%/năm)<span
                                         className={'error-message'}>*</span></div>
                                     <NumericFormat
-                                        disabled={values.interest_rate_type==='Biên độ'}
+                                        disabled={values.interest_rate_type === 'Biên độ'}
                                         id='interest_rate'
                                         customInput={TextField}
                                         name='interest_rate'
@@ -1077,7 +1119,8 @@ export default function EditSOF(props) {
                                             className={'error-message'}>{errors.interest_rate_type}</FormHelperText>
                                     </FormControl>
                                 </Grid>
-                                <Grid className={`${values.interest_rate_type==='Cố định'?'hidden':''}`} item xs={6} md={6}>
+                                <Grid className={`${values.interest_rate_type === 'Cố định' ? 'hidden' : ''}`} item
+                                      xs={6} md={6}>
                                     <div className={'label-input'}>Lãi suất tham chiếu (%/năm)<span
                                         className={'error-message'}>*</span></div>
                                     <NumericFormat
@@ -1102,7 +1145,7 @@ export default function EditSOF(props) {
                                             //         setFieldValue('interest_rate',(values.interest_rate_rage||0)+(floatValue||0))
                                             // }
                                             setFieldValue('reference_interest_rate', floatValue)
-                                            setFieldValue('interest_rate',((values.interest_rate_rage||0)+(floatValue||0)).toFixed(2))
+                                            setFieldValue('interest_rate', ((values.interest_rate_rage || 0) + (floatValue || 0)).toFixed(2))
                                             // setFieldValue('max_capital_value', formattedValue)
 
                                         }}
@@ -1112,7 +1155,8 @@ export default function EditSOF(props) {
                                     />
                                     {/*<div>{</div>*/}
                                 </Grid>
-                                <Grid className={`${values.interest_rate_type==='Cố định'?'hidden':''}`} item xs={6} md={6}>
+                                <Grid className={`${values.interest_rate_type === 'Cố định' ? 'hidden' : ''}`} item
+                                      xs={6} md={6}>
                                     <div className={'label-input'}>Biên độ lãi suất (%)<span
                                         className={'error-message'}>*</span></div>
                                     <NumericFormat
@@ -1128,7 +1172,7 @@ export default function EditSOF(props) {
                                             endAdornment: <InputAdornment position="end">%</InputAdornment>,
                                         }}
                                         onValueChange={(value) => {
-                                            const { floatValue} = value;
+                                            const {floatValue} = value;
                                             // do something with floatValue
 
                                             const re = /^[0-9\b]+$/;
@@ -1136,7 +1180,7 @@ export default function EditSOF(props) {
 
                                             }
                                             setFieldValue('interest_rate_rage', floatValue)
-                                            setFieldValue('interest_rate',((values.reference_interest_rate||0)+(floatValue||0)).toFixed(2))
+                                            setFieldValue('interest_rate', ((values.reference_interest_rate || 0) + (floatValue || 0)).toFixed(2))
                                             // setFieldValue('max_capital_value', formattedValue)
 
                                         }}

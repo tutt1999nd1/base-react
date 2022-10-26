@@ -7,7 +7,7 @@ import {
     Button, CircularProgress,
     Collapse,
     Divider,
-    IconButton,
+    IconButton, Stack,
     Table,
     TableBody,
     TableCell,
@@ -40,6 +40,9 @@ import DialogActions from "@mui/material/DialogActions";
 import {NumericFormat} from "react-number-format";
 import ItemDashboard from "../../components/ItemDashboard";
 import VerticalAlignBottomIcon from "@mui/icons-material/VerticalAlignBottom";
+import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
+import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 export default function ManageSofChargingEst() {
     const currentUser = useSelector(state => state.currentUser)
@@ -51,7 +54,9 @@ export default function ManageSofChargingEst() {
     const [openModalEdit, setOpenModalEdit] = useState(false)
     const [openModalEmail, setOpenModalEmail] = useState(false)
     const [listUser, setListUser] = useState([{id: '1', 'label': '1'}])
-    const [email, setEmail] = useState("")
+    const [email, setEmail] = useState([])
+    const [cc, setCc] = useState([])
+    const [bcc, setBcc] = useState([])
     const [total, setTotal] = useState({
         charging_amount: 0,
         principal: 0,
@@ -59,8 +64,8 @@ export default function ManageSofChargingEst() {
     })
     const [timeSearch, setTimeSearch] = useState(
         {
-            start: moment().startOf('day').toDate(),
-            end: moment().endOf('day').add(120, 'hour').toDate()
+            start: (new dayjs).startOf('month'),
+            end: (new dayjs).endOf('month'),
         }
     )
 
@@ -74,7 +79,13 @@ export default function ManageSofChargingEst() {
         rows: [],
         total: 0
     });
-
+    const convertMultiToArr = (arr) => {
+        let newArr = [];
+        for (let i = 0; i < arr.length; i++) {
+            newArr.push(arr[i].label);
+        }
+        return newArr;
+    }
     const handleCloseModalEdit = () => {
         setOpenModalEdit(false)
     }
@@ -84,15 +95,21 @@ export default function ManageSofChargingEst() {
     const convertArr = (arr) => {
         let total = {
             charging_amount: 0,
+            INTEREST: 0,
             principal: 0,
             GRACE_INTEREST: 0,
         }
 
         let listConvert = [];
         for (let i = 0; i < arr.length; i++) {
-            total.principal = total.principal + arr[i].principal;
             if (arr[i].charging_type === "GRACE_INTEREST") {
                 total.GRACE_INTEREST = total.GRACE_INTEREST + arr[i].charging_amount;
+            }
+            else if (arr[i].charging_type === "INTEREST"){
+                total.INTEREST = total.INTEREST + arr[i].charging_amount;
+            }
+            else if (arr[i].charging_type === "PRINCIPAL"){
+                total.principal = total.principal + arr[i].charging_amount;
             }
             let key = arr[i].company.company_name + arr[i].charging_date;
             if (listConvert.filter(e => e.key === key).length === 0) {
@@ -127,13 +144,15 @@ export default function ManageSofChargingEst() {
     }
 
     useEffect(() => {
+        // dayjs(values.founding_date).format('DD-MM-YYYY');
         if (currentUser.token) {
             getListChargingEstApi({
                 'page_size': listResult.pageSize,
                 'page_index': listResult.page + 1,
                 'paging': false,
-                'charging_date_from':moment(timeSearch.start).format('DD-MM-YYYY'),
-                'charging_date_to':moment(timeSearch.end).format('DD-MM-YYYY'),
+                'charging_date_from': dayjs(timeSearch.start).format('DD-MM-YYYY'),
+                'charging_date_to': dayjs(timeSearch.end).format('DD-MM-YYYY'),
+                // 'charging_date_to': moment(timeSearch.end).format('DD-MM-YYYY'),
                 // 'company_name': nameSearch === '' ? null : nameSearch,
                 // 'contact_detail': contactSearch === 0 ? null : contactSearch,
                 // 'tax_number': taxSearch === 0 ? null : taxSearch,
@@ -187,17 +206,19 @@ export default function ManageSofChargingEst() {
     }
     const sendEmail = () => {
         sendEmailApi({
-            'email': email,
+            'list_email_to': email,
+            'list_email_cc': cc,
+            'list_email_bcc': bcc,
             'page_size': listResult.pageSize,
             'page_index': listResult.page + 1,
             'paging': false,
-            'charging_date_from':moment(timeSearch.start).format('DD-MM-YYYY'),
-            'charging_date_to':moment(timeSearch.end).format('DD-MM-YYYY'),
+            'charging_date_from': moment(timeSearch.start).format('DD-MM-YYYY'),
+            'charging_date_to': moment(timeSearch.end).format('DD-MM-YYYY'),
             // 'company_name': nameSearch === '' ? null : nameSearch,
             // 'contact_detail': contactSearch === 0 ? null : contactSearch,
             // 'tax_number': taxSearch === 0 ? null : taxSearch,
             'capital_company_id': companySearch === 0 ? null : companySearch,
-        }).then(r=>{
+        }).then(r => {
             setLoadingEmail(false)
             toast.success('Gửi báo cáo thành công, vui lòng kiểm tra email.', {
                 position: "top-right",
@@ -211,16 +232,8 @@ export default function ManageSofChargingEst() {
             console.log(r)
         }).catch(err => {
             setLoadingEmail(false)
-            toast.error('Có lỗi xảy ra', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            setOpenModalEmail(false)
             console.log(err)
+            setOpenModalEmail(false)
         })
     }
     const submitUpdate = () => {
@@ -237,14 +250,7 @@ export default function ManageSofChargingEst() {
             setRefresh(!refresh)
         }).catch(e => {
             handleCloseModalEdit();
-            toast.error('Có lỗi xảy ra', {
-                position: "top-right",
-                autoClose: 5000,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            })
+            console.log(e)
         })
     }
 
@@ -273,14 +279,7 @@ export default function ManageSofChargingEst() {
                             setRefresh(!refresh)
 
                         }).catch(err => {
-                            toast.error('Có lỗi xảy ra', {
-                                position: "top-right",
-                                autoClose: 1500,
-                                hideProgressBar: true,
-                                closeOnClick: true,
-                                pauseOnHover: true,
-                                draggable: true,
-                            });
+                            console.log(err)
                         })
                     }
                     resolve();
@@ -294,16 +293,15 @@ export default function ManageSofChargingEst() {
                     el = window._protected_reference = undefined;
                 });
         });
-
         el.click();
     }
     const exportChargingEst = () => {
-        Axios.post(API_MAP.EXPORT_CHARGING_EST,{
+        Axios.post(API_MAP.EXPORT_CHARGING_EST, {
             'page_size': listResult.pageSize,
             'page_index': listResult.page + 1,
             'paging': false,
-            'charging_date_from':moment(timeSearch.start).format('DD-MM-YYYY'),
-            'charging_date_to':moment(timeSearch.end).format('DD-MM-YYYY'),
+            'charging_date_from': moment(timeSearch.start).format('DD-MM-YYYY'),
+            'charging_date_to': moment(timeSearch.end).format('DD-MM-YYYY'),
             // 'company_name': nameSearch === '' ? null : nameSearch,
             // 'contact_detail': contactSearch === 0 ? null : contactSearch,
             // 'tax_number': taxSearch === 0 ? null : taxSearch,
@@ -424,36 +422,76 @@ export default function ManageSofChargingEst() {
                         <CloseIcon/>
                     </IconButton>
                 </DialogTitle>
-                <DialogContent style={{width: '450px', height: '150px'}} dividers className={"model-project"}>
+                <DialogContent style={{width: '550px', height: '300px'}} dividers className={"model-project"}>
                     <div className="form-input">
-                        <div className={'label-input'}>Email<span
-                            className={'error-message'}>*</span></div>
-                        <Autocomplete
-                            value={{
-                                id: email,
-                                label: email
-                            }
-                            }
-                            size={"small"}
-                            disablePortal
-                            options={listUser}
-                            freeSolo
-                            inputValue={email}
-                            renderInput={(params) =>
-                                <TextField
-                                    size={"small"}
-                                    {...params}
-                                />
-                            }
+                        <div className={'label-input'}>Email<span className={'error-message'}>*</span></div>
+                        <Stack spacing={3}>
+                            <Autocomplete
+                                multiple
+                                options={listUser}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                    />
+                                )}
 
-                            onInputChange={(event, value) => {
-                                setEmail(value)
+                                onChange={(event, newValue) => {
+                                    console.log("newValue", newValue);
+                                    setEmail(convertMultiToArr(newValue));
+                                }}
 
-                            }
-                            }
-                        />
+                            />
+                        </Stack>
 
                     </div>
+                    <div className="form-input">
+                        <div className={'label-input'}>CC</div>
+                        <Stack spacing={3}>
+                            <Autocomplete
+                                multiple
+                                options={listUser}
+                                // getOptionLabel={(option) => option.title}
+                                // defaultValue={[top5Songs[2]]}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                    />
+                                )}
+
+                                onChange={(event, newValue) => {
+                                    console.log("newValue", newValue);
+                                    setCc(convertMultiToArr(newValue));
+                                }}
+
+                            />
+                        </Stack>
+
+                    </div>
+                    <div className="form-input">
+                        <div className={'label-input'}>BCC</div>
+                        <Stack spacing={3}>
+                            <Autocomplete
+                                multiple
+                                options={listUser}
+                                // getOptionLabel={(option) => option.title}
+                                // defaultValue={[top5Songs[2]]}
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                    />
+                                )}
+
+                                onChange={(event, newValue) => {
+                                    console.log("newValue", newValue);
+                                    setBcc(convertMultiToArr(newValue));
+                                }}
+
+                            />
+                        </Stack>
+
+                    </div>
+
+
                 </DialogContent>
                 <DialogActions>
                     <Button variant="outlined" onClick={handleCloseModalEmail}>
@@ -465,10 +503,10 @@ export default function ManageSofChargingEst() {
                     {/*        <Button  onClick={submit} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>*/}
                     {/*}*/}
                     {
-                        loadingEmail ?<CircularProgress size={30}></CircularProgress>:
+                        loadingEmail ? <CircularProgress size={30}></CircularProgress> :
                             <Button
-                            onClick={sendEmail}
-                            variant={'contained'} color={"primary"}>Gửi</Button>
+                                onClick={sendEmail}
+                                variant={'contained'} disabled={email.length === 0} color={"primary"}>Gửi</Button>
                     }
 
                 </DialogActions>
@@ -491,7 +529,8 @@ export default function ManageSofChargingEst() {
                         Tính lãi
                     </Typography>
                     <div>
-                        <Button onClick={exportChargingEst} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
+                        <Button onClick={exportChargingEst} style={{marginLeft: '10px', marginRight: '10px'}}
+                                variant="text"
                                 startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
                         <Button onClick={sendEmailBtn} variant="text" startIcon={<ForwardToInboxIcon/>}>Gửi thống kê về
                             email</Button>
@@ -512,10 +551,11 @@ export default function ManageSofChargingEst() {
                     </div>
                     <Divider light/>
                     <Collapse in={openTotal} timeout="auto" unmountOnExit>
-                        <div className={'row'} style={{padding: '0 50px 50px 50px'}}>
+                        <div className={'row'} style={{padding: '0 50px 50px 50px', justifyContent: "space-between"}}>
                             <ItemDashboard tittle={'Tổng tiền phái trả'}
                                            content={total.charging_amount}></ItemDashboard>
                             <ItemDashboard tittle={'Tổng tiền gốc'} content={total.principal}></ItemDashboard>
+                            <ItemDashboard tittle={'Tổng tiền lãi'} content={total.INTEREST}></ItemDashboard>
                             <ItemDashboard tittle={'Tổng tiền lãi ân hạn'}
                                            content={total.GRACE_INTEREST}></ItemDashboard>
                         </div>
@@ -559,24 +599,36 @@ export default function ManageSofChargingEst() {
                                 }}
                             />
                         </div>
-                        <div style={{width: '20%', marginLeft: '20px'}}>
+                        <div style={{ marginLeft: '20px',width:'30%'}}>
                             <div className={'label-input'}>Khoảng thời gian</div>
-                            <div className={'time-search'}>
-                                <img src={require('../../assets/img/icon-calendar.svg').default} alt=""/>
-                                <DateRangePicker
-                                    initialSettings={{
-                                        timePicker: true,
-                                        // minDate: moment().startOf('day').toDate(),
-                                        startDate: moment().startOf('month').toDate(),
-                                        endDate: moment().endOf('month').toDate(),
-                                        locale: {
-                                            format: 'DD/MM/YYYY',
-                                        }
-                                    }}
-                                    onApply={handleChangeDateRange}
-                                >
-                                    <input type="text" className="form-control col input-date-range"/>
-                                </DateRangePicker>
+                            <div className={''} style={{display:"flex",alignItems:"center"}}>
+                                <LocalizationProvider  dateAdapter={AdapterDayjs} >
+                                    <DesktopDatePicker
+                                        style={{height:'30px'}}
+                                        inputFormat="DD-MM-YYYY"
+                                        value={timeSearch.start}
+                                        onChange={(values) => {
+                                            console.log(values)
+                                            setTimeSearch({...timeSearch,start: values})
+                                        }}
+
+                                        renderInput={(params) => <TextField size={"small"}  {...params} />}
+                                    />
+                                </LocalizationProvider>
+                                <div style={{margin:'0 5px'}}>đến</div>
+                                <LocalizationProvider   style={{width:'50px !important',height:'30px'}}  dateAdapter={AdapterDayjs} >
+                                    <DesktopDatePicker
+                                        style={{width:'50px !important',height:'30px'}}
+                                        inputFormat="DD-MM-YYYY"
+                                        value={timeSearch.end}
+                                        onChange={(values) => {
+                                            console.log(values)
+                                            setTimeSearch({...timeSearch,end: values})
+                                        }}
+                                        // onChange={value => props.setFieldValue("founding_date", value)}
+                                        renderInput={(params) => <TextField size={"small"}  {...params} />}
+                                    />
+                                </LocalizationProvider>
                             </div>
                         </div>
 
@@ -585,7 +637,7 @@ export default function ManageSofChargingEst() {
 
                 </Collapse>
                 <Divider light/>
-                <div className={'main-content-body-result'}>
+                <div className={'main-content-body-result'} style={{position:"relative"}}>
                     <TableContainer style={{height: '100%', width: '100%', overflow: "auto"}}>
                         {/*<div style={{height: '100%', width: '100%'}}>*/}
                         <Table stickyHeader className={"table-custom"}>
@@ -597,6 +649,9 @@ export default function ManageSofChargingEst() {
 
                                     <TableCell align="center">Mã khoản vay</TableCell>
                                     <TableCell align="center">Giá trị vay(VNĐ)</TableCell>
+                                    <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
+                                    {/*charging_type*/}
+                                    <TableCell align="center">Loại tiền lãi</TableCell>
                                     {/*start_date*/}
                                     <TableCell align="center">Ngày vay</TableCell>
                                     {/*end_date*/}
@@ -606,9 +661,7 @@ export default function ManageSofChargingEst() {
                                     {/*interest_rate*/}
                                     <TableCell align="center">Lãi xuất(%)</TableCell>
                                     {/*//charging_amount*/}
-                                    <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
-                                    {/*charging_type*/}
-                                    <TableCell align="center">Loại tiền lãi</TableCell>
+
                                     {/*interest_period*/}
                                     <TableCell align="center">Số kỳ trả lãi</TableCell>
                                     {/*principal_period*/}
@@ -643,18 +696,19 @@ export default function ManageSofChargingEst() {
                                                          onClick={() => redirectToSof(detail.sof_id)}>{detail.sof_code}</div>
                                                 </TableCell>
                                                 <TableCell>
+                                                    <div className={'error-message'}>
+                                                        {detail.charging_amount}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>{detail.charging_type}</TableCell>
+                                                <TableCell>
                                                     <div>{detail.principal}</div>
                                                 </TableCell>
                                                 <TableCell>{detail.start_date}</TableCell>
                                                 <TableCell>{detail.end_date}</TableCell>
                                                 <TableCell>{detail.nums_of_interest_day}</TableCell>
                                                 <TableCell>{detail.interest_rate}</TableCell>
-                                                <TableCell>
-                                                    <div className={'error-message'}>
-                                                        {detail.charging_amount}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell>{detail.charging_type}</TableCell>
+
                                                 <TableCell>{detail.interest_period}</TableCell>
                                                 <TableCell>{detail.principal_period}</TableCell>
                                                 <TableCell>

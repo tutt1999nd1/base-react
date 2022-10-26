@@ -35,9 +35,9 @@ export default function Nav() {
                         <li>
                             <div className={'nav-item'}>
                                 <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>
+                                    Dashboard
                                 </div>
                             </div>
-                            Dashboard
                         </li>
                     </NavLink>
                     <NavLink className={'nav-link'}   to={'assets'}>
@@ -120,7 +120,7 @@ export default function Nav() {
                             <NavLink className={'nav-link'} to={'supplier'}>
                                 <li>
                                     <div className={'nav-item li-child'}>
-                                        <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Đới tượng cung cấp
+                                        <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Đối tượng cung cấp
                                         </div>
                                     </div>
                                 </li>

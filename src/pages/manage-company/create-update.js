@@ -26,30 +26,21 @@ import dayjs from "dayjs";
 
 export default function EditCategory(props) {
     const navigate = useNavigate();
-    const [location,setLocation] = useSearchParams();
-    const [listGroup,setListGroup] =useState([]);
-    const [listType,setListType] =useState([]);
-    const [typeDefault,setTypeDefault] = useState(0)
-    const [groupDefault,setGroupDefault] = useState(0)
-    const [value, setValue] = useState()
-
-    const handleChangeDate = (newValue) => {
-        setValue(newValue);
-    };
-    const [info,setInfo] =useState({
-        company_name:'',
-        address:'',
-        contact_detail:'',
-        tax_number:'',
-        charter_capital:'',
-        founding_date:new dayjs,
-        capital_limit:'',
-        company_code:'',
-        company_type:'CAPITAL',
-        collateral:''
+    const [location, setLocation] = useSearchParams();
+    const [info, setInfo] = useState({
+        company_name: '',
+        address: '',
+        contact_detail: '',
+        tax_number: '',
+        charter_capital: '',
+        founding_date: new dayjs,
+        capital_limit: '',
+        company_code: '',
+        company_type: 'CAPITAL',
+        collateral: ''
     })
     const {isUpdate} = props
-    const [idUpdate,setIdUpdate] = useState(null)
+    const [idUpdate, setIdUpdate] = useState(null)
     const validationSchema = yup.object({
         company_name: yup
             .string()
@@ -76,30 +67,29 @@ export default function EditCategory(props) {
     const backList = () => {
         navigate('/company')
     }
-    useEffect(()=>{
-        if(isUpdate){
-            if(location.get('id')){
+    useEffect(() => {
+        if (isUpdate) {
+            if (location.get('id')) {
                 setIdUpdate(location.get('id'));
-            }
-            else navigate('/company')
+            } else navigate('/company')
         }
 
-    },[location])
-    useEffect(()=>{
-        if(isUpdate&&idUpdate){
-            getListCompanyApi({id:idUpdate,page_size:1}).then(r=>{
-                setInfo( r.data.companies[0])
+    }, [location])
+    useEffect(() => {
+        if (isUpdate && idUpdate) {
+            getListCompanyApi({id: idUpdate, page_size: 1}).then(r => {
+                setInfo(r.data.companies[0])
                 console.log(r.data.companies[0])
-            }).catch(e=>{
+            }).catch(e => {
 
             })
         }
-    },[idUpdate])
+    }, [idUpdate])
     const createCompanyApi = (data) => {
         return apiManagerCompany.createCompany(data);
     }
     const updateCompanyApi = (data) => {
-        return apiManagerCompany.updateCompany(idUpdate,data);
+        return apiManagerCompany.updateCompany(idUpdate, data);
     }
     const getListCompanyApi = (data) => {
         return apiManagerCompany.getListCompany(data);
@@ -109,9 +99,9 @@ export default function EditCategory(props) {
     const back = () => {
         navigate('/company')
     }
-    useEffect(()=>{
-        console.log("info",info)
-    },[info])
+    useEffect(() => {
+        console.log("info", info)
+    }, [info])
     return (
         <div className={'main-content'}>
             <ToastContainer
@@ -125,10 +115,11 @@ export default function EditCategory(props) {
                 draggable
                 pauseOnHover
             />
-            <Button onClick={back} style={{marginBottom:'10px'}} variant="text" startIcon={<KeyboardBackspaceIcon />}>Công ty</Button>
+            <Button onClick={back} style={{marginBottom: '10px'}} variant="text" startIcon={<KeyboardBackspaceIcon/>}>Công
+                ty</Button>
 
             <div className={'main-content-header'}>
-                <div className={'row'} style={{justifyContent:'space-between'}}>
+                <div className={'row'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
                         Quản lý công ty
                     </Typography>
@@ -136,22 +127,22 @@ export default function EditCategory(props) {
             </div>
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
-                    <h4>{isUpdate?'Cập nhật':'Thêm mới'} </h4>
+                    <h4>{isUpdate ? 'Cập nhật' : 'Thêm mới'} </h4>
                 </div>
-                <Divider light />
+                <Divider light/>
                 <Formik
                     enableReinitialize
                     initialValues={{
-                        company_name:info.company_name,
-                        address:info.address,
-                        contact_detail:info.contact_detail,
+                        company_name: info.company_name,
+                        address: info.address,
+                        contact_detail: info.contact_detail,
                         // asset_type:info.asset_type.id,
                         // asset_group:info.asset_group.id,
-                        tax_number:info.tax_number,
-                        charter_capital:info.charter_capital,
-                        founding_date:isUpdate?dayjs(info.founding_date,'DD-MM-YYYY'):info.founding_date,
-                        capital_limit:info.capital_limit,
-                        collateral:info.collateral
+                        tax_number: info.tax_number,
+                        charter_capital: info.charter_capital,
+                        founding_date: isUpdate ? dayjs(info.founding_date, 'DD-MM-YYYY') : info.founding_date,
+                        capital_limit: info.capital_limit,
+                        collateral: info.collateral
                     }}
                     validationSchema={validationSchema}
                     onSubmit={
@@ -161,8 +152,8 @@ export default function EditCategory(props) {
                             let valueConvert = {...values};
                             valueConvert.founding_date = dayjs(values.founding_date).format('DD-MM-YYYY');
                             console.log(valueConvert)
-                            if(isUpdate){
-                                updateCompanyApi(valueConvert).then(r=>{
+                            if (isUpdate) {
+                                updateCompanyApi(valueConvert).then(r => {
                                     toast.success('Cập nhật thành công', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -175,21 +166,13 @@ export default function EditCategory(props) {
                                         navigate(`/company/detail?id=${idUpdate}`)
                                     }, 1050);
 
-                                }).catch(e=>{
-                                    toast.error('Có lỗi xảy ra', {
-                                        position: "top-right",
-                                        autoClose: 1500,
-                                        hideProgressBar: true,
-                                        closeOnClick: true,
-                                        pauseOnHover: true,
-                                        draggable: true,
-                                    });
+                                }).catch(e => {
+                                    console.log(e)
                                 })
 
 
-                            }
-                            else {
-                                createCompanyApi(valueConvert).then(r=>{
+                            } else {
+                                createCompanyApi(valueConvert).then(r => {
                                     toast.success('Thêm mới thành công', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -199,18 +182,11 @@ export default function EditCategory(props) {
                                         draggable: true,
                                     });
                                     setTimeout(() => {
-                                        navigate('/company/detail?id='+r.data.id)
+                                        navigate('/company/detail?id=' + r.data.id)
                                     }, 1050);
 
-                                }).catch(e=>{
-                                    toast.error('Có lỗi xảy ra', {
-                                        position: "top-right",
-                                        autoClose: 1500,
-                                        hideProgressBar: true,
-                                        closeOnClick: true,
-                                        pauseOnHover: true,
-                                        draggable: true,
-                                    });
+                                }).catch(e => {
+                                    console.log(e)
                                 })
                             }
                         }
@@ -227,10 +203,11 @@ export default function EditCategory(props) {
                         } = props;
                         return (
                             <Form onSubmit={handleSubmit}>
-                                <Box sx={{ flexGrow: 1 }} className={'form-content'}>
+                                <Box sx={{flexGrow: 1}} className={'form-content'}>
                                     <Grid container spacing={4}>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Tên công ty<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Tên công ty<span
+                                                className={'error-message'}>*</span></div>
                                             <TextField
                                                 size={"small"}
                                                 id='company_name'
@@ -241,11 +218,11 @@ export default function EditCategory(props) {
                                                 onChange={handleChange}
                                                 error={touched.company_name && Boolean(errors.company_name)}
                                                 helperText={touched.company_name && errors.company_name}
-
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Khoản vay tối đa (VNĐ)<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Khoản vay tối đa (VNĐ)<span
+                                                className={'error-message'}>*</span></div>
                                             <NumericFormat
                                                 size={"small"}
                                                 id='capital_limit'
@@ -260,7 +237,7 @@ export default function EditCategory(props) {
                                                     const {formattedValue, value, floatValue} = values;
                                                     // do something with floatValue
                                                     const re = /^[0-9\b]+$/;
-                                                    if(re.test(floatValue)||floatValue===undefined){
+                                                    if (re.test(floatValue) || floatValue === undefined) {
                                                         console.log(floatValue)
                                                         setFieldValue('capital_limit', floatValue)
                                                     }
@@ -274,12 +251,14 @@ export default function EditCategory(props) {
 
                                                 }}
                                             />
-                                            <Typography className={'uppercase'} variant="caption" display="block" gutterBottom>
-                                                {values.capital_limit?`*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.capital_limit))} đồng`:''}
+                                            <Typography className={'uppercase'} variant="caption" display="block"
+                                                        gutterBottom>
+                                                {values.capital_limit ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.capital_limit))} đồng` : ''}
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Mã số thuế<span className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Mã số thuế<span
+                                                className={'error-message'}>*</span></div>
                                             <TextField
                                                 size={"small"}
                                                 id='tax_number'
@@ -361,7 +340,7 @@ export default function EditCategory(props) {
                                                     const {formattedValue, value, floatValue} = values;
                                                     // do something with floatValue
                                                     const re = /^[0-9\b]+$/;
-                                                    if(re.test(floatValue)||floatValue===undefined){
+                                                    if (re.test(floatValue) || floatValue === undefined) {
                                                         console.log(floatValue)
                                                         setFieldValue('charter_capital', floatValue)
                                                     }
@@ -371,8 +350,9 @@ export default function EditCategory(props) {
                                                 error={touched.charter_capital && Boolean(errors.charter_capital)}
                                                 helperText={touched.charter_capital && errors.charter_capital}
                                             />
-                                            <Typography className={'uppercase'} variant="caption" display="block" gutterBottom>
-                                                {values.charter_capital?`*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.charter_capital))} đồng`:''}
+                                            <Typography className={'uppercase'} variant="caption" display="block"
+                                                        gutterBottom>
+                                                {values.charter_capital ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.charter_capital))} đồng` : ''}
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
@@ -390,9 +370,9 @@ export default function EditCategory(props) {
 
                                             {/*/>*/}
                                             <div className={'label-input'}>Ngày thành lập</div>
-                                            <LocalizationProvider style={{width:'100%'}} dateAdapter={AdapterDayjs} >
+                                            <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
                                                 <DesktopDatePicker
-                                                    style={{width:'100% !important',height:'30px'}}
+                                                    style={{width: '100% !important', height: '30px'}}
                                                     inputFormat="DD-MM-YYYY"
                                                     value={values.founding_date}
                                                     // onChange={(values) => {
@@ -402,7 +382,8 @@ export default function EditCategory(props) {
                                                     onChange={value => props.setFieldValue("founding_date", value)}
                                                     error={touched.founding_date && Boolean(errors.founding_date)}
                                                     helperText={touched.founding_date && errors.founding_date}
-                                                    renderInput={(params) => <TextField size={"small"} fullWidth {...params} />}
+                                                    renderInput={(params) => <TextField size={"small"}
+                                                                                        fullWidth {...params} />}
                                                 />
                                             </LocalizationProvider>
 
@@ -412,8 +393,9 @@ export default function EditCategory(props) {
                                         {/*    <input type="file"/>*/}
                                         {/*</Grid>*/}
                                         <Grid item xs={6} md={12}>
-                                            <div className={''} style={{display:"flex", justifyContent:"center"}}>
-                                                <Button style={{marginRight:'10px'}} onClick={backList} variant="outlined">Hủy</Button>
+                                            <div className={''} style={{display: "flex", justifyContent: "center"}}>
+                                                <Button style={{marginRight: '10px'}} onClick={backList}
+                                                        variant="outlined">Hủy</Button>
                                                 <Button variant="contained" type='submit'>Lưu</Button>
 
                                             </div>
@@ -429,8 +411,9 @@ export default function EditCategory(props) {
         </div>
     )
 }
+
 function NumberFormatCustom(props) {
-    const { inputRef, onChange, ...other } = props;
+    const {inputRef, onChange, ...other} = props;
 
     return (
         <NumericFormat
