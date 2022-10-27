@@ -436,11 +436,9 @@ export default function DetailSOF(props) {
                                     <TableCell align="center">Công ty vay</TableCell>
                                     <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
 
-                                    <TableCell align="center">Giá trị vay(VNĐ)</TableCell>
-                                    {/*start_date*/}
                                     <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
-                                    {/*charging_type*/}
                                     <TableCell align="center">Loại tiền lãi</TableCell>
+                                    <TableCell align="center">Giá trị vay(VNĐ)</TableCell>
                                     <TableCell align="center">Ngày vay</TableCell>
                                     {/*end_date*/}
                                     <TableCell align="center">Ngày trả gốc</TableCell>
@@ -475,12 +473,12 @@ export default function DetailSOF(props) {
                                         </TableRow>
                                         {item.sof.map(detail => (
                                             <TableRow>
-                                                <TableCell><div className={'error-message'}>
+                                                <TableCell><div className={'error-message number'}>
                                                     {detail.charging_amount}
                                                 </div>
                                                 </TableCell>
                                                 <TableCell>{detail.charging_type}</TableCell>
-                                                <TableCell><div >{detail.principal}</div></TableCell>
+                                                <TableCell><div className={'number'}>{detail.principal}</div></TableCell>
                                                 <TableCell>{detail.start_date}</TableCell>
                                                 <TableCell>{detail.end_date}</TableCell>
                                                 <TableCell>{detail.nums_of_interest_day}</TableCell>

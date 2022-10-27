@@ -19,7 +19,13 @@ import {
 } from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import {currencyFormatter, pending} from "../../constants/utils";
+import {
+    changeVisibilityTable,
+    changeVisibilityTableAll,
+    checkColumnVisibility,
+    currencyFormatter,
+    pending
+} from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
@@ -61,7 +67,7 @@ export default function ManageCompany() {
             maxWidth: 60,
             filterable: false,
             headerClassName: 'super-app-theme--header',
-
+            hide: checkColumnVisibility('company','index'),
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         {
@@ -72,6 +78,7 @@ export default function ManageCompany() {
             headerClassName: 'super-app-theme--header',
             minWidth: 250,
             flex:1,
+            hide: checkColumnVisibility('company','company_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -86,6 +93,7 @@ export default function ManageCompany() {
             headerName: 'Mã số thuế',
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
+            hide: checkColumnVisibility('company','tax_number'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -101,6 +109,7 @@ export default function ManageCompany() {
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex:1,
+            hide: checkColumnVisibility('company','capital_limit'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -115,6 +124,7 @@ export default function ManageCompany() {
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex:1,
+            hide: checkColumnVisibility('company','remain_capital'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -130,6 +140,7 @@ export default function ManageCompany() {
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex:1,
+            hide: checkColumnVisibility('company','contact_detail'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -146,6 +157,7 @@ export default function ManageCompany() {
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
             flex:1,
+            hide: checkColumnVisibility('company','collateral'),
             renderCell: (params) => {
                 return <div className='content-column'>
                     {params.value}
@@ -162,6 +174,7 @@ export default function ManageCompany() {
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex:1,
+            hide: checkColumnVisibility('company','charter_capital'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -177,6 +190,7 @@ export default function ManageCompany() {
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex:1,
+            hide: checkColumnVisibility('company','founding_date'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -195,6 +209,7 @@ export default function ManageCompany() {
             headerClassName: 'super-app-theme--header',
             minWidth: 200,
             flex:1,
+            hide: checkColumnVisibility('company','address'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -205,7 +220,7 @@ export default function ManageCompany() {
         {
             field: 'action',
             headerClassName: 'super-app-theme--header',
-
+            hide: checkColumnVisibility('company','action'),
             headerName: 'Thao tác',
             sortable: false,
             width: 200,
@@ -542,6 +557,9 @@ export default function ManageCompany() {
                 <div className={'main-content-body-result'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
+                            onColumnVisibilityModelChange={(event) =>{
+                                changeVisibilityTableAll('company',event)
+                            }}
                             getRowHeight={() => 'auto'}
                             localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
                             labelRowsPerPage={"Số kết quả"}
@@ -585,13 +603,4 @@ export default function ManageCompany() {
             </div>
         </div>
     )
-}
-
-function CustomToolbar() {
-    return (
-        <GridToolbarContainer>
-            <GridToolbarColumnsButton/>
-            <GridToolbarDensitySelector/>
-        </GridToolbarContainer>
-    );
 }

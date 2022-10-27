@@ -19,7 +19,7 @@ import {
 } from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import {pending} from "../../constants/utils";
+import {changeVisibilityTableAll, checkColumnVisibility, pending} from "../../constants/utils";
 import apiManagerCategory from "../../api/manage-category";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
@@ -59,7 +59,7 @@ export default function ManageCategory() {
             maxWidth: 70,
             filterable: false,
             headerClassName: 'super-app-theme--header',
-
+            hide: checkColumnVisibility('category','index'),
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         // {
@@ -78,6 +78,7 @@ export default function ManageCategory() {
             headerName: 'Tên hạng mục',
             headerClassName: 'super-app-theme--header',
             flex:1,
+            hide: checkColumnVisibility('category','category_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -91,6 +92,7 @@ export default function ManageCategory() {
             headerName: 'Hạng mục cha',
             headerClassName: 'super-app-theme--header',
             flex:1,
+            hide: checkColumnVisibility('category','parent_category_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -105,6 +107,7 @@ export default function ManageCategory() {
             headerName: 'Mô tả',
             headerClassName: 'super-app-theme--header',
             flex:1,
+            hide: checkColumnVisibility('category','description'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -115,13 +118,13 @@ export default function ManageCategory() {
         {
             field: 'action',
             headerClassName: 'super-app-theme--header',
-
             headerName: 'Thao tác',
             sortable: false,
             width: 200,
             align: 'center',
             maxWidth: 130,
-            // flex: 1,
+            hide: checkColumnVisibility('category','action'),
+            flex: 1,
             renderCell: (params) => {
 
                 const detailBtn = (e) => {
@@ -402,6 +405,9 @@ export default function ManageCategory() {
                             // onPageSizeChange={(pageSize) =>
                             //    setCurrentSize(pageSize)
                             // }
+                            onColumnVisibilityModelChange={(event) =>{
+                                changeVisibilityTableAll('category',event)
+                            }}
                             onPageChange={(page) => setListResult((prev) => ({...prev, page}))}
                             onPageSizeChange={(pageSize) =>
                                 setListResult((prev) => ({...prev, pageSize}))

@@ -19,7 +19,7 @@ import {
 } from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import {pending} from "../../constants/utils";
+import {changeVisibilityTableAll, checkColumnVisibility, pending} from "../../constants/utils";
 import apiManagerCategory from "../../api/manage-category";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
@@ -59,7 +59,7 @@ export default function ManageCategory() {
             maxWidth: 70,
             filterable: false,
             headerClassName: 'super-app-theme--header',
-
+            hide: checkColumnVisibility('asset-group','index'),
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         // {
@@ -78,6 +78,7 @@ export default function ManageCategory() {
             headerName: 'Tên nhóm tài sản',
             headerClassName: 'super-app-theme--header',
             flex:1,
+            hide: checkColumnVisibility('asset-group','group_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -91,6 +92,7 @@ export default function ManageCategory() {
             headerName: 'Nhóm tài sản cha',
             headerClassName: 'super-app-theme--header',
             flex:1,
+            hide: checkColumnVisibility('asset-group','parent_asset_group_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -105,6 +107,7 @@ export default function ManageCategory() {
             headerName: 'Mô tả',
             headerClassName: 'super-app-theme--header',
             flex:1,
+            hide: checkColumnVisibility('asset-group','description'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -115,7 +118,7 @@ export default function ManageCategory() {
         {
             field: 'action',
             headerClassName: 'super-app-theme--header',
-
+            hide: checkColumnVisibility('asset-group','action'),
             headerName: 'Thao tác',
             sortable: false,
             width: 200,
@@ -409,6 +412,9 @@ export default function ManageCategory() {
                             onPageSizeChange={(pageSize) =>
                                 setListResult((prev) => ({...prev, pageSize}))
                             }
+                            onColumnVisibilityModelChange={(event) =>{
+                                changeVisibilityTableAll('asset-group',event)
+                            }}
                             checkboxSelection
                             loading={loading}
                             rowsPerPageOptions={[5, 10, 25]}

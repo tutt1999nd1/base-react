@@ -28,7 +28,13 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, viVN} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import {convertToAutoComplete, currencyFormatter, pending} from "../../constants/utils";
+import {
+    changeVisibilityTableAll,
+    checkColumnVisibility,
+    convertToAutoComplete,
+    currencyFormatter,
+    pending
+} from "../../constants/utils";
 import apiManagerSOF from "../../api/manage-sof";
 import apiManagerCompany from "../../api/manage-company";
 import apiManagerCategory from "../../api/manage-category";
@@ -94,6 +100,7 @@ export default function ManageSOF() {
             maxWidth: 60,
             filterable: false,
             headerClassName: 'super-app-theme--header',
+            hide: checkColumnVisibility('sof','index'),
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         {
@@ -103,6 +110,7 @@ export default function ManageSOF() {
             minWidth: 150,
             filterable: false,
             headerClassName: 'super-app-theme--header',
+            hide: checkColumnVisibility('sof','sof_code'),
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         {
@@ -112,6 +120,7 @@ export default function ManageSOF() {
             headerName: 'Công ty vay',
             headerClassName: 'super-app-theme--header',
             minWidth: 250,
+            hide: checkColumnVisibility('sof','capital_company_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -126,6 +135,7 @@ export default function ManageSOF() {
             headerName: 'Đối tượng cung cấp vốn',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('sof','supplier_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -140,6 +150,7 @@ export default function ManageSOF() {
             headerName: 'Hạng mục',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('sof','capital_category_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -154,6 +165,7 @@ export default function ManageSOF() {
             headerName: 'Mục đích vay',
             headerClassName: 'super-app-theme--header',
             minWidth: 250,
+            hide: checkColumnVisibility('sof','capital_campaign_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -168,6 +180,7 @@ export default function ManageSOF() {
             headerName: 'Trạng thái',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('sof','status'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -182,6 +195,7 @@ export default function ManageSOF() {
             headerName: 'Số tiền vay',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('sof','lending_amount'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -196,6 +210,7 @@ export default function ManageSOF() {
             headerName: 'Người quản lý',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('sof','owner_full_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -211,6 +226,7 @@ export default function ManageSOF() {
             headerName: 'Người phê duyệt',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('sof','approve_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -225,6 +241,7 @@ export default function ManageSOF() {
             headerName: 'Người tạo',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('sof','created_by'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -240,6 +257,7 @@ export default function ManageSOF() {
             headerName: 'Ngày vay',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('sof','lending_start_date'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -254,6 +272,7 @@ export default function ManageSOF() {
             headerName: 'Thời gian vay',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('sof','lending_in_month'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -269,6 +288,7 @@ export default function ManageSOF() {
             headerName: 'Số kỳ trả gốc',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('sof','principal_period'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -283,6 +303,7 @@ export default function ManageSOF() {
             headerName: 'Số kỳ trả lãi',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('sof','interest_period'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -298,6 +319,7 @@ export default function ManageSOF() {
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex: 1,
+            hide: checkColumnVisibility('sof','interest_rate'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -313,6 +335,7 @@ export default function ManageSOF() {
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex: 1,
+            hide: checkColumnVisibility('sof','grace_principal_in_month'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -328,6 +351,7 @@ export default function ManageSOF() {
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex: 1,
+            hide: checkColumnVisibility('sof','grace_interest_in_month'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -343,6 +367,7 @@ export default function ManageSOF() {
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex: 1,
+            hide: checkColumnVisibility('sof','interest_rate_type'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -359,6 +384,7 @@ export default function ManageSOF() {
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex: 1,
+            hide: checkColumnVisibility('sof','reference_interest_rate'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -375,6 +401,7 @@ export default function ManageSOF() {
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex: 1,
+            hide: checkColumnVisibility('sof','interest_rate_rage'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -390,6 +417,7 @@ export default function ManageSOF() {
             headerName: 'Trạng thái phê duyệt',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('sof','status_approve'),
             flex: 1,
             renderCell: (params) => {
                 return <div className='content-column'>
@@ -406,7 +434,7 @@ export default function ManageSOF() {
             align: 'center',
             minWidth: 150,
             headerClassName: 'super-app-theme--header',
-
+            hide: checkColumnVisibility('sof','action'),
             flex: 1,
             renderCell: (params) => {
 
@@ -892,6 +920,9 @@ export default function ManageSOF() {
                             // onPageSizeChange={(pageSize) =>
                             //    setCurrentSize(pageSize)
                             // }
+                            onColumnVisibilityModelChange={(event) =>{
+                                changeVisibilityTableAll('sof',event)
+                            }}
                             onPageChange={(page) => setListResult((prev) => ({...prev, page}))}
                             onPageSizeChange={(pageSize) =>
                                 setListResult((prev) => ({...prev, pageSize}))

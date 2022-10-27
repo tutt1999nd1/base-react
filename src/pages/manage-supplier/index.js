@@ -19,7 +19,7 @@ import {
 } from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import {currencyFormatter, pending} from "../../constants/utils";
+import {changeVisibilityTableAll, checkColumnVisibility, currencyFormatter, pending} from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
@@ -57,7 +57,7 @@ export default function ManageAssetGroup() {
             maxWidth: 75,
             filterable: false,
             headerClassName: 'super-app-theme--header',
-
+            hide: checkColumnVisibility('supplier','index'),
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         {
@@ -68,6 +68,7 @@ export default function ManageAssetGroup() {
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
             flex: 1,
+            hide: checkColumnVisibility('supplier','supplier_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -86,6 +87,7 @@ export default function ManageAssetGroup() {
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
             flex: 1,
+            hide: checkColumnVisibility('supplier','description'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -96,7 +98,7 @@ export default function ManageAssetGroup() {
         {
             field: 'action',
             headerClassName: 'super-app-theme--header',
-
+            hide: checkColumnVisibility('supplier','action'),
             headerName: 'Thao tác',
             sortable: false,
             width: 200,
@@ -347,6 +349,9 @@ export default function ManageAssetGroup() {
                             }
                             onSelectionModelChange={(newSelectionModel) => {
                                 setListDelete(newSelectionModel)
+                            }}
+                            onColumnVisibilityModelChange={(event) =>{
+                                changeVisibilityTableAll('supplier',event)
                             }}
                             checkboxSelection
                             loading={loading}

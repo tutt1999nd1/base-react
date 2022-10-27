@@ -19,7 +19,7 @@ import {
 } from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import {currencyFormatter, pending} from "../../constants/utils";
+import {changeVisibilityTableAll, checkColumnVisibility, currencyFormatter, pending} from "../../constants/utils";
 import apiManagerCampaign from "../../api/manage-campaign";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
@@ -59,7 +59,7 @@ export default function ManageCategory() {
             maxWidth: 70,
             filterable: false,
             headerClassName: 'super-app-theme--header',
-
+            hide: checkColumnVisibility('campaign','index'),
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         {
@@ -68,6 +68,7 @@ export default function ManageCategory() {
             field: 'campaign_name',
             headerName: 'Tên mục đích vay',
             headerClassName: 'super-app-theme--header',
+            hide: checkColumnVisibility('campaign','campaign_name'),
             flex: 1,
             renderCell: (params) => {
 
@@ -83,6 +84,7 @@ export default function ManageCategory() {
             headerName: 'Mục đích cha',
             headerClassName: 'super-app-theme--header',
             flex: 1,
+            hide: checkColumnVisibility('campaign','campaign_parent_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -97,6 +99,7 @@ export default function ManageCategory() {
             headerName: 'Số tiền vay',
             headerClassName: 'super-app-theme--header',
             flex: 1,
+            hide: checkColumnVisibility('campaign','amount'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -111,6 +114,7 @@ export default function ManageCategory() {
             headerName: 'Mô tả',
             headerClassName: 'super-app-theme--header',
             flex: 1,
+            hide: checkColumnVisibility('campaign','description'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -122,12 +126,12 @@ export default function ManageCategory() {
             field: 'action',
             headerName: 'Thao tác',
             headerClassName: 'super-app-theme--header',
-
+            hide: checkColumnVisibility('campaign','action'),
             sortable: false,
             width: 200,
             align: 'center',
             maxWidth: 130,
-            // flex: 1,
+            flex: 1,
             renderCell: (params) => {
 
                 const detailBtn = (e) => {
@@ -412,6 +416,9 @@ export default function ManageCategory() {
                             // onPageSizeChange={(pageSize) =>
                             //    setCurrentSize(pageSize)
                             // }
+                            onColumnVisibilityModelChange={(event) =>{
+                                changeVisibilityTableAll('campaign',event)
+                            }}
                             onPageChange={(page) => setListResult((prev) => ({...prev, page}))}
                             onPageSizeChange={(pageSize) =>
                                 setListResult((prev) => ({...prev, pageSize}))

@@ -120,7 +120,42 @@ export interface TabPanelProps {
     index: number;
     value: number;
 }
+export function checkColumnVisibility(table,column) {
+    let tableVisibility = JSON.parse(localStorage.getItem('tableVisibility'))||{};
 
+    if(tableVisibility[table]){
+        return tableVisibility[table].includes(column)
+    }
+    return false
+}
+export function changeVisibilityTable(table,column,hide) {
+    let tableVisibility = JSON.parse(localStorage.getItem('tableVisibility'))||{};
+    if (hide){
+        tableVisibility[table].push(column);
+    }
+    else {
+        tableVisibility[table] = tableVisibility[table].filter(e => e !== column);
+    }
+    localStorage.setItem('tableVisibility',JSON.stringify(tableVisibility))
+
+}
+export function changeVisibilityTableAll(table,event) {
+    let tableVisibility = JSON.parse(localStorage.getItem('tableVisibility'))||{};
+    if(!tableVisibility[table])tableVisibility[table]=[];
+    for ( let variable in event){
+        if(event[variable] ===true){
+            if(tableVisibility[table].includes(variable)){
+                tableVisibility[table] = tableVisibility[table].filter(e => e !== variable);
+            }
+        }
+        else {
+            if(!tableVisibility[table].includes(variable)){
+                tableVisibility[table].push(variable);
+            }
+        }
+    }
+    localStorage.setItem('tableVisibility',JSON.stringify(tableVisibility))
+}
 export function TabPanel(props: TabPanelProps) {
     const { children, value, index, ...other } = props;
 

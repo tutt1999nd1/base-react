@@ -24,7 +24,7 @@ import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, vi
 import {useNavigate} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import {currencyFormatter, pending} from "../../constants/utils";
+import {changeVisibilityTableAll, checkColumnVisibility, currencyFormatter, pending} from "../../constants/utils";
 import {useSelector} from "react-redux";
 import {TreeSelect} from "antd";
 import apiManagerAssetGroup from "../../api/manage-asset-group";
@@ -84,6 +84,7 @@ export default function ManageAssets() {
             maxWidth: 60,
             filterable: false,
             headerClassName: 'super-app-theme--header',
+            hide: checkColumnVisibility('asset','index'),
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         {
@@ -93,7 +94,7 @@ export default function ManageAssets() {
             headerName: 'Tên tài sản',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-
+            hide: checkColumnVisibility('asset','asset_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -108,7 +109,7 @@ export default function ManageAssets() {
             headerName: 'Nhóm tài sản',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-
+            hide: checkColumnVisibility('asset','asset_group_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -123,6 +124,7 @@ export default function ManageAssets() {
             headerName: 'Gía trị ban đầu',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            hide: checkColumnVisibility('asset','initial_value'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -137,7 +139,7 @@ export default function ManageAssets() {
             headerName: 'Vốn vay',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-
+            hide: checkColumnVisibility('asset','capital_value'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -152,7 +154,7 @@ export default function ManageAssets() {
             headerName: 'Gốc vay tín dụng hiện tại',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-
+            hide: checkColumnVisibility('asset','current_credit_value'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -168,7 +170,7 @@ export default function ManageAssets() {
             headerName: 'Số tiền vay tối đa',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-
+            hide: checkColumnVisibility('asset','max_capital_value'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -183,7 +185,7 @@ export default function ManageAssets() {
             headerName: 'Trạng thái',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-
+            hide: checkColumnVisibility('asset','status'),
             flex: 1,
             renderCell: (params) => {
 
@@ -200,6 +202,7 @@ export default function ManageAssets() {
             headerName: 'Thông tin',
             headerClassName: 'super-app-theme--header',
             minWidth: 450,
+            hide: checkColumnVisibility('asset','description'),
             // flex: 3,
             renderCell: (params) => {
 
@@ -218,7 +221,7 @@ export default function ManageAssets() {
             align: 'center',
             maxWidth: 130,
             headerClassName: 'super-app-theme--header',
-
+            hide: checkColumnVisibility('asset','action'),
             // flex: 1,
             renderCell: (params) => {
 
@@ -567,6 +570,9 @@ export default function ManageAssets() {
                             pagination
                             rowCount={listResult.total}
                             {...listResult}
+                            onColumnVisibilityModelChange={(event) =>{
+                                changeVisibilityTableAll('asset',event)
+                            }}
                             paginationMode="server"
                             // onPageChange={(page) => setCurrentPage(page)}
                             // onPageSizeChange={(pageSize) =>

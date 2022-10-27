@@ -90,6 +90,7 @@ export default function EditSOF(props) {
         interest_rate_type: 'Cố định',
         reference_interest_rate: '',
         interest_rate_rage: '',
+        changing_date:new dayjs,
         list_attachments: []
     })
     const {isUpdate} = props
@@ -423,6 +424,7 @@ export default function EditSOF(props) {
                     interest_rate_type: info.interest_rate_type,
                     reference_interest_rate: info.reference_interest_rate,
                     interest_rate_rage: info.interest_rate_rage,
+                    changing_date: info.changing_date,
                 }}
                 validationSchema={validationSchema}
                 onSubmit={(values, actions) => {
@@ -463,6 +465,7 @@ export default function EditSOF(props) {
 
                         // formData.append('currentCreditValue',values.)
                         if (isUpdate) {
+                            formData.append('changingDate', dayjs(values.changing_date).format('DD-MM-YYYY'))
                             console.log("listDeletedAttachment", listDeletedAttachment)
                             for (let i = 0; i < listDeletedAttachment.length; i++) {
                                 formData.append('listDeletedAttachment', listDeletedAttachment[i])
@@ -744,6 +747,37 @@ export default function EditSOF(props) {
                                             onChange={value => props.setFieldValue("lending_start_date", value)}
                                             error={touched.lending_start_date && Boolean(errors.lending_start_date)}
                                             helperText={touched.lending_start_date && errors.lending_start_date}
+                                            renderInput={(params) => <TextField size={"small"} fullWidth {...params} />}
+                                        />
+                                    </LocalizationProvider>
+
+                                </Grid>
+                                <Grid className={`${isUpdate?'':'hidden'}`} item xs={6} md={6}>
+                                    {/*<TextField*/}
+                                    {/*    id='founding_date'*/}
+                                    {/*    name='founding_date'*/}
+                                    {/*    className={'formik-input'}*/}
+                                    {/*    label="Ngày thành lập*"*/}
+                                    {/*    placeholder={'Ngày thành lập*'}*/}
+                                    {/*    // variant="standard"*/}
+                                    {/*    value={values.founding_date}*/}
+                                    {/*    onChange={handleChange}*/}
+                                    {/*    error={touched.founding_date && Boolean(errors.founding_date)}*/}
+                                    {/*    helperText={touched.founding_date && errors.founding_date}*/}
+
+                                    {/*/>*/}
+                                    <div className={'label-input'}>Ngày áp dụng gốc/lãi mới(DD-MM-YYYY)</div>
+                                    <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
+                                        <DesktopDatePicker
+                                            style={{width: '100% !important'}}
+                                            inputFormat="DD-MM-YYYY"
+                                            value={values.changing_date}
+                                            // onChange={(values) => {
+                                            //     console.log(values)
+                                            //
+                                            // }}
+
+                                            onChange={value => props.setFieldValue("changing_date", value)}
                                             renderInput={(params) => <TextField size={"small"} fullWidth {...params} />}
                                         />
                                     </LocalizationProvider>
