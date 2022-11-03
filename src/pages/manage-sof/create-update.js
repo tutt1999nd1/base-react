@@ -264,9 +264,14 @@ export default function EditSOF(props) {
     const back = () => {
         navigate('/sof')
     }
+    const convert = () => {
+
+    }
     useEffect(() => {
         console.log('info', {id: info.grace_interest_in_month, label: info.grace_interest_in_month + ''})
-        setListFileServer(info.list_attachments)
+
+        setListFileServer(info.list_attachments.filter(e => e.attachment_type === 'LOCAL'))
+        setListLinkServer(info.list_attachments.filter(e => e.attachment_type === "REFERENCE"))
         setCategorySearch(info.capital_category.id)
         setCampaignSearch(info.capital_campaign.id)
         setCompanySearch({id: info.capital_company.id, label: info.capital_company.company_name})

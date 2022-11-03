@@ -11,7 +11,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ClassIcon from '@mui/icons-material/Class';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import {useSelector} from "react-redux";
-
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 export default function Nav() {
     const { pathname } = useLocation();
     const navigate = useNavigate()
@@ -19,6 +19,10 @@ export default function Nav() {
     const [open, setOpen] = useState(true)
     const handleClickCollapse = () => {
         setOpen(!open);
+    };
+    const [openCompany, setOpenCompany] = useState(true)
+    const handleClickCollapseCompany = () => {
+        setOpenCompany(!openCompany);
     };
     useEffect(() => {
         if (pathname == '/') navigate('/dashboard')
@@ -83,6 +87,34 @@ export default function Nav() {
                     {/*        </div>*/}
                     {/*    </li>*/}
                     {/*</NavLink>*/}
+                    <li onClick={handleClickCollapseCompany}>
+                        <div className={'nav-item'} style={{width:'100%'}}>
+                            <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Quản lý công ty</div>
+                            {openCompany ? <ExpandLess/> : <ExpandMore/>}
+                        </div>
+                    </li>
+                    <Collapse in={openCompany} timeout="auto" unmountOnExit>
+                        <ul>
+                            <NavLink className={'nav-link'} to={'company'}>
+                                <li>
+                                    <div className={'nav-item li-child'}>
+                                        <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Công ty vay
+                                        </div>
+                                    </div>
+                                </li>
+                            </NavLink>
+                            <NavLink className={'nav-link'} to={'member'}>
+                                <li>
+                                    <div className={'nav-item li-child'}>
+                                        <div className={'nav-item-name'}><AccountBoxIcon></AccountBoxIcon>Thành viên
+                                        </div>
+                                    </div>
+                                </li>
+                            </NavLink>
+
+                        </ul>
+                    </Collapse>
+
                     <li onClick={handleClickCollapse}>
                         <div className={'nav-item'} style={{width:'100%'}}>
                             <div className={'nav-item-name'}><LibraryBooksIcon></LibraryBooksIcon>Danh mục</div>
@@ -90,22 +122,12 @@ export default function Nav() {
                         </div>
                     </li>
 
-
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <ul>
                             <NavLink className={'nav-link hidden'} to={'account'}>
                                 <li>
                                     <div className={'nav-item li-child'}>
                                         <div className={'nav-item-name'}><SwitchAccountIcon></SwitchAccountIcon>Tài khoản
-                                        </div>
-                                    </div>
-                                </li>
-                            </NavLink>
-
-                            <NavLink className={'nav-link'} to={'company'}>
-                                <li>
-                                    <div className={'nav-item li-child'}>
-                                        <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Công ty vay
                                         </div>
                                     </div>
                                 </li>
