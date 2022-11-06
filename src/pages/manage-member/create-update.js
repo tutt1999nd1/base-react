@@ -49,7 +49,6 @@ export default function EditMember(props) {
         description: yup
             .string()
             .trim()
-            .required('Không được để trống')
             .max(255, 'Tối đa 255 ký tự'),
 
     });

@@ -1,22 +1,37 @@
 import React, {useEffect, useState} from "react";
-import {Button, Divider, Typography} from "@mui/material";
+import {Button, Divider, FormControl, MenuItem, Select, Tooltip, Typography} from "@mui/material";
 import {toast, ToastContainer} from "react-toastify";
 import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import {useNavigate, useSearchParams} from "react-router-dom";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import {currencyFormatter} from "../../constants/utils";
+import {checkColumnVisibility, currencyFormatter} from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
+import AddIcon from "@mui/icons-material/Add";
+import {DataGrid, GridColDef, viVN} from "@mui/x-data-grid";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import apiManagerMember from "../../api/manage-member";
+import ModalAddMember from "./modal-add-member";
+import ModalEditHistory from "./modal-edit-histoty";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 
 export default function DetailCategory(props) {
     const navigate = useNavigate();
     const [location,setLocation] = useSearchParams();
-    const [listGroup,setListGroup] =useState([]);
-    const [listType,setListType] =useState([]);
-    const [typeDefault,setTypeDefault] = useState(0)
-    const [groupDefault,setGroupDefault] = useState(0)
     const [idDetail,setIdDetail] = useState(null)
+    const [idUpdateHistory,setIdUpdateHistory] = useState(0)
     const [openModalDel,setOpenModalDel] = useState(false)
+    const [listMember, setListMember] = React.useState([]);
+    const [listHistory, setListHistory] = React.useState([]);
+    const [isRefresh,setIsRefresh] = useState(false)
+    const [openModalAddMember,setOpenModalAddMember] = useState(false)
+    const [openModalAddHistory,setOpenModalAddHistory] = useState(false)
+    const [isAddHistory,setIsAddHistory] = useState(false)
+    const [openModalRemoveMember,setOpenModalRemoveMember] = useState(false)
+    const [openModalRemoveHistory,setOpenModalRemoveHistory] = useState(false)
+    const [idRemoveMember,setIdRemoveMember] = useState(0)
+    const [idRemoveHistory,setIdRemoveHistory] = useState(0)
+
 
     const [info,setInfo] =useState({
         company_name:'',
@@ -31,9 +46,203 @@ export default function DetailCategory(props) {
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
+    const handleCloseModalAddHistory = () => {
+        setOpenModalAddHistory(false)
+    }
     const backList = () => {
         navigate('/company')
     }
+    const redirectToMember = (id) => {
+        navigate('/member/detail?id='+id)
+    }
+    const handleChangePosition = (e,row) => {
+        // updateCompanyMemberApi
+        console.log(e.target.value);
+        row.position = e.target.value
+        updateCompanyMemberApi(row).then(r => {
+            setIsRefresh(!isRefresh)
+            toast.success('Cập nhật thành công', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }).catch(e => {
+            console.log(e)
+        })
+    }
+    const updateCompanyMemberApi = (data) => {
+        return apiManagerCompany.updateCompanyMember(data);
+    }
+    const columnsMember: GridColDef[] = [
+        {
+            sortable: false,
+            field: 'index',
+            headerName: 'STT',
+            maxWidth: 60,
+            filterable: false,
+            headerClassName: 'super-app-theme--header',
+            renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'name',
+            headerName: 'Tên nhân viên',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            flex:1,
+            renderCell: (params) => {
+                return <div className='content-column text-decoration' onClick={()=>redirectToMember(params.row.member_id)}>
+                    {params.value}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'position',
+            headerName: 'Vị trí',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 200,
+            hide: checkColumnVisibility('company','tax_number'),
+            renderCell: (params) => {
+                return <div className='content-column'>
+                    <FormControl fullWidth>
+                        <Select
+                            className={''}
+                            size={'small'}
+                            value={params.value}
+                            onChange={(e)=>handleChangePosition(e,params.row)}
+                            // size='small'
+                        >
+                            <MenuItem value={'NV'}>Nhân viên</MenuItem>
+                            <MenuItem value={'BGĐ'}>Ban giám đốc</MenuItem>
+
+                        </Select>
+                    </FormControl>
+                </div>;
+            },
+        },
+        {
+            field: 'action',
+            headerClassName: 'super-app-theme--header',
+            hide: checkColumnVisibility('company','action'),
+            headerName: 'Thao tác',
+            sortable: false,
+            width: 200,
+            align: 'center',
+            maxWidth: 130,
+            // flex: 1,
+            renderCell: (params) => {
+
+                const deleteBtn = (e) => {
+                    e.stopPropagation();
+                    console.log(params)
+                    // setIsDelList(false)
+                    // setOpenModalDel(true)
+                    // setInfoDel(params.row)
+                    setOpenModalRemoveMember(true)
+                    setIdRemoveMember(params.id)
+                }
+
+                return <div className='icon-action'>
+                    <Tooltip title="Xóa" onClick={deleteBtn}>
+                        <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
+                    </Tooltip>
+                </div>;
+            },
+        },
+
+        // { field: 'document', headerName: 'Nhóm tài sản' },
+    ];
+    const columnsHistory: GridColDef[] = [
+        {
+            sortable: false,
+            field: 'index',
+            headerName: 'STT',
+            maxWidth: 60,
+            filterable: false,
+            headerClassName: 'super-app-theme--header',
+            renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'change_date',
+            headerName: 'Ngày thay đổi',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 300,
+            renderCell: (params) => {
+                return <div className='content-column '>
+                    {params.value}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'changing_content',
+            headerName: 'Nội dung thay đổi',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 200,
+            flex:1,
+            hide: checkColumnVisibility('company','tax_number'),
+            renderCell: (params) => {
+                return <div className='content-column '>
+                    {params.value}
+                </div>;
+            },
+        },
+        {
+            field: 'action',
+            headerClassName: 'super-app-theme--header',
+            hide: checkColumnVisibility('company','action'),
+            headerName: 'Thao tác',
+            sortable: false,
+            width: 200,
+            align: 'center',
+            maxWidth: 130,
+            // flex: 1,
+            renderCell: (params) => {
+
+                const deleteBtn = (e) => {
+                    e.stopPropagation();
+                    console.log(params)
+                    // setIsDelList(false)
+                    // setOpenModalDel(true)
+                    // setInfoDel(params.row)
+                    setIsAddHistory(true);
+                    setOpenModalRemoveHistory(true)
+                    setIdRemoveHistory(params.id)
+                }
+
+                const updateBtn = (e) => {
+                    e.stopPropagation();
+                    console.log(params)
+                    // setIsDelList(false)
+                    // setOpenModalDel(true)
+                    // setInfoDel(params.row)
+                    setIsAddHistory(false);
+                    setIdUpdateHistory(params.id)
+                    setOpenModalAddHistory(true)
+                }
+                return <div className='icon-action'>
+                    <Tooltip title="Cập nhật" onClick={updateBtn}>
+                        <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
+                    </Tooltip>
+                    <Tooltip title="Xóa" onClick={deleteBtn}>
+                        <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
+                    </Tooltip>
+                </div>;
+            },
+        },
+
+        // { field: 'document', headerName: 'Nhóm tài sản' },
+    ];
+
     useEffect(()=>{
         if(idDetail){
             getListCompanyApi({id:idDetail,page_size:1}).then(r=>{
@@ -42,8 +251,17 @@ export default function DetailCategory(props) {
             }).catch(e=>{
 
             })
+            getChangeHistoryApi(idDetail).then(r=>{
+                console.log("history",r)
+                setListHistory(r.data)
+
+            })
+            getMemberApi(idDetail).then(r=>{
+                console.log("member",r)
+                setListMember(r.data)
+            })
         }
-    },[idDetail])
+    },[idDetail,isRefresh])
     useEffect(()=>{
         if(location.get('id')){
             setIdDetail(location.get('id'));
@@ -85,9 +303,65 @@ export default function DetailCategory(props) {
     const deleteCompanyApi = (id) => {
         return apiManagerCompany.deleteCompany(id);
     }
+    const getChangeHistoryApi = (id) => {
+        return apiManagerCompany.getChangeHistory(id);
+    }
+    const getMemberApi = (id) => {
+        return apiManagerCompany.getMember(id);
+    }
     useEffect(()=>{
         console.log("info",info)
     },[info])
+
+    const submitRemove = () => {
+        // alert("tutt20")
+        removeMemberFromCompanyApi(idRemoveMember).then(r => {
+            toast.success('Xóa thành công', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            setIsRefresh(!isRefresh)
+        }).catch(e => {
+            console.log(e)
+        })
+
+    }
+    const submitDeleteHistory = () => {
+        // alert("tutt20")
+        removeHistoryApi(idRemoveHistory).then(r => {
+            toast.success('Xóa thành công', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            setIsRefresh(!isRefresh)
+        }).catch(e => {
+            console.log(e)
+        })
+
+    }
+    const removeMemberFromCompanyApi = (id) => {
+        return apiManagerMember.removeMemberFromCompany(id);
+    }
+    const removeHistoryApi = (id) => {
+        return apiManagerCompany.deleteChangeHistory(id);
+    }
+    const handleCloseModalRemoveMember = () => {
+      setOpenModalRemoveMember(false)
+    }
+    const handleCloseModalAddMember = () => {
+      setOpenModalAddMember(false)
+    }
+    const handleCloseModalRemoveHistory = () => {
+      setOpenModalRemoveHistory(false)
+    }
     return (
         <div className={'main-content main-content-detail'}>
             {/*<div className={`loading ${false ? '' : ''}`}>*/}
@@ -96,6 +370,10 @@ export default function DetailCategory(props) {
             {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
             {/*</div>*/}
             <ModalConfirmDel name={info.company_name} openModalDel={openModalDel} handleCloseModalDel={handleCloseModalDel} submitDelete={submitDelete} ></ModalConfirmDel>
+            <ModalConfirmDel openModalDel={openModalRemoveMember} handleCloseModalDel={handleCloseModalRemoveMember} submitDelete={submitRemove} ></ModalConfirmDel>
+            <ModalConfirmDel openModalDel={openModalRemoveHistory} handleCloseModalDel={handleCloseModalRemoveHistory} submitDelete={submitDeleteHistory} ></ModalConfirmDel>
+            <ModalAddMember isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddMember={openModalAddMember} handleCloseModalAddMember={handleCloseModalAddMember} companyId={idDetail}></ModalAddMember>
+            <ModalEditHistory idUpdateHistory={idUpdateHistory} isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddHistory={openModalAddHistory} handleCloseModalAddHistory={handleCloseModalAddHistory} isAddHistory={isAddHistory} companyId={idDetail}></ModalEditHistory>
 
             <ToastContainer
                 position="top-right"
@@ -210,6 +488,79 @@ export default function DetailCategory(props) {
                 <Divider></Divider>
 
             </div>
+            <div className={'main-content-body'}>
+                <div className={'main-content-body-tittle'}>
+                    <h4>Thành viên</h4>
+                    <div>
+                        <Button  variant="outlined" onClick={()=>{setOpenModalAddMember(true)}} startIcon={<AddIcon/>}>
+                            Thêm thành viên vào công ty
+                        </Button>
+                    </div>
+                </div>
+                <div style={{height: '400px', width: '100%',marginTop:'10px'}}>
+
+                    <DataGrid
+                        // getRowHeight={() => 'auto'}
+                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
+                        labelRowsPerPage={"Số kết quả"}
+                        density="standard"
+                        rows={listMember}
+                        columns={columnsMember}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        // loading={loading}
+                        disableSelectionOnClick
+                        sx={{
+                            // boxShadow: 2,
+                            overflowX: 'scroll',
+                            border: 1,
+                            borderColor: 'rgb(255, 255, 255)',
+                            '& .MuiDataGrid-iconSeparator': {
+                                display: 'none',
+                            }
+                        }}
+
+                    />
+                </div>
+
+            </div>
+            <div className={'main-content-body'}>
+                <div className={'main-content-body-tittle'}>
+                    <h4>Lịch sử thay đổi</h4>
+                    <div>
+                        <Button  variant="outlined" onClick={()=>{setOpenModalAddHistory(true)}} startIcon={<AddIcon/>}>
+                            Thêm lịch sử thay đổi
+                        </Button>
+                    </div>
+                </div>
+                <div style={{height: '400px', width: '100%',marginTop:'10px'}}>
+
+                    <DataGrid
+                        // getRowHeight={() => 'auto'}
+                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
+                        labelRowsPerPage={"Số kết quả"}
+                        density="standard"
+                        rows={listHistory}
+                        columns={columnsHistory}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        // loading={loading}
+                        disableSelectionOnClick
+                        sx={{
+                            // boxShadow: 2,
+                            overflowX: 'scroll',
+                            border: 1,
+                            borderColor: 'rgb(255, 255, 255)',
+                            '& .MuiDataGrid-iconSeparator': {
+                                display: 'none',
+                            }
+                        }}
+
+                    />
+                </div>
+
+            </div>
+
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
                     <h4>Quản lý</h4>

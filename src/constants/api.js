@@ -68,5 +68,16 @@ const API_MAP = {
     UPDATE_MEMBER: API_DOMAIN + 'member',
     DELETE_MEMBER: API_DOMAIN + 'member',
     DELETE_LIST_MEMBER: API_DOMAIN + 'member/delete',
+    GET_COMPANY_MEMBER: API_DOMAIN + 'member/get-company',
+    REMOVE_MEMBER_COMPANY: API_DOMAIN + 'capital_company/remove-member',
+    GET_MEMBER_COMPANY: API_DOMAIN + 'capital_company/get-member',
+    ADD_MEMBER_COMPANY: API_DOMAIN + 'capital_company/add-member',
+    UPDATE_MEMBER_COMPANY: API_DOMAIN + 'capital_company/update-company-member',
+    GET_CHANGE_HISTORY: API_DOMAIN + 'history-company/get',
+    DELETE_CHANGE_HISTORY: API_DOMAIN + 'history-company',
+    CREATE_CHANGE_HISTORY: API_DOMAIN + 'history-company/create',
+    UPDATE_CHANGE_HISTORY: API_DOMAIN + 'history-company',
+    GET_CHANGE_HISTORY_BY_ID: API_DOMAIN + 'history-company/get-by-id',
+
 }
 export default API_MAP;

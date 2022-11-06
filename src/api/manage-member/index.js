@@ -17,6 +17,12 @@ class ApiManagerMember{
     deleteMember = (id) => {
         return axiosClient.delete(API_MAP.DELETE_MEMBER+`/${id}`)
     }
+    removeMemberFromCompany = (id) => {
+        return axiosClient.post(API_MAP.REMOVE_MEMBER_COMPANY+`/${id}`)
+    }
+    getCompanyOfMember = (id) => {
+        return axiosClient.get(API_MAP.GET_COMPANY_MEMBER+`/${id}`)
+    }
 }
 
 const apiManagerMember = new ApiManagerMember();

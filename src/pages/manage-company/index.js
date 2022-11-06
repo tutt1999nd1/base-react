@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {ClipLoader} from "react-spinners";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
-import {Button, Collapse, css, Divider, IconButton, TextField, Tooltip, Typography} from "@mui/material";
+import {Autocomplete, Button, Collapse, css, Divider, IconButton, TextField, Tooltip, Typography} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
@@ -22,7 +22,7 @@ import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import {
     changeVisibilityTable,
     changeVisibilityTableAll,
-    checkColumnVisibility,
+    checkColumnVisibility, convertToAutoComplete,
     currencyFormatter,
     pending
 } from "../../constants/utils";
@@ -35,6 +35,7 @@ import Axios from "axios";
 import API_MAP from "../../constants/api";
 import FileDownload from "js-file-download";
 import SimCardDownloadIcon from "@mui/icons-material/SimCardDownload";
+import apiManagerMember from "../../api/manage-member";
 
 export default function ManageCompany() {
     const currentUser = useSelector(state => state.currentUser)
@@ -42,10 +43,10 @@ export default function ManageCompany() {
     const [listDelete, setListDelete] = useState([]);
     const [isDelList,setIsDelList] =  useState(false)
     const [nameSearch,setNameSearch] =useState(null)
+    const [member,setMember] =useState({memberId:'',memberName:''})
     const [contactSearch,setContactSearch] =useState(null)
     const [taxSearch,setTaxSearch] =useState(null)
-    const [] =useState(null)
-    const [] =useState(null)
+    const [listMember, setListMember] = useState([]);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
     const [refresh, setRefresh] = useState(false)
@@ -304,6 +305,7 @@ export default function ManageCompany() {
                 'company_name': nameSearch === '' ? null : nameSearch,
                 'contact_detail': contactSearch === 0 ? null : contactSearch,
                 'tax_number': taxSearch === 0 ? null : taxSearch,
+                'member_id': member.memberId === '' ? null : member.memberId
             }).then(r => {
                 setLoading(false)
                 console.log("r", r)
@@ -315,7 +317,24 @@ export default function ManageCompany() {
             })
         }
 
-    }, [listResult.page, listResult.pageSize,nameSearch,contactSearch,taxSearch ,refresh,currentUser.token])
+    }, [listResult.page, listResult.pageSize,nameSearch,contactSearch,taxSearch ,refresh,currentUser.token,member])
+    useEffect(()=>{
+        if(currentUser.token){
+            getListMemberApi({paging: false}).then(r => {
+                // console.log("r.data.companies",r.data);
+
+                if (r.data.member_entities) {
+                    setListMember(convertToAutoComplete(r.data.member_entities, 'name'))
+
+                } else {
+                    setListMember([])
+                }
+
+            }).catch(e => {
+
+            })
+        }
+    },[currentUser.token])
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
@@ -429,6 +448,9 @@ export default function ManageCompany() {
     const getListCompanyApi = (data) => {
         setLoading(true)
         return apiManagerCompany.getListCompany(data);
+    }
+    const getListMemberApi = (data) => {
+        return apiManagerMember.getListMember(data);
     }
     const deleteCompanyApi = (id) => {
         setLoading(true)
@@ -546,6 +568,37 @@ export default function ManageCompany() {
                                 //     ),
                                 // }}
                                 // variant="standard"
+                            />
+                        </div>
+                        <div style={{width: '20%',marginLeft:'20px'}}>
+                            <div className={'label-input'}>Nhân viên</div>
+                            <Autocomplete
+                                id="combo-box-demo"
+                                options={listMember}
+                                value={{
+                                    id: member.memberId,
+                                    label: member.memberName,
+                                }
+                                }
+
+                                renderInput={(params) => < TextField  {...params} />}
+                                size={"small"}
+                                onChange={(event, newValue) => {
+                                    // setCompanySearch(newValue)
+                                    console.log("new_value", newValue)
+                                    if (newValue){
+                                        setMember({memberId: newValue.id,memberName:newValue.label})
+                                        // setFieldValue('capital_company_id', newValue.id)
+                                        // setFieldValue('capital_campaign_name', newValue.label)
+                                        // setIdCompanyCurrent(newValue.id)
+                                    }
+                                    else{
+                                        setMember({memberId: '',memberName:''})
+                                        // setFieldValue('capital_company_id', '')
+                                        // setFieldValue('capital_campaign_name', '')
+                                        // setIdCompanyCurrent(0)
+                                    }
+                                }}
                             />
                         </div>
 

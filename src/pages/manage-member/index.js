@@ -43,6 +43,7 @@ import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {useSelector} from "react-redux";
 import apiManagerMember from "../../api/manage-member";
+import ModalAddMember from "./modal-add-member";
 
 export default function ManageMember() {
     const currentUser = useSelector(state => state.currentUser)
@@ -180,6 +181,7 @@ export default function ManageMember() {
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
+
 
     const redirectAddPage = () => {
         navigate('/member/create')

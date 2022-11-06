@@ -871,6 +871,13 @@ height: 45px;
     .main-content{
         padding: 15px;
     }
+    .MuiSelect-select{
+        font-size: 0.75rem !important;
+    }
+    .MuiOutlinedInput-root{
+        font-size: 0.75rem !important;
+
+    }
     /*body {*/
     /*    !*zoom:50%;*!*/
     /*    zoom: 0.8;*/
