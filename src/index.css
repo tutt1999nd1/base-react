@@ -874,7 +874,7 @@ nav + div > ul{
     font-size: 0.88rem;
 }
 .nav-item .MuiSvgIcon-root{
-    font-size: 1rem;
+    font-size: 1.2rem;
 }
 .nav.animationTab{
     width: 20rem;
@@ -906,7 +906,7 @@ nav + div > ul{
 
 /* mobile style */
 @media only screen and (max-width: 787px) {
-    /* .nav.animationTab {
+    .nav.animationTab {
         visibility: visible;
     }
     .nav {
@@ -918,5 +918,37 @@ nav + div > ul{
         z-index: 20;
         transition: all .3s ease-in-out;
         visibility: hidden;
-    } */
+    }
+    .nav.animationTab .navbarBox__main {
+        visibility: visible;
+        transform: none;
+    }
+    .navbarBox__main {
+        width: calc(100% - 50px);
+        height: 100%;
+        transition: all .3s ease-in-out;
+        visibility: hidden;
+        transform: translateX(-100%);
+        background: #1F2251;
+    }
+    .nav.animationTab .navbarBox__backdrop {
+        visibility: visible;
+        opacity: 1;
+    }
+    .navbarBox__backdrop {
+        background-color: rgba(0,0,0,.75);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        transition: all .3s ease-in-out;
+        visibility: hidden;
+        opacity: 0;
+    }
+    .nav{
+        background: unset;
+        width: 100% !important;
+    }
 }

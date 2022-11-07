@@ -24,7 +24,7 @@ export default function Nav() {
         if (pathname == '/') navigate('/dashboard')
     }, [pathname])
     return (
-        <nav className={`nav ${currentUser.showMenu?'':'animationTab'}`}>
+        <nav className={`nav ${currentUser.showMenu?'animationTab':''}`}>
             <div className={'navbarBox__main'}>
                 <div className={'logo'}>
                     <img style={{width: '100%'}} src={require('../assets/img/logo-white.png')}/>
@@ -140,6 +140,7 @@ export default function Nav() {
                     </ul>
                 </div>
             </div>
+            <div class="navbarBox__backdrop"></div>
         </nav>
     );
 };
