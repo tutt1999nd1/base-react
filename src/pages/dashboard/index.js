@@ -259,7 +259,7 @@ export default function Dashboard() {
         },
 
         {
-            title: 'Gía trị (VNĐ)',
+            title: 'Giá trị (VNĐ)',
             dataIndex: 'total_value',
             width: '30%',
             key: 'total_value',
@@ -274,7 +274,7 @@ export default function Dashboard() {
         },
 
         {
-            title: 'Gía trị (VNĐ)',
+            title: 'Giá trị (VNĐ)',
             dataIndex: 'total_value',
             width: '30%',
             key: 'total_value',

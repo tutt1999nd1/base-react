@@ -24,8 +24,8 @@ export default function Nav() {
         if (pathname == '/') navigate('/dashboard')
     }, [pathname])
     return (
-        <nav className={`nav ${currentUser.showMenu?'':'hidden'}`}>
-            <div style={{margin: '10px'}}>
+        <nav className={`nav ${currentUser.showMenu?'':'animationTab'}`}>
+            <div className={'logo'}>
                 <img style={{width: '100%'}} src={require('../assets/img/logo-white.png')}/>
             </div>
             <hr/>

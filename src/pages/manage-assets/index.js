@@ -121,7 +121,7 @@ export default function ManageAssets() {
             filterable: false,
             sortable: false,
             field: 'initial_value',
-            headerName: 'Gía trị ban đầu',
+            headerName: 'Giá trị ban đầu',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             hide: checkColumnVisibility('asset','initial_value'),

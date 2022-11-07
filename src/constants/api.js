@@ -10,6 +10,8 @@ const API_MAP = {
     GET_LIST_ASSETS_DASHBOARD: API_DOMAIN + 'dashboard/asset_aggregate',
     GET_LIST_SOF_DASHBOARD: API_DOMAIN + 'dashboard/sof_aggregate',
     CREATE_ASSETS: API_DOMAIN + 'asset/create',
+    BOOKS: API_DOMAIN + 'asset/books',
+
     UPDATE_ASSETS: API_DOMAIN + 'asset',
     DELETE_ASSETS: API_DOMAIN + 'asset',
     IMPORT_ASSETS: API_DOMAIN + 'asset/import-excel',
