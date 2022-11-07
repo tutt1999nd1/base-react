@@ -78,6 +78,8 @@ const API_MAP = {
     CREATE_CHANGE_HISTORY: API_DOMAIN + 'history-company/create',
     UPDATE_CHANGE_HISTORY: API_DOMAIN + 'history-company',
     GET_CHANGE_HISTORY_BY_ID: API_DOMAIN + 'history-company/get-by-id',
-
+    REMOVE_SHAREHOLDER: API_DOMAIN + 'capital_company/remove-shareholder',
+    GET_SHAREHOLDER: API_DOMAIN + 'capital_company/get-shareholder',
+    ADD_SHAREHOLDER: API_DOMAIN + 'capital_company/add-shareholder',
 }
 export default API_MAP;

@@ -9,6 +9,8 @@ import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
 import {toast, ToastContainer} from "react-toastify";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import Highlighter from "react-highlight-words";
+
 import {
     DataGrid,
     GridColDef,
@@ -83,7 +85,12 @@ export default function ManageCompany() {
             renderCell: (params) => {
 
                 return <div className='content-column'>
-                    {params.value}
+                    <Highlighter
+                        highlightClassName="test-highlight"
+                        searchWords={[nameSearch]}
+                        autoEscape={true}
+                        textToHighlight={params.value}
+                    />
                 </div>;
             },
         },
@@ -98,7 +105,12 @@ export default function ManageCompany() {
             renderCell: (params) => {
 
                 return <div className='content-column'>
-                    {params.value}
+                    <Highlighter
+                        highlightClassName="test-highlight"
+                        searchWords={[taxSearch]}
+                        autoEscape={true}
+                        textToHighlight={params.value}
+                    />
                 </div>;
             },
         },
@@ -145,8 +157,12 @@ export default function ManageCompany() {
             renderCell: (params) => {
 
                 return <div className='content-column'>
-                    {params.value}
-                </div>;
+                    <Highlighter
+                        highlightClassName="test-highlight"
+                        searchWords={[contactSearch]}
+                        autoEscape={true}
+                        textToHighlight={params.value}
+                    />                </div>;
             },
 
         },
