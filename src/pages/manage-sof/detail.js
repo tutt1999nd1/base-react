@@ -230,9 +230,9 @@ export default function DetailSOF(props) {
                     startIcon={<KeyboardBackspaceIcon/>}>Nguồn vốn</Button>
 
             <div className={'main-content-header'}>
-                <div className={'row'} style={{justifyContent: 'space-between'}}>
+                <div className={'row makhoanvay'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
-                        {info.id}
+                        Mã khoản vay: {info.sof_code}
                     </Typography>
                     <Button onClick={update} style={{marginBottom: '10px'}} variant="outlined"
                             startIcon={<BorderColorOutlinedIcon/>}>Cập nhật</Button>

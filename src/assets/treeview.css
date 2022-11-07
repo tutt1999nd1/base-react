@@ -1196,7 +1196,7 @@
     margin: 0;
     padding: 0;
     color: rgba(0, 0, 0, 0.85);
-    font-size: 14px;
+    font-size: 0.88em;
     font-variant: tabular-nums;
     line-height: 1.5715;
     list-style: none;
@@ -1559,8 +1559,7 @@
     margin: 0;
     padding: 0;
     color: rgba(0, 0, 0, 0.85);
-    font-size: 14px;
-    font-variant: tabular-nums;
+    font-size: 0.8rem;
     line-height: 1.5715;
     list-style: none;
     font-feature-settings: 'tnum';
@@ -23002,7 +23001,7 @@ textarea.ant-mentions {
     list-style: none;
     font-feature-settings: 'tnum';
     position: relative;
-    font-size: 14px;
+    font-size: .8rem;
     background: #fff;
     border-radius: 2px;
 }

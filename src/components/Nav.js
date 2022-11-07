@@ -25,118 +25,120 @@ export default function Nav() {
     }, [pathname])
     return (
         <nav className={`nav ${currentUser.showMenu?'':'animationTab'}`}>
-            <div className={'logo'}>
-                <img style={{width: '100%'}} src={require('../assets/img/logo-white.png')}/>
-            </div>
-            <hr/>
-            <div style={{marginTop: "10px"}}>
-                <ul>
-                    <NavLink className={'nav-link'} isActive={true} to={'dashboard'}>
-                        <li>
-                            <div className={'nav-item'}>
-                                <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>
-                                    Dashboard
+            <div className={'navbarBox__main'}>
+                <div className={'logo'}>
+                    <img style={{width: '100%'}} src={require('../assets/img/logo-white.png')}/>
+                </div>
+                <hr/>
+                <div style={{marginTop: "10px"}}>
+                    <ul>
+                        <NavLink className={'nav-link'} isActive={true} to={'dashboard'}>
+                            <li>
+                                <div className={'nav-item'}>
+                                    <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>
+                                        Dashboard
+                                    </div>
                                 </div>
+                            </li>
+                        </NavLink>
+                        <NavLink className={'nav-link'}   to={'assets'}>
+                            <li>
+                                <div className={'nav-item'}>
+                                    <div className={'nav-item-name'}><AttachMoneyIcon></AttachMoneyIcon>Quản lý tài sản</div>
+                                </div>
+                            </li>
+                        </NavLink>
+                        <NavLink className={'nav-link'} to={'campaign'}>
+                            <li>
+                                <div className={'nav-item'}>
+                                    <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>Quản lý mục đích vay</div>
+                                </div>
+                            </li>
+                        </NavLink>
+                        <NavLink className={'nav-link'} to={'sof'}>
+                            <li>
+                                <div className={'nav-item'}>
+                                    <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý nguồn vốn</div>
+                                </div>
+                            </li>
+                        </NavLink>
+                        <NavLink className={'nav-link'} to={'approve'}>
+                            <li>
+                                <div className={'nav-item'}>
+                                    <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý phê duyệt</div>
+                                </div>
+                            </li>
+                        </NavLink>
+                        <NavLink className={'nav-link '} to={'charging_est'}>
+                            <li>
+                                <div className={'nav-item'}>
+                                    <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Tính lãi</div>
+                                </div>
+                            </li>
+                        </NavLink>
+                        {/*<NavLink className={'nav-link'} to={''}>*/}
+                        {/*    <li onClick={handleClickCollapse}>*/}
+                        {/*        <div className={'nav-item'} style={{width:'100%'}}>*/}
+                        {/*            <div className={'nav-item-name'}><LibraryBooksIcon></LibraryBooksIcon>Danh mục</div>*/}
+                        {/*            {open ? <ExpandLess/> : <ExpandMore/>}*/}
+                        {/*        </div>*/}
+                        {/*    </li>*/}
+                        {/*</NavLink>*/}
+                        <li onClick={handleClickCollapse}>
+                            <div className={'nav-item'} style={{width:'100%'}}>
+                                <div className={'nav-item-name'}><LibraryBooksIcon></LibraryBooksIcon>Danh mục</div>
+                                {open ? <ExpandLess/> : <ExpandMore/>}
                             </div>
                         </li>
-                    </NavLink>
-                    <NavLink className={'nav-link'}   to={'assets'}>
-                        <li>
-                            <div className={'nav-item'}>
-                                <div className={'nav-item-name'}><AttachMoneyIcon></AttachMoneyIcon>Quản lý tài sản</div>
-                            </div>
-                        </li>
-                    </NavLink>
-                    <NavLink className={'nav-link'} to={'campaign'}>
-                        <li>
-                            <div className={'nav-item'}>
-                                <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>Quản lý mục đích vay</div>
-                            </div>
-                        </li>
-                    </NavLink>
-                    <NavLink className={'nav-link'} to={'sof'}>
-                        <li>
-                            <div className={'nav-item'}>
-                                <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý nguồn vốn</div>
-                            </div>
-                        </li>
-                    </NavLink>
-                    <NavLink className={'nav-link'} to={'approve'}>
-                        <li>
-                            <div className={'nav-item'}>
-                                <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý phê duyệt</div>
-                            </div>
-                        </li>
-                    </NavLink>
-                    <NavLink className={'nav-link '} to={'charging_est'}>
-                        <li>
-                            <div className={'nav-item'}>
-                                <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Tính lãi</div>
-                            </div>
-                        </li>
-                    </NavLink>
-                    {/*<NavLink className={'nav-link'} to={''}>*/}
-                    {/*    <li onClick={handleClickCollapse}>*/}
-                    {/*        <div className={'nav-item'} style={{width:'100%'}}>*/}
-                    {/*            <div className={'nav-item-name'}><LibraryBooksIcon></LibraryBooksIcon>Danh mục</div>*/}
-                    {/*            {open ? <ExpandLess/> : <ExpandMore/>}*/}
-                    {/*        </div>*/}
-                    {/*    </li>*/}
-                    {/*</NavLink>*/}
-                    <li onClick={handleClickCollapse}>
-                        <div className={'nav-item'} style={{width:'100%'}}>
-                            <div className={'nav-item-name'}><LibraryBooksIcon></LibraryBooksIcon>Danh mục</div>
-                            {open ? <ExpandLess/> : <ExpandMore/>}
-                        </div>
-                    </li>
 
 
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <ul>
-                            <NavLink className={'nav-link hidden'} to={'account'}>
-                                <li>
-                                    <div className={'nav-item li-child'}>
-                                        <div className={'nav-item-name'}><SwitchAccountIcon></SwitchAccountIcon>Tài khoản
+                        <Collapse in={open} timeout="auto" unmountOnExit>
+                            <ul>
+                                <NavLink className={'nav-link hidden'} to={'account'}>
+                                    <li>
+                                        <div className={'nav-item li-child'}>
+                                            <div className={'nav-item-name'}><SwitchAccountIcon></SwitchAccountIcon>Tài khoản
+                                            </div>
                                         </div>
-                                    </div>
-                                </li>
-                            </NavLink>
+                                    </li>
+                                </NavLink>
 
-                            <NavLink className={'nav-link'} to={'company'}>
-                                <li>
-                                    <div className={'nav-item li-child'}>
-                                        <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Công ty vay
+                                <NavLink className={'nav-link'} to={'company'}>
+                                    <li>
+                                        <div className={'nav-item li-child'}>
+                                            <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Công ty vay
+                                            </div>
                                         </div>
-                                    </div>
-                                </li>
-                            </NavLink>
-                            <NavLink className={'nav-link'} to={'category'}>
-                                <li>
-                                    <div className={'nav-item li-child'}>
-                                        <div className={'nav-item-name'}><ClassIcon></ClassIcon>Hạng mục</div>
-                                    </div>
-                                </li>
-                            </NavLink>
-                            <NavLink className={'nav-link'} to={'supplier'}>
-                                <li>
-                                    <div className={'nav-item li-child'}>
-                                        <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Đối tượng cung cấp
+                                    </li>
+                                </NavLink>
+                                <NavLink className={'nav-link'} to={'category'}>
+                                    <li>
+                                        <div className={'nav-item li-child'}>
+                                            <div className={'nav-item-name'}><ClassIcon></ClassIcon>Hạng mục</div>
                                         </div>
-                                    </div>
-                                </li>
-                            </NavLink>
-                            <NavLink className={'nav-link'} to={'asset-group'}>
-                                <li>
-                                    <div className={'nav-item li-child'}>
-                                        <div className={'nav-item-name'}><ClassIcon></ClassIcon>Nhóm tài sản</div>
-                                    </div>
-                                </li>
-                            </NavLink>
-                        </ul>
-                    </Collapse>
+                                    </li>
+                                </NavLink>
+                                <NavLink className={'nav-link'} to={'supplier'}>
+                                    <li>
+                                        <div className={'nav-item li-child'}>
+                                            <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Đối tượng cung cấp
+                                            </div>
+                                        </div>
+                                    </li>
+                                </NavLink>
+                                <NavLink className={'nav-link'} to={'asset-group'}>
+                                    <li>
+                                        <div className={'nav-item li-child'}>
+                                            <div className={'nav-item-name'}><ClassIcon></ClassIcon>Nhóm tài sản</div>
+                                        </div>
+                                    </li>
+                                </NavLink>
+                            </ul>
+                        </Collapse>
 
 
-                </ul>
+                    </ul>
+                </div>
             </div>
         </nav>
     );
