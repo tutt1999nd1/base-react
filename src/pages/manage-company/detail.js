@@ -14,6 +14,7 @@ import apiManagerMember from "../../api/manage-member";
 import ModalAddMember from "./modal-add-member";
 import ModalEditHistory from "./modal-edit-histoty";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import ModalAddShareholder from "./modal-add-shareholder";
 
 export default function DetailCategory(props) {
     const navigate = useNavigate();
@@ -27,6 +28,7 @@ export default function DetailCategory(props) {
     const [isRefresh,setIsRefresh] = useState(false)
     const [openModalAddMember,setOpenModalAddMember] = useState(false)
     const [openModalAddHistory,setOpenModalAddHistory] = useState(false)
+    const [openModalAddShareholder,setOpenModalAddShareholder] = useState(false)
     const [isAddHistory,setIsAddHistory] = useState(false)
     const [openModalRemoveMember,setOpenModalRemoveMember] = useState(false)
     const [openModalRemoveShareholder,setOpenModalRemoveShareholder] = useState(false)
@@ -431,6 +433,9 @@ export default function DetailCategory(props) {
     const handleCloseModalRemoveShareholder = () => {
         setOpenModalRemoveShareholder(false)
     }
+    const handleCloseModalAddShareholder = () => {
+        setOpenModalAddShareholder(false)
+    }
     const deleteCompanyApi = (id) => {
         return apiManagerCompany.deleteCompany(id);
     }
@@ -466,6 +471,7 @@ export default function DetailCategory(props) {
             <ModalConfirmDel openModalDel={openModalRemoveHistory} handleCloseModalDel={handleCloseModalRemoveHistory} submitDelete={submitDeleteHistory} ></ModalConfirmDel>
             <ModalConfirmDel openModalDel={openModalRemoveShareholder} handleCloseModalDel={handleCloseModalRemoveShareholder} submitDelete={submitDeleteShareholder} ></ModalConfirmDel>
             <ModalAddMember isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddMember={openModalAddMember} handleCloseModalAddMember={handleCloseModalAddMember} companyId={idDetail}></ModalAddMember>
+            <ModalAddShareholder isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddShareholder={openModalAddShareholder} handleCloseModalAddShareholder={handleCloseModalAddShareholder} companyId={idDetail}></ModalAddShareholder>
             <ModalEditHistory idUpdateHistory={idUpdateHistory} isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddHistory={openModalAddHistory} handleCloseModalAddHistory={handleCloseModalAddHistory} isAddHistory={isAddHistory} companyId={idDetail}></ModalEditHistory>
 
             <ToastContainer
@@ -484,7 +490,7 @@ export default function DetailCategory(props) {
             <div className={'main-content-header'}>
                 <div className={'row'} style={{justifyContent:'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
-                        {info.asset_name}
+                        {info.company_name}
                     </Typography>
                     <Button onClick={update} style={{marginBottom:'10px'}} variant="outlined" startIcon={<BorderColorOutlinedIcon />}>Cập nhật</Button>
 
@@ -621,7 +627,7 @@ export default function DetailCategory(props) {
                 <div className={'main-content-body-tittle'}>
                     <h4>Danh sách cổ đông</h4>
                     <div>
-                        <Button  variant="outlined" onClick={()=>{setOpenModalAddHistory(true)}} startIcon={<AddIcon/>}>
+                        <Button  variant="outlined" onClick={()=>{setOpenModalAddShareholder(true)}} startIcon={<AddIcon/>}>
                             Thêm cổ đông
                         </Button>
                     </div>
@@ -658,7 +664,7 @@ export default function DetailCategory(props) {
                 <div className={'main-content-body-tittle'}>
                     <h4>Lịch sử thay đổi</h4>
                     <div>
-                        <Button  variant="outlined" onClick={()=>{setOpenModalAddHistory(true)}} startIcon={<AddIcon/>}>
+                        <Button  variant="outlined" onClick={()=>{setOpenModalAddHistory(true);setIsAddHistory(true)}} startIcon={<AddIcon/>}>
                             Thêm lịch sử thay đổi
                         </Button>
                     </div>

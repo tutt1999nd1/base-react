@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Outlet, useNavigate} from 'react-router-dom';
-import Header from "../../../base-react/src/components/Header";
-import Nav from "../../../base-react/src/components/Nav";
+import Header from "../components/Header";
+import Nav from "../components/Nav";
 import {useIsAuthenticated, useMsal} from "@azure/msal-react";
 import {loginRequest} from "../constants/authConfig";
 import {useDispatch, useSelector} from "react-redux";

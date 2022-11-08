@@ -81,7 +81,7 @@ export default function ManageCategory() {
             filterable: false,
             sortable: false,
             field: 'campaign_parent_name',
-            headerName: 'Mục đích cha',
+            headerName: 'Mục đích vay',
             headerClassName: 'super-app-theme--header',
             flex: 1,
             hide: checkColumnVisibility('campaign','campaign_parent_name'),
@@ -375,7 +375,7 @@ export default function ManageCategory() {
                             />
                         </div>
                         <div style={{width: '20%', marginLeft: '20px'}}>
-                            <div className={'label-input'}>Mục đích cha</div>
+                            <div className={'label-input'}>Mục đích vay</div>
                             <TreeSelect
                                 style={{ width: '100%' }}
                                 showSearch

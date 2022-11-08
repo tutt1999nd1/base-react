@@ -1,17 +1,35 @@
 body {
     margin: 0;
-    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: #f9fafc;
     height: 100%;
-    /*zoom:75%;*/
-    /*transform: scale(0.8);*/
-    /*transform-origin: 0 0;*/
 }
+.table-custom th,input,.item-dashboard-content h6,.main-content-tittle,.main-content-body-result button,#root div{
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+}
+input {
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
+    font-size: .8rem !important;
+    text-shadow: 0 0 #948f8f;
+}
+.main-content-header button{
+    font-size: 0.88rem !important;
+}
+/* .css-ahj2mt-MuiTypography-root{
+    font-size: 1.1vw;
+}
+.css-1jbbcbn-MuiDataGrid-columnHeaderTitle,.MuiDataGrid-cell--textLeft,.css-1kxbtff-MuiAutocomplete-root .MuiOutlinedInput-root.MuiInputBase-sizeSmall .MuiAutocomplete-input,.css-jedpe8-MuiSelect-select-MuiInputBase-input-MuiOutlinedInput-input.MuiSelect-select{
+    font-size: .8vw !important;
+}
+.ant-table,.css-1knaqv7-MuiButtonBase-root-MuiButton-root,.css-1yk1gt9-MuiInputBase-root-MuiOutlinedInput-root-MuiSelect-root,.css-9e5uuu-MuiPaper-root-MuiAutocomplete-paper,.ant-select-show-search.ant-select:not(.ant-select-customize-input) .ant-select-selector input::placeholder{
+    font-size: .9vw !important;
+} */
 
+.css-f3jnds-MuiDataGrid-columnHeaders{
+    border-radius: 0 !important;
+}
 html{
     margin: 0;
     height: 100%;
@@ -20,28 +38,39 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-
+h4{
+    margin: 0;
+    font-weight: 500;
+    padding: 12px 0;
+    font-size: 1rem;
+}
 hr {
-    margin: 24px 0px;
+    margin: 10px 0px;
     flex-shrink: 0;
     border-width: 0px 0px thin;
     border-style: solid;
-    border-color: rgb(45, 55, 72);
+    border-color: #fff;
+}
+.css-19qh8xo-MuiInputBase-input-MuiOutlinedInput-input{
+    font: revert;
+    color: #000;
+}
+.MuiButtonBase-root{
+    font-size: 0.88rem !important;
+    color: #1F2251 !important;
+    text-transform: inherit !important;
+}
+.makhoanvay h5{
+    font-weight: 500 !important;
+    font-size: 1rem;
+    color: #1F2251;
 }
 
+input:has(> div){
+    height: 40px;
+}
 .header {
     width: 100%;
-    /*position: fixed;*/
-    /*top: 0;*/
-}
-
-.nav {
-    /*float: left;*/
-    overflow-y: auto;
-    background: #111827;
-    width: 280px;
-    height: 100%;
-    color: rgb(209, 213, 219)
 }
 
 .nav ul {
@@ -51,7 +80,7 @@ hr {
 }
 
 .nav ul li:hover {
-    background: #242a38;
+    background:rgb(34 39 112 / 52%);
 }
 
 .nav ul li {
@@ -77,9 +106,7 @@ hr {
 
 }
 
-.li-child {
-    /*padding-left: 45px;*/
-}
+
 
 .footer {
     width: 100%;
@@ -135,16 +162,39 @@ hr {
     border-radius: 5px;
     direction: unset;
     text-decoration: none;
-    color: rgb(209, 213, 219);;
+    color: #fff;
 }
 
 .nav .active {
-    /*color: rgb(16, 185, 129) !important;*/
-    color: #fbbd2c !important;
-    background: #242a38;
+    color: #F16F21 !important;
+    background: rgb(34 39 112 / 52%);
+}
+.main-content-header svg path,.MuiButtonBase-root svg path{
+    fill: #1F2251;
+}
+.main-content-header button,.MuiDataGrid-toolbarContainer button{
+    color: #1F2251;
+    text-transform: capitalize;
 }
 
-.item-link {
+.main-content-header button:hover{
+    background-color: #1F2251;
+    color: #fff !important;
+}
+.main-content-header button:hover svg path{
+    fill: #fff;
+}
+.main-content-header button{
+    border: 1px solid #1F2251;
+    margin: 0 6px;
+    padding: 4px 12px;
+}
+.main-content-header button.MuiIconButton-colorPrimary{
+    width: 40px;
+    height: 40px;
+}
+.main-content-header .MuiButton-startIcon{
+    margin-right: 4px;
 }
 
 .main-body {
@@ -180,7 +230,7 @@ hr {
 }
 
 ::-webkit-scrollbar {
-    width: 20px;
+    width: 15px;
 }
 
 ::-webkit-scrollbar-track {
@@ -204,11 +254,11 @@ hr {
     border-radius: 8px;
     box-shadow: rgb(100 116 139 / 6%) 0px 1px 1px, rgb(100 116 139 / 10%) 0px 1px 2px;
 }
-
-.main-content-body {
-
+#asset_type{
+    padding: 7px;
+    font-size: .8rem;
+    margin-left: 5px;
 }
-
 .main-content-body-tittle {
     /*margin-left: 20px;*/
     padding-left: 20px;
@@ -224,7 +274,12 @@ hr {
     display: flex;
     align-items: center;
 }
-
+.MuiBox-root .Mui-selected{
+    color: #1F2251 !important;
+}
+.MuiTabs-indicator{
+    background-color: #1F2251 !important;
+}
 .main-content-body-search {
     padding-left: 20px;
     height: 90px;
@@ -263,8 +318,7 @@ hr {
     height: 70vh;
 }
 
-.main-content-detail {
-    width: 80%;
+.main-content-detail {  
     margin: 0 auto;
 }
 
@@ -348,11 +402,6 @@ p::first-letter, .uppercase::first-letter {
     color: red;
 }
 
-.nav-close {
-
-}
-
-
 
 .MuiDataGrid-iconSeparator {
     display: none
@@ -392,6 +441,10 @@ p::first-letter, .uppercase::first-letter {
     width: 100%;
     word-break: break-all;
     white-space: pre-wrap;
+    padding: 6px 0;
+}
+.row h5{
+    color: #1F2251;
 }
 .text-decoration{
     text-decoration: underline;
@@ -407,7 +460,7 @@ p::first-letter, .uppercase::first-letter {
 
 /*slecttree*/
 @font-face {
-    font-family: "Material Icons";
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-style: normal;
     font-weight: 400;
     src: url(https://fonts.gstatic.com/s/materialicons/v36/flUhRq6tzZclQEJ-Vdg-IuiaDsNc.woff2)
@@ -415,7 +468,7 @@ p::first-letter, .uppercase::first-letter {
 }
 
 .material-icons {
-    font-family: "Material Icons";
+    font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-weight: normal;
     font-style: normal;
     font-size: 24px;
@@ -471,7 +524,6 @@ p::first-letter, .uppercase::first-letter {
     outline: 0;
     vertical-align: middle;
 }
-
 .mdl-demo .checkbox-item:before {
     content: "";
     position: absolute;
@@ -483,7 +535,6 @@ p::first-letter, .uppercase::first-letter {
     border: 2px solid #aaa;
     transition: all 0.3s ease-in-out;
 }
-
 .mdl-demo .checkbox-item:checked:before {
     height: 50%;
     -webkit-transform: rotate(-45deg);
@@ -503,28 +554,22 @@ p::first-letter, .uppercase::first-letter {
     font-size:16px;
 }
 .react-dropdown-tree-select .dropdown .dropdown-trigger {
-height: 45px;
-}
-.mdl-demo{
-    /*width: 25%;*/
+    height: 45px;
 }
 .tag-item .tag{
     display: none;
 }
 .label-input{
-    font-size: 14px;
+    font-size: .8em;
     margin-bottom: 3px;
+    font-weight: 500;
 }
 .wrapper-login{
     display: flex;
-    /*background: red;*/
     height: 100%;
     background-image: url('assets/img/background.jpg');
-    /*transition: all 1s ease 0s;*/
     background-size: cover;
-
 }
-
 .wrapper-form-login{
     height: 100%;
     width: 30%;
@@ -535,9 +580,7 @@ height: 45px;
 }
 .logo img{
     width: 100%;
-    /*height: 200px;*/
 }
-
 .logo{
     text-align: center;
 }
@@ -566,6 +609,10 @@ height: 45px;
 .button-login >div{
     margin: 10px;
 }
+.logo{
+    margin: 12px;
+    padding-top: 4px;
+}
 .icon-microsoft img{
     height: 100%;
 }
@@ -575,33 +622,22 @@ height: 45px;
 .tittle-button-login{
     margin-left: 5px;
 }
-
 .button-login:hover {
     box-shadow: 0 8px 16px 0 rgb(0 0 0 / 20%);
-    /* transform: translateY(-10px); */
-    /* transform: scale(1.1, 1.1); */
     transform: scale(0.95, 0.95);
 }
-
-
-
 .login-with{
     font-size: 14px;
 }
-
 .widget-tittle{
     align-items: center;
     display: flex;
-    height: 45px;
+    height: auto;
     justify-content: space-between;
     padding-left: 20px;
     padding-right: 20px;
 }
-.widget-content{
-    padding: 20px;
-}
 .widget {
-    /*margin-top: 20px;*/
     height: 100%;
     width: 100%;
     background-color: rgb(255, 255, 255);
@@ -616,30 +652,19 @@ height: 45px;
     width: 100%;
     text-align: right;
 }
-.widget-content table{
-
-}
 .widget-content table {
-    /*font-family: arial, sans-serif;*/
     border-collapse: collapse;
     width: 100%;
     border: 1px solid #dddddd;
 
 }
-
 .widget-content td,.widget-content th {
-    /*border: 1px solid #dddddd;*/
     text-align: left;
-    padding: 8px;
 }
-
 
 .row-total{
     color: #1976d2 ;
     background-color: unset !important;
-
-}
-.widget-content{
 
 }
 .list-table{
@@ -649,15 +674,19 @@ height: 45px;
     width: 100%;
 }
 .list-table >div{
-    margin: 15px;
+    margin: 20px;
+}
+th{
+    font-weight: 600;
 }
 .tittle-table{
-    font-size: 17px;
-    font-weight: bold;
+    font-size: 1rem;
+    font-weight: 500;
     margin-bottom: 10px;
 }
-
-
+.MuiInputBase-root ,.MuiTablePagination-selectLabel,.MuiTablePagination-displayedRows{
+    font-size: .8rem !important;
+}
 .text-field-link{
     display: flex;
     align-items: center;
@@ -671,25 +700,13 @@ height: 45px;
 .modal-reject{
     width: 100%;
 }
-/*.css-1poimk-MuiPaper-root-MuiMenu-paper-MuiPaper-root-MuiPopover-pape{*/
-/*    left: unset !important;*/
-/*    right: 0px !important;*/
-/*}*/
 .MuiDataGrid-columnHeadersInner{
-    background-color: #fbbd2c;
+    background-color: #1F2251;
 }
 .MuiDataGrid-toolbarContainer{
     height: 47px;
 }
 
-
-/*.table-custom {*/
-/*    !*font-family: arial, sans-serif;*!*/
-/*    border-collapse: collapse;*/
-/*    width: 100%;*/
-/*    border: 1px solid #dddddd;*/
-
-/*}*/
 .table-custom{
     border-right: 1px solid #dddddd;
 
@@ -699,38 +716,29 @@ height: 45px;
     border-left: 1px solid #dddddd;
     padding-top: 8px!important;
     padding-bottom: 8px!important;
-    /*padding: 8px;*/
     color: rgb(18, 24, 40);
-    font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-weight: 400;
-    font-size: 0.8rem;
+    font-size: .8rem;
     min-width: 100px;
     max-width: 150px;
     min-height: auto;
     max-height: none;
-    /*width: 100%;*/
     word-break: break-all;
     white-space: pre-wrap;
 }
 .table-custom th{
-    color: rgb(55, 65, 81);
+    height: 40px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    color: #fff;
     border-bottom: none;
-    text-transform: uppercase;
-    background-color: #fbbd2c;
-    /*height: 20px;*/
-    font-family: "Roboto","Helvetica","Arial",sans-serif;
-    /*font-size: 1rem;*/
-    /*line-height: 1.5;*/
-    /*letter-spacing: 0.00938em;*/
+    background-color: #1F2251;
     font-weight: 500;
 }
 .table-custom{
-    /*height: 100%;*/
-    /*height: 40vh;*/
-    /*position:relative;*/
     overflow: auto;
     color: rgb(18, 24, 40);
-    font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-weight: 400;
     font-size: 1rem ;
     line-height: 1.5;
@@ -741,9 +749,6 @@ height: 45px;
     top:50%;
     left: 50%;
     transform: translate(-50%, -50%);
-}
-.table-custom th{
-    background-color: #fbbd2c;
 }
 .time-search {
     position: relative;
@@ -775,24 +780,22 @@ height: 45px;
     border-radius: 0.25rem;
     transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
 }
-
 .input-date-range:focus {
     color: #212529;
     background-color: #fff;
     border:solid 2px #1976d2;
     outline: 0;
-    /*box-shadow: 0 0 0 0.25rem rgb(13 110 253 / 25%);*/
 }
-
+.item-dashboard svg path{
+    fill: #fff;
+}
 .item-dashboard{
     border: solid 1px #dddddd;
     border-radius: 5px;
-    /*box-shadow: 0 2px 4px 0 rgb(0 0 0 / 10%);*/
     transition: 0.7s;
-    /*background-color: white;*/
-    background-color:#4b8fc3;
+    background-color:#F16F21;
     width: 275px;
-    height: 125px;
+    height: 100px;
     color: black;
     align-items: center;
     padding-left: 20px;
@@ -802,61 +805,97 @@ height: 45px;
 .item-dashboard .item-dashboard-tittle{
     color: white;
 }
-
 .item-dashboard-content h6{
     font-weight: 500 !important;
-    /*color: #1a75bb;*/
     color: white;
 }
-
 .form-input{
     margin-bottom: 20px;
 }
 .number{
     text-align: right;
 }
+.MuiDataGrid-columnHeaders svg path{
+    fill: #fff;
+}
 .super-app-theme--header {
-    color: rgb(55, 65, 81);
+    color: #fff;
     border-bottom: none;
-    /*font-weight: 600;*/
-    text-transform: uppercase;
-    background-color: #fbbd2c;
+    background-color: #1F2251   ;
     height: 50px;
-    font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 0.88rem;
     line-height: 1.5;
     letter-spacing: 0.00938em;
 }
 .MuiDataGrid-cell--textLeft{
     color: rgb(18, 24, 40);
-    font-family: "Roboto","Helvetica","Arial",sans-serif;
     font-weight: 400;
-    font-size: 1rem;
+    font-size: 0.8rem;
     line-height: 1.5;
     letter-spacing: 0.00938em;
 }
+.nav {
+    transition: width .2s cubic-bezier(0.77,0,0.175,1);
+    height: 100%;
+    border-right: 1px solid #E7EAF1;
+    width: 18vw;
+    overflow-y: auto;
+    background: #1F2251;
+    color: rgb(209, 213, 219)  
+}
+nav.nav {
+    width: 0;
+    border-right: 1px solid #d9e2e8;
+    transition: width .2s cubic-bezier(0.77,0,0.175,1);
+    width: 0;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+    -ms-overflow-style: none;
+    top: 0;
+    left: 0;
+    z-index: 9989;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+nav + div {
+    transition: padding-left .2s cubic-bezier(0.77,0,0.175,1);
+}
+nav + div > ul{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    min-width: 18vw;
+}
+.nav-item{
+    font-size: 0.88rem;
+}
+.nav-item .MuiSvgIcon-root{
+    font-size: 1.2rem;
+}
+.nav.animationTab{
+    width: 20rem;
+}
+.MuiDialogActions-root button{
+    background: #fff;
+    box-shadow: none;
+    border: 1px solid #1F2251;
+}
+.MuiDialogActions-root button:hover{
+    background-color: #1F2251;
+    color: #fff !important;
+}
 @media only screen and (max-width: 1600px) {
-    .MuiDataGrid-cell--textLeft{
-        font-size: 0.75rem;
-    }
     .super-app-theme--header {
         height: 30px;
         font-weight: bold;
-        font-size: 0.7rem;
-
+        font-size: 0.88rem;
     }
     .main-content-body-result .MuiSvgIcon-root{
         font-size: 0.8rem;
-    }
-    .nav-item{
-        font-size: 0.7rem;
-    }
-    .nav-item .MuiSvgIcon-root{
-        font-size: 0.8rem;
-    }
-    .nav {
-        width: 207px;
     }
     .table-custom{
         font-size: 0.8rem !important;
@@ -871,18 +910,73 @@ height: 45px;
     .main-content{
         padding: 15px;
     }
-    .MuiSelect-select{
-        font-size: 0.75rem !important;
-    }
-    .MuiOutlinedInput-root{
-        font-size: 0.75rem !important;
-
-    }
-    /*body {*/
-    /*    !*zoom:50%;*!*/
-    /*    zoom: 0.8;*/
-    /*    -moz-transform: scale(0.8);*/
-    /*    -moz-transform-origin: 0 0;*/
-    /*}*/
 }
 
+
+/* mobile style */
+@media only screen and (max-width: 787px) {
+    .nav.animationTab {
+        visibility: visible;
+    }
+    .nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 20;
+        transition: all .3s ease-in-out;
+        visibility: hidden;
+    }
+    .nav.animationTab .navbarBox__main {
+        visibility: visible;
+        transform: none;
+    }
+    .navbarBox__main {
+        width: calc(100% - 50px);
+        height: 100%;
+        transition: all .3s ease-in-out;
+        visibility: hidden;
+        transform: translateX(-100%);
+        background: #1F2251;
+    }
+    .nav.animationTab .navbarBox__backdrop {
+        visibility: visible;
+        opacity: 1;
+    }
+    .navbarBox__backdrop {
+        background-color: rgba(0,0,0,.75);
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: -1;
+        transition: all .3s ease-in-out;
+        visibility: hidden;
+        opacity: 0;
+    }
+    .nav{
+        background: unset;
+        width: 100% !important;
+    }
+    .main-content-body-search > div{
+        width: 100% !important;
+        padding: 6px 0;
+        margin: 0 !important;
+    }
+    .main-content-body-search{
+        display: block;
+        height: auto;
+        padding: 10px 20px;
+    }
+    .main-content-header .row{
+        display: block;
+    }
+    .main-content-header button{
+        margin: 10px 0;
+    }
+    .main-content-body{
+        margin-top: 10px;
+    }
+}

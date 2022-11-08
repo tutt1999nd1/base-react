@@ -23,13 +23,13 @@ import apiManagerMember from "../../api/manage-member";
 
 
 export default function ModalAddShareholder(props) {
-    const {openModalAddShareholder, handleCloseModalAddShareholder,companyId,setIsRefresh,isRefresh} = props
-    const [value,setValue] = useState({companyId:companyId,memberId:'',position:'NV',memberName:''})
+    const {openModalAddShareholder, handleCloseModalAddShareholder, companyId, setIsRefresh, isRefresh} = props
+    const [value, setValue] = useState({companyId: companyId, memberId: '', position: 'NV', memberName: ''})
     const [listMember, setListMember] = useState([]);
 
     const submit = () => {
-        handleCloseModalAddMember();
-        addShareholderApi({company_id:value.companyId,member_id:value.memberId}).then(r=>{
+        handleCloseModalAddShareholder();
+        addShareholderApi({company_id: value.companyId, member_id: value.memberId}).then(r => {
             toast.success('Thêm mới thành công', {
                 position: "top-right",
                 autoClose: 1500,
@@ -43,11 +43,11 @@ export default function ModalAddShareholder(props) {
         })
     }
     useEffect(() => {
-        setValue({companyId:companyId,memberId:'',memberName:''})
+        setValue({companyId: companyId, memberId: '', memberName: ''})
         // alert(name)
 
-    }, [openModalAddMember])
-    useEffect(()=>{
+    }, [openModalAddShareholder])
+    useEffect(() => {
         getListMemberApi({paging: false}).then(r => {
             // console.log("r.data.companies",r.data);
 
@@ -61,9 +61,9 @@ export default function ModalAddShareholder(props) {
         }).catch(e => {
 
         })
-    },[])
+    }, [])
     const handleChangePosition = (e) => {
-      setValue({...value,position: e.target.value})
+        setValue({...value, position: e.target.value})
     }
     const getListMemberApi = (data) => {
         return apiManagerMember.getListMember(data);
@@ -73,14 +73,14 @@ export default function ModalAddShareholder(props) {
     }
     return (
         <div>
-            <Dialog open={openModalAddMember} onClose={handleCloseModalAddMember}>
+            <Dialog open={openModalAddShareholder} onClose={handleCloseModalAddShareholder}>
                 <DialogTitle>
                     <div className={'vmp-tittle'}>
-                        Thêm thành viên vào công ty
+                        Thêm cổ đông
                     </div>
                     <IconButton
                         aria-label="close"
-                        onClick={handleCloseModalAddMember}
+                        onClick={handleCloseModalAddShareholder}
                         sx={{
                             position: 'absolute',
                             right: 8,
@@ -91,7 +91,7 @@ export default function ModalAddShareholder(props) {
                         <CloseIcon/>
                     </IconButton>
                 </DialogTitle>
-                <DialogContent style={{width: '450px', height: '200px'}} dividers className={"model-project"}>
+                <DialogContent style={{width: '450px', height: '150px'}} dividers className={"model-project"}>
                     <div className="form-input">
                         <div className={'label-input'}>Nhân viên<span className={'error-message'}>*</span>
                         </div>
@@ -109,14 +109,13 @@ export default function ModalAddShareholder(props) {
                             onChange={(event, newValue) => {
                                 // setCompanySearch(newValue)
                                 console.log("new_value", newValue)
-                                if (newValue){
-                                    setValue({...value,memberId: newValue.id,memberName:newValue.label})
+                                if (newValue) {
+                                    setValue({...value, memberId: newValue.id, memberName: newValue.label})
                                     // setFieldValue('capital_company_id', newValue.id)
                                     // setFieldValue('capital_campaign_name', newValue.label)
                                     // setIdCompanyCurrent(newValue.id)
-                                }
-                                else{
-                                    setValue({...value,memberId: '',memberName:''})
+                                } else {
+                                    setValue({...value, memberId: '', memberName: ''})
                                     // setFieldValue('capital_company_id', '')
                                     // setFieldValue('capital_campaign_name', '')
                                     // setIdCompanyCurrent(0)
@@ -124,37 +123,13 @@ export default function ModalAddShareholder(props) {
                             }}
                         />
                     </div>
-                    <div>
-
-                        <div className={'label-input'}>Vị trí<span className={'error-message'}>*</span>
-                        </div>
-                        <FormControl fullWidth>
-                            <Select
-                                size={'small'}
-                                labelId="asset_type_label"
-                                value={value.position}
-                                onChange={handleChangePosition}
-
-                                // size='small'
-                            >
-                                <MenuItem value={'NV'}>Nhân viên</MenuItem>
-                                <MenuItem value={'BGĐ'}>Ban giám đốc</MenuItem>
-
-                            </Select>
-
-                        </FormControl>
-                    </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="outlined" autoFocus onClick={handleCloseModalAddMember}>
+                    <Button variant="outlined" autoFocus onClick={handleCloseModalAddShareholder}>
                         Hủy
                     </Button>
-                    {/*{*/}
-                    {/*    !(valueInput.trim() ==(name?name.trim():name)) ?   <Button disabled={true} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>*/}
-                    {/*    :*/}
-                    {/*        <Button  onClick={submit} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>*/}
-                    {/*}*/}
-                    <Button disabled={value.memberId === ''} onClick={submit} variant={'contained'} color={"error"}>Lưu</Button>
+                    <Button disabled={value.memberId === ''} onClick={submit} variant={'contained'}
+                            color={"error"}>Lưu</Button>
                 </DialogActions>
             </Dialog>
         </div>

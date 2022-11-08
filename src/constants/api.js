@@ -1,15 +1,17 @@
 // const API_DOMAIN = 'http://10.190.180.251:8088/'
 // const API_DOMAIN = 'http://10.190.160.20:8088/'
-const API_DOMAIN = 'http://localhost:8443/'
+// const API_DOMAIN = 'http://localhost:8443/'
 // const API_DOMAIN = 'http://103.151.238.62:8088/'
 // const API_DOMAIN = 'http://103.151.238.62:8089/'
-// const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
-// const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
+const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
+// const API_DOMAIN = 'https://devcashflow.amberholdings.vn:8443/'
 const API_MAP = {
     GET_LIST_ASSETS: API_DOMAIN + 'asset/search',
     GET_LIST_ASSETS_DASHBOARD: API_DOMAIN + 'dashboard/asset_aggregate',
     GET_LIST_SOF_DASHBOARD: API_DOMAIN + 'dashboard/sof_aggregate',
     CREATE_ASSETS: API_DOMAIN + 'asset/create',
+    BOOKS: API_DOMAIN + 'asset/books',
+
     UPDATE_ASSETS: API_DOMAIN + 'asset',
     DELETE_ASSETS: API_DOMAIN + 'asset',
     IMPORT_ASSETS: API_DOMAIN + 'asset/import-excel',

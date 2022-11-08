@@ -8,6 +8,7 @@ export const msalConfig = {
         clientId: "eb78163a-2610-446e-9815-9298ffe657d8",
         authority: "https://login.microsoftonline.com/a3caf050-59a6-4dd2-ac1b-2566f947dd3d", // This is a URL (e.g. https://login.microsoftonline.com/{your tenant ID})
         // redirectUri: "https://cashflow.amberholdings.vn/dashboard",
+        // redirectUri: "https://devcashflow.amberholdings.vn/dashboard",
         // redirectUri: "http://localhost:3000/login",
         redirectUri: "http://localhost:3000/dashboard",
     },

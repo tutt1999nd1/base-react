@@ -52,7 +52,7 @@ class ApiManagerCompany{
     }
 
     addShareHolder = (data) => {
-        return axiosClient.post(API_MAP.CREATE_CHANGE_HISTORY,data)
+        return axiosClient.post(API_MAP.ADD_SHAREHOLDER,data)
     };
     getShareHolder = (id) => {
         return axiosClient.get(API_MAP.GET_SHAREHOLDER+`/${id}`)
