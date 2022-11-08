@@ -870,6 +870,9 @@ nav + div > ul{
     align-items: flex-start;
     min-width: 18vw;
 }
+.logo button{
+    display: none;
+}
 .nav-item{
     font-size: 0.88rem;
 }
@@ -888,15 +891,16 @@ nav + div > ul{
     background-color: #1F2251;
     color: #fff !important;
 }
+.main-content-body-result .MuiSvgIcon-root{
+    font-size: 0.8rem;
+}
 @media only screen and (max-width: 1600px) {
     .super-app-theme--header {
         height: 30px;
         font-weight: bold;
         font-size: 0.88rem;
     }
-    .main-content-body-result .MuiSvgIcon-root{
-        font-size: 0.8rem;
-    }
+    
     .table-custom{
         font-size: 0.8rem !important;
     }
@@ -972,11 +976,42 @@ nav + div > ul{
     }
     .main-content-header .row{
         display: block;
+        margin-top: 10px;
     }
     .main-content-header button{
-        margin: 10px 0;
+        margin: 10px 4px;
     }
     .main-content-body{
         margin-top: 10px;
     }
+    .logo{
+        justify-content: space-between;
+        display: flex;
+    }
+    .logo img{
+        width: 85% !important;
+    }
+    .main-content{
+        padding: 12px;
+    }
+    .logo button{
+        box-shadow: none;
+        background: unset;
+        border: unset;
+        display: block;
+    }
+    #simple-tabpanel-0 > div{
+        padding: 0;
+    }
+    .list-table{
+        display: block;
+    }
+    .MuiBox-root .MuiGrid-grid-md-12{
+        flex-basis: 100%;
+        max-width: 100%;
+    }
+    .wrapper-table{
+        width: auto;
+    }
+
 }
