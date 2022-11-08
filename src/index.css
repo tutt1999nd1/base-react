@@ -879,6 +879,15 @@ nav + div > ul{
 .nav.animationTab{
     width: 20rem;
 }
+.MuiDialogActions-root button{
+    background: #fff;
+    box-shadow: none;
+    border: 1px solid #1F2251;
+}
+.MuiDialogActions-root button:hover{
+    background-color: #1F2251;
+    color: #fff !important;
+}
 @media only screen and (max-width: 1600px) {
     .super-app-theme--header {
         height: 30px;
@@ -950,5 +959,24 @@ nav + div > ul{
     .nav{
         background: unset;
         width: 100% !important;
+    }
+    .main-content-body-search > div{
+        width: 100% !important;
+        padding: 6px 0;
+        margin: 0 !important;
+    }
+    .main-content-body-search{
+        display: block;
+        height: auto;
+        padding: 10px 20px;
+    }
+    .main-content-header .row{
+        display: block;
+    }
+    .main-content-header button{
+        margin: 10px 0;
+    }
+    .main-content-body{
+        margin-top: 10px;
     }
 }
