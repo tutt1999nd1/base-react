@@ -11,7 +11,7 @@ import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ClassIcon from '@mui/icons-material/Class';
 import AssignmentIcon from '@mui/icons-material/Assignment';
 import {useDispatch,useSelector} from "react-redux";
-
+import { BrowserView, MobileView, isBrowser, isMobile } from 'react-device-detect';
 
 import {updateShowMenu} from "../store/user/userSlice";
 
@@ -32,8 +32,6 @@ export default function Nav() {
         dispatch(updateShowMenu(!currentUser.showMenu))
     }
 
-    
-
     return (
         <nav className={`nav ${currentUser.showMenu?'animationTab':''}`}>
             <div className={'navbarBox__main'}>
@@ -48,7 +46,7 @@ export default function Nav() {
                 <hr/>
                 <div style={{marginTop: "10px"}}>
                     <ul>
-                        <NavLink className={'nav-link'} isActive={true} to={'dashboard'} onClick={touchMenu}>
+                        <NavLink className={'nav-link'} isActive={true} to={'dashboard'} onClick={isMobile?touchMenu:''}>
                             <li>
                                 <div className={'nav-item'}>
                                     <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>
@@ -57,35 +55,35 @@ export default function Nav() {
                                 </div>
                             </li>
                         </NavLink>
-                        <NavLink className={'nav-link'}   to={'assets'} onClick={touchMenu}>
+                        <NavLink className={'nav-link'}   to={'assets'} onClick={isMobile?touchMenu:''}>
                             <li>
                                 <div className={'nav-item'}>
                                     <div className={'nav-item-name'}><AttachMoneyIcon></AttachMoneyIcon>Quản lý tài sản</div>
                                 </div>
                             </li>
                         </NavLink>
-                        <NavLink className={'nav-link'} to={'campaign'} onClick={touchMenu}>
+                        <NavLink className={'nav-link'} to={'campaign'} onClick={isMobile?touchMenu:''}>
                             <li>
                                 <div className={'nav-item'}>
                                     <div className={'nav-item-name'}><DashboardIcon></DashboardIcon>Quản lý mục đích vay</div>
                                 </div>
                             </li>
                         </NavLink>
-                        <NavLink className={'nav-link'} to={'sof'} onClick={touchMenu}> 
+                        <NavLink className={'nav-link'} to={'sof'} onClick={isMobile?touchMenu:''}>
                             <li>
                                 <div className={'nav-item'}>
                                     <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý nguồn vốn</div>
                                 </div>
                             </li>
                         </NavLink>
-                        <NavLink className={'nav-link'} to={'approve'} onClick={touchMenu}>
+                        <NavLink className={'nav-link'} to={'approve'} onClick={isMobile?touchMenu:''}>
                             <li>
                                 <div className={'nav-item'}>
                                     <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý phê duyệt</div>
                                 </div>
                             </li>
                         </NavLink>
-                        <NavLink className={'nav-link '} to={'charging_est'} onClick={touchMenu}>
+                        <NavLink className={'nav-link '} to={'charging_est'} onClick={isMobile?touchMenu:''}>
                             <li>
                                 <div className={'nav-item'}>
                                     <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Tính lãi</div>
