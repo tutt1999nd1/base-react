@@ -24,12 +24,12 @@ import apiManagerMember from "../../api/manage-member";
 
 export default function ModalAddShareholder(props) {
     const {openModalAddShareholder, handleCloseModalAddShareholder, companyId, setIsRefresh, isRefresh} = props
-    const [value, setValue] = useState({companyId: companyId, memberId: '', position: 'NV', memberName: ''})
+    const [value, setValue] = useState({companyId: companyId, memberId: '', position: 'TGĐ', memberName: ''})
     const [listMember, setListMember] = useState([]);
 
     const submit = () => {
         handleCloseModalAddShareholder();
-        addShareholderApi({company_id: value.companyId, member_id: value.memberId}).then(r => {
+        addShareholderApi({company_id: value.companyId, member_id: value.memberId,position:value.position}).then(r => {
             toast.success('Thêm mới thành công', {
                 position: "top-right",
                 autoClose: 1500,
@@ -123,6 +123,26 @@ export default function ModalAddShareholder(props) {
                             }}
                         />
                     </div>
+                    <div>
+                        <div className={'label-input'}>Vị trí<span className={'error-message'}>*</span>
+                        </div>
+                        <FormControl fullWidth>
+                            <Select
+                                size={'small'}
+                                labelId="asset_type_label"
+                                value={value.position}
+                                onChange={handleChangePosition}
+
+                                // size='small'
+                            >
+                                <MenuItem value={'NV'}>Nhân viên</MenuItem>
+                                <MenuItem value={'BGĐ'}>Ban giám đốc</MenuItem>
+
+                            </Select>
+
+                        </FormControl>
+                    </div>
+
                 </DialogContent>
                 <DialogActions>
                     <Button variant="outlined" autoFocus onClick={handleCloseModalAddShareholder}>

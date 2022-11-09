@@ -32,6 +32,9 @@ class ApiManagerCompany{
     updateCompanyMember= (data) => {
         return axiosClient.post(API_MAP.UPDATE_MEMBER_COMPANY+`/${data.id}`,data)
     }
+    updateCompanyShareholder= (data) => {
+        return axiosClient.post(API_MAP.UPDATE_SHAREHOLDER_COMPANY+`/${data.id}`,data)
+    }
     addCompanyMember= (data) => {
         return axiosClient.post(API_MAP.ADD_MEMBER_COMPANY,data)
     }

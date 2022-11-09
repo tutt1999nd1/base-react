@@ -78,8 +78,29 @@ export default function DetailCategory(props) {
             console.log(e)
         })
     }
+    const handleChangePositionShareholder = (e,row) => {
+        // updateCompanyMemberApi
+        console.log(e.target.value);
+        row.position = e.target.value
+        updateCompanyShareholderApi(row).then(r => {
+            setIsRefresh(!isRefresh)
+            toast.success('Cập nhật thành công', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+        }).catch(e => {
+            console.log(e)
+        })
+    }
     const updateCompanyMemberApi = (data) => {
         return apiManagerCompany.updateCompanyMember(data);
+    }
+    const updateCompanyShareholderApi = (data) => {
+        return apiManagerCompany.updateCompanyShareholder(data);
     }
     const columnsMember: GridColDef[] = [
         {
@@ -95,7 +116,7 @@ export default function DetailCategory(props) {
             filterable: false,
             sortable: false,
             field: 'name',
-            headerName: 'Tên nhân viên',
+            headerName: 'Tên thành viên ban điều hành',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex:1,
@@ -123,8 +144,9 @@ export default function DetailCategory(props) {
                             onChange={(e)=>handleChangePosition(e,params.row)}
                             // size='small'
                         >
-                            <MenuItem value={'NV'}>Nhân viên</MenuItem>
-                            <MenuItem value={'BGĐ'}>Ban giám đốc</MenuItem>
+                            <MenuItem value={'TGĐ'}>Tổng giám đốc</MenuItem>
+                            <MenuItem value={'PTGĐ'}>Phó tổng giám đốc</MenuItem>
+                            <MenuItem value={'KTT'}>Kế toán trưởng</MenuItem>
 
                         </Select>
                     </FormControl>
@@ -268,6 +290,33 @@ export default function DetailCategory(props) {
             renderCell: (params) => {
                 return <div className='content-column text-decoration' onClick={()=>redirectToMember(params.row.member_id)}>
                     {params.value}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'position',
+            headerName: 'Vị trí',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 200,
+            hide: checkColumnVisibility('company','tax_number'),
+            renderCell: (params) => {
+                return <div className='content-column'>
+                    <FormControl fullWidth>
+                        <Select
+                            className={''}
+                            size={'small'}
+                            value={params.value}
+                            onChange={(e)=>handleChangePositionShareholder(e,params.row)}
+                            // size='small'
+                        >
+                            <MenuItem value={'CTHĐQT'}>Chủ tịch hội đồng quản trị</MenuItem>
+                            <MenuItem value={'PCTHĐQT'}>Phó chủ tịch hội đồng quản trị</MenuItem>
+                            <MenuItem value={'CĐ'}>Cổ đông</MenuItem>
+
+                        </Select>
+                    </FormControl>
                 </div>;
             },
         },
@@ -589,10 +638,10 @@ export default function DetailCategory(props) {
             </div>
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
-                    <h4>Thành viên</h4>
+                    <h4>Ban điều hành công ty</h4>
                     <div>
                         <Button  variant="outlined" onClick={()=>{setOpenModalAddMember(true)}} startIcon={<AddIcon/>}>
-                            Thêm thành viên vào công ty
+                            Thêm thành viên vào ban điều hành
                         </Button>
                     </div>
                 </div>

@@ -49,7 +49,7 @@ export default function EditMember(props) {
         description: yup
             .string()
             .trim()
-            .max(255, 'Tối đa 255 ký tự'),
+            .max(9999, 'Tối đa 10000 ký tự'),
 
     });
     const backList = () => {

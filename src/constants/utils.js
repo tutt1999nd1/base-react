@@ -139,6 +139,17 @@ export function changeVisibilityTable(table,column,hide) {
     localStorage.setItem('tableVisibility',JSON.stringify(tableVisibility))
 
 }
+export function typeToName(type) {
+    let object = {
+        'TGĐ':'Tổng giám đốc',
+        'PTGĐ':'Phó tổng giám đốc',
+        'KTT':'Kế toán trưởng',
+        'CTHĐQT':'Chủ tịch hội đồng quản trị',
+        'CĐ':'Cổ đông',
+        'PCTHĐQT':'Phó chủ tịch hội đồng quản trị',
+    }
+    return object[type]||'';
+}
 export function changeVisibilityTableAll(table,event) {
     let tableVisibility = JSON.parse(localStorage.getItem('tableVisibility'))||{};
     if(!tableVisibility[table])tableVisibility[table]=[];
