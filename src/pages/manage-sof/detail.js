@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from "react";
 import {
-    Button, Collapse,
-    Divider, IconButton,
-    Table, TableBody,
+    Button,
+    Collapse,
+    Divider,
+    IconButton,
+    Table,
+    TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    Tooltip,
     Typography
 } from "@mui/material";
 import {toast, ToastContainer} from "react-toastify";
@@ -21,15 +23,8 @@ import Axios from "axios";
 import FileDownload from "js-file-download";
 import {useSelector} from "react-redux";
 import apiManagerChargingEst from "../../api/manage-charging-est";
-import {DataGrid, GridColDef, viVN} from "@mui/x-data-grid";
-import CheckBoxOutlinedIcon from "@mui/icons-material/CheckBoxOutlined";
-import CancelPresentationOutlinedIcon from "@mui/icons-material/CancelPresentationOutlined";
-import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
-import ItemDashboard from "../../components/ItemDashboard";
 
 export default function DetailSOF(props) {
     const navigate = useNavigate();
@@ -105,10 +100,9 @@ export default function DetailSOF(props) {
                 // setLoading(false)
                 console.log("r", r)
                 let arr;
-                if(r.data.sof_charging_ests){
+                if (r.data.sof_charging_ests) {
                     arr = convertArr(r.data.sof_charging_ests)
-                }
-                else arr = []
+                } else arr = []
                 setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
             }).catch(e => {
                 // setLoading(false)
@@ -120,20 +114,20 @@ export default function DetailSOF(props) {
 
         let listConvert = [];
         for (let i = 0; i < arr.length; i++) {
-            let key = arr[i].company.company_name+arr[i].charging_date;
+            let key = arr[i].company.company_name + arr[i].charging_date;
             if (listConvert.filter(e => e.key === key).length === 0) {
                 listConvert.push({
                     key: key,
-                    chargingDate:arr[i].charging_date ,
-                    companyName:arr[i].company.company_name,
+                    chargingDate: arr[i].charging_date,
+                    companyName: arr[i].company.company_name,
                     sof: [arr[i]],
-                    total:arr[i].charging_amount
+                    total: arr[i].charging_amount
                 })
             } else
                 for (let j = 0; j < listConvert.length; j++) {
                     if (listConvert[j].key === key) {
                         listConvert[j].sof.push(arr[i]);
-                        listConvert[j].total = listConvert[j].total+arr[i].charging_amount;
+                        listConvert[j].total = listConvert[j].total + arr[i].charging_amount;
                     }
 
                 }
@@ -144,7 +138,7 @@ export default function DetailSOF(props) {
             for (let j = 0; j < listConvert[i].sof.length; j++) {
                 listConvert[i].sof[j].principal = currencyFormatter(listConvert[i].sof[j].principal)
                 listConvert[i].sof[j].charging_amount = currencyFormatter(listConvert[i].sof[j].charging_amount)
-                listConvert[i].sof[j].charging_type = listConvert[i].sof[j].charging_type==='INTEREST'?'Tiền lãi':listConvert[i].sof[j].charging_type==='PRINCIPAL'?'Tiền gốc':'Tiền lãi ân hạn';
+                listConvert[i].sof[j].charging_type = listConvert[i].sof[j].charging_type === 'INTEREST' ? 'Tiền lãi' : listConvert[i].sof[j].charging_type === 'PRINCIPAL' ? 'Tiền gốc' : 'Tiền lãi ân hạn';
             }
         }
         return listConvert;
@@ -194,15 +188,22 @@ export default function DetailSOF(props) {
         return apiManagerSOF.deleteSOF(id);
     }
 
-    const downloadFile = (url) => {
-        Axios.get(url, {
-            headers: {'Authorization': `Bearer ${currentUser.token}`},
-            responseType: 'blob'
-        }).then(response => {
-            let nameFile = response.headers['content-disposition'].split(`"`)[1]
-            FileDownload(response.data, nameFile);
-        }).catch(e => {
-        })
+    const downloadFile = (e) => {
+
+        if(e.attachment_type ==='REFERENCE'){
+            window.open(e.download_link, '_blank');
+        }
+        else {
+            Axios.get(e.download_link, {
+                headers: {'Authorization': `Bearer ${currentUser.token}`},
+                responseType: 'blob'
+            }).then(response => {
+                let nameFile = response.headers['content-disposition'].split(`"`)[1]
+                FileDownload(response.data, nameFile);
+            }).catch(e => {
+            })
+        }
+
     }
 
     return (
@@ -243,7 +244,7 @@ export default function DetailSOF(props) {
                 <div className={'main-content-body-tittle'}>
                     <h4>Thông tin chi tiết</h4>
                     {openDetail ? <IconButton color="primary" style={{cursor: 'pointer'}}
-                                             onClick={() => setOpenDetail(false)}>
+                                              onClick={() => setOpenDetail(false)}>
                             <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>
                         </IconButton> :
                         <IconButton style={{cursor: 'pointer'}} color="primary"
@@ -419,7 +420,6 @@ export default function DetailSOF(props) {
                 </Collapse>
 
 
-
             </div>
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
@@ -427,11 +427,11 @@ export default function DetailSOF(props) {
                 </div>
                 <Divider light/>
                 <div style={{height: '500px', width: '100%'}}>
-                    <TableContainer  style={{height:'100%', width: '100%',overflow:"auto"}}>
+                    <TableContainer style={{height: '100%', width: '100%', overflow: "auto"}}>
                         {/*<div style={{height: '100%', width: '100%'}}>*/}
-                        <Table stickyHeader  className={"table-custom"}>
-                            <TableHead >
-                                <TableRow >
+                        <Table stickyHeader className={"table-custom"}>
+                            <TableHead>
+                                <TableRow>
                                     <TableCell align="center">Ngày trả lãi</TableCell>
                                     <TableCell align="center">Công ty vay</TableCell>
                                     <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
@@ -454,8 +454,11 @@ export default function DetailSOF(props) {
                                     <TableCell align="center">Số kỳ trả gốc</TableCell>
                                 </TableRow>
                             </TableHead>
-                            <TableBody style={{overflowY:"auto"}}>
-                                <div className={`message-table-empty ${listResult.rows.length===0?'':'hidden'}`}>Không có dữ liệu</div>
+                            <TableBody style={{overflowY: "auto"}}>
+                                <div
+                                    className={`message-table-empty ${listResult.rows.length === 0 ? '' : 'hidden'}`}>Không
+                                    có dữ liệu
+                                </div>
                                 {listResult.rows.map(item => (
                                     <>
                                         <TableRow>
@@ -473,12 +476,15 @@ export default function DetailSOF(props) {
                                         </TableRow>
                                         {item.sof.map(detail => (
                                             <TableRow>
-                                                <TableCell><div className={'error-message number'}>
-                                                    {detail.charging_amount}
-                                                </div>
+                                                <TableCell>
+                                                    <div className={'error-message number'}>
+                                                        {detail.charging_amount}
+                                                    </div>
                                                 </TableCell>
                                                 <TableCell>{detail.charging_type}</TableCell>
-                                                <TableCell><div className={'number'}>{detail.principal}</div></TableCell>
+                                                <TableCell>
+                                                    <div className={'number'}>{detail.principal}</div>
+                                                </TableCell>
                                                 <TableCell>{detail.start_date}</TableCell>
                                                 <TableCell>{detail.end_date}</TableCell>
                                                 <TableCell>{detail.nums_of_interest_day}</TableCell>
@@ -514,7 +520,7 @@ export default function DetailSOF(props) {
                 {
                     info.list_attachments.map((e, i) => (
                         <div style={{cursor: "pointer"}} className={'row-detail'}
-                             onClick={() => downloadFile(e.download_link)}>
+                             onClick={() => downloadFile(e)}>
                             <div className={'text-info-content text-decoration'}>
                                 {e.file_name || e.download_link}
                             </div>

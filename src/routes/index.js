@@ -29,6 +29,9 @@ import DetailAssetGroup from "../pages/manage-asset-group/detail";
 import ManageSofChargingEst from "../pages/manage-sof-charging-est";
 import DetailSofChargingEst from "../pages/manage-sof-charging-est/detail";
 import EditSofChargingEst from "../pages/manage-sof-charging-est/create-update";
+import ManageMember from "../pages/manage-member";
+import EditMember from "../pages/manage-member/create-update";
+import DetailMember from "../pages/manage-member/detail";
 
 export default function RenderRoute() {
     return (
@@ -61,6 +64,13 @@ export default function RenderRoute() {
                 <Route path="company/create" element={<EditCompany isUpdate={false}></EditCompany>}/>
                 <Route path="company/update" element={<EditCompany isUpdate={true}></EditCompany>}/>
                 <Route path="company/detail" element={<DetailCompany></DetailCompany>}/>
+
+
+                <Route path="member" element={<ManageMember></ManageMember>}/>
+                <Route path="member/create" element={<EditMember isUpdate={false}></EditMember>}/>
+                <Route path="member/update" element={<EditMember isUpdate={true}></EditMember>}/>
+                <Route path="member/detail" element={<DetailMember></DetailMember>}/>
+
                 <Route path="supplier" element={<ManageSupplier ></ManageSupplier>}/>
                 <Route path="supplier/create" element={<EditSupplier isUpdate={false}></EditSupplier>}/>
                 <Route path="supplier/update" element={<EditSupplier isUpdate={true}></EditSupplier>}/>
@@ -82,12 +92,9 @@ export default function RenderRoute() {
                 <Route path="sof/create" element={<EditSOF isUpdate={false}></EditSOF>}/>
                 <Route path="sof/update" element={<EditSOF isUpdate={true}></EditSOF>}/>
                 <Route path="sof/detail" element={<DetailSOF></DetailSOF>}/>
-
                 <Route path="charging_est/update" element={<EditSofChargingEst isUpdate={true}></EditSofChargingEst>}/>
                 <Route path="charging_est/detail" element={<DetailSofChargingEst></DetailSofChargingEst>}/>
                 <Route path="charging_est" element={<ManageSofChargingEst></ManageSofChargingEst>}/>
-
-
                 <Route path="account" element={<div>Tài khoản</div>}/>
                 <Route path="company" element={<div>Công ty vay</div>}/>
                 <Route path="categories" element={<div>Hạng mục</div>}/>

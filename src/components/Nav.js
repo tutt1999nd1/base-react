@@ -10,19 +10,24 @@ import {Collapse} from "@mui/material";
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import ClassIcon from '@mui/icons-material/Class';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import AccountBoxIcon from '@mui/icons-material/AccountBox';
 import {useDispatch,useSelector} from "react-redux";
 import { BrowserView, MobileView, isBrowser, isMobile } from 'react-device-detect';
 
 import {updateShowMenu} from "../store/user/userSlice";
 
 export default function Nav() {
-    const { pathname } = useLocation();
+    const {pathname} = useLocation();
     const navigate = useNavigate()
     const dispatch = useDispatch()
     const currentUser = useSelector(state => state.currentUser)
     const [open, setOpen] = useState(true)
     const handleClickCollapse = () => {
         setOpen(!open);
+    };
+    const [openCompany, setOpenCompany] = useState(true)
+    const handleClickCollapseCompany = () => {
+        setOpenCompany(!openCompany);
     };
     useEffect(() => {
         if (pathname == '/') navigate('/dashboard')
@@ -31,6 +36,8 @@ export default function Nav() {
     const touchMenu = () => {
         dispatch(updateShowMenu(!currentUser.showMenu))
     }
+
+    
 
     return (
         <nav className={`nav ${currentUser.showMenu?'animationTab':''}`}>
@@ -98,26 +105,17 @@ export default function Nav() {
                         {/*        </div>*/}
                         {/*    </li>*/}
                         {/*</NavLink>*/}
-                        <li onClick={handleClickCollapse}>
-                            <div className={'nav-item'} style={{width:'100%'}}>
-                                <div className={'nav-item-name'}><LibraryBooksIcon></LibraryBooksIcon>Danh mục</div>
-                                {open ? <ExpandLess/> : <ExpandMore/>}
+                        <li onClick={handleClickCollapseCompany}>
+                            <div className={'nav-item'} style={{width: '100%'}}>
+                                <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Quản lý công ty</div>
+                                {openCompany ? <ExpandLess/> : <ExpandMore/>}
                             </div>
                         </li>
 
 
-                        <Collapse in={open} timeout="auto" unmountOnExit>
+                        <Collapse in={openCompany} timeout="auto" unmountOnExit>
                             <ul>
-                                <NavLink className={'nav-link hidden'} to={'account'}>
-                                    <li>
-                                        <div className={'nav-item li-child'}>
-                                            <div className={'nav-item-name'}><SwitchAccountIcon></SwitchAccountIcon>Tài khoản
-                                            </div>
-                                        </div>
-                                    </li>
-                                </NavLink>
-
-                                <NavLink className={'nav-link'} to={'company'}>
+                                <NavLink className={'nav-link'} to={'company'} onClick={isMobile?touchMenu:''}>
                                     <li>
                                         <div className={'nav-item li-child'}>
                                             <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Công ty vay
@@ -125,22 +123,53 @@ export default function Nav() {
                                         </div>
                                     </li>
                                 </NavLink>
-                                <NavLink className={'nav-link'} to={'category'}>
+                                <NavLink className={'nav-link'} to={'member'} onClick={isMobile?touchMenu:''}>
+                                    <li>
+                                        <div className={'nav-item li-child'}>
+                                            <div className={'nav-item-name'}><AccountBoxIcon></AccountBoxIcon>Thành viên
+                                            </div>
+                                        </div>
+                                    </li>
+                                </NavLink>
+
+                            </ul>
+                        </Collapse>
+
+                        <li onClick={handleClickCollapse}>
+                            <div className={'nav-item'} style={{width: '100%'}}>
+                                <div className={'nav-item-name'}><LibraryBooksIcon></LibraryBooksIcon>Danh mục</div>
+                                {open ? <ExpandLess/> : <ExpandMore/>}
+                            </div>
+                        </li>
+
+                        <Collapse in={open} timeout="auto" unmountOnExit>
+                            <ul>
+                                <NavLink className={'nav-link hidden'} to={'account'}>
+                                    <li>
+                                        <div className={'nav-item li-child'}>
+                                            <div className={'nav-item-name'}><SwitchAccountIcon></SwitchAccountIcon>Tài
+                                                khoản
+                                            </div>
+                                        </div>
+                                    </li>
+                                </NavLink>
+                                <NavLink className={'nav-link'} to={'category'} onClick={isMobile?touchMenu:''}>
                                     <li>
                                         <div className={'nav-item li-child'}>
                                             <div className={'nav-item-name'}><ClassIcon></ClassIcon>Hạng mục</div>
                                         </div>
                                     </li>
                                 </NavLink>
-                                <NavLink className={'nav-link'} to={'supplier'}>
+                                <NavLink className={'nav-link'} to={'supplier'} onClick={isMobile?touchMenu:''}>
                                     <li>
                                         <div className={'nav-item li-child'}>
-                                            <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Đối tượng cung cấp
+                                            <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Đối tượng cung
+                                                cấp
                                             </div>
                                         </div>
                                     </li>
                                 </NavLink>
-                                <NavLink className={'nav-link'} to={'asset-group'}>
+                                <NavLink className={'nav-link'} to={'asset-group'} onClick={isMobile?touchMenu:''}>
                                     <li>
                                         <div className={'nav-item li-child'}>
                                             <div className={'nav-item-name'}><ClassIcon></ClassIcon>Nhóm tài sản</div>
@@ -153,6 +182,7 @@ export default function Nav() {
 
                     </ul>
                 </div>
+                <div className="navbarBox__backdrop"></div>
             </div>
             <div class="navbarBox__backdrop"></div>
         </nav>

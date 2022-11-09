@@ -536,7 +536,7 @@ export default function ManageSofChargingEst() {
                             email</Button>
                     </div>
                 </div>
-                <div className={'main-content-body'}>
+                <div className={'main-content-body calculate-interest-body'}>
                     <div className={'main-content-body-tittle'}>
                         <h4>Thống kê</h4>
                         {openTotal ? <IconButton color="primary" style={{cursor: 'pointer'}}

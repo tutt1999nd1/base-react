@@ -102,37 +102,45 @@ export default function DetailAsset(props) {
         console.log("info", info)
     }, [info])
 
-    const downloadFile = (url) => {
-        Axios.get(url, {
-            headers: { 'Authorization': `Bearer ${currentUser.token}` },
-            responseType: 'blob'
-        }).then(response => {
-            console.log('response.data',response.headers)
-            let nameFile ;
-            if(response.headers['content-disposition']){
-                nameFile = response.headers['content-disposition'].split(`"`)[1]
-                console.log("1",nameFile)
+    const downloadFile = (e) => {
+        if(e.attachment_type ==='REFERENCE'){
+            window.open(e.download_link, '_blank');
+        }
+        else {
+            Axios.get(e.download_link, {
+                headers: { 'Authorization': `Bearer ${currentUser.token}` },
+                responseType: 'blob'
+            }).then(response => {
+                console.log('response.data',response.headers)
+                let nameFile ;
+                if(response.headers['content-disposition']){
+                    nameFile = response.headers['content-disposition'].split(`"`)[1]
+                    console.log("1",nameFile)
 
-            }
-            if(response.headers['Content-Disposition']){
-                nameFile = response.headers['Content-Disposition'].split(`"`)[1]
-                console.log("2",nameFile)
+                }
+                if(response.headers['Content-Disposition']){
+                    nameFile = response.headers['Content-Disposition'].split(`"`)[1]
+                    console.log("2",nameFile)
 
-            }
-            console.log("3",nameFile)
-            const url = window.URL || window.webkitURL;
-            const href = url.createObjectURL(response.data);
-            const link = document.createElement('a');
-            link.href = href;
-            link.setAttribute('download', nameFile); //or any other extension
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+                }
+                const url = window.URL || window.webkitURL;
+                const href = url.createObjectURL(response.data);
+                const link = document.createElement('a');
+                link.href = href;
+                link.setAttribute('download', nameFile); //or any other extension
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
 
-            // FileDownload(response.data,nameFile);
-        }).catch(e=>{
-            console.log(e)
-        })
+                // FileDownload(response.data,nameFile);
+            }).catch(e=>{
+                console.log(e)
+            })
+        }
+
+
+
+
     }
     return (
         <div className={'main-content main-content-detail'}>
@@ -257,7 +265,7 @@ export default function DetailAsset(props) {
                 {
                     info.list_attachments.map((e, i) => (
                         <div style={{cursor: "pointer"}} className={'row-detail'}
-                             onClick={() => downloadFile(e.download_link)}>
+                             onClick={() => downloadFile(e)}>
                             <div className={'text-info-content text-decoration'}>
                                 {e.file_name||e.download_link}
                             </div>

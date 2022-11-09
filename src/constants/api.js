@@ -1,10 +1,10 @@
 // const API_DOMAIN = 'http://10.190.180.251:8088/'
 // const API_DOMAIN = 'http://10.190.160.20:8088/'
-// const API_DOMAIN = 'http://localhost:8443/'
+const API_DOMAIN = 'http://localhost:8443/'
 // const API_DOMAIN = 'http://103.151.238.62:8088/'
 // const API_DOMAIN = 'http://103.151.238.62:8089/'
 // const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
-const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
+// const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
 const API_MAP = {
     GET_LIST_ASSETS: API_DOMAIN + 'asset/search',
     GET_LIST_ASSETS_DASHBOARD: API_DOMAIN + 'dashboard/asset_aggregate',
@@ -64,6 +64,24 @@ const API_MAP = {
     GET_LIST_CHARGING_EST: API_DOMAIN + 'charging_est/search',
     SEND_EMAIL_CHARGING_EST: API_DOMAIN + 'charging_est/send_email',
     UPDATE_CHARGING_EST: API_DOMAIN + 'charging_est',
-    EXPORT_CHARGING_EST: API_DOMAIN + 'charging_est/export_excel'
+    EXPORT_CHARGING_EST: API_DOMAIN + 'charging_est/export_excel',
+    GET_LIST_MEMBER: API_DOMAIN + 'member/search',
+    CREATE_MEMBER: API_DOMAIN + 'member/create',
+    UPDATE_MEMBER: API_DOMAIN + 'member',
+    DELETE_MEMBER: API_DOMAIN + 'member',
+    DELETE_LIST_MEMBER: API_DOMAIN + 'member/delete',
+    GET_COMPANY_MEMBER: API_DOMAIN + 'member/get-company',
+    REMOVE_MEMBER_COMPANY: API_DOMAIN + 'capital_company/remove-member',
+    GET_MEMBER_COMPANY: API_DOMAIN + 'capital_company/get-member',
+    ADD_MEMBER_COMPANY: API_DOMAIN + 'capital_company/add-member',
+    UPDATE_MEMBER_COMPANY: API_DOMAIN + 'capital_company/update-company-member',
+    GET_CHANGE_HISTORY: API_DOMAIN + 'history-company/get',
+    DELETE_CHANGE_HISTORY: API_DOMAIN + 'history-company',
+    CREATE_CHANGE_HISTORY: API_DOMAIN + 'history-company/create',
+    UPDATE_CHANGE_HISTORY: API_DOMAIN + 'history-company',
+    GET_CHANGE_HISTORY_BY_ID: API_DOMAIN + 'history-company/get-by-id',
+    REMOVE_SHAREHOLDER: API_DOMAIN + 'capital_company/remove-shareholder',
+    GET_SHAREHOLDER: API_DOMAIN + 'capital_company/get-shareholder',
+    ADD_SHAREHOLDER: API_DOMAIN + 'capital_company/add-shareholder',
 }
 export default API_MAP;

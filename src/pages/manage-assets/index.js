@@ -565,6 +565,7 @@ export default function ManageAssets() {
                             getRowHeight={() => 'auto'}
                             localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
                             labelRowsPerPage={"Số kết quả"}
+                            getRowHeight={() => 'auto'}
                             density="standard"
                             columns={columns}
                             pagination
@@ -597,7 +598,6 @@ export default function ManageAssets() {
                                 '& .MuiDataGrid-iconSeparator': {
                                     display: 'none',
                                 },
-
                             }}
                             components={{
                                 Toolbar: CustomToolbar,
