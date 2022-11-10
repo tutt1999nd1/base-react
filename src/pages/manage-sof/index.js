@@ -899,7 +899,6 @@ export default function ManageSOF() {
                                 </Select>
                             </FormControl>
                         </div>
-
                     </div>
 
                 </Collapse>
