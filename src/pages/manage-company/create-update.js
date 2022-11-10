@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {
+    Autocomplete,
     Box,
     Button,
     Divider,
@@ -18,26 +19,31 @@ import {Form, Formik} from 'formik';
 import {useNavigate, useSearchParams} from "react-router-dom";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import PropTypes from "prop-types";
-import {capitalizeFirstLetter, VNnum2words} from "../../constants/utils";
+import {capitalizeFirstLetter, convertToAutoComplete, VNnum2words} from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
+import apiManagerMember from "../../api/manage-member";
 
 export default function EditCategory(props) {
     const navigate = useNavigate();
     const [location, setLocation] = useSearchParams();
+    const [listMember, setListMember] = useState([]);
+
     const [info, setInfo] = useState({
         company_name: '',
         address: '',
         contact_detail: '',
         tax_number: '',
+        member:{},
         charter_capital: '',
         founding_date: new dayjs,
         capital_limit: '',
         company_code: '',
         company_type: 'CAPITAL',
-        collateral: ''
+        collateral: '',
+        member_id:''
     })
     const {isUpdate} = props
     const [idUpdate, setIdUpdate] = useState(null)
@@ -54,6 +60,10 @@ export default function EditCategory(props) {
             .required('Không được để trống')
             .max(255, 'Tối đa 255 ký tự'),
         founding_date: yup
+            .string()
+            .trim()
+            .required('Không được để trống'),
+        member_id: yup
             .string()
             .trim()
             .required('Không được để trống'),
@@ -85,8 +95,26 @@ export default function EditCategory(props) {
             })
         }
     }, [idUpdate])
+    useEffect(()=>{
+        getListMemberApi({paging: false}).then(r => {
+            // console.log("r.data.companies",r.data);
+
+            if (r.data.member_entities) {
+                setListMember(convertToAutoComplete(r.data.member_entities, 'name'))
+
+            } else {
+                setListMember([])
+            }
+
+        }).catch(e => {
+
+        })
+    },[])
     const createCompanyApi = (data) => {
         return apiManagerCompany.createCompany(data);
+    }
+    const getListMemberApi = (data) => {
+        return apiManagerMember.getListMember(data);
     }
     const updateCompanyApi = (data) => {
         return apiManagerCompany.updateCompany(idUpdate, data);
@@ -138,6 +166,8 @@ export default function EditCategory(props) {
                         contact_detail: info.contact_detail,
                         // asset_type:info.asset_type.id,
                         // asset_group:info.asset_group.id,
+                        member_id: idUpdate ? info.member.id : info.member_id,
+                        member_name: info.member.name||'',
                         tax_number: info.tax_number,
                         charter_capital: info.charter_capital,
                         founding_date: isUpdate ? dayjs(info.founding_date, 'DD-MM-YYYY') : info.founding_date,
@@ -256,6 +286,46 @@ export default function EditCategory(props) {
                                                 {values.capital_limit ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.capital_limit))} đồng` : ''}
                                             </Typography>
                                         </Grid>
+                                        <Grid item xs={6} md={6}>
+                                            <div className={'label-input'}>Người đại diện theo pháp luật<span
+                                                className={'error-message'}>*</span></div>
+                                            <Autocomplete
+                                                disablePortal
+                                                id="combo-box-demo"
+                                                options={listMember}
+                                                value={{
+                                                    id: values.member_id,
+                                                    label: values.member_name
+                                                }
+                                                }
+                                                // defaultValue={[{
+                                                //     id: info.id: info.capital_company.id,,
+                                                //     label: info.capital_company.company_name
+                                                // }]}
+                                                // sx={{ width: 300 }}
+                                                // onChange={}
+                                                renderInput={(params) => < TextField  {...params} id='capital_company_id'
+                                                                                      name='capital_company_id'
+                                                                                      placeholder="Người đại diện theo pháp luật"
+                                                                                      error={touched.member_id && Boolean(errors.member_id)}
+                                                                                      helperText={touched.member_id && errors.member_id}/>}
+                                                size={"small"}
+                                                onChange={(event, newValue) => {
+                                                    // setCompanySearch(newValue)
+                                                    console.log("new_value", newValue)
+                                                    if (newValue){
+                                                        setFieldValue('member_id', newValue.id)
+                                                        setFieldValue('member_name', newValue.label)
+
+                                                    }
+                                                    else{
+                                                        setFieldValue('member_id', '')
+                                                        setFieldValue('member_name', '')
+                                                    }
+                                                }}
+                                            />
+                                        </Grid>
+
                                         <Grid item xs={6} md={6}>
                                             <div className={'label-input'}>Mã số thuế<span
                                                 className={'error-message'}>*</span></div>

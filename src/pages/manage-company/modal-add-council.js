@@ -22,14 +22,14 @@ import {toast} from "react-toastify";
 import apiManagerMember from "../../api/manage-member";
 
 
-export default function ModalAddMember(props) {
-    const {openModalAddMember, handleCloseModalAddMember,companyId,setIsRefresh,isRefresh} = props
-    const [value,setValue] = useState({companyId:companyId,memberId:'',position:'TGĐ',memberName:''})
+export default function ModalAddCouncil(props) {
+    const {openModalAddCouncil, handleCloseModalAddCouncil,companyId,setIsRefresh,isRefresh} = props
+    const [value,setValue] = useState({companyId:companyId,memberId:'',position:'CT',memberName:''})
     const [listMember, setListMember] = useState([]);
 
     const submit = () => {
-        handleCloseModalAddMember();
-        addMemberCompanyApi({company_id:value.companyId,member_id:value.memberId,position:value.position,type:'TV'}).then(r=>{
+        handleCloseModalAddCouncil();
+        addMemberCompanyApi({company_id:value.companyId,member_id:value.memberId,position:value.position,type:'HĐQT'}).then(r=>{
             toast.success('Thêm mới thành công', {
                 position: "top-right",
                 autoClose: 1500,
@@ -46,7 +46,7 @@ export default function ModalAddMember(props) {
         setValue({companyId:companyId,memberId:'',position:'NV',memberName:''})
         // alert(name)
 
-    }, [openModalAddMember])
+    }, [openModalAddCouncil])
     useEffect(()=>{
         getListMemberApi({paging: false}).then(r => {
             // console.log("r.data.companies",r.data);
@@ -73,14 +73,14 @@ export default function ModalAddMember(props) {
     }
     return (
         <div>
-            <Dialog open={openModalAddMember} onClose={handleCloseModalAddMember}>
+            <Dialog open={openModalAddCouncil} onClose={handleCloseModalAddCouncil}>
                 <DialogTitle>
                     <div className={'vmp-tittle'}>
-                        Thêm thành viên vào công ty
+                        Thêm thành viên vào hội đồng quản trị
                     </div>
                     <IconButton
                         aria-label="close"
-                        onClick={handleCloseModalAddMember}
+                        onClick={handleCloseModalAddCouncil}
                         sx={{
                             position: 'absolute',
                             right: 8,
@@ -137,16 +137,16 @@ export default function ModalAddMember(props) {
 
                                 // size='small'
                             >
-                                <MenuItem value={'TGĐ'}>Tổng giám đốc</MenuItem>
-                                <MenuItem value={'PTGĐ'}>Phó tổng giám đốc</MenuItem>
-                                <MenuItem value={'KTT'}>Kế toán trưởng</MenuItem>
+                                <MenuItem value={'CT'}>Chủ tịch</MenuItem>
+                                <MenuItem value={'PCT'}>Phó chủ tịch</MenuItem>
+                                <MenuItem value={'HĐQT'}>Hội đồng quản trị</MenuItem>
                             </Select>
 
                         </FormControl>
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="outlined" autoFocus onClick={handleCloseModalAddMember}>
+                    <Button variant="outlined" autoFocus onClick={handleCloseModalAddCouncil}>
                         Hủy
                     </Button>
                     {/*{*/}
