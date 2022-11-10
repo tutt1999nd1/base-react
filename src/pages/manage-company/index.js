@@ -26,7 +26,7 @@ import {
     changeVisibilityTableAll,
     checkColumnVisibility, convertToAutoComplete,
     currencyFormatter,
-    pending
+    pending, typeToName
 } from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
@@ -160,6 +160,27 @@ export default function ManageCompany() {
                     <Highlighter
                         highlightClassName="test-highlight"
                         searchWords={[contactSearch]}
+                        autoEscape={true}
+                        textToHighlight={params.value}
+                    />                </div>;
+            },
+
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'member',
+            headerName: 'Nhân viên',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 250,
+            flex:1,
+            hide: checkColumnVisibility('company','member'),
+            renderCell: (params) => {
+
+                return <div className='content-column row-member'>
+                    <Highlighter
+                        highlightClassName="test-highlight"
+                        searchWords={[member.memberName]}
                         autoEscape={true}
                         textToHighlight={params.value}
                     />                </div>;
@@ -308,6 +329,13 @@ export default function ManageCompany() {
             arr[i].capital_limit = currencyFormatter(arr[i].capital_limit)
             arr[i].charter_capital = currencyFormatter(arr[i].charter_capital)
             arr[i].remain_capital = currencyFormatter(arr[i].remain_capital)
+            arr[i].member = "";
+            for(let j = 0; j < arr[i].member_response_list.length; j++){
+                if(arr[i].member_response_list[j].member_id!==member.memberId){
+                    arr[i].member =arr[i].member+'- Tên nhân viên: '+ arr[i].member_response_list[j].name+'\n  Vị trí: '+(typeToName(arr[i].member_response_list[j].position))+"\n";
+                }
+                else  arr[i].member ='- Tên nhân viên: '+ arr[i].member_response_list[j].name+'\n  Vị trí: '+(typeToName(arr[i].member_response_list[j].position))+"\n"+arr[i].member;
+            }
         }
         return arr;
     }

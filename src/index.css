@@ -932,7 +932,10 @@ border: unset;
     padding: 15px;
 }
 }
-
+.row-member{
+    max-height: 150px;
+    overflow-y: auto;
+}
 
 /* mobile style */
 @media only screen and (max-width: 787px) {

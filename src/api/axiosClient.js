@@ -78,9 +78,13 @@ axiosClient.interceptors.response.use((response) => {
                 toast.error('Không thể tạo thư mục dữ liệu', options);
             } else if(error.response.data.status.code == "invalid_status"){
                 toast.error('Trạng thái không hợp lệ', options);
-            } else if(error.response.data.status.code == "invalid_sof_data"){
+            }
+            else if(error.response.data.status.code == "invalid_sof_data"){
                 toast.error('Dữ liệu hợp đồng vay không hợp lệ', options);
-            }  else {
+            } else if(error.response.data.status.code == "member_already_exist"){
+                toast.error('Thành viên đã tồn tại', options);
+            }
+            else {
                 toast.error('Có lỗi xảy ra', options);
             }
         }

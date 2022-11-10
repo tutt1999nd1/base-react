@@ -75,6 +75,7 @@ const API_MAP = {
     GET_MEMBER_COMPANY: API_DOMAIN + 'capital_company/get-member',
     ADD_MEMBER_COMPANY: API_DOMAIN + 'capital_company/add-member',
     UPDATE_MEMBER_COMPANY: API_DOMAIN + 'capital_company/update-company-member',
+    UPDATE_SHAREHOLDER_COMPANY: API_DOMAIN + 'capital_company/update-company-shareholder',
     GET_CHANGE_HISTORY: API_DOMAIN + 'history-company/get',
     DELETE_CHANGE_HISTORY: API_DOMAIN + 'history-company',
     CREATE_CHANGE_HISTORY: API_DOMAIN + 'history-company/create',

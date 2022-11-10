@@ -76,9 +76,9 @@ export default function DetailMember(props) {
                             onChange={(e)=>handleChangePosition(e,params.row)}
                             // size='small'
                         >
-                            <MenuItem value={'NV'}>Nhân viên</MenuItem>
-                            <MenuItem value={'BGĐ'}>Ban giám đốc</MenuItem>
-
+                            <MenuItem value={'TGĐ'}>Tổng giám đốc</MenuItem>
+                            <MenuItem value={'PTGĐ'}>Phó tổng giám đốc</MenuItem>
+                            <MenuItem value={'KTT'}>Kế toán trưởng</MenuItem>
                         </Select>
                     </FormControl>
                 </div>;

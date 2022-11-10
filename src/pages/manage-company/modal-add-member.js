@@ -24,7 +24,7 @@ import apiManagerMember from "../../api/manage-member";
 
 export default function ModalAddMember(props) {
     const {openModalAddMember, handleCloseModalAddMember,companyId,setIsRefresh,isRefresh} = props
-    const [value,setValue] = useState({companyId:companyId,memberId:'',position:'NV',memberName:''})
+    const [value,setValue] = useState({companyId:companyId,memberId:'',position:'TGĐ',memberName:''})
     const [listMember, setListMember] = useState([]);
 
     const submit = () => {
@@ -137,9 +137,9 @@ export default function ModalAddMember(props) {
 
                                 // size='small'
                             >
-                                <MenuItem value={'NV'}>Nhân viên</MenuItem>
-                                <MenuItem value={'BGĐ'}>Ban giám đốc</MenuItem>
-
+                                <MenuItem value={'TGĐ'}>Tổng giám đốc</MenuItem>
+                                <MenuItem value={'PTGĐ'}>Phó tổng giám đốc</MenuItem>
+                                <MenuItem value={'KTT'}>Kế toán trưởng</MenuItem>
                             </Select>
 
                         </FormControl>
