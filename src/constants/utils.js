@@ -147,6 +147,9 @@ export function typeToName(type) {
         'CTHĐQT':'Chủ tịch hội đồng quản trị',
         'CĐ':'Cổ đông',
         'PCTHĐQT':'Phó chủ tịch hội đồng quản trị',
+        'CT':'Chủ tịch',
+        'PCT':'Phó chủ tịch',
+        'HĐQT':'Hội đồng quản trị'
     }
     return object[type]||'';
 }

@@ -46,6 +46,8 @@ export default function ManageCompany() {
     const [isDelList,setIsDelList] =  useState(false)
     const [nameSearch,setNameSearch] =useState(null)
     const [member,setMember] =useState({memberId:'',memberName:''})
+    const [council,setCouncil] =useState({memberId:'',memberName:''})
+    const [represent,setRepresent] =useState({memberId:'',memberName:''})
     const [contactSearch,setContactSearch] =useState(null)
     const [taxSearch,setTaxSearch] =useState(null)
     const [listMember, setListMember] = useState([]);
@@ -88,6 +90,27 @@ export default function ManageCompany() {
                     <Highlighter
                         highlightClassName="test-highlight"
                         searchWords={[nameSearch]}
+                        autoEscape={true}
+                        textToHighlight={params.value}
+                    />
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'represent',
+            headerName: 'Người đại diện pháp lý',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 250,
+            flex:1,
+            hide: checkColumnVisibility('company','company_name'),
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    <Highlighter
+                        highlightClassName="test-highlight"
+                        searchWords={[represent.memberName]}
                         autoEscape={true}
                         textToHighlight={params.value}
                     />
@@ -170,7 +193,7 @@ export default function ManageCompany() {
             filterable: false,
             sortable: false,
             field: 'member',
-            headerName: 'Nhân viên',
+            headerName: 'Ban điều hành',
             headerClassName: 'super-app-theme--header',
             minWidth: 250,
             flex:1,
@@ -181,6 +204,26 @@ export default function ManageCompany() {
                     <Highlighter
                         highlightClassName="test-highlight"
                         searchWords={[member.memberName]}
+                        autoEscape={true}
+                        textToHighlight={params.value}
+                    />                </div>;
+            },
+
+        }, {
+            filterable: false,
+            sortable: false,
+            field: 'council',
+            headerName: 'Hội đồng quản trị',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 250,
+            flex:1,
+            hide: checkColumnVisibility('company','council'),
+            renderCell: (params) => {
+
+                return <div className='content-column row-member'>
+                    <Highlighter
+                        highlightClassName="test-highlight"
+                        searchWords={[council.memberName]}
                         autoEscape={true}
                         textToHighlight={params.value}
                     />                </div>;
@@ -329,12 +372,23 @@ export default function ManageCompany() {
             arr[i].capital_limit = currencyFormatter(arr[i].capital_limit)
             arr[i].charter_capital = currencyFormatter(arr[i].charter_capital)
             arr[i].remain_capital = currencyFormatter(arr[i].remain_capital)
+            arr[i].represent = arr[i].member?arr[i].member.name:''
             arr[i].member = "";
+            arr[i].council = "";
             for(let j = 0; j < arr[i].member_response_list.length; j++){
-                if(arr[i].member_response_list[j].member_id!==member.memberId){
-                    arr[i].member =arr[i].member+'- Tên nhân viên: '+ arr[i].member_response_list[j].name+'\n  Vị trí: '+(typeToName(arr[i].member_response_list[j].position))+"\n";
+                if(arr[i].member_response_list[j].type=="TV"){
+                    if(arr[i].member_response_list[j].member_id!==member.memberId){
+                        arr[i].member =arr[i].member+'- Tên thành viên: '+ arr[i].member_response_list[j].name+'\n  Vị trí: '+(typeToName(arr[i].member_response_list[j].position))+"\n";
+                    }
+                    else  arr[i].member ='- Tên thành viên: '+ arr[i].member_response_list[j].name+'\n  Vị trí: '+(typeToName(arr[i].member_response_list[j].position))+"\n"+arr[i].member;
                 }
-                else  arr[i].member ='- Tên nhân viên: '+ arr[i].member_response_list[j].name+'\n  Vị trí: '+(typeToName(arr[i].member_response_list[j].position))+"\n"+arr[i].member;
+                else if(arr[i].member_response_list[j].type=="HĐQT"){
+                    if(arr[i].member_response_list[j].member_id!==council.memberId){
+                        arr[i].council =arr[i].council+'- Tên thành viên: '+ arr[i].member_response_list[j].name+'\n  Vị trí: '+(typeToName(arr[i].member_response_list[j].position))+"\n";
+                    }
+                    else  arr[i].council ='- Tên thành viên: '+ arr[i].member_response_list[j].name+'\n  Vị trí: '+(typeToName(arr[i].member_response_list[j].position))+"\n"+arr[i].council;
+                }
+
             }
         }
         return arr;
@@ -349,7 +403,9 @@ export default function ManageCompany() {
                 'company_name': nameSearch === '' ? null : nameSearch,
                 'contact_detail': contactSearch === 0 ? null : contactSearch,
                 'tax_number': taxSearch === 0 ? null : taxSearch,
-                'member_id': member.memberId === '' ? null : member.memberId
+                'member_id': member.memberId === '' ? null : member.memberId,
+                'council_id': council.memberId === '' ? null : council.memberId,
+                'represent_id': represent.memberId === '' ? null : represent.memberId
             }).then(r => {
                 setLoading(false)
                 console.log("r", r)
@@ -361,7 +417,7 @@ export default function ManageCompany() {
             })
         }
 
-    }, [listResult.page, listResult.pageSize,nameSearch,contactSearch,taxSearch ,refresh,currentUser.token,member])
+    }, [listResult.page, listResult.pageSize,nameSearch,contactSearch,taxSearch ,refresh,currentUser.token,member,represent,council])
     useEffect(()=>{
         if(currentUser.token){
             getListMemberApi({paging: false}).then(r => {
@@ -615,7 +671,39 @@ export default function ManageCompany() {
                             />
                         </div>
                         <div style={{width: '20%',marginLeft:'20px'}}>
-                            <div className={'label-input'}>Nhân viên</div>
+                            <div className={'label-input'}>Người đại diện pháp luật</div>
+                            <Autocomplete
+                                id="combo-box-demo"
+                                options={listMember}
+                                value={{
+                                    id: represent.memberId,
+                                    label: represent.memberName,
+                                }
+                                }
+
+                                renderInput={(params) => < TextField  {...params} />}
+                                size={"small"}
+                                onChange={(event, newValue) => {
+                                    // setCompanySearch(newValue)
+                                    console.log("new_value", newValue)
+                                    if (newValue){
+                                        setRepresent({memberId: newValue.id,memberName:newValue.label})
+                                        // setFieldValue('capital_company_id', newValue.id)
+                                        // setFieldValue('capital_campaign_name', newValue.label)
+                                        // setIdCompanyCurrent(newValue.id)
+                                    }
+                                    else{
+                                        setRepresent({memberId: '',memberName:''})
+                                        // setFieldValue('capital_company_id', '')
+                                        // setFieldValue('capital_campaign_name', '')
+                                        // setIdCompanyCurrent(0)
+                                    }
+                                }}
+                            />
+                        </div>
+
+                        <div style={{width: '20%',marginLeft:'20px'}}>
+                            <div className={'label-input'}>Ban điều hành</div>
                             <Autocomplete
                                 id="combo-box-demo"
 
@@ -646,8 +734,37 @@ export default function ManageCompany() {
                                 }}
                             />
                         </div>
+                        <div style={{width: '20%',marginLeft:'20px'}}>
+                            <div className={'label-input'}>Hội đồng quản trị</div>
+                            <Autocomplete
+                                id="combo-box-demo"
+                                options={listMember}
+                                value={{
+                                    id: council.memberId,
+                                    label: council.memberName,
+                                }
+                                }
 
-
+                                renderInput={(params) => < TextField  {...params} />}
+                                size={"small"}
+                                onChange={(event, newValue) => {
+                                    // setCompanySearch(newValue)
+                                    console.log("new_value", newValue)
+                                    if (newValue){
+                                        setCouncil({memberId: newValue.id,memberName:newValue.label})
+                                        // setFieldValue('capital_company_id', newValue.id)
+                                        // setFieldValue('capital_campaign_name', newValue.label)
+                                        // setIdCompanyCurrent(newValue.id)
+                                    }
+                                    else{
+                                        setCouncil({memberId: '',memberName:''})
+                                        // setFieldValue('capital_company_id', '')
+                                        // setFieldValue('capital_campaign_name', '')
+                                        // setIdCompanyCurrent(0)
+                                    }
+                                }}
+                            />
+                        </div>
                     </div>
 
                 </Collapse>

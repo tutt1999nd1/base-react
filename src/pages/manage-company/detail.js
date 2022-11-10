@@ -15,6 +15,7 @@ import ModalAddMember from "./modal-add-member";
 import ModalEditHistory from "./modal-edit-histoty";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ModalAddShareholder from "./modal-add-shareholder";
+import ModalAddCouncil from "./modal-add-council";
 
 export default function DetailCategory(props) {
     const navigate = useNavigate();
@@ -25,8 +26,10 @@ export default function DetailCategory(props) {
     const [listMember, setListMember] = useState([]);
     const [listHistory, setListHistory] = useState([]);
     const [listShareholder, setListShareholder] = useState([]);
+    const [listCouncil, setListCouncil] = useState([]);
     const [isRefresh,setIsRefresh] = useState(false)
     const [openModalAddMember,setOpenModalAddMember] = useState(false)
+    const [openModalAddCouncil,setOpenModalAddCouncil] = useState(false)
     const [openModalAddHistory,setOpenModalAddHistory] = useState(false)
     const [openModalAddShareholder,setOpenModalAddShareholder] = useState(false)
     const [isAddHistory,setIsAddHistory] = useState(false)
@@ -46,7 +49,8 @@ export default function DetailCategory(props) {
         charter_capital:'',
         capital_limit:'',
         founding_date:'',
-        collateral:''
+        collateral:'',
+        member:{}
     })
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
@@ -147,6 +151,89 @@ export default function DetailCategory(props) {
                             <MenuItem value={'TGĐ'}>Tổng giám đốc</MenuItem>
                             <MenuItem value={'PTGĐ'}>Phó tổng giám đốc</MenuItem>
                             <MenuItem value={'KTT'}>Kế toán trưởng</MenuItem>
+
+                        </Select>
+                    </FormControl>
+                </div>;
+            },
+        },
+        {
+            field: 'action',
+            headerClassName: 'super-app-theme--header',
+            hide: checkColumnVisibility('company','action'),
+            headerName: 'Thao tác',
+            sortable: false,
+            width: 200,
+            align: 'center',
+            maxWidth: 130,
+            // flex: 1,
+            renderCell: (params) => {
+
+                const deleteBtn = (e) => {
+                    e.stopPropagation();
+                    console.log(params)
+                    // setIsDelList(false)
+                    // setOpenModalDel(true)
+                    // setInfoDel(params.row)
+                    setOpenModalRemoveMember(true)
+                    setIdRemoveMember(params.id)
+                }
+
+                return <div className='icon-action'>
+                    <Tooltip title="Xóa" onClick={deleteBtn}>
+                        <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
+                    </Tooltip>
+                </div>;
+            },
+        },
+
+        // { field: 'document', headerName: 'Nhóm tài sản' },
+    ];
+    const columnsCouncil: GridColDef[] = [
+        {
+            sortable: false,
+            field: 'index',
+            headerName: 'STT',
+            maxWidth: 60,
+            filterable: false,
+            headerClassName: 'super-app-theme--header',
+            renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'name',
+            headerName: 'Tên thành viên ban điều hành',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            flex:1,
+            renderCell: (params) => {
+                return <div className='content-column text-decoration' onClick={()=>redirectToMember(params.row.member_id)}>
+                    {params.value}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'position',
+            headerName: 'Vị trí',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 200,
+            hide: checkColumnVisibility('company','tax_number'),
+            renderCell: (params) => {
+                return <div className='content-column'>
+                    <FormControl fullWidth>
+                        <Select
+                            className={''}
+                            size={'small'}
+                            value={params.value}
+                            onChange={(e)=>handleChangePosition(e,params.row)}
+                            // size='small'
+                        >
+                            <MenuItem value={'CT'}>Chủ tịch</MenuItem>
+                            <MenuItem value={'PCT'}>Phó chủ tịch</MenuItem>
+                            <MenuItem value={'HĐQT'}>Hội đồng quản trị</MenuItem>
 
                         </Select>
                     </FormControl>
@@ -368,7 +455,11 @@ export default function DetailCategory(props) {
             })
             getMemberApi(idDetail).then(r=>{
                 console.log("member",r)
-                setListMember(r.data)
+                console.log("r.data",r.data)
+                let memberList = r.data.filter(e => e.type === 'TV')
+                let councilList = r.data.filter(e => e.type === 'HĐQT')
+                setListMember(memberList)
+                setListCouncil(councilList)
             })
             getShareholderApi(idDetail).then(r=>{
                 console.log("member",r)
@@ -476,6 +567,9 @@ export default function DetailCategory(props) {
     const handleCloseModalAddMember = () => {
         setOpenModalAddMember(false)
     }
+    const handleCloseModalAddCouncil = () => {
+        setOpenModalAddCouncil(false)
+    }
     const handleCloseModalRemoveHistory = () => {
         setOpenModalRemoveHistory(false)
     }
@@ -520,6 +614,7 @@ export default function DetailCategory(props) {
             <ModalConfirmDel openModalDel={openModalRemoveHistory} handleCloseModalDel={handleCloseModalRemoveHistory} submitDelete={submitDeleteHistory} ></ModalConfirmDel>
             <ModalConfirmDel openModalDel={openModalRemoveShareholder} handleCloseModalDel={handleCloseModalRemoveShareholder} submitDelete={submitDeleteShareholder} ></ModalConfirmDel>
             <ModalAddMember isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddMember={openModalAddMember} handleCloseModalAddMember={handleCloseModalAddMember} companyId={idDetail}></ModalAddMember>
+            <ModalAddCouncil isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddCouncil={openModalAddCouncil} handleCloseModalAddCouncil={handleCloseModalAddCouncil} companyId={idDetail}></ModalAddCouncil>
             <ModalAddShareholder isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddShareholder={openModalAddShareholder} handleCloseModalAddShareholder={handleCloseModalAddShareholder} companyId={idDetail}></ModalAddShareholder>
             <ModalEditHistory idUpdateHistory={idUpdateHistory} isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddHistory={openModalAddHistory} handleCloseModalAddHistory={handleCloseModalAddHistory} isAddHistory={isAddHistory} companyId={idDetail}></ModalEditHistory>
 
@@ -574,6 +669,15 @@ export default function DetailCategory(props) {
                     </div>
                     <div className={'text-info-content'}>
                         {info.collateral}
+                    </div>
+                </div>
+                <Divider></Divider>
+                <div className={'row-detail'}>
+                    <div className={'text-info-tittle'}>
+                        Người đại diện pháp luật
+                    </div>
+                    <div className={'text-info-content text-decoration'} onClick={()=>{navigate(`/member/detail?id=${info.member.id}`)}}>
+                        {info.member?info.member.name:''}
                     </div>
                 </div>
                 <Divider></Divider>
@@ -654,6 +758,42 @@ export default function DetailCategory(props) {
                         density="standard"
                         rows={listMember}
                         columns={columnsMember}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        // loading={loading}
+                        disableSelectionOnClick
+                        sx={{
+                            // boxShadow: 2,
+                            overflowX: 'scroll',
+                            border: 1,
+                            borderColor: 'rgb(255, 255, 255)',
+                            '& .MuiDataGrid-iconSeparator': {
+                                display: 'none',
+                            }
+                        }}
+
+                    />
+                </div>
+
+            </div>
+            <div className={'main-content-body'}>
+                <div className={'main-content-body-tittle'}>
+                    <h4>Thành viên hội đồng quản trị</h4>
+                    <div>
+                        <Button  variant="outlined" onClick={()=>{setOpenModalAddCouncil(true)}} startIcon={<AddIcon/>}>
+                            Thêm thành viên vào hội đồng quản trị
+                        </Button>
+                    </div>
+                </div>
+                <div style={{height: '400px', width: '100%',marginTop:'10px'}}>
+
+                    <DataGrid
+                        // getRowHeight={() => 'auto'}
+                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
+                        labelRowsPerPage={"Số kết quả"}
+                        density="standard"
+                        rows={listCouncil}
+                        columns={columnsCouncil}
                         pageSize={5}
                         rowsPerPageOptions={[5]}
                         // loading={loading}
