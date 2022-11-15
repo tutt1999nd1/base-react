@@ -11,7 +11,6 @@ const API_MAP = {
     GET_LIST_SOF_DASHBOARD: API_DOMAIN + 'dashboard/sof_aggregate',
     CREATE_ASSETS: API_DOMAIN + 'asset/create',
     BOOKS: API_DOMAIN + 'asset/books',
-
     UPDATE_ASSETS: API_DOMAIN + 'asset',
     DELETE_ASSETS: API_DOMAIN + 'asset',
     IMPORT_ASSETS: API_DOMAIN + 'asset/import-excel',
@@ -84,5 +83,15 @@ const API_MAP = {
     REMOVE_SHAREHOLDER: API_DOMAIN + 'capital_company/remove-shareholder',
     GET_SHAREHOLDER: API_DOMAIN + 'capital_company/get-shareholder',
     ADD_SHAREHOLDER: API_DOMAIN + 'capital_company/add-shareholder',
+    GET_LIST_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount/search',
+    CREATE_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount/create',
+    UPDATE_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount',
+    DELETE_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount',
+    DELETE_LIST_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount/delete',
+    GET_LIST_CHANGE_INTEREST_RATE: API_DOMAIN + 'change-interest-rate/search',
+    CREATE_CHANGE_INTEREST_RATE: API_DOMAIN + 'change-interest-rate/create',
+    UPDATE_CHANGE_INTEREST_RATE: API_DOMAIN + 'change-interest-rate',
+    DELETE_CHANGE_INTEREST_RATE: API_DOMAIN + 'change-interest-rate',
+    DELETE_LIST_CHANGE_INTEREST_RATE: API_DOMAIN + 'change-interest-rate/delete',
 }
 export default API_MAP;

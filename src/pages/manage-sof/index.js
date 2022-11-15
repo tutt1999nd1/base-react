@@ -44,6 +44,7 @@ import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import CancelPresentationOutlinedIcon from '@mui/icons-material/CancelPresentationOutlined';
 import apiManagerSupplier from "../../api/manage-supplier";
 import apiManagerAssets from "../../api/manage-assets";
+import HistoryIcon from '@mui/icons-material/History';
 export default function ManageSOF() {
     const currentUser = useSelector(state => state.currentUser)
     const [listDelete, setListDelete] = useState([]);
@@ -470,6 +471,11 @@ export default function ManageSOF() {
                     navigate(`/sof/update?id=${params.id}`)
                     // });
                 }
+                const redirectChangeSofBtn = (e) => {
+                    e.stopPropagation();
+                    navigate(`/change-sof?id=${params.id}`)
+                    // });
+                }
                 const sendBtn = (e) => {
                     e.stopPropagation();
                     sendApproveSOFApi({id:params.id}).then(r=>{
@@ -501,7 +507,9 @@ export default function ManageSOF() {
                             </Tooltip>:''
                     }
 
-
+                    <Tooltip title="Lịch sử thay đổi" onClick={redirectChangeSofBtn}>
+                        <HistoryIcon style={{color: "rgb(107, 114, 128)"}}></HistoryIcon>
+                    </Tooltip>
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
                         <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
                     </Tooltip>
@@ -710,8 +718,6 @@ export default function ManageSOF() {
                 console.log(e)
             })
         }
-
-
     }
     const deleteListBtn = () => {
         setIsDelList(true)

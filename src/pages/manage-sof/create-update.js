@@ -1199,7 +1199,7 @@ export default function EditSOF(props) {
                                     <div className={'label-input'}>Biên độ lãi suất (%)<span
                                         className={'error-message'}>*</span></div>
                                     <NumericFormat
-                                        style={{width: '200px'}}
+                                        // style={{width: '200px'}}
                                         size={'small'}
                                         id='interest_rate_rage'
                                         customInput={TextField}

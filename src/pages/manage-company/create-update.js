@@ -63,10 +63,6 @@ export default function EditCategory(props) {
             .string()
             .trim()
             .required('Không được để trống'),
-        member_id: yup
-            .string()
-            .trim()
-            .required('Không được để trống'),
         capital_limit: yup
             .string()
             .trim()
@@ -166,8 +162,8 @@ export default function EditCategory(props) {
                         contact_detail: info.contact_detail,
                         // asset_type:info.asset_type.id,
                         // asset_group:info.asset_group.id,
-                        member_id: idUpdate ? info.member.id : info.member_id,
-                        member_name: info.member.name||'',
+                        member_id: idUpdate ? (info.member?info.member.id:"") : info.member_id,
+                        member_name:info.member? info.member.name:'',
                         tax_number: info.tax_number,
                         charter_capital: info.charter_capital,
                         founding_date: isUpdate ? dayjs(info.founding_date, 'DD-MM-YYYY') : info.founding_date,
@@ -287,8 +283,9 @@ export default function EditCategory(props) {
                                             </Typography>
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Người đại diện theo pháp luật<span
-                                                className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Người đại diện theo pháp luật
+                                                {/*<span className={'error-message'}>*</span>*/}
+                                            </div>
                                             <Autocomplete
                                                 disablePortal
                                                 id="combo-box-demo"
