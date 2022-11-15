@@ -206,6 +206,21 @@ export default function ManageSOF() {
         {
             filterable: false,
             sortable: false,
+            field: 'remain_lending_amount',
+            headerName: 'Số tiền vay còn lại',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            hide: checkColumnVisibility('sof','remain_lending_amount'),
+            renderCell: (params) => {
+
+                return <div className='content-column number'>
+                    {params.value}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
             field: 'owner_full_name',
             headerName: 'Người quản lý',
             headerClassName: 'super-app-theme--header',
@@ -532,6 +547,7 @@ export default function ManageSOF() {
             // arr[i].capital_value = currencyFormatter(arr[i].capital_value)
             // arr[i].max_capital_value = currencyFormatter(arr[i].max_capital_value)
             arr[i].lending_amount = currencyFormatter(arr[i].lending_amount)
+            arr[i].remain_lending_amount = currencyFormatter(arr[i].remain_lending_amount)
             if (arr[i].status === 'UNPAID') {
                 arr[i].status = "Chưa tất toán"
             } else if (arr[i].status === 'PAID') {
