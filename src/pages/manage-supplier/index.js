@@ -238,7 +238,6 @@ export default function ManageAssetGroup() {
         setIsDelList(true)
         setOpenModalDel(true)
     }
-
     const deleteListApi = (data) => {
         return apiManagerSupplier.deleteListSupplier(data);
     }

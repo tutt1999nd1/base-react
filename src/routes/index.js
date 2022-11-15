@@ -32,6 +32,7 @@ import EditSofChargingEst from "../pages/manage-sof-charging-est/create-update";
 import ManageMember from "../pages/manage-member";
 import EditMember from "../pages/manage-member/create-update";
 import DetailMember from "../pages/manage-member/detail";
+import ManageChangeSof from "../pages/manage-sof/manage-change-sof";
 
 export default function RenderRoute() {
     return (
@@ -64,13 +65,10 @@ export default function RenderRoute() {
                 <Route path="company/create" element={<EditCompany isUpdate={false}></EditCompany>}/>
                 <Route path="company/update" element={<EditCompany isUpdate={true}></EditCompany>}/>
                 <Route path="company/detail" element={<DetailCompany></DetailCompany>}/>
-
-
                 <Route path="member" element={<ManageMember></ManageMember>}/>
                 <Route path="member/create" element={<EditMember isUpdate={false}></EditMember>}/>
                 <Route path="member/update" element={<EditMember isUpdate={true}></EditMember>}/>
                 <Route path="member/detail" element={<DetailMember></DetailMember>}/>
-
                 <Route path="supplier" element={<ManageSupplier ></ManageSupplier>}/>
                 <Route path="supplier/create" element={<EditSupplier isUpdate={false}></EditSupplier>}/>
                 <Route path="supplier/update" element={<EditSupplier isUpdate={true}></EditSupplier>}/>
@@ -89,6 +87,7 @@ export default function RenderRoute() {
                 <Route path="campaign/detail" element={<DetailCampaign></DetailCampaign>}/>
                 <Route path="approve" element={<ManageApprove></ManageApprove>}/>
                 <Route path="sof" element={<ManageSOF>Khoản vay</ManageSOF>}/>
+                <Route path="change-sof" element={<ManageChangeSof></ManageChangeSof>}/>
                 <Route path="sof/create" element={<EditSOF isUpdate={false}></EditSOF>}/>
                 <Route path="sof/update" element={<EditSOF isUpdate={true}></EditSOF>}/>
                 <Route path="sof/detail" element={<DetailSOF></DetailSOF>}/>

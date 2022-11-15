@@ -1,24 +1,24 @@
 import axiosClient from "../axiosClient";
 import API_MAP from "../../constants/api";
 
-class ApiChangeLendingAmount{
-    getListChangeLendingAmount = (data) => {
-        return axiosClient.post(API_MAP.GET_LIST_CHANGE_LENDING_AMOUNT,data)
+class ApiChangeInterestRate{
+    getListChangeInterestRate= (data) => {
+        return axiosClient.post(API_MAP.GET_LIST_CHANGE_INTEREST_RATE,data)
     }
-    createChangeLendingAmount = (data) => {
-        return axiosClient.post(API_MAP.CREATE_CHANGE_LENDING_AMOUNT,data)
+    createChangeInterestRate = (data) => {
+        return axiosClient.post(API_MAP.CREATE_CHANGE_INTEREST_RATE,data)
     }
-    updateChangeLendingAmount = (id,data) => {
-        return axiosClient.put(API_MAP.UPDATE_CHANGE_LENDING_AMOUNT+`/${id}`,data)
+    updateChangeInterestRate = (id,data) => {
+        return axiosClient.put(API_MAP.UPDATE_CHANGE_INTEREST_RATE+`/${id}`,data)
     }
-    deleteListChangeLendingAmount= (data) => {
-        return axiosClient.post(API_MAP.DELETE_LIST_CHANGE_LENDING_AMOUNT,data)
+    deleteListChangeInterestRate= (data) => {
+        return axiosClient.post(API_MAP.DELETE_LIST_CHANGE_INTEREST_RATE,data)
     }
-    deleteChangeLendingAmount = (id) => {
-        return axiosClient.delete(API_MAP.DELETE_CHANGE_LENDING_AMOUNT+`/${id}`)
+    deleteChangeInterestRate = (id) => {
+        return axiosClient.delete(API_MAP.DELETE_CHANGE_INTEREST_RATE+`/${id}`)
     }
 }
 
-const apiChangeLendingAmount = new ApiChangeLendingAmount();
+const apiChangeInterestRate = new ApiChangeInterestRate();
 
-export default apiChangeLendingAmount;
+export default apiChangeInterestRate;

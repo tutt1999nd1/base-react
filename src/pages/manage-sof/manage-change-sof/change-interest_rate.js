@@ -17,8 +17,10 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import apiChangeLendingAmount from "../../../api/manage-change-lending-amount";
 import ModalChangeLendingAmount from "./modal-edit";
+import apiChangeInterestRate from "../../../api/manage-change-interest_rate";
+import ModalEditInterest from "./modal-edit-interest";
 
-export default function ChangeLendingAmount(props) {
+export default function ChangeInterestRate(props) {
     const {sourceOfFundId} = props;
     const navigate = useNavigate();
     const currentUser = useSelector(state => state.currentUser)
@@ -46,6 +48,10 @@ export default function ChangeLendingAmount(props) {
     const [info, setInfo] = useState({
         "paid_amount":"",
         "date_apply":new dayjs,
+        "interest_rate":"",
+        "interest_rate_type":"",
+        "interest_rate_rage":"",
+        "reference_interest_rate":"",
         "source_of_fund_id":sourceOfFundId
     })
     useEffect(()=>{
@@ -53,7 +59,11 @@ export default function ChangeLendingAmount(props) {
             setInfo({
                 "paid_amount":"",
                 "date_apply":new dayjs,
-                "source_of_fund_id":sourceOfFundId
+                "source_of_fund_id":sourceOfFundId,
+                "interest_rate":"",
+                "interest_rate_type":"",
+                "interest_rate_rage":"",
+                "reference_interest_rate":"",
             })
         }
     },[openModalEdit])
@@ -71,8 +81,53 @@ export default function ChangeLendingAmount(props) {
         {
             filterable: false,
             sortable: false,
-            field: 'paid_amount',
-            headerName: 'Số tiền trả',
+            field: 'interest_rate',
+            headerName: 'Lãi suất hợp đồng vay',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 120,
+            flex: 1,
+            hide: checkColumnVisibility('change_lending_amount','paid_amount'),
+            renderCell: (params) => {
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'interest_rate_type',
+            headerName: 'Loại lãi suất',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 120,
+            flex: 1,
+            hide: checkColumnVisibility('change_lending_amount','paid_amount'),
+            renderCell: (params) => {
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+        }
+        ,{
+            filterable: false,
+            sortable: false,
+            field: 'interest_rate_rage',
+            headerName: 'Biên độ lãi suất',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 120,
+            flex: 1,
+            hide: checkColumnVisibility('change_lending_amount','paid_amount'),
+            renderCell: (params) => {
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+        },
+,{
+            filterable: false,
+            sortable: false,
+            field: 'reference_interest_rate',
+            headerName: 'Lãi suất tham chiếu',
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
             flex: 1,
@@ -122,7 +177,10 @@ export default function ChangeLendingAmount(props) {
                 const updateBtn = (e) => {
                     e.stopPropagation();
                     let copy = {...params.row}
-                    copy.paid_amount = Number(copy.paid_amount.replaceAll('.',''))
+                    // copy.interest_rate = Number(copy.interest_rate.replaceAll('.',''))
+                    // copy.interest_rate_type = Number(copy.interest_rate_type.replaceAll('.',''))
+                    // copy.interest_rate_rage = Number(copy.interest_rate_rage.replaceAll('.',''))
+                    // copy.reference_interest_rate = Number(copy.reference_interest_rate.replaceAll('.',''))
                     setInfo(copy)
                     setIsUpdate(true)
                     setOpenModalEdit(true)
@@ -150,13 +208,12 @@ export default function ChangeLendingAmount(props) {
             // arr[i].initial_value = currencyFormatter(arr[i].initial_value)
             // arr[i].capital_value = currencyFormatter(arr[i].capital_value)
             // arr[i].max_capital_value = currencyFormatter(arr[i].max_capital_value)
-            arr[i].paid_amount = currencyFormatter(arr[i].paid_amount)
         }
         return arr;
     }
     useEffect(() => {
         if (currentUser.token&&sourceOfFundId) {
-            getListChangeLendingAmountApi({
+            getListChangeInterestRateApi({
                 'page_size': listResult.pageSize,
                 'page_index': listResult.page + 1,
                 'paging': true,
@@ -167,7 +224,7 @@ export default function ChangeLendingAmount(props) {
             }).then(r => {
                 setLoading(false)
                 console.log("r", r)
-                let arr = convertArr(r.data.change_lending_amount_entities)
+                let arr = convertArr(r.data.change_interest_rate_entities)
                 setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
             }).catch(e => {
                 setLoading(false)
@@ -233,15 +290,15 @@ export default function ChangeLendingAmount(props) {
         setOpenModalDel(true)
     }
     const deleteListApi = (data) => {
-        return apiChangeLendingAmount.deleteListChangeLendingAmount(data);
+        return apiChangeInterestRate.deleteListChangeInterestRate(data);
     }
-    const getListChangeLendingAmountApi = (data) => {
+    const getListChangeInterestRateApi = (data) => {
         setLoading(true)
-        return apiChangeLendingAmount.getListChangeLendingAmount(data);
+        return apiChangeInterestRate.getListChangeInterestRate(data);
     }
     const deleteApi = (id) => {
         setLoading(true)
-        return apiChangeLendingAmount.deleteChangeLendingAmount(id);
+        return apiChangeInterestRate.deleteChangeInterestRate(id);
     }
     return (
         <div className={'main-content'}>
@@ -265,10 +322,10 @@ export default function ChangeLendingAmount(props) {
                 <ModalConfirmDel name={infoDel.supplier_name} openModalDel={openModalDel}
                                  handleCloseModalDel={handleCloseModalDel}
                                  submitDelete={submitDelete}></ModalConfirmDel>
-                <ModalChangeLendingAmount refresh={refresh} setRefresh={setRefresh} openModal={openModalEdit} handleCloseModal={handleCloseModalEdit} info={info} isUpdate={isUpdate}></ModalChangeLendingAmount>
+                <ModalEditInterest refresh={refresh} setRefresh={setRefresh} openModal={openModalEdit} handleCloseModal={handleCloseModalEdit} info={info} isUpdate={isUpdate}></ModalEditInterest>
                 <div className={'row'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
-                        Quản lý đối tượng cung cấp vốn
+                        Quản lý thay đổi lãi suất
                     </Typography>
                     <div>
                         <Button onClick={()=>{setIsUpdate(false);setOpenModalEdit(true)}}  variant="outlined" startIcon={<AddIcon/>}>

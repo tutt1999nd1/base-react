@@ -936,7 +936,12 @@ border: unset;
     max-height: 150px;
     overflow-y: auto;
 }
-
+/*.main-content-tab .main-content-body{*/
+/*    margin-top: unset !important;*/
+/*}*/
+/*.MuiBox-root{*/
+/*    padding: unset !important;*/
+/*}*/
 /* mobile style */
 @media only screen and (max-width: 787px) {
     .super-app-theme--header{

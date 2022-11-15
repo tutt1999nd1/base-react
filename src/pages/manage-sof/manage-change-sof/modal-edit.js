@@ -125,55 +125,56 @@ export default function ModalChangeLendingAmount(props) {
                     return (
                         <Form onSubmit={handleSubmit}>
                             <DialogContent style={{width: '450px', height: '200px'}} dividers className={"model-account-form"}>
-                                <Grid item xs={6} md={6}>
-                                    <div className={'label-input'}>Số tiền vay trả (VNĐ)<span
-                                        className={'error-message'}>*</span></div>
-                                    <NumericFormat
-                                        id='paid_amount'
-                                        name='paid_amount'
-                                        className={'formik-input text-right'}
-                                        size={"small"}
-                                        value={values.paid_amount}
-                                        customInput={TextField}
-                                        error={touched.paid_amount && Boolean(errors.paid_amount)}
-                                        helperText={touched.paid_amount && errors.paid_amount}
-                                        InputProps={{
-                                            endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
+                                <Grid container spacing={4}>
+                                    <Grid item xs={6} md={12}>
+                                        <div className={'label-input'}>Số tiền vay trả (VNĐ)<span
+                                            className={'error-message'}>*</span></div>
+                                        <NumericFormat
+                                            id='paid_amount'
+                                            name='paid_amount'
+                                            className={'formik-input text-right'}
+                                            size={"small"}
+                                            value={values.paid_amount}
+                                            customInput={TextField}
+                                            error={touched.paid_amount && Boolean(errors.paid_amount)}
+                                            helperText={touched.paid_amount && errors.paid_amount}
+                                            InputProps={{
+                                                endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
 
-                                        }}
-                                        thousandSeparator={"."}
-                                        decimalSeparator={","}
-                                        onValueChange={(values) => {
-                                            const {formattedValue, value, floatValue} = values;
-                                            const re = /^[0-9\b]+$/;
-                                            if (re.test(floatValue)) {
-                                                setFieldValue('paid_amount', floatValue)
-                                            }
-                                        }}
-                                    />
-                                    <Typography className={'uppercase'} variant="caption" display="block"
-                                                gutterBottom>
-                                        {values.paid_amount ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.paid_amount))} đồng` : ''}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={6} md={6}>
-                                    <div className={'label-input'}>Ngày áo dụng gốc mới<span
-                                        className={'error-message'}>*</span></div>
-                                    <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
-                                        <DesktopDatePicker
-                                            style={{width: '100% !important', height: '30px'}}
-                                            inputFormat="DD-MM-YYYY"
-                                            value={values.date_apply}
-                                            onChange={value => props.setFieldValue("date_apply", value)}
-                                            error={touched.date_apply && Boolean(errors.date_apply)}
-                                            helperText={touched.date_apply && errors.date_apply}
-                                            renderInput={(params) => <TextField size={"small"}
-                                                                                fullWidth {...params} />}
+                                            }}
+                                            thousandSeparator={"."}
+                                            decimalSeparator={","}
+                                            onValueChange={(values) => {
+                                                const {formattedValue, value, floatValue} = values;
+                                                const re = /^[0-9\b]+$/;
+                                                if (re.test(floatValue)) {
+                                                    setFieldValue('paid_amount', floatValue)
+                                                }
+                                            }}
                                         />
-                                    </LocalizationProvider>
+                                        <Typography className={'uppercase'} variant="caption" display="block"
+                                                    gutterBottom>
+                                            {values.paid_amount ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.paid_amount))} đồng` : ''}
+                                        </Typography>
+                                    </Grid>
+                                    <Grid item xs={6} md={12}>
+                                        <div className={'label-input'}>Ngày áo dụng gốc mới<span
+                                            className={'error-message'}>*</span></div>
+                                        <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
+                                            <DesktopDatePicker
+                                                style={{width: '100% !important', height: '30px'}}
+                                                inputFormat="DD-MM-YYYY"
+                                                value={values.date_apply}
+                                                onChange={value => props.setFieldValue("date_apply", value)}
+                                                error={touched.date_apply && Boolean(errors.date_apply)}
+                                                helperText={touched.date_apply && errors.date_apply}
+                                                renderInput={(params) => <TextField size={"small"}
+                                                                                    fullWidth {...params} />}
+                                            />
+                                        </LocalizationProvider>
 
+                                    </Grid>
                                 </Grid>
-
                             </DialogContent>
                             <DialogActions>
                                 <Button variant="outlined" onClick={handleCloseModal}>

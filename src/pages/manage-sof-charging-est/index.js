@@ -68,7 +68,6 @@ export default function ManageSofChargingEst() {
             end: (new dayjs).endOf('month'),
         }
     )
-
     const [loading, setLoading] = useState(false)
     const [refresh, setRefresh] = useState(false)
     const [companySearch, setCompanySearch] = useState(0)
@@ -254,47 +253,6 @@ export default function ManageSofChargingEst() {
         })
     }
 
-    const uploadFile = () => {
-        var el = window._protected_reference = document.createElement("INPUT");
-        el.type = "file";
-        el.accept = ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
-        // el.multiple = "multiple";
-        el.addEventListener('change', function (ev2) {
-            new Promise(function (resolve) {
-                setTimeout(function () {
-                    if (el.files.length > 0) {
-                        console.log(el.files);
-                        let formData = new FormData();
-                        formData.append('file', el.files[0])
-                        importCompanyApi(formData).then(r => {
-                            console.log(r);
-                            toast.success('Nhập dữ liệu thành công', {
-                                position: "top-right",
-                                autoClose: 1500,
-                                hideProgressBar: true,
-                                closeOnClick: true,
-                                pauseOnHover: true,
-                                draggable: true,
-                            });
-                            setRefresh(!refresh)
-
-                        }).catch(err => {
-                            console.log(err)
-                        })
-                    }
-                    resolve();
-
-                }, 1000);
-
-
-            })
-                .then(function () {
-                    // clear / free reference
-                    el = window._protected_reference = undefined;
-                });
-        });
-        el.click();
-    }
     const exportChargingEst = () => {
         Axios.post(API_MAP.EXPORT_CHARGING_EST, {
             'page_size': listResult.pageSize,
