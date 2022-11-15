@@ -41,7 +41,7 @@ export const currencyFormatter = (value) => {
     value = value.toFixed(options.significantDigits)
 
     const [currency, decimal] = value.split('.')
-    return ` ${currency.replace(
+    return `${currency.replace(
         /\B(?=(\d{3})+(?!\d))/g,
         options.thousandsSeparator
     )}`
