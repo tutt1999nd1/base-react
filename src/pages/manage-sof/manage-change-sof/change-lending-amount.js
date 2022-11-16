@@ -3,7 +3,7 @@ import {Button, Collapse, Divider, IconButton, TextField, Tooltip, Typography} f
 import {toast, ToastContainer} from "react-toastify";
 import {useNavigate} from "react-router-dom";
 import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, viVN} from "@mui/x-data-grid";
-import {changeVisibilityTableAll, checkColumnVisibility, currencyFormatter} from "../../../constants/utils";
+import {changeVisibilityTableAll, checkColumnVisibility, currencyFormatter, typeToName} from "../../../constants/utils";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
@@ -46,12 +46,14 @@ export default function ChangeLendingAmount(props) {
     const [info, setInfo] = useState({
         "paid_amount":"",
         "date_apply":new dayjs,
+        "type":"pay",
         "source_of_fund_id":sourceOfFundId
     })
     useEffect(()=>{
         if(!openModalEdit){
             setInfo({
                 "paid_amount":"",
+                type:"pay",
                 "date_apply":new dayjs,
                 "source_of_fund_id":sourceOfFundId
             })
@@ -72,7 +74,7 @@ export default function ChangeLendingAmount(props) {
             filterable: false,
             sortable: false,
             field: 'paid_amount',
-            headerName: 'Số tiền trả',
+            headerName: 'Số tiền',
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
             flex: 1,
@@ -83,7 +85,21 @@ export default function ChangeLendingAmount(props) {
                 </div>;
             },
         },
-
+        {
+            filterable: false,
+            sortable: false,
+            field: 'type',
+            headerName: 'Loại',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 120,
+            flex: 1,
+            hide: checkColumnVisibility('change_lending_amount','paid_amount'),
+            renderCell: (params) => {
+                return <div className='content-column'>
+                    {typeToName(params.value)}
+                </div>;
+            },
+        },
         // {filterable: false,sortable: false, field: 'document', headerName: 'Tài liệu',headerClassName: 'super-app-theme--header' ,minWidth: 120},
 
         {
@@ -265,7 +281,7 @@ export default function ChangeLendingAmount(props) {
                 <ModalConfirmDel name={infoDel.supplier_name} openModalDel={openModalDel}
                                  handleCloseModalDel={handleCloseModalDel}
                                  submitDelete={submitDelete}></ModalConfirmDel>
-                <ModalChangeLendingAmount refresh={refresh} setRefresh={setRefresh} openModal={openModalEdit} handleCloseModal={handleCloseModalEdit} info={info} isUpdate={isUpdate}></ModalChangeLendingAmount>
+                <ModalChangeLendingAmount sourceOfFundId={sourceOfFundId} refresh={refresh} setRefresh={setRefresh} openModal={openModalEdit} handleCloseModal={handleCloseModalEdit} info={info} isUpdate={isUpdate}></ModalChangeLendingAmount>
                 <div className={'row'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
                         Quản lý thay đổi tiền gốc

@@ -49,7 +49,7 @@ export default function ChangeInterestRate(props) {
         "paid_amount":"",
         "date_apply":new dayjs,
         "interest_rate":"",
-        "interest_rate_type":"",
+        "interest_rate_type":"Cố định",
         "interest_rate_rage":"",
         "reference_interest_rate":"",
         "source_of_fund_id":sourceOfFundId
@@ -61,7 +61,7 @@ export default function ChangeInterestRate(props) {
                 "date_apply":new dayjs,
                 "source_of_fund_id":sourceOfFundId,
                 "interest_rate":"",
-                "interest_rate_type":"",
+                "interest_rate_type":"Cố định",
                 "interest_rate_rage":"",
                 "reference_interest_rate":"",
             })
@@ -322,7 +322,7 @@ export default function ChangeInterestRate(props) {
                 <ModalConfirmDel name={infoDel.supplier_name} openModalDel={openModalDel}
                                  handleCloseModalDel={handleCloseModalDel}
                                  submitDelete={submitDelete}></ModalConfirmDel>
-                <ModalEditInterest refresh={refresh} setRefresh={setRefresh} openModal={openModalEdit} handleCloseModal={handleCloseModalEdit} info={info} isUpdate={isUpdate}></ModalEditInterest>
+                <ModalEditInterest sourceOfFundId={sourceOfFundId} refresh={refresh} setRefresh={setRefresh} openModal={openModalEdit} handleCloseModal={handleCloseModalEdit} info={info} isUpdate={isUpdate}></ModalEditInterest>
                 <div className={'row'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
                         Quản lý thay đổi lãi suất

@@ -943,14 +943,10 @@ export default function EditSOF(props) {
                                         inputValue={values.lending_in_month}
                                         options={listOptionMonth}
                                         onInputChange={(event, value) => {
-                                            // console.log("value",value)}
-                                            // do something with floatValue
-
                                             const re = /^[0-9\b]+$/;
                                             if (re.test(value) || value === '') {
                                                 setFieldValue('lending_in_month', value)
                                             }
-                                            // setFieldValue('lending_in_month', value)
                                         }
                                         }
 

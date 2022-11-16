@@ -31,7 +31,7 @@ import apiChangeInterestRate from "../../../api/manage-change-interest_rate";
 
 
 export default function ModalEditInterest(props) {
-    const {openModal, handleCloseModal,info,isUpdate,setRefresh,refresh} = props
+    const {openModal, handleCloseModal,info,isUpdate,setRefresh,refresh,sourceOfFundId} = props
     const validationSchema = yup.object({
         interest_rate_type: yup.string()
             .trim()
@@ -79,7 +79,7 @@ export default function ModalEditInterest(props) {
                         reference_interest_rate: info.reference_interest_rate,
                         interest_rate_rage: info.interest_rate_rage,
                         date_apply: dayjs(info.date_apply, 'DD-MM-YYYY'),
-                        source_of_fund_id:info.source_of_fund_id,
+                        source_of_fund_id:sourceOfFundId,
                     }}
                     validationSchema={validationSchema}
                     onSubmit={
