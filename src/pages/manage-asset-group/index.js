@@ -123,7 +123,7 @@ export default function ManageCategory() {
             sortable: false,
             width: 200,
             align: 'center',
-            maxWidth: 130,
+            maxWidth: 150,
             // flex: 1,
             renderCell: (params) => {
 

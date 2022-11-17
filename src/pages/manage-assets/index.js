@@ -217,9 +217,9 @@ export default function ManageAssets() {
             field: 'action',
             headerName: 'Thao tác',
             sortable: false,
-            width: 200,
+            width: 150,
             align: 'center',
-            maxWidth: 130,
+            maxWidth: 150,
             headerClassName: 'super-app-theme--header',
             hide: checkColumnVisibility('asset','action'),
             // flex: 1,
@@ -559,7 +559,7 @@ export default function ManageAssets() {
 
                 </Collapse>
                 <Divider light/>
-                <div className={'main-content-body-result'}>
+                <div className={'main-content-body-result sticky-body'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
                             getRowHeight={() => 'auto'}

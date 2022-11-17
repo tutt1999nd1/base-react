@@ -64,25 +64,27 @@ export default function ManageChangeSof(props) {
     }
 
     return (
-        <Box sx={{width: '100%'}}>
-                <Button onClick={backList} style={{marginBottom: '10px'}} variant="text"
-                        startIcon={<KeyboardBackspaceIcon/>}>Nguồn vốn</Button>
-            <Typography variant="h5" className={'main-content-tittle'}>
-                {/*Mã khoản vay: {info.sof_code}*/}
-                Mã khoản vay: {info.sof_code}
-            </Typography>
+        <div className={'main-content'}>
+            <Box sx={{width: '100%'}}>
+                    <Button onClick={backList} style={{marginBottom: '10px'}} variant="text"
+                            startIcon={<KeyboardBackspaceIcon/>}>Nguồn vốn</Button>
+                <Typography variant="h5" className={'main-content-tittle'}>
+                    {/*Mã khoản vay: {info.sof_code}*/}
+                    Mã khoản vay: {info.sof_code}
+                </Typography>
 
-                <Tabs value={tab} onChange={handleChangeTab} aria-label="basic tabs example">
-                    <Tab label="Thay đổi tiền gốc" {...a11yProps(0)} />
-                    <Tab label="Thay đổi lãi suất" {...a11yProps(1)} />
-                    {/*<Tab label="Item Three" {...a11yProps(2)} />*/}
-                </Tabs>
-            <TabPanel value={tab} index={0}>
-                <ChangeLendingAmount sourceOfFundId={idDetail}></ChangeLendingAmount>
-            </TabPanel>
-            <TabPanel value={tab} index={1}>
-            <ChangeInterestRate sourceOfFundId={idDetail}></ChangeInterestRate>
-            </TabPanel>
-        </Box>
+                    <Tabs value={tab} onChange={handleChangeTab} aria-label="basic tabs example">
+                        <Tab label="Thay đổi tiền gốc" {...a11yProps(0)} />
+                        <Tab label="Thay đổi lãi suất" {...a11yProps(1)} />
+                        {/*<Tab label="Item Three" {...a11yProps(2)} />*/}
+                    </Tabs>
+                <TabPanel value={tab} index={0}>
+                    <ChangeLendingAmount sourceOfFundId={idDetail}></ChangeLendingAmount>
+                </TabPanel>
+                <TabPanel value={tab} index={1}>
+                <ChangeInterestRate sourceOfFundId={idDetail}></ChangeInterestRate>
+                </TabPanel>
+            </Box>
+        </div>
     )
 }

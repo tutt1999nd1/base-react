@@ -304,9 +304,10 @@ export default function ManageCompany() {
             hide: checkColumnVisibility('company','action'),
             headerName: 'Thao tác',
             sortable: false,
-            width: 200,
+            width: 150,
+            minWidth: 150,
             align: 'center',
-            maxWidth: 130,
+            maxWidth: 150,
             // flex: 1,
             renderCell: (params) => {
 
@@ -769,7 +770,7 @@ export default function ManageCompany() {
 
                 </Collapse>
                 <Divider light/>
-                <div className={'main-content-body-result'}>
+                <div className={'main-content-body-result sticky-body'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
                             onColumnVisibilityModelChange={(event) =>{

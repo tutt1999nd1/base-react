@@ -133,9 +133,9 @@ export default function ManageCategory() {
             headerClassName: 'super-app-theme--header',
             hide: checkColumnVisibility('campaign','action'),
             sortable: false,
-            width: 200,
+            width: 150,
             align: 'center',
-            maxWidth: 130,
+            maxWidth: 150,
             flex: 1,
             renderCell: (params) => {
 

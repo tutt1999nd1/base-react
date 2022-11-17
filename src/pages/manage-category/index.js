@@ -118,11 +118,12 @@ export default function ManageCategory() {
         {
             field: 'action',
             headerClassName: 'super-app-theme--header',
+            minWidth: 150,
             headerName: 'Thao tác',
             sortable: false,
-            width: 200,
+            width: 150,
             align: 'center',
-            maxWidth: 130,
+            maxWidth: 150,
             hide: checkColumnVisibility('category','action'),
             flex: 1,
             renderCell: (params) => {

@@ -101,9 +101,10 @@ export default function ManageAssetGroup() {
             hide: checkColumnVisibility('supplier','action'),
             headerName: 'Thao tác',
             sortable: false,
-            width: 200,
+            width: 150,
+            minWidth: 150,
             align: 'center',
-            maxWidth: 130,
+            maxWidth: 150,
             // flex: 1,
             renderCell: (params) => {
 

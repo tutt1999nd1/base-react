@@ -734,18 +734,21 @@ th{
     background-color: #1F2251;
     color: #fff !important;
 }
-.main-content > button{
+.main-content > button,.main-content .MuiBox-root > button{
     padding: 4px 10px;
     border: 1px solid #1F2251 !important;
 }
-.main-content > button:hover{
+.main-content > button:hover,.main-content .MuiBox-root > button:hover{
     background-color: #1F2251;
     color: #fff !important;
 }
-.main-content > button:hover svg path{
+.main-content > button:hover svg path,.main-content .MuiBox-root > button:hover svg path{
     fill: #fff;
 }
-
+.main-content .MuiBox-root h5 {
+    color: #1F2251;
+    margin-top: 15px;
+}
 .table-custom th{
 height: 40px;
 white-space: nowrap;
@@ -912,7 +915,7 @@ background-color: #1F2251;
 color: #fff !important;
 }
 .main-content-body-result .MuiSvgIcon-root{
-font-size: 0.8rem;
+font-size: 1rem;
 }
 .main-content-body-tittle button{
 border: unset;
@@ -1066,3 +1069,78 @@ border: unset;
         white-space: unset;
     }
 }
+
+
+.sticky-body .MuiDataGrid-columnHeaders:after {
+    content: "Thao tác";
+    width: 157px;
+    height: 56px;
+    position: absolute;
+    right: -1px;
+    background-color: #1f2251;
+    padding-left: 10px;
+    color: #fff;
+    border-left: 1px solid #dee2e6;
+    font-family: Roboto,Helvetica,Arial,sans-serif;
+    font-weight: 500;
+}
+.sticky-body .MuiDataGrid-row .MuiDataGrid-cell:last-child {
+    position: sticky;
+    right: 0px;
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+    border-left: 1px solid #dee2e6;
+    min-width: 153px!important;
+}
+.main-content-body-result tr th:last-child{
+    position: sticky;
+    right: 0;
+    background-color: #1f2251;
+    border-left: 1px solid #dee2e6;
+}
+.main-content-body-result table tbody tr > td:last-child{
+    position: sticky;
+    right: 0;
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+
+}
+.icon-action svg:not(svg:last-child){
+    border-right: 1px dashed rgb(206 206 206);
+    padding-right: 8px;
+}
+
+/*.MuiDataGrid-columnHeaders:before{*/
+/*    content: "Công ty vay";*/
+/*    width: 60px;*/
+/*    height: 56px;*/
+/*    position: absolute;*/
+/*    left: -1px;*/
+/*    background-color: #1f2251;*/
+/*    padding-left: 10px;*/
+/*    color: #fff;*/
+/*    border-left: 1px solid #dee2e6;*/
+/*    font-family: Roboto,Helvetica,Arial,sans-serif;*/
+/*    font-weight: 500;*/
+/*    z-index: 99;*/
+/*}*/
+
+/*.MuiDataGrid-virtualScrollerRenderZone div[aria-colindex="4"]{*/
+/*    position: sticky;*/
+/*    left: 0;*/
+/*    z-index: 999;*/
+/*    background:red;*/
+/*}*/
+/*.MuiDataGrid-virtualScrollerRenderZone .MuiDataGrid-row:first-child div[aria-colindex="4"]:before{*/
+/*    content: "Thao tác";*/
+/*    width: 157px;*/
+/*    height: 56px;*/
+/*    position: absolute;*/
+/*    right: -1px;*/
+/*    background-color: #1f2251;*/
+/*    padding-left: 10px;*/
+/*    color: #fff;*/
+/*    border-left: 1px solid #dee2e6;*/
+/*    font-family: Roboto,Helvetica,Arial,sans-serif;*/
+/*    font-weight: 500;*/
+/*}*/

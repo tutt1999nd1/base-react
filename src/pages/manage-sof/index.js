@@ -1,6 +1,10 @@
 import React, {useEffect, useState} from "react";
 import Collapse from "@mui/material/Collapse";
 import 'react-dropdown-tree-select/dist/styles.css'
+import PaidIcon from '@mui/icons-material/Paid';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 // import 'antd/dist/antd.css';
 import {TreeSelect} from 'antd';
 
@@ -117,6 +121,7 @@ export default function ManageSOF() {
         {
             filterable: false,
             sortable: false,
+            resizable: true,
             field: 'capital_company_name',
             headerName: 'Công ty vay',
             headerClassName: 'super-app-theme--header',
@@ -446,7 +451,8 @@ export default function ManageSOF() {
             field: 'action',
             headerName: 'Thao tác',
             sortable: false,
-            width: 200,
+            width: 150,
+            maxWidth: 150,
             align: 'center',
             minWidth: 150,
             headerClassName: 'super-app-theme--header',
@@ -496,28 +502,28 @@ export default function ManageSOF() {
                     console.log(params.row.status_approve)
                 }
                 return <div className='icon-action'>
-                    {
-                        params.row.created_by !== currentUser.username?'': params.row.status_approve=='Tạo mới'|| params.row.status_approve=='Đã từ chối'?
-                        <Tooltip title="Đề xuát phê duyệt" >
-                            <CheckBoxOutlinedIcon onClick={sendBtn} style={{color: "rgb(107, 114, 128)"}}></CheckBoxOutlinedIcon>
-                        </Tooltip> :
-                            params.row.status_approve=='Đang chờ phê duyệt'?
-                            <Tooltip title="Hủy phê duyệt" >
-                                <CancelPresentationOutlinedIcon onClick={cancelBtn} style={{color: "rgb(107, 114, 128)"}}></CancelPresentationOutlinedIcon>
-                            </Tooltip>:''
-                    }
+                    {/*{*/}
+                    {/*    params.row.created_by !== currentUser.username?'': params.row.status_approve=='Tạo mới'|| params.row.status_approve=='Đã từ chối'?*/}
+                    {/*    <Tooltip title="Đề xuất phê duyệt" >*/}
+                    {/*        <CheckBoxOutlinedIcon onClick={sendBtn} style={{color: "rgb(107, 114, 128)"}}></CheckBoxOutlinedIcon>*/}
+                    {/*    </Tooltip> :*/}
+                    {/*        params.row.status_approve=='Đang chờ phê duyệt'?*/}
+                    {/*        <Tooltip title="Hủy phê duyệt" >*/}
+                    {/*            <CancelPresentationOutlinedIcon onClick={cancelBtn} style={{color: "rgb(107, 114, 128)"}}></CancelPresentationOutlinedIcon>*/}
+                    {/*        </Tooltip>:''*/}
+                    {/*}*/}
 
-                    <Tooltip title="Lịch sử thay đổi" onClick={redirectChangeSofBtn}>
-                        <HistoryIcon style={{color: "rgb(107, 114, 128)"}}></HistoryIcon>
+                    <Tooltip title="Thay đổi giá trị vay" onClick={redirectChangeSofBtn}>
+                        <PaidIcon style={{color: "rgb(123, 128, 154)"}}></PaidIcon>
                     </Tooltip>
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
-                        <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
+                        <BorderColorIcon style={{color: "rgb(123, 128, 154)"}}></BorderColorIcon>
                     </Tooltip>
                     <Tooltip title="Xóa" onClick={deleteBtn}>
-                        <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
+                        <DeleteForeverIcon style={{color: "rgb(123, 128, 154)"}}></DeleteForeverIcon>
                     </Tooltip>
                     <Tooltip onClick={detailBtn} title="Xem chi tiết">
-                        <ArrowForwardIcon style={{color: "rgb(107, 114, 128)"}}></ArrowForwardIcon>
+                        <RemoveRedEyeIcon style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon >
                     </Tooltip>
                 </div>;
             },
@@ -925,7 +931,7 @@ export default function ManageSOF() {
 
                 </Collapse>
                 <Divider light/>
-                <div className={'main-content-body-result'}>
+                <div className={'main-content-body-result sticky-body'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
                             getRowHeight={() => 'auto'}
