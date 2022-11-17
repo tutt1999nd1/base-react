@@ -64,7 +64,7 @@ export default function ManageChangeSof(props) {
     }
 
     return (
-        <div className={'main-content'}>
+        <div className={'main-content change-lending-amount'}>
             <Box sx={{width: '100%'}}>
                     <Button onClick={backList} style={{marginBottom: '10px'}} variant="text"
                             startIcon={<KeyboardBackspaceIcon/>}>Nguồn vốn</Button>
