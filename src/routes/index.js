@@ -33,6 +33,8 @@ import ManageMember from "../pages/manage-member";
 import EditMember from "../pages/manage-member/create-update";
 import DetailMember from "../pages/manage-member/detail";
 import ManageChangeSof from "../pages/manage-sof/manage-change-sof";
+import CompanyHistory from "../pages/manage-company/company-history";
+import CompanyMember from "../pages/manage-company/company-member";
 
 export default function RenderRoute() {
     return (
@@ -65,6 +67,8 @@ export default function RenderRoute() {
                 <Route path="company/create" element={<EditCompany isUpdate={false}></EditCompany>}/>
                 <Route path="company/update" element={<EditCompany isUpdate={true}></EditCompany>}/>
                 <Route path="company/detail" element={<DetailCompany></DetailCompany>}/>
+                <Route path="company/member" element={<CompanyMember></CompanyMember>}/>
+                <Route path="company/history" element={<CompanyHistory></CompanyHistory>}/>
                 <Route path="member" element={<ManageMember></ManageMember>}/>
                 <Route path="member/create" element={<EditMember isUpdate={false}></EditMember>}/>
                 <Route path="member/update" element={<EditMember isUpdate={true}></EditMember>}/>

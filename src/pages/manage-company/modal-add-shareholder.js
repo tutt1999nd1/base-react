@@ -29,7 +29,7 @@ export default function ModalAddShareholder(props) {
 
     const submit = () => {
         handleCloseModalAddShareholder();
-        addShareholderApi({company_id: value.companyId, member_id: value.memberId,position:value.position}).then(r => {
+        addShareholderApi({company_id: value.companyId,member_name:value.memberName, member_id: value.memberId,position:value.position}).then(r => {
             toast.success('Thêm mới thành công', {
                 position: "top-right",
                 autoClose: 1500,
@@ -103,22 +103,22 @@ export default function ModalAddShareholder(props) {
                                 label: value.memberName,
                             }
                             }
+                            freeSolo
+                            inputValue={value.memberName}
 
                             renderInput={(params) => < TextField  {...params} />}
                             size={"small"}
+                            onInputChange={(event, newValue) => {
+                                setValue({...value,memberId: "",memberName:newValue})
+                            }
+                            }
                             onChange={(event, newValue) => {
-                                // setCompanySearch(newValue)
                                 console.log("new_value", newValue)
-                                if (newValue) {
-                                    setValue({...value, memberId: newValue.id, memberName: newValue.label})
-                                    // setFieldValue('capital_company_id', newValue.id)
-                                    // setFieldValue('capital_campaign_name', newValue.label)
-                                    // setIdCompanyCurrent(newValue.id)
-                                } else {
-                                    setValue({...value, memberId: '', memberName: ''})
-                                    // setFieldValue('capital_company_id', '')
-                                    // setFieldValue('capital_campaign_name', '')
-                                    // setIdCompanyCurrent(0)
+                                if (newValue){
+                                    setValue({...value,memberId: newValue.id,memberName:newValue.label})
+                                }
+                                else{
+                                    setValue({...value,memberId: '',memberName:''})
                                 }
                             }}
                         />
@@ -148,7 +148,7 @@ export default function ModalAddShareholder(props) {
                     <Button variant="outlined" autoFocus onClick={handleCloseModalAddShareholder}>
                         Hủy
                     </Button>
-                    <Button disabled={value.memberId === ''} onClick={submit} variant={'contained'}
+                    <Button disabled={value.memberName === ''} onClick={submit} variant={'contained'}
                             color={"error"}>Lưu</Button>
                 </DialogActions>
             </Dialog>

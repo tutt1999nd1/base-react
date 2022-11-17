@@ -357,7 +357,7 @@ export default function ManageAssets() {
             setLoading(false)
             console.log(e)
         })
-    }, [listResult.page, listResult.pageSize, nameSearch, groupSearch, typeSearch, refresh, currentUser])
+    }, [listResult.page, listResult.pageSize, nameSearch, groupSearch, typeSearch, refresh, currentUser.token])
     useEffect(() => {
 
         getListAssetGroupTreeApi({paging: false}).then(r => {

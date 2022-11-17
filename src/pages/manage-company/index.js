@@ -10,7 +10,8 @@ import {toast, ToastContainer} from "react-toastify";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Highlighter from "react-highlight-words";
-
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import HistoryIcon from '@mui/icons-material/History';
 import {
     DataGrid,
     GridColDef,
@@ -304,10 +305,10 @@ export default function ManageCompany() {
             hide: checkColumnVisibility('company','action'),
             headerName: 'Thao tác',
             sortable: false,
-            width: 150,
-            minWidth: 150,
+            width: 170,
+            minWidth: 170,
             align: 'center',
-            maxWidth: 150,
+            maxWidth: 170,
             // flex: 1,
             renderCell: (params) => {
 
@@ -329,6 +330,12 @@ export default function ManageCompany() {
                     // });
                 }
                 return <div className='icon-action'>
+                    <Tooltip title="Lịch sử thay đổi công ty" onClick={()=>navigate(`/company/history?id=${params.id}`)}>
+                        <HistoryIcon style={{color: "rgb(107, 114, 128)"}}></HistoryIcon>
+                    </Tooltip>
+                    <Tooltip title="Thành viên" onClick={()=>navigate(`/company/member?id=${params.id}`)}>
+                        <PersonOutlineIcon style={{color: "rgb(107, 114, 128)"}}></PersonOutlineIcon>
+                    </Tooltip>
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
                         <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
                     </Tooltip>
@@ -770,7 +777,7 @@ export default function ManageCompany() {
 
                 </Collapse>
                 <Divider light/>
-                <div className={'main-content-body-result sticky-body'}>
+                <div className={'main-content-body-result sticky-body tutt20'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
                             onColumnVisibilityModelChange={(event) =>{

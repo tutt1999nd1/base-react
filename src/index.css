@@ -1069,7 +1069,10 @@ border: unset;
         white-space: unset;
     }
 }
-
+.tutt20 .MuiDataGrid-columnHeaders:after {
+    content: "Thao tác";
+    width: 177px !important;
+}
 
 .sticky-body .MuiDataGrid-columnHeaders:after {
     content: "Thao tác";

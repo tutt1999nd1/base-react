@@ -29,7 +29,7 @@ export default function ModalAddCouncil(props) {
 
     const submit = () => {
         handleCloseModalAddCouncil();
-        addMemberCompanyApi({company_id:value.companyId,member_id:value.memberId,position:value.position,type:'HĐQT'}).then(r=>{
+        addMemberCompanyApi({company_id:value.companyId,member_id:value.memberId,member_name:value.memberName,position:value.position,type:'HĐQT'}).then(r=>{
             toast.success('Thêm mới thành công', {
                 position: "top-right",
                 autoClose: 1500,
@@ -43,7 +43,7 @@ export default function ModalAddCouncil(props) {
         })
     }
     useEffect(() => {
-        setValue({companyId:companyId,memberId:'',position:'NV',memberName:''})
+        setValue({companyId:companyId,memberId:'',position:'CT',memberName:''})
         // alert(name)
 
     }, [openModalAddCouncil])
@@ -94,6 +94,7 @@ export default function ModalAddCouncil(props) {
                 <DialogContent style={{width: '450px', height: '200px'}} dividers className={"model-project"}>
                     <div className="form-input">
                         <div className={'label-input'}>Thành viên<span className={'error-message'}>*</span>
+                            {JSON.stringify(value)}
                         </div>
                         <Autocomplete
                             id="combo-box-demo"
@@ -103,29 +104,27 @@ export default function ModalAddCouncil(props) {
                                 label: value.memberName,
                             }
                             }
+                            freeSolo
+                            inputValue={value.memberName}
 
                             renderInput={(params) => < TextField  {...params} />}
                             size={"small"}
+                            onInputChange={(event, newValue) => {
+                                setValue({...value,memberId: "",memberName:newValue})
+                            }
+                            }
                             onChange={(event, newValue) => {
-                                // setCompanySearch(newValue)
                                 console.log("new_value", newValue)
                                 if (newValue){
                                     setValue({...value,memberId: newValue.id,memberName:newValue.label})
-                                    // setFieldValue('capital_company_id', newValue.id)
-                                    // setFieldValue('capital_campaign_name', newValue.label)
-                                    // setIdCompanyCurrent(newValue.id)
                                 }
                                 else{
                                     setValue({...value,memberId: '',memberName:''})
-                                    // setFieldValue('capital_company_id', '')
-                                    // setFieldValue('capital_campaign_name', '')
-                                    // setIdCompanyCurrent(0)
                                 }
                             }}
                         />
                     </div>
                     <div>
-
                         <div className={'label-input'}>Vị trí<span className={'error-message'}>*</span>
                         </div>
                         <FormControl fullWidth>
@@ -154,7 +153,7 @@ export default function ModalAddCouncil(props) {
                     {/*    :*/}
                     {/*        <Button  onClick={submit} variant={'contained'} className={`vmp-btn ${!(valueInput.trim() ==(name?name.trim():name)) ? 'not-allowed' : ''}`}>Xóa</Button>*/}
                     {/*}*/}
-                    <Button disabled={value.memberId === ''} onClick={submit} variant={'contained'} color={"error"}>Lưu</Button>
+                    <Button disabled={value.memberName === ''} onClick={submit} variant={'contained'} color={"error"}>Lưu</Button>
                 </DialogActions>
             </Dialog>
         </div>
