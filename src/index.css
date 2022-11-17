@@ -939,12 +939,20 @@ border: unset;
     max-height: 150px;
     overflow-y: auto;
 }
-/*.main-content-tab .main-content-body{*/
-/*    margin-top: unset !important;*/
-/*}*/
-/*.MuiBox-root{*/
-/*    padding: unset !important;*/
-/*}*/
+.change-lending-amount > div > h5{
+    font-weight: 500 !important;
+    font-size: 1rem;
+    color: #1F2251;
+    margin-bottom: 20px;
+}
+.change-lending-amount #simple-tabpanel-0 .main-content,.change-lending-amount #simple-tabpanel-0 .MuiBox-root{
+    padding: 0 !important;
+}
+.change-lending-amount .MuiTabs-root button:hover{
+    border-bottom: 2px solid #1F2251;
+    margin-left: 2px;
+}
+
 /* mobile style */
 @media only screen and (max-width: 787px) {
     .super-app-theme--header{
@@ -1112,38 +1120,3 @@ border: unset;
     border-right: 1px dashed rgb(206 206 206);
     padding-right: 8px;
 }
-
-/*.MuiDataGrid-columnHeaders:before{*/
-/*    content: "Công ty vay";*/
-/*    width: 60px;*/
-/*    height: 56px;*/
-/*    position: absolute;*/
-/*    left: -1px;*/
-/*    background-color: #1f2251;*/
-/*    padding-left: 10px;*/
-/*    color: #fff;*/
-/*    border-left: 1px solid #dee2e6;*/
-/*    font-family: Roboto,Helvetica,Arial,sans-serif;*/
-/*    font-weight: 500;*/
-/*    z-index: 99;*/
-/*}*/
-
-/*.MuiDataGrid-virtualScrollerRenderZone div[aria-colindex="4"]{*/
-/*    position: sticky;*/
-/*    left: 0;*/
-/*    z-index: 999;*/
-/*    background:red;*/
-/*}*/
-/*.MuiDataGrid-virtualScrollerRenderZone .MuiDataGrid-row:first-child div[aria-colindex="4"]:before{*/
-/*    content: "Thao tác";*/
-/*    width: 157px;*/
-/*    height: 56px;*/
-/*    position: absolute;*/
-/*    right: -1px;*/
-/*    background-color: #1f2251;*/
-/*    padding-left: 10px;*/
-/*    color: #fff;*/
-/*    border-left: 1px solid #dee2e6;*/
-/*    font-family: Roboto,Helvetica,Arial,sans-serif;*/
-/*    font-weight: 500;*/
-/*}*/
