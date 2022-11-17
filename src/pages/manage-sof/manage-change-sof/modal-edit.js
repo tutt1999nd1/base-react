@@ -1,5 +1,15 @@
 import DialogContent from "@mui/material/DialogContent";
-import {Button, Grid, InputAdornment, TextField, Typography} from "@mui/material";
+import {
+    Button,
+    FormControl,
+    FormHelperText,
+    Grid,
+    InputAdornment,
+    MenuItem,
+    Select,
+    TextField,
+    Typography
+} from "@mui/material";
 import DialogActions from "@mui/material/DialogActions";
 import React, {useEffect, useState} from "react";
 import Dialog from "@mui/material/Dialog";
@@ -20,7 +30,7 @@ import {toast} from "react-toastify";
 
 
 export default function ModalChangeLendingAmount(props) {
-    const {openModal, handleCloseModal,info,isUpdate,setRefresh,refresh} = props
+    const {openModal, handleCloseModal,info,isUpdate,setRefresh,refresh,sourceOfFundId} = props
     const validationSchema = yup.object({
         paid_amount: yup
             .string()
@@ -62,7 +72,8 @@ export default function ModalChangeLendingAmount(props) {
                     initialValues={{
                         paid_amount: info.paid_amount,
                         date_apply: dayjs(info.date_apply, 'DD-MM-YYYY'),
-                        source_of_fund_id:info.source_of_fund_id,
+                        source_of_fund_id:sourceOfFundId,
+                        type:info.type,
                     }}
                     validationSchema={validationSchema}
                     onSubmit={
@@ -124,10 +135,10 @@ export default function ModalChangeLendingAmount(props) {
                     } = props;
                     return (
                         <Form onSubmit={handleSubmit}>
-                            <DialogContent style={{width: '450px', height: '200px'}} dividers className={"model-account-form"}>
+                            <DialogContent style={{width: '450px', height: '300px'}} dividers className={"model-account-form"}>
                                 <Grid container spacing={4}>
                                     <Grid item xs={6} md={12}>
-                                        <div className={'label-input'}>Số tiền vay trả (VNĐ)<span
+                                        <div className={'label-input'}>{values.type==="lend"?"Số tiền vay thêm":"Số tiền trả"} (VNĐ)<span
                                             className={'error-message'}>*</span></div>
                                         <NumericFormat
                                             id='paid_amount'
@@ -156,6 +167,28 @@ export default function ModalChangeLendingAmount(props) {
                                                     gutterBottom>
                                             {values.paid_amount ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.paid_amount))} đồng` : ''}
                                         </Typography>
+                                    </Grid>
+                                    <Grid item xs={12} md={12}>
+                                        <div className={'label-input'}>Loại thay đổi<span
+                                            className={'error-message'}>*</span></div>
+                                        <FormControl fullWidth>
+                                            <Select
+                                                size={'small'}
+                                                labelId="type"
+                                                id='type'
+                                                name='type'
+                                                value={values.type}
+                                                onChange={handleChange}
+                                                error={touched.type && Boolean(errors.type)}
+                                                helperText={touched.type && errors.type}
+                                                // size='small'
+                                            >
+                                                <MenuItem value={'pay'}>Trả gốc</MenuItem>
+                                                <MenuItem value={'lend'}>Vay thêm</MenuItem>
+                                            </Select>
+                                            <FormHelperText
+                                                className={'error-message'}>{errors.interest_rate_type}</FormHelperText>
+                                        </FormControl>
                                     </Grid>
                                     <Grid item xs={6} md={12}>
                                         <div className={'label-input'}>Ngày áo dụng gốc mới<span

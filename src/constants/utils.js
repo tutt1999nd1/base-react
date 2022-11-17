@@ -149,7 +149,9 @@ export function typeToName(type) {
         'PCTHĐQT':'Phó chủ tịch hội đồng quản trị',
         'CT':'Chủ tịch',
         'PCT':'Phó chủ tịch',
-        'HĐQT':'Hội đồng quản trị'
+        'HĐQT':'Hội đồng quản trị',
+        'lend':'Vay thêm',
+        'pay':'Trả gốc'
     }
     return object[type]||'';
 }

@@ -87,7 +87,6 @@ export default function ManageMember() {
             flex: 1,
             hide: checkColumnVisibility('member', 'name'),
             renderCell: (params) => {
-
                 return <div className='content-column'>
                     {params.value}
                 </div>;
@@ -112,14 +111,13 @@ export default function ManageMember() {
         {
             filterable: false,
             sortable: false,
-            field: 'address',
+            field: 'description',
             headerName: 'Mô tả',
             headerClassName: 'super-app-theme--header',
             minWidth: 200,
             flex: 1,
             hide: checkColumnVisibility('member', 'description'),
             renderCell: (params) => {
-
                 return <div className='content-column'>
                     {params.value}
                 </div>;

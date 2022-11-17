@@ -24,7 +24,7 @@ import apiManagerMember from "../../api/manage-member";
 
 export default function ModalAddShareholder(props) {
     const {openModalAddShareholder, handleCloseModalAddShareholder, companyId, setIsRefresh, isRefresh} = props
-    const [value, setValue] = useState({companyId: companyId, memberId: '', position: 'TGĐ', memberName: ''})
+    const [value, setValue] = useState({companyId: companyId, memberId: '', position: 'CĐ', memberName: ''})
     const [listMember, setListMember] = useState([]);
 
     const submit = () => {
@@ -43,7 +43,7 @@ export default function ModalAddShareholder(props) {
         })
     }
     useEffect(() => {
-        setValue({companyId: companyId, memberId: '', memberName: ''})
+        setValue({companyId: companyId, memberId: '', memberName: '',position:"CĐ"})
         // alert(name)
 
     }, [openModalAddShareholder])
@@ -93,7 +93,7 @@ export default function ModalAddShareholder(props) {
                 </DialogTitle>
                 <DialogContent style={{width: '450px', height: '150px'}} dividers className={"model-project"}>
                     <div className="form-input">
-                        <div className={'label-input'}>Nhân viên<span className={'error-message'}>*</span>
+                        <div className={'label-input'}>Thành viên<span className={'error-message'}>*</span>
                         </div>
                         <Autocomplete
                             id="combo-box-demo"
@@ -135,9 +135,9 @@ export default function ModalAddShareholder(props) {
 
                                 // size='small'
                             >
-                                <MenuItem value={'NV'}>Nhân viên</MenuItem>
-                                <MenuItem value={'BGĐ'}>Ban giám đốc</MenuItem>
-
+                                <MenuItem value={'CTHĐQT'}>Chủ tịch hội đồng quản trị</MenuItem>
+                                <MenuItem value={'PCTHĐQT'}>Phó chủ tịch hội đồng quản trị</MenuItem>
+                                <MenuItem value={'CĐ'}>Cổ đông</MenuItem>
                             </Select>
 
                         </FormControl>

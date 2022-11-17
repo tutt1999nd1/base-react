@@ -60,6 +60,7 @@ export default function DetailSOF(props) {
         capital_campaign: {id: 0},
         supplier: {id: 0},
         lending_amount: null,
+        remain_lending_amount: null,
         owner_full_name: null,
         owner_user_id: null,
         lending_start_date: null,
@@ -313,6 +314,12 @@ export default function DetailSOF(props) {
                         <div className={'text-info-tittle'}>Số tiền vay</div>
                         <div className={'text-info-content'}>
                             {currencyFormatter(info.lending_amount)}
+                        </div>
+                    </div>
+                    <div className={'row-detail'}>
+                        <div className={'text-info-tittle'}>Số tiền còn lại</div>
+                        <div className={'text-info-content'}>
+                            {currencyFormatter(info.remain_lending_amount)}
                         </div>
                     </div>
                     <Divider></Divider>
