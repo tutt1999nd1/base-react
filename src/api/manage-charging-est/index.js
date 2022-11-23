@@ -8,6 +8,9 @@ class ApiManagerChargingEst{
     sendEmailChargingEst = (data) => {
         return axiosClient.post(API_MAP.SEND_EMAIL_CHARGING_EST,data)
     }
+    getInterestTable = (data) => {
+        return axiosClient.post(API_MAP.GET_INTEREST_TABLE,data)
+    }
     exportChargingEst = (data) => {
         return axiosClient.post(API_MAP.EXPORT_CHARGING_EST,data)
     }

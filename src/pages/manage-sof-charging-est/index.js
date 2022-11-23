@@ -55,6 +55,7 @@ export default function ManageSofChargingEst() {
     const [openModalEmail, setOpenModalEmail] = useState(false)
     const [listUser, setListUser] = useState([{id: '1', 'label': '1'}])
     const [email, setEmail] = useState([])
+    const [listInterestDay, setListInterestDay] = useState([])
     const [cc, setCc] = useState([])
     const [bcc, setBcc] = useState([])
     const [total, setTotal] = useState({
@@ -164,6 +165,27 @@ export default function ManageSofChargingEst() {
                     arr = convertArr(r.data.sof_charging_ests)
                 } else arr = convertArr([])
                 setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
+            }).catch(e => {
+                setLoading(false)
+                console.log(e)
+            })
+            getInterestTableApi({
+                'page_size': listResult.pageSize,
+                'page_index': listResult.page + 1,
+                'paging': false,
+                'charging_date_from': dayjs(timeSearch.start).format('DD-MM-YYYY'),
+                'charging_date_to': dayjs(timeSearch.end).format('DD-MM-YYYY'),
+                // 'charging_date_to': moment(timeSearch.end).format('DD-MM-YYYY'),
+                // 'company_name': nameSearch === '' ? null : nameSearch,
+                // 'contact_detail': contactSearch === 0 ? null : contactSearch,
+                // 'tax_number': taxSearch === 0 ? null : taxSearch,
+                'capital_company_id': companySearch === 0 ? null : companySearch,
+            }).then(r => {
+                setLoading(false)
+                console.log("manhnd", r)
+                setListInterestDay(r.data)
+                let arr;
+
             }).catch(e => {
                 setLoading(false)
                 console.log(e)
@@ -296,6 +318,10 @@ export default function ManageSofChargingEst() {
     const getListChargingEstApi = (data) => {
         setLoading(true)
         return apiManagerChargingEst.getListChargingEst(data);
+    }
+    const getInterestTableApi = (data) => {
+        setLoading(true)
+        return apiManagerChargingEst.getInterestTable(data);
     }
     const updateChargingEstApi = (id, data) => {
         return apiManagerChargingEst.updateChargingEst(id, data);
@@ -601,22 +627,23 @@ export default function ManageSofChargingEst() {
                         <Table stickyHeader className={"table-custom"}>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="center">Ngày trả lãi</TableCell>
+                                    <TableCell align="center">Ngày</TableCell>
+                                    <TableCell align="center">Loại tiền lãi</TableCell>
                                     <TableCell align="center">Công ty vay</TableCell>
                                     <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
 
                                     <TableCell align="center">Mã khoản vay</TableCell>
                                     <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
-                                    <TableCell align="center">Loại tiền lãi</TableCell>
-                                    <TableCell align="center">Giá trị vay(VNĐ)</TableCell>
+
+                                    {/*<TableCell align="center">Giá trị vay(VNĐ)</TableCell>*/}
 
                                     {/*charging_type*/}
                                     {/*start_date*/}
-                                    <TableCell align="center">Ngày vay</TableCell>
+                                    <TableCell align="center">Ngày</TableCell>
                                     {/*end_date*/}
-                                    <TableCell align="center">Ngày trả gốc</TableCell>
-                                    {/*nums_of_interest_day*/}
-                                    <TableCell align="center">Ngày tính lãi</TableCell>
+                                    {/*<TableCell align="center">Ngày trả gốc</TableCell>*/}
+                                    {/*/!*nums_of_interest_day*!/*/}
+                                    {/*<TableCell align="center">Ngày tính lãi</TableCell>*/}
                                     {/*interest_rate*/}
                                     <TableCell align="center">Lãi xuất(%)</TableCell>
                                     {/*//charging_amount*/}
@@ -633,58 +660,98 @@ export default function ManageSofChargingEst() {
                                     className={`message-table-empty ${listResult.rows.length === 0 ? '' : 'hidden'}`}>Không
                                     có dữ liệu
                                 </div>
-                                {listResult.rows.map(item => (
+                                {listInterestDay.map(item => (
                                     <>
                                         <TableRow>
-                                            <TableCell rowSpan={item.sof.length + 1}>
-                                                {item.chargingDate}
+                                            <TableCell>
+                                                {item.date_type}
                                             </TableCell>
-                                            <TableCell rowSpan={item.sof.length + 1}>
-                                                {item.companyName}
+                                            <TableCell>
+                                                {item.company_name}
                                             </TableCell>
-                                            <TableCell rowSpan={item.sof.length + 1}>
-                                                <div className={'error-message'}>
+                                            <TableCell>
+                                                <div>
+                                                    {item.interest_amount}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div>
+                                                    {item.sof_code}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div>
+                                                    {item.interest_amount}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div>
+                                                    {item.date_type}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div>
+                                                    {item.total}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div>
+                                                    {item.total}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div>
+                                                    {item.total}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div>
+                                                    {item.total}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell>
+                                                <div>
                                                     {item.total}
                                                 </div>
                                             </TableCell>
                                         </TableRow>
-                                        {item.sof.map(detail => (
-                                            <TableRow>
-                                                <TableCell>
-                                                    <div className={'text-decoration'}
-                                                         onClick={() => redirectToSof(detail.sof_id)}>{detail.sof_code}</div>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div className={'error-message number'}>
-                                                        {detail.charging_amount}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell>
-                                                    <div >
-                                                        {detail.charging_type}
-                                                    </div>
-                                                   </TableCell>
-                                                <TableCell>
-                                                    <div className={'number'}>{detail.principal}</div>
-                                                </TableCell>
-                                                <TableCell>{detail.start_date}</TableCell>
-                                                <TableCell>{detail.end_date}</TableCell>
-                                                <TableCell>{detail.nums_of_interest_day}</TableCell>
-                                                <TableCell>{detail.interest_rate}</TableCell>
+                                        {/*{item.sof.map(detail => (*/}
+                                        {/*    <TableRow>*/}
+                                        {/*        <TableCell>*/}
+                                        {/*            <div className={'text-decoration'}*/}
+                                        {/*                 onClick={() => redirectToSof(detail.sof_id)}>{detail.sof_code}</div>*/}
+                                        {/*        </TableCell>*/}
+                                        {/*        <TableCell>*/}
+                                        {/*            <div className={'error-message number'}>*/}
+                                        {/*                {detail.charging_amount}*/}
+                                        {/*            </div>*/}
+                                        {/*        </TableCell>*/}
+                                        {/*        <TableCell>*/}
+                                        {/*            <div >*/}
+                                        {/*                {detail.charging_type}*/}
+                                        {/*            </div>*/}
+                                        {/*           </TableCell>*/}
+                                        {/*        <TableCell>*/}
+                                        {/*            <div className={'number'}>{detail.principal}</div>*/}
+                                        {/*        </TableCell>*/}
+                                        {/*        <TableCell>{detail.start_date}</TableCell>*/}
+                                        {/*        <TableCell>{detail.end_date}</TableCell>*/}
+                                        {/*        <TableCell>{detail.nums_of_interest_day}</TableCell>*/}
+                                        {/*        <TableCell>{detail.interest_rate}</TableCell>*/}
 
-                                                <TableCell>{detail.interest_period}</TableCell>
-                                                <TableCell>{detail.principal_period}</TableCell>
-                                                <TableCell>
-                                                    <div className='icon-action'>
-                                                        <Tooltip title="Cập nhật">
-                                                            <EditOutlinedIcon
-                                                                onClick={() => updateChargingEstBtn(detail.id, detail.charging_amount)}
-                                                                style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
-                                                        </Tooltip>
-                                                    </div>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))}
+                                        {/*        <TableCell>{detail.interest_period}</TableCell>*/}
+                                        {/*        <TableCell>{detail.principal_period}</TableCell>*/}
+                                        {/*        <TableCell>*/}
+                                        {/*            <div className='icon-action'>*/}
+                                        {/*                <Tooltip title="Cập nhật">*/}
+                                        {/*                    <EditOutlinedIcon*/}
+                                        {/*                        onClick={() => updateChargingEstBtn(detail.id, detail.charging_amount)}*/}
+                                        {/*                        style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>*/}
+                                        {/*                </Tooltip>*/}
+                                        {/*            </div>*/}
+                                        {/*        </TableCell>*/}
+                                        {/*    </TableRow>*/}
+                                        {/*))}*/}
 
                                     </>
                                 ))}
