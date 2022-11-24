@@ -8,7 +8,7 @@ import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import {checkColumnVisibility, currencyFormatter} from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import AddIcon from "@mui/icons-material/Add";
-import {DataGrid, GridColDef, viVN} from "@mui/x-data-grid";
+import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, viVN} from "@mui/x-data-grid";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import apiManagerMember from "../../api/manage-member";
 import ModalAddMember from "./modal-add-member";
@@ -289,6 +289,7 @@ export default function CompanyHistory(props) {
             headerName: 'Ngày thay đổi',
             headerClassName: 'super-app-theme--header',
             minWidth: 300,
+            flex:1,
             renderCell: (params) => {
                 return <div className='content-column '>
                     {params.value}
@@ -347,89 +348,6 @@ export default function CompanyHistory(props) {
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
                         <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
                     </Tooltip>
-                    <Tooltip title="Xóa" onClick={deleteBtn}>
-                        <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
-                    </Tooltip>
-                </div>;
-            },
-        },
-
-        // { field: 'document', headerName: 'Nhóm tài sản' },
-    ];
-    const columnsShareholder: GridColDef[] = [
-        {
-            sortable: false,
-            field: 'index',
-            headerName: 'STT',
-            maxWidth: 60,
-            filterable: false,
-            headerClassName: 'super-app-theme--header',
-            renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'name',
-            headerName: 'Tên cổ đông',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 150,
-            flex:1,
-            renderCell: (params) => {
-                return <div className='content-column text-decoration' onClick={()=>redirectToMember(params.row.member_id)}>
-                    {params.value}
-                </div>;
-            },
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'position',
-            headerName: 'Vị trí',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 200,
-            hide: checkColumnVisibility('company','tax_number'),
-            renderCell: (params) => {
-                return <div className='content-column'>
-                    <FormControl fullWidth>
-                        <Select
-                            className={''}
-                            size={'small'}
-                            value={params.value}
-                            onChange={(e)=>handleChangePositionShareholder(e,params.row)}
-                            // size='small'
-                        >
-                            <MenuItem value={'CTHĐQT'}>Chủ tịch hội đồng quản trị</MenuItem>
-                            <MenuItem value={'PCTHĐQT'}>Phó chủ tịch hội đồng quản trị</MenuItem>
-                            <MenuItem value={'CĐ'}>Cổ đông</MenuItem>
-
-                        </Select>
-                    </FormControl>
-                </div>;
-            },
-        },
-        {
-            field: 'action',
-            headerClassName: 'super-app-theme--header',
-            hide: checkColumnVisibility('company','action'),
-            headerName: 'Thao tác',
-            sortable: false,
-            width: 200,
-            align: 'center',
-            maxWidth: 130,
-            // flex: 1,
-            renderCell: (params) => {
-
-                const deleteBtn = (e) => {
-                    e.stopPropagation();
-                    console.log(params)
-                    // setIsDelList(false)
-                    // setOpenModalDel(true)
-                    // setInfoDel(params.row)
-                    setOpenModalRemoveShareholder(true)
-                    setIdRemoveShareholder(params.id)
-                }
-
-                return <div className='icon-action'>
                     <Tooltip title="Xóa" onClick={deleteBtn}>
                         <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
                     </Tooltip>
@@ -602,6 +520,13 @@ export default function CompanyHistory(props) {
         return apiManagerCompany.getShareHolder(id);
     }
 
+    function CustomToolbar() {
+        return (
+            <GridToolbarContainer>
+                <GridToolbarColumnsButton/>
+            </GridToolbarContainer>
+        );
+    }
     return (
         <div className={'main-content main-content-detail'}>
             {/*<div className={`loading ${false ? '' : ''}`}>*/}
@@ -661,7 +586,9 @@ export default function CompanyHistory(props) {
                                 display: 'none',
                             }
                         }}
-
+                        components={{
+                            Toolbar: CustomToolbar,
+                        }}
                     />
                 </div>
 

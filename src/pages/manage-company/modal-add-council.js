@@ -94,7 +94,6 @@ export default function ModalAddCouncil(props) {
                 <DialogContent style={{width: '450px', height: '200px'}} dividers className={"model-project"}>
                     <div className="form-input">
                         <div className={'label-input'}>Thành viên<span className={'error-message'}>*</span>
-                            {JSON.stringify(value)}
                         </div>
                         <Autocomplete
                             id="combo-box-demo"
