@@ -1120,3 +1120,7 @@ border: unset;
     border-right: 1px dashed rgb(206 206 206);
     padding-right: 8px;
 }
+.symbol-percent:after {
+    content: "%";
+
+}

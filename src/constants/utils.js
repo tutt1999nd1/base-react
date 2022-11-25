@@ -128,6 +128,24 @@ export function checkColumnVisibility(table,column) {
     }
     return false
 }
+export function calculatePercent(oldAmount,amount,total,isUpdate) {
+    let result;
+    let newTotal ;
+    if(isUpdate){
+        newTotal = amount+total
+    }else {
+        newTotal = amount+total-oldAmount
+    }
+    if(total==0){
+        return 100
+        // result = 100
+    }
+    else {
+        result = amount *100/ newTotal;
+    }
+    // return Math.round((result + Number.EPSILON) * 100)
+    return result.toFixed(2)
+}
 export function changeVisibilityTable(table,column,hide) {
     let tableVisibility = JSON.parse(localStorage.getItem('tableVisibility'))||{};
     if (hide){

@@ -4,7 +4,7 @@ import {
     Button,
     FormControl,
     FormHelperText,
-    Grid,
+    Grid, InputAdornment,
     MenuItem,
     Select,
     TextField,
@@ -16,41 +16,89 @@ import Dialog from "@mui/material/Dialog";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
-import {convertToAutoComplete, currencyFormatter} from "../../constants/utils";
+import {
+    calculatePercent,
+    capitalizeFirstLetter,
+    convertToAutoComplete,
+    currencyFormatter,
+    VNnum2words
+} from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import {toast} from "react-toastify";
 import apiManagerMember from "../../api/manage-member";
+import {NumericFormat} from "react-number-format";
 
 
 export default function ModalAddShareholder(props) {
-    const {openModalAddShareholder, handleCloseModalAddShareholder, companyId, setIsRefresh, isRefresh} = props
-    const [value, setValue] = useState({companyId: companyId, memberId: '', position: 'CĐ', memberName: ''})
+    const {infoShareholder,isAddShareholder,idUpdateShareholder,openModalAddShareholder, handleCloseModalAddShareholder, companyId, setIsRefresh, isRefresh,sumAmountShareholder} = props
+    const [info, setInfo] = useState({
+        companyId: companyId,
+        memberId: '',
+        position: 'CĐ',
+        memberName: '',
+        amountShare: 0
+    })
     const [listMember, setListMember] = useState([]);
 
     const submit = () => {
         handleCloseModalAddShareholder();
-        addShareholderApi({company_id: value.companyId,member_name:value.memberName, member_id: value.memberId,position:value.position}).then(r => {
-            toast.success('Thêm mới thành công', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            setIsRefresh(!isRefresh)
-        }).catch(err => {
-        })
+        if(isAddShareholder){
+            addShareholderApi({
+                company_id: info.companyId,
+                member_name: info.memberName,
+                member_id: info.memberId,
+                position: info.position,
+                amount_share:info.amountShare
+            }).then(r => {
+                toast.success('Thêm mới thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                setIsRefresh(!isRefresh)
+            }).catch(err => {
+            })
+        }
+        else {
+            updateCompanyShareholderApi({
+                id:idUpdateShareholder,
+                company_id: info.companyId,
+                member_name: info.memberName,
+                member_id: info.memberId,
+                position: info.position,
+                amount_share:info.amountShare
+            }).then(r => {
+                toast.success('Cập nhật thành công', {
+                    position: "top-right",
+                    autoClose: 1500,
+                    hideProgressBar: true,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                });
+                setIsRefresh(!isRefresh)
+            }).catch(err => {
+            })
+        }
+
     }
     useEffect(() => {
-        setValue({companyId: companyId, memberId: '', memberName: '',position:"CĐ"})
+        setInfo({companyId: companyId, memberId: '', memberName: '', position: "CĐ", amountShare: 0})
         // alert(name)
 
     }, [openModalAddShareholder])
     useEffect(() => {
+        if(!isAddShareholder){
+            console.log("infoShareholder",infoShareholder)
+            setInfo({companyId: companyId, memberId: infoShareholder.member_id, memberName: infoShareholder.name, position: infoShareholder.position, amountShare: infoShareholder.amount_share})
+        }
+    },[infoShareholder,openModalAddShareholder  ])
+    useEffect(() => {
         getListMemberApi({paging: false}).then(r => {
             // console.log("r.data.companies",r.data);
-
             if (r.data.member_entities) {
                 setListMember(convertToAutoComplete(r.data.member_entities, 'name'))
 
@@ -63,7 +111,7 @@ export default function ModalAddShareholder(props) {
         })
     }, [])
     const handleChangePosition = (e) => {
-        setValue({...value, position: e.target.value})
+        setInfo({...info, position: e.target.value})
     }
     const getListMemberApi = (data) => {
         return apiManagerMember.getListMember(data);
@@ -71,12 +119,15 @@ export default function ModalAddShareholder(props) {
     const addShareholderApi = (data) => {
         return apiManagerCompany.addShareHolder(data);
     }
+    const updateCompanyShareholderApi = (data) => {
+        return apiManagerCompany.updateCompanyShareholder(data);
+    }
     return (
         <div>
             <Dialog open={openModalAddShareholder} onClose={handleCloseModalAddShareholder}>
                 <DialogTitle>
                     <div className={'vmp-tittle'}>
-                        Thêm cổ đông
+                        {isAddShareholder?"Thêm cổ đông":"Cập nhật cổ đông"}
                     </div>
                     <IconButton
                         aria-label="close"
@@ -86,12 +137,11 @@ export default function ModalAddShareholder(props) {
                             right: 8,
                             top: 8,
                             color: (theme) => theme.palette.grey[500],
-                        }}
-                    >
+                        }}>
                         <CloseIcon/>
                     </IconButton>
                 </DialogTitle>
-                <DialogContent style={{width: '450px', height: '150px'}} dividers className={"model-project"}>
+                <DialogContent style={{width: '450px', height: '300px'}} dividers className={"model-project"}>
                     <div className="form-input">
                         <div className={'label-input'}>Thành viên<span className={'error-message'}>*</span>
                         </div>
@@ -99,38 +149,37 @@ export default function ModalAddShareholder(props) {
                             id="combo-box-demo"
                             options={listMember}
                             value={{
-                                id: value.memberId,
-                                label: value.memberName,
+                                id: info.memberId,
+                                label: info.memberName,
                             }
                             }
                             freeSolo
-                            inputValue={value.memberName}
+                            inputValue={info.memberName}
 
                             renderInput={(params) => < TextField  {...params} />}
                             size={"small"}
                             onInputChange={(event, newValue) => {
-                                setValue({...value,memberId: "",memberName:newValue})
+                                setInfo({...info, memberId: "", memberName: newValue})
                             }
                             }
                             onChange={(event, newValue) => {
                                 console.log("new_value", newValue)
-                                if (newValue){
-                                    setValue({...value,memberId: newValue.id,memberName:newValue.label})
-                                }
-                                else{
-                                    setValue({...value,memberId: '',memberName:''})
+                                if (newValue) {
+                                    setInfo({...info, memberId: newValue.id, memberName: newValue.label})
+                                } else {
+                                    setInfo({...info, memberId: '', memberName: ''})
                                 }
                             }}
                         />
                     </div>
-                    <div>
+                    <div className="form-input">
                         <div className={'label-input'}>Vị trí<span className={'error-message'}>*</span>
                         </div>
                         <FormControl fullWidth>
                             <Select
                                 size={'small'}
                                 labelId="asset_type_label"
-                                value={value.position}
+                                value={info.position}
                                 onChange={handleChangePosition}
 
                                 // size='small'
@@ -142,13 +191,40 @@ export default function ModalAddShareholder(props) {
 
                         </FormControl>
                     </div>
+                    <div>
+                        <div className={'label-input'}>Số lượng cổ phần/Vốn góp<span className={'error-message'}>*</span>
+                        </div>
+                        <NumericFormat
+                            size={'small'}
+                            customInput={TextField}
+                            className={'formik-input text-right'}
+                            thousandSeparator={"."}
+                            decimalSeparator={","}
+                            value={info.amountShare}
+                            InputProps={{
+                                endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
+                            }}
+                            onValueChange={(values) => {
+                                const {formattedValue, value, floatValue} = values;
+                                const re = /^[0-9\b]+$/;
+                                if (re.test(floatValue) || floatValue === undefined) {
+                                    setInfo({...info, amountShare: floatValue})
+                                }
+                            }}
+                        />
+                        <Typography className={'uppercase'} variant="caption" display="block"
+                                    gutterBottom>
+                            {info.amountShare ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(info.amountShare))} đồng` : ''}
+                        </Typography>
+                    </div>
 
                 </DialogContent>
                 <DialogActions>
                     <Button variant="outlined" autoFocus onClick={handleCloseModalAddShareholder}>
                         Hủy
                     </Button>
-                    <Button disabled={value.memberName === ''} onClick={submit} variant={'contained'}
+                    <Button disabled={info.memberName === '' || info.amountShare === 0 || info.amountShare === ''}
+                            onClick={submit} variant={'contained'}
                             color={"error"}>Lưu</Button>
                 </DialogActions>
             </Dialog>

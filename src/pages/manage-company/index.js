@@ -118,6 +118,48 @@ export default function ManageCompany() {
                 </div>;
             },
         },
+        ,
+        {
+            filterable: false,
+            sortable: false,
+            field: 'member',
+            headerName: 'Ban điều hành',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 250,
+            flex:1,
+            hide: checkColumnVisibility('company','member'),
+            renderCell: (params) => {
+
+                return <div className='content-column row-member'>
+                    <Highlighter
+                        highlightClassName="test-highlight"
+                        searchWords={[member.memberName]}
+                        autoEscape={true}
+                        textToHighlight={params.value}
+                    />                </div>;
+            },
+
+        }, {
+            filterable: false,
+            sortable: false,
+            field: 'council',
+            headerName: 'Hội đồng quản trị',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 250,
+            flex:1,
+            hide: checkColumnVisibility('company','council'),
+            renderCell: (params) => {
+
+                return <div className='content-column row-member'>
+                    <Highlighter
+                        highlightClassName="test-highlight"
+                        searchWords={[council.memberName]}
+                        autoEscape={true}
+                        textToHighlight={params.value}
+                    />                </div>;
+            },
+
+        },
         {
             filterable: false,
             sortable: false,
@@ -184,47 +226,6 @@ export default function ManageCompany() {
                     <Highlighter
                         highlightClassName="test-highlight"
                         searchWords={[contactSearch]}
-                        autoEscape={true}
-                        textToHighlight={params.value}
-                    />                </div>;
-            },
-
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'member',
-            headerName: 'Ban điều hành',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 250,
-            flex:1,
-            hide: checkColumnVisibility('company','member'),
-            renderCell: (params) => {
-
-                return <div className='content-column row-member'>
-                    <Highlighter
-                        highlightClassName="test-highlight"
-                        searchWords={[member.memberName]}
-                        autoEscape={true}
-                        textToHighlight={params.value}
-                    />                </div>;
-            },
-
-        }, {
-            filterable: false,
-            sortable: false,
-            field: 'council',
-            headerName: 'Hội đồng quản trị',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 250,
-            flex:1,
-            hide: checkColumnVisibility('company','council'),
-            renderCell: (params) => {
-
-                return <div className='content-column row-member'>
-                    <Highlighter
-                        highlightClassName="test-highlight"
-                        searchWords={[council.memberName]}
                         autoEscape={true}
                         textToHighlight={params.value}
                     />                </div>;
