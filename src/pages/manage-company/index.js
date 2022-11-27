@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {ClipLoader} from "react-spinners";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
-import {Autocomplete, Button, Collapse, css, Divider, IconButton, TextField, Tooltip, Typography} from "@mui/material";
+import {Autocomplete, Button, Collapse, Divider, IconButton, TextField, Tooltip, Typography} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
@@ -12,37 +11,32 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Highlighter from "react-highlight-words";
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import HistoryIcon from '@mui/icons-material/History';
-import {
-    DataGrid,
-    GridColDef,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector,
-    viVN
-} from "@mui/x-data-grid";
+import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, viVN} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import {
-    changeVisibilityTable,
     changeVisibilityTableAll,
-    checkColumnVisibility, convertToAutoComplete,
+    checkColumnVisibility,
+    convertToAutoComplete,
     currencyFormatter,
-    pending, typeToName
+    pending,
+    typeToName
 } from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {useSelector} from "react-redux";
-import apiManagerAssets from "../../api/manage-assets";
 import Axios from "axios";
 import API_MAP from "../../constants/api";
 import FileDownload from "js-file-download";
 import SimCardDownloadIcon from "@mui/icons-material/SimCardDownload";
 import apiManagerMember from "../../api/manage-member";
+import ModalViewSelected from "./modal-view-selected";
 
 export default function ManageCompany() {
     const currentUser = useSelector(state => state.currentUser)
     const [openSearch, setOpenSearch] = useState(true)
+    const [openModalViewSelected, setOpenModalViewSelected] = useState(true)
     const [listDelete, setListDelete] = useState([]);
     const [isDelList,setIsDelList] =  useState(false)
     const [nameSearch,setNameSearch] =useState(null)
@@ -63,6 +57,7 @@ export default function ManageCompany() {
         ],
         total: 0
     });
+    const [listRowSelect, setListRowSelect] = React.useState([]);
     const [infoDel, setInfoDel] = useState({})
 
     const columns: GridColDef[] = [
@@ -366,6 +361,9 @@ export default function ManageCompany() {
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
+    const handleCloseModalViewSelected = () => {
+        setOpenModalViewSelected(false)
+    }
 
     const redirectAddPage = () => {
         navigate('/company/create')
@@ -444,15 +442,37 @@ export default function ManageCompany() {
             })
         }
     },[currentUser.token])
+    useEffect(()=>{
+        let listSelect = [];
+        console.log("listDelete",listDelete)
+        console.log("listResult.rows",listResult.rows)
+        for (let i = 0; i < listDelete.length; i++){
+            console.log("i",i)
+            for (let j = 0; j < listResult.rows.length; j++){
+                console.log("j",j)
+                if(listDelete[i] === listResult.rows[j].id){
+                    listSelect.push(listResult.rows[j]);
+                }
+            }
+        }
+        setListRowSelect(listSelect);
+        console.log("listSelect",listSelect);
+    },[listDelete])
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
                 <GridToolbarColumnsButton/>
                 {/*<GridToolbarDensitySelector/>*/}
                 {listDelete.length > 0 ?
-                    <Tooltip title="Xóa">
-                        <Button onClick={deleteListBtn} variant={"outlined"} style={{right:"20px",position:'absolute'}} color={"error"}>Xóa</Button>
-                    </Tooltip> : ''}
+                    <div style={{right:"5px",position:'absolute'}}>
+                        <Tooltip title="Xóa">
+                            <Button onClick={deleteListBtn} variant={"outlined"}  color={"error"}>Xóa</Button>
+                        </Tooltip>
+                        <Tooltip title="Danh sách đã chọn">
+                            <Button style={{marginLeft:"10px"}} onClick={()=>{setOpenModalViewSelected(true)}} variant={"outlined"}  color={"primary"}>Danh sách đã chọn</Button>
+                        </Tooltip>
+                    </div>
+                    : ''}
             </GridToolbarContainer>
         );
     }
@@ -583,6 +603,8 @@ export default function ManageCompany() {
                 draggable
                 pauseOnHover
             />
+            <ModalViewSelected columns={columns} listResult={listRowSelect} openModalViewSelected={openModalViewSelected} handleCloseModalViewSelected={handleCloseModalViewSelected}></ModalViewSelected>
+
             <div className={'main-content-header'}>
                 <ModalConfirmDel name={infoDel.company_name} openModalDel={openModalDel}
                                  handleCloseModalDel={handleCloseModalDel}
