@@ -609,14 +609,14 @@ export default function DetailCategory(props) {
             {/*    <ClipLoader*/}
             {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
             {/*</div>*/}
-            <ModalConfirmDel name={info.company_name} openModalDel={openModalDel} handleCloseModalDel={handleCloseModalDel} submitDelete={submitDelete} ></ModalConfirmDel>
-            <ModalConfirmDel openModalDel={openModalRemoveMember} handleCloseModalDel={handleCloseModalRemoveMember} submitDelete={submitRemove} ></ModalConfirmDel>
-            <ModalConfirmDel openModalDel={openModalRemoveHistory} handleCloseModalDel={handleCloseModalRemoveHistory} submitDelete={submitDeleteHistory} ></ModalConfirmDel>
-            <ModalConfirmDel openModalDel={openModalRemoveShareholder} handleCloseModalDel={handleCloseModalRemoveShareholder} submitDelete={submitDeleteShareholder} ></ModalConfirmDel>
-            <ModalAddMember isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddMember={openModalAddMember} handleCloseModalAddMember={handleCloseModalAddMember} companyId={idDetail}></ModalAddMember>
-            <ModalAddCouncil isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddCouncil={openModalAddCouncil} handleCloseModalAddCouncil={handleCloseModalAddCouncil} companyId={idDetail}></ModalAddCouncil>
-            <ModalAddShareholder isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddShareholder={openModalAddShareholder} handleCloseModalAddShareholder={handleCloseModalAddShareholder} companyId={idDetail}></ModalAddShareholder>
-            <ModalEditHistory idUpdateHistory={idUpdateHistory} isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddHistory={openModalAddHistory} handleCloseModalAddHistory={handleCloseModalAddHistory} isAddHistory={isAddHistory} companyId={idDetail}></ModalEditHistory>
+            {/*<ModalConfirmDel name={info.company_name} openModalDel={openModalDel} handleCloseModalDel={handleCloseModalDel} submitDelete={submitDelete} ></ModalConfirmDel>*/}
+            {/*<ModalConfirmDel openModalDel={openModalRemoveMember} handleCloseModalDel={handleCloseModalRemoveMember} submitDelete={submitRemove} ></ModalConfirmDel>*/}
+            {/*<ModalConfirmDel openModalDel={openModalRemoveHistory} handleCloseModalDel={handleCloseModalRemoveHistory} submitDelete={submitDeleteHistory} ></ModalConfirmDel>*/}
+            {/*<ModalConfirmDel openModalDel={openModalRemoveShareholder} handleCloseModalDel={handleCloseModalRemoveShareholder} submitDelete={submitDeleteShareholder} ></ModalConfirmDel>*/}
+            {/*<ModalAddMember isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddMember={openModalAddMember} handleCloseModalAddMember={handleCloseModalAddMember} companyId={idDetail}></ModalAddMember>*/}
+            {/*<ModalAddCouncil isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddCouncil={openModalAddCouncil} handleCloseModalAddCouncil={handleCloseModalAddCouncil} companyId={idDetail}></ModalAddCouncil>*/}
+            {/*<ModalAddShareholder isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddShareholder={openModalAddShareholder} handleCloseModalAddShareholder={handleCloseModalAddShareholder} companyId={idDetail}></ModalAddShareholder>*/}
+            {/*<ModalEditHistory idUpdateHistory={idUpdateHistory} isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddHistory={openModalAddHistory} handleCloseModalAddHistory={handleCloseModalAddHistory} isAddHistory={isAddHistory} companyId={idDetail}></ModalEditHistory>*/}
 
             <ToastContainer
                 position="top-right"
@@ -736,156 +736,8 @@ export default function DetailCategory(props) {
                         {info.founding_date}
                     </div>
                 </div>
-
                 <Divider></Divider>
-
             </div>
-            <div className={'main-content-body'}>
-                <div className={'main-content-body-tittle'}>
-                    <h4>Ban điều hành công ty</h4>
-                    <div>
-                        <Button  variant="outlined" onClick={()=>{setOpenModalAddMember(true)}} startIcon={<AddIcon/>}>
-                            Thêm thành viên vào ban điều hành
-                        </Button>
-                    </div>
-                </div>
-                <div style={{height: '400px', width: '100%',marginTop:'10px'}}>
-
-                    <DataGrid
-                        // getRowHeight={() => 'auto'}
-                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
-                        labelRowsPerPage={"Số kết quả"}
-                        density="standard"
-                        rows={listMember}
-                        columns={columnsMember}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                        // loading={loading}
-                        disableSelectionOnClick
-                        sx={{
-                            // boxShadow: 2,
-                            overflowX: 'scroll',
-                            border: 1,
-                            borderColor: 'rgb(255, 255, 255)',
-                            '& .MuiDataGrid-iconSeparator': {
-                                display: 'none',
-                            }
-                        }}
-
-                    />
-                </div>
-
-            </div>
-            <div className={'main-content-body'}>
-                <div className={'main-content-body-tittle'}>
-                    <h4>Thành viên hội đồng quản trị</h4>
-                    <div>
-                        <Button  variant="outlined" onClick={()=>{setOpenModalAddCouncil(true)}} startIcon={<AddIcon/>}>
-                            Thêm thành viên vào hội đồng quản trị
-                        </Button>
-                    </div>
-                </div>
-                <div style={{height: '400px', width: '100%',marginTop:'10px'}}>
-
-                    <DataGrid
-                        // getRowHeight={() => 'auto'}
-                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
-                        labelRowsPerPage={"Số kết quả"}
-                        density="standard"
-                        rows={listCouncil}
-                        columns={columnsCouncil}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                        // loading={loading}
-                        disableSelectionOnClick
-                        sx={{
-                            // boxShadow: 2,
-                            overflowX: 'scroll',
-                            border: 1,
-                            borderColor: 'rgb(255, 255, 255)',
-                            '& .MuiDataGrid-iconSeparator': {
-                                display: 'none',
-                            }
-                        }}
-
-                    />
-                </div>
-
-            </div>
-            <div className={'main-content-body'}>
-                <div className={'main-content-body-tittle'}>
-                    <h4>Danh sách cổ đông</h4>
-                    <div>
-                        <Button  variant="outlined" onClick={()=>{setOpenModalAddShareholder(true)}} startIcon={<AddIcon/>}>
-                            Thêm cổ đông
-                        </Button>
-                    </div>
-                </div>
-                <div style={{height: '400px', width: '100%',marginTop:'10px'}}>
-
-                    <DataGrid
-                        // getRowHeight={() => 'auto'}
-                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
-                        labelRowsPerPage={"Số kết quả"}
-                        density="standard"
-                        rows={listShareholder}
-                        columns={columnsShareholder}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                        // loading={loading}
-                        disableSelectionOnClick
-                        sx={{
-                            // boxShadow: 2,
-                            overflowX: 'scroll',
-                            border: 1,
-                            borderColor: 'rgb(255, 255, 255)',
-                            '& .MuiDataGrid-iconSeparator': {
-                                display: 'none',
-                            }
-                        }}
-
-                    />
-                </div>
-
-            </div>
-
-            <div className={'main-content-body'}>
-                <div className={'main-content-body-tittle'}>
-                    <h4>Lịch sử thay đổi</h4>
-                    <div>
-                        <Button  variant="outlined" onClick={()=>{setOpenModalAddHistory(true);setIsAddHistory(true)}} startIcon={<AddIcon/>}>
-                            Thêm lịch sử thay đổi
-                        </Button>
-                    </div>
-                </div>
-                <div style={{height: '400px', width: '100%',marginTop:'10px'}}>
-
-                    <DataGrid
-                        // getRowHeight={() => 'auto'}
-                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
-                        labelRowsPerPage={"Số kết quả"}
-                        density="standard"
-                        rows={listHistory}
-                        columns={columnsHistory}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                        // loading={loading}
-                        disableSelectionOnClick
-                        sx={{
-                            // boxShadow: 2,
-                            overflowX: 'scroll',
-                            border: 1,
-                            borderColor: 'rgb(255, 255, 255)',
-                            '& .MuiDataGrid-iconSeparator': {
-                                display: 'none',
-                            }
-                        }}
-
-                    />
-                </div>
-
-            </div>
-
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
                     <h4>Quản lý</h4>

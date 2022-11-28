@@ -1147,8 +1147,6 @@ export default function EditSOF(props) {
                                         >
                                             <MenuItem value={'Cố định'}>Cố định</MenuItem>
                                             <MenuItem value={'Biên độ'}>Biên độ</MenuItem>
-
-
                                         </Select>
                                         <FormHelperText
                                             className={'error-message'}>{errors.interest_rate_type}</FormHelperText>

@@ -36,7 +36,7 @@ import ModalViewSelected from "./modal-view-selected";
 export default function ManageCompany() {
     const currentUser = useSelector(state => state.currentUser)
     const [openSearch, setOpenSearch] = useState(true)
-    const [openModalViewSelected, setOpenModalViewSelected] = useState(true)
+    const [openModalViewSelected, setOpenModalViewSelected] = useState(false)
     const [listDelete, setListDelete] = useState([]);
     const [isDelList,setIsDelList] =  useState(false)
     const [nameSearch,setNameSearch] =useState(null)
@@ -745,7 +745,7 @@ export default function ManageCompany() {
                                 }
                                 }
 
-                                renderInput={(params) => < TextField placeholder={'Nhân viên'} {...params} />}
+                                renderInput={(params) => < TextField  {...params} />}
                                 size={"small"}
                                 onChange={(event, newValue) => {
                                     // setCompanySearch(newValue)
