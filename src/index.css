@@ -847,7 +847,7 @@ border-bottom: none;
 background-color: #1F2251   ;
 height: 50px;
 font-weight: bold;
-font-size: 0.88rem;
+font-size: 0.8rem;
 line-height: 1.5;
 letter-spacing: 0.00938em;
 }
@@ -945,7 +945,7 @@ border: unset;
     color: #1F2251;
     margin-bottom: 20px;
 }
-.change-lending-amount #simple-tabpanel-0 .main-content,.change-lending-amount #simple-tabpanel-0 .MuiBox-root{
+.change-lending-amount .main-content,.change-lending-amount .MuiBox-root{
     padding: 0 !important;
 }
 .change-lending-amount .MuiTabs-root button:hover{
@@ -1050,7 +1050,7 @@ border: unset;
         border: unset;
         display: block;
     }
-    #simple-tabpanel-0 > div{
+    #simple-tabpanel-0 > div,.simple-tabpanel-1 > div{
         padding: 0;
     }
     .list-table{

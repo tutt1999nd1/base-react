@@ -2,11 +2,17 @@ import axiosClient from "../axiosClient";
 import API_MAP from "../../constants/api";
 
 class ApiManagerChargingEst{
+    // getListChargingEst = (data) => {
+    //     //     return axiosClient.post(API_MAP.GET_LIST_CHARGING_EST,data)
+    //     // }
     getListChargingEst = (data) => {
-        return axiosClient.post(API_MAP.GET_LIST_CHARGING_EST,data)
+        return axiosClient.post(API_MAP.GET_PAYABLE_PERIOD,data)
     }
     sendEmailChargingEst = (data) => {
         return axiosClient.post(API_MAP.SEND_EMAIL_CHARGING_EST,data)
+    }
+    getInterestTable = (data) => {
+        return axiosClient.post(API_MAP.GET_INTEREST_TABLE,data)
     }
     exportChargingEst = (data) => {
         return axiosClient.post(API_MAP.EXPORT_CHARGING_EST,data)
