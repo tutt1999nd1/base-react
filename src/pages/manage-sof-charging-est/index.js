@@ -82,6 +82,7 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
         rows: [],
         total: 0
     });
+
     const convertMultiToArr = (arr) => {
         let newArr = [];
         for (let i = 0; i < arr.length; i++) {
@@ -285,8 +286,8 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
     const redirectToSof = (id) => {
         navigate('/sof/detail?id=' + id)
     }
-    const payablePeriodDetail = (id) => {
-        navigate('/detail-est/?id='+ id)
+    const payablePeriodDetail = (id, startDate, endDate) => {
+        navigate('/detail-est/?id='+ id+'&startDate='+startDate+'&endDate='+endDate)
     }
     const sendEmailApi = (data) => {
         setLoadingEmail(true)
@@ -667,7 +668,7 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
                                             <TableCell>
                                                 <div className='icon-action'>
                                                     <Tooltip title="Xem chi tiết">
-                                                        <RemoveRedEyeIcon onClick={()=>{payablePeriodDetail(item.source_of_fund_id)}} style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon >
+                                                        <RemoveRedEyeIcon onClick={()=>{payablePeriodDetail(item.source_of_fund_id, item.start_date, item.payable_date)}} style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon >
                                                     </Tooltip>
                                                 </div>
                                             </TableCell>

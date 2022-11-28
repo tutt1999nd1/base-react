@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {Button, Collapse, Divider, IconButton, TextField, Tooltip, Typography} from "@mui/material";
 import {toast, ToastContainer} from "react-toastify";
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useSearchParams} from "react-router-dom";
 import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, viVN} from "@mui/x-data-grid";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -22,6 +22,10 @@ export default function PayablePeriodDetail(props) {
     const {sourceOfFundId} = props;
     const navigate = useNavigate();
     const currentUser = useSelector(state => state.currentUser)
+    const [idSof, setIdSof] = useState(null)
+    const [start, setStart] = useState(null)
+    const [end, setEnd] = useState(null)
+    const [location, setLocation] = useSearchParams();
     const [loading, setLoading] = useState(false);
     const [listDelete, setListDelete] = useState([]);
     const [isDelList,setIsDelList] =  useState(false);
@@ -36,6 +40,15 @@ export default function PayablePeriodDetail(props) {
         rows: [],
         total: 0
     });
+    console.log('nguuuuuuuuuuuuuuuuuuuuu');
+    console.log(listResult);
+    useEffect(() => {
+        setIdSof(location.get('id'));
+        setStart(location.get('startDate'));
+        setEnd(location.get('endDate'));
+
+
+    }, [location])
     const [timeSearch, setTimeSearch] = useState(
         {
             start: (new dayjs).startOf('month'),
@@ -73,7 +86,7 @@ export default function PayablePeriodDetail(props) {
         {
             filterable: false,
             sortable: false,
-            field: 'date_apply',
+            field: 'payable_date',
             headerName: 'Ngày',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
@@ -88,15 +101,15 @@ export default function PayablePeriodDetail(props) {
         {
             filterable: false,
             sortable: false,
-            field: 'typeAmount',
+            field: 'type_date',
             headerName: 'Loại tiền',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             flex: 1,
-            hide: checkColumnVisibility('change_lending_amount','paid_amount'),
+            hide: checkColumnVisibility('change_lending_amount','type_date'),
             renderCell: (params) => {
                 return <div className='content-column'>
-                    {typeToName(params.value)}
+                    {params.value}
                 </div>;
             },
         },
@@ -105,7 +118,7 @@ export default function PayablePeriodDetail(props) {
         {
             filterable: false,
             sortable: false,
-            field: 'companyName',
+            field: 'company_name',
             headerName: 'Công ty vay',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
@@ -121,7 +134,7 @@ export default function PayablePeriodDetail(props) {
         {
             filterable: false,
             sortable: false,
-            field: 'paidAmount',
+            field: 'amount_paid_in_period',
             headerName: 'Số tiền phải trả(VNĐ)',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
@@ -130,14 +143,14 @@ export default function PayablePeriodDetail(props) {
             renderCell: (params) => {
 
                 return <div className='content-column'>
-                    {params.value}
+                    {currencyFormatter(params.value)}
                 </div>;
             },
         },
         {
             filterable: false,
             sortable: false,
-            field: 'sofCode',
+            field: 'sof_code',
             headerName: 'Mã khoản vay',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
@@ -153,7 +166,7 @@ export default function PayablePeriodDetail(props) {
         {
             filterable: false,
             sortable: false,
-            field: 'interest',
+            field: 'interest_rate',
             headerName: 'Lãi suất(%)',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
@@ -212,27 +225,25 @@ export default function PayablePeriodDetail(props) {
         return arr;
     }
     useEffect(() => {
-        if (currentUser.token&&sourceOfFundId) {
-            getListChangeLendingAmountApi({
+            if(idSof!=null&&start!=null&&end!=null)
+            getPayablePeriod(idSof,start,end,{
                 'page_size': listResult.pageSize,
                 'page_index': listResult.page + 1,
                 'paging': true,
                 // 'supplier_name': nameSearch === '' ? null : nameSearch,
-                'source_of_fund_id':sourceOfFundId,
-                'date_apply_from':dayjs(timeSearch.start).format('DD-MM-YYYY'),
-                'date_apply_to':dayjs(timeSearch.end).format('DD-MM-YYYY'),
+
             }).then(r => {
                 setLoading(false)
                 console.log("r", r)
-                let arr = convertArr(r.data.change_lending_amount_entities)
-                setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
+                let arr = convertArr(r.data)
+                setListResult({...listResult, rows: (arr)});
             }).catch(e => {
                 setLoading(false)
                 console.log(e)
             })
-        }
 
-    }, [listResult.page, listResult.pageSize, refresh, currentUser.token,sourceOfFundId,timeSearch])
+
+    }, [listResult.page, listResult.pageSize, refresh, currentUser.token,sourceOfFundId,timeSearch,idSof,start,end])
 
     function CustomToolbar() {
         return (
@@ -292,9 +303,9 @@ export default function PayablePeriodDetail(props) {
     const deleteListApi = (data) => {
         return apiChangeLendingAmount.deleteListChangeLendingAmount(data);
     }
-    const getListChangeLendingAmountApi = (data) => {
+    const getPayablePeriod = (id,start,end,data) => {
         setLoading(true)
-        return apiChangeLendingAmount.getListChangeLendingAmount(data);
+        return apiChangeLendingAmount.getPayablePeriodDetail(id,start,end,data);
     }
     const deleteApi = (id) => {
         setLoading(true)
@@ -331,58 +342,58 @@ export default function PayablePeriodDetail(props) {
 
             </div>
             <div className={'main-content-body'}>
-                <div className={'main-content-body-tittle'}>
-                    <h4>Tìm kiếm</h4>
-                    {openSearch ? <IconButton color="primary" style={{cursor: 'pointer'}}
-                                              onClick={() => setOpenSearch(false)}>
-                            <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>
-                        </IconButton> :
-                        <IconButton style={{cursor: 'pointer'}} color="primary"
-                                    onClick={() => setOpenSearch(true)}>
-                            <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
-                        </IconButton>
-                    }
+                {/*<div className={'main-content-body-tittle'}>*/}
+                {/*    <h4>Tìm kiếm</h4>*/}
+                {/*    {openSearch ? <IconButton color="primary" style={{cursor: 'pointer'}}*/}
+                {/*                              onClick={() => setOpenSearch(false)}>*/}
+                {/*            <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>*/}
+                {/*        </IconButton> :*/}
+                {/*        <IconButton style={{cursor: 'pointer'}} color="primary"*/}
+                {/*                    onClick={() => setOpenSearch(true)}>*/}
+                {/*            <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>*/}
+                {/*        </IconButton>*/}
+                {/*    }*/}
 
-                </div>
-                <Divider light/>
-                <Collapse in={openSearch} timeout="auto" unmountOnExit>
-                    <div className={'main-content-body-search'}>
-                        <div style={{width:'30%'}}>
-                            <div className={'label-input'}>Khoảng thời gian</div>
-                            <div className={''} style={{display:"flex",alignItems:"center"}}>
-                                <LocalizationProvider  dateAdapter={AdapterDayjs} >
-                                    <DesktopDatePicker
-                                        style={{height:'30px'}}
-                                        inputFormat="DD-MM-YYYY"
-                                        value={timeSearch.start}
-                                        onChange={(values) => {
-                                            console.log(values)
-                                            setTimeSearch({...timeSearch,start: values})
-                                        }}
+                {/*</div>*/}
+                {/*<Divider light/>*/}
+                {/*<Collapse in={openSearch} timeout="auto" unmountOnExit>*/}
+                {/*    <div className={'main-content-body-search'}>*/}
+                {/*        <div style={{width:'30%'}}>*/}
+                {/*            <div className={'label-input'}>Khoảng thời gian</div>*/}
+                {/*            <div className={''} style={{display:"flex",alignItems:"center"}}>*/}
+                {/*                <LocalizationProvider  dateAdapter={AdapterDayjs} >*/}
+                {/*                    <DesktopDatePicker*/}
+                {/*                        style={{height:'30px'}}*/}
+                {/*                        inputFormat="DD-MM-YYYY"*/}
+                {/*                        value={timeSearch.start}*/}
+                {/*                        onChange={(values) => {*/}
+                {/*                            console.log(values)*/}
+                {/*                            setTimeSearch({...timeSearch,start: values})*/}
+                {/*                        }}*/}
 
-                                        renderInput={(params) => <TextField size={"small"}  {...params} />}
-                                    />
-                                </LocalizationProvider>
-                                <div style={{margin:'0 5px'}}>đến</div>
-                                <LocalizationProvider   style={{width:'50px !important',height:'30px'}}  dateAdapter={AdapterDayjs} >
-                                    <DesktopDatePicker
-                                        style={{width:'50px !important',height:'30px'}}
-                                        inputFormat="DD-MM-YYYY"
-                                        value={timeSearch.end}
-                                        onChange={(values) => {
-                                            console.log(values)
-                                            setTimeSearch({...timeSearch,end: values})
-                                        }}
-                                        // onChange={value => props.setFieldValue("founding_date", value)}
-                                        renderInput={(params) => <TextField size={"small"}  {...params} />}
-                                    />
-                                </LocalizationProvider>
-                            </div>
-                        </div>
+                {/*                        renderInput={(params) => <TextField size={"small"}  {...params} />}*/}
+                {/*                    />*/}
+                {/*                </LocalizationProvider>*/}
+                {/*                <div style={{margin:'0 5px'}}>đến</div>*/}
+                {/*                <LocalizationProvider   style={{width:'50px !important',height:'30px'}}  dateAdapter={AdapterDayjs} >*/}
+                {/*                    <DesktopDatePicker*/}
+                {/*                        style={{width:'50px !important',height:'30px'}}*/}
+                {/*                        inputFormat="DD-MM-YYYY"*/}
+                {/*                        value={timeSearch.end}*/}
+                {/*                        onChange={(values) => {*/}
+                {/*                            console.log(values)*/}
+                {/*                            setTimeSearch({...timeSearch,end: values})*/}
+                {/*                        }}*/}
+                {/*                        // onChange={value => props.setFieldValue("founding_date", value)}*/}
+                {/*                        renderInput={(params) => <TextField size={"small"}  {...params} />}*/}
+                {/*                    />*/}
+                {/*                </LocalizationProvider>*/}
+                {/*            </div>*/}
+                {/*        </div>*/}
 
-                    </div>
+                {/*    </div>*/}
 
-                </Collapse>
+                {/*</Collapse>*/}
                 <Divider light/>
                 <div className={'main-content-body-result'}>
                     <div style={{height: '100%', width: '100%'}}>
@@ -392,25 +403,9 @@ export default function PayablePeriodDetail(props) {
                             labelRowsPerPage={"Số kết quả"}
                             density="standard"
                             columns={columns}
+                            rows={listResult.rows}
                             pagination
-                            rowCount={listResult.total}
-                            {...listResult}
-                            paginationMode="server"
-                            // onPageChange={(page) => setCurrentPage(page)}
-                            // onPageSizeChange={(pageSize) =>
-                            //    setCurrentSize(pageSize)
-                            // }
-                            onPageChange={(page) => setListResult((prev) => ({...prev, page}))}
-                            onPageSizeChange={(pageSize) =>
-                                setListResult((prev) => ({...prev, pageSize}))
-                            }
-                            onSelectionModelChange={(newSelectionModel) => {
-                                setListDelete(newSelectionModel)
-                            }}
-                            onColumnVisibilityModelChange={(event) =>{
-                                changeVisibilityTableAll('supplier',event)
-                            }}
-                            checkboxSelection
+
                             loading={loading}
                             rowsPerPageOptions={[5, 10, 25]}
                             disableSelectionOnClick

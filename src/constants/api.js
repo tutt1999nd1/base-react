@@ -95,5 +95,6 @@ const API_MAP = {
     DELETE_LIST_CHANGE_INTEREST_RATE: API_DOMAIN + 'change-interest-rate/delete',
     GET_INTEREST_TABLE: API_DOMAIN + 'lending-value-daily/get-all-payable-period',
     GET_PAYABLE_PERIOD: API_DOMAIN + 'lending-value-daily/search',
+    GET_PAYABLE_PERIOD_DETAIL: API_DOMAIN + 'lending-value-daily/get-all-payable-period-detail',
 }
 export default API_MAP;

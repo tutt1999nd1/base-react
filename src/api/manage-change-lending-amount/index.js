@@ -5,6 +5,9 @@ class ApiChangeLendingAmount{
     getListChangeLendingAmount = (data) => {
         return axiosClient.post(API_MAP.GET_LIST_CHANGE_LENDING_AMOUNT,data)
     }
+    getPayablePeriodDetail = (id,start,end,data) => {
+        return axiosClient.post(API_MAP.GET_PAYABLE_PERIOD_DETAIL+`/${id}?startDate=${start}&endDate=${end}`,data)
+    }
     createChangeLendingAmount = (data) => {
         return axiosClient.post(API_MAP.CREATE_CHANGE_LENDING_AMOUNT,data)
     }
