@@ -39,12 +39,15 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
 import {NumericFormat} from "react-number-format";
 import ItemDashboard from "../../components/ItemDashboard";
+
 import VerticalAlignBottomIcon from "@mui/icons-material/VerticalAlignBottom";
 import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import {DesktopDatePicker, LocalizationProvider} from "@mui/x-date-pickers";
 import dayjs from "dayjs";
+import BorderColorIcon from "@mui/icons-material/BorderColor";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
-export default function ManageSofChargingEst() {
+    export default function ManageSofChargingEst() {
     const currentUser = useSelector(state => state.currentUser)
     const [openSearch, setOpenSearch] = useState(true)
     const [openTotal, setOpenTotal] = useState(true)
@@ -150,46 +153,26 @@ export default function ManageSofChargingEst() {
                 'page_size': listResult.pageSize,
                 'page_index': listResult.page + 1,
                 'paging': false,
-                'charging_date_from': dayjs(timeSearch.start).format('DD-MM-YYYY'),
-                'charging_date_to': dayjs(timeSearch.end).format('DD-MM-YYYY'),
+                'start_date': dayjs(timeSearch.start).format('DD-MM-YYYY'),
+                'end_date': dayjs(timeSearch.end).format('DD-MM-YYYY'),
                 // 'charging_date_to': moment(timeSearch.end).format('DD-MM-YYYY'),
                 // 'company_name': nameSearch === '' ? null : nameSearch,
                 // 'contact_detail': contactSearch === 0 ? null : contactSearch,
                 // 'tax_number': taxSearch === 0 ? null : taxSearch,
-                'capital_company_id': companySearch === 0 ? null : companySearch,
+                'company_id': companySearch === 0 ? null : companySearch,
             }).then(r => {
                 setLoading(false)
                 console.log("r", r)
                 let arr;
-                if (r.data.sof_charging_ests) {
-                    arr = convertArr(r.data.sof_charging_ests)
-                } else arr = convertArr([])
-                setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
+                // if (r.data.payable_period_responses) {
+                //     arr = convertArr(r.data.payable_period_responses)
+                // } else arr = convertArr([])
+                setListResult({...listResult, rows: (r.data.payable_period_responses), total: r.data.page.total_elements});
             }).catch(e => {
                 setLoading(false)
                 console.log(e)
             })
-            getInterestTableApi({
-                'page_size': listResult.pageSize,
-                'page_index': listResult.page + 1,
-                'paging': false,
-                'charging_date_from': dayjs(timeSearch.start).format('DD-MM-YYYY'),
-                'charging_date_to': dayjs(timeSearch.end).format('DD-MM-YYYY'),
-                // 'charging_date_to': moment(timeSearch.end).format('DD-MM-YYYY'),
-                // 'company_name': nameSearch === '' ? null : nameSearch,
-                // 'contact_detail': contactSearch === 0 ? null : contactSearch,
-                // 'tax_number': taxSearch === 0 ? null : taxSearch,
-                'capital_company_id': companySearch === 0 ? null : companySearch,
-            }).then(r => {
-                setLoading(false)
-                console.log("manhnd", r)
-                setListInterestDay(r.data)
-                let arr;
 
-            }).catch(e => {
-                setLoading(false)
-                console.log(e)
-            })
         }
 
     }, [listResult.page, listResult.pageSize, companySearch, timeSearch, refresh, currentUser.token])
@@ -301,6 +284,9 @@ export default function ManageSofChargingEst() {
     }
     const redirectToSof = (id) => {
         navigate('/sof/detail?id=' + id)
+    }
+    const payablePeriodDetail = (id) => {
+        navigate('/detail-est/?id='+ id)
     }
     const sendEmailApi = (data) => {
         setLoadingEmail(true)
@@ -628,24 +614,22 @@ export default function ManageSofChargingEst() {
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="center">Ngày</TableCell>
-                                    <TableCell align="center">Loại tiền lãi</TableCell>
+                                    <TableCell align="center">Loại tiền</TableCell>
                                     <TableCell align="center">Công ty vay</TableCell>
-                                    <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
+                                    <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
 
                                     <TableCell align="center">Mã khoản vay</TableCell>
-                                    <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
 
                                     {/*<TableCell align="center">Giá trị vay(VNĐ)</TableCell>*/}
 
                                     {/*charging_type*/}
                                     {/*start_date*/}
-                                    <TableCell align="center">Ngày</TableCell>
                                     {/*end_date*/}
                                     {/*<TableCell align="center">Ngày trả gốc</TableCell>*/}
                                     {/*/!*nums_of_interest_day*!/*/}
                                     {/*<TableCell align="center">Ngày tính lãi</TableCell>*/}
                                     {/*interest_rate*/}
-                                    <TableCell align="center">Lãi xuất(%)</TableCell>
+                                    <TableCell align="center">Lãi suất(%)</TableCell>
                                     {/*//charging_amount*/}
 
                                     {/*interest_period*/}
@@ -660,60 +644,34 @@ export default function ManageSofChargingEst() {
                                     className={`message-table-empty ${listResult.rows.length === 0 ? '' : 'hidden'}`}>Không
                                     có dữ liệu
                                 </div>
-                                {listInterestDay.map(item => (
+                                {listResult.rows.map(item => (
+
                                     <>
                                         <TableRow>
+                                            <TableCell>{item.payable_date}</TableCell>
+
+                                            <TableCell>{item.type_date}</TableCell>
+
+                                            <TableCell><div>{item.company_name}</div></TableCell>
+
+                                            <TableCell><div className={'error-message number'}>{currencyFormatter(item.amount_paid_in_period)}</div></TableCell>
+
+                                            <TableCell><div>{item.sof_code}</div></TableCell>
+
+                                            <TableCell><div>{item.interest_rate}</div></TableCell>
+
+                                            <TableCell><div>{item.interest_period}</div></TableCell>
+
+                                            <TableCell><div>{item.principal_period}</div></TableCell>
+
                                             <TableCell>
-                                                {item.date_type}
-                                            </TableCell>
-                                            <TableCell>
-                                                {item.company_name}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div>
-                                                    {item.interest_amount}
+                                                <div className='icon-action'>
+                                                    <Tooltip title="Xem chi tiết">
+                                                        <RemoveRedEyeIcon onClick={()=>{payablePeriodDetail(item.source_of_fund_id)}} style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon >
+                                                    </Tooltip>
                                                 </div>
                                             </TableCell>
-                                            <TableCell>
-                                                <div>
-                                                    {item.sof_code}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div>
-                                                    {item.interest_amount}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div>
-                                                    {item.date_type}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div>
-                                                    {item.total}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div>
-                                                    {item.total}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div>
-                                                    {item.total}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div>
-                                                    {item.total}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                <div>
-                                                    {item.total}
-                                                </div>
-                                            </TableCell>
+
                                         </TableRow>
                                         {/*{item.sof.map(detail => (*/}
                                         {/*    <TableRow>*/}

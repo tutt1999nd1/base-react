@@ -462,7 +462,7 @@ export default function ManageSOF() {
 
                 const detailBtn = (e) => {
                     e.stopPropagation();
-                    console.log(params)
+                    console.log(params);
                     navigate(`/sof/detail?id=${params.id}`)
 
                 }

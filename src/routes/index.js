@@ -33,6 +33,7 @@ import ManageMember from "../pages/manage-member";
 import EditMember from "../pages/manage-member/create-update";
 import DetailMember from "../pages/manage-member/detail";
 import ManageChangeSof from "../pages/manage-sof/manage-change-sof";
+import PayablePeriodDetail from "../pages/manage-sof-charging-est/payable-period-detail";
 
 export default function RenderRoute() {
     return (
@@ -88,6 +89,7 @@ export default function RenderRoute() {
                 <Route path="approve" element={<ManageApprove></ManageApprove>}/>
                 <Route path="sof" element={<ManageSOF>Khoản vay</ManageSOF>}/>
                 <Route path="change-sof" element={<ManageChangeSof></ManageChangeSof>}/>
+                <Route path="detail-est" element={<PayablePeriodDetail></PayablePeriodDetail>}/>
                 <Route path="sof/create" element={<EditSOF isUpdate={false}></EditSOF>}/>
                 <Route path="sof/update" element={<EditSOF isUpdate={true}></EditSOF>}/>
                 <Route path="sof/detail" element={<DetailSOF></DetailSOF>}/>

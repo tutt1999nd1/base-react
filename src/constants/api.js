@@ -93,6 +93,7 @@ const API_MAP = {
     UPDATE_CHANGE_INTEREST_RATE: API_DOMAIN + 'change-interest-rate',
     DELETE_CHANGE_INTEREST_RATE: API_DOMAIN + 'change-interest-rate',
     DELETE_LIST_CHANGE_INTEREST_RATE: API_DOMAIN + 'change-interest-rate/delete',
-    GET_INTEREST_TABLE: API_DOMAIN + 'lending-value-daily/get-all-interest-date',
+    GET_INTEREST_TABLE: API_DOMAIN + 'lending-value-daily/get-all-payable-period',
+    GET_PAYABLE_PERIOD: API_DOMAIN + 'lending-value-daily/search',
 }
 export default API_MAP;
