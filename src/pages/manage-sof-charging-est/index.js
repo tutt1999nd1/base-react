@@ -47,7 +47,7 @@ import dayjs from "dayjs";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
-    export default function ManageSofChargingEst() {
+export default function ManageSofChargingEst() {
     const currentUser = useSelector(state => state.currentUser)
     const [openSearch, setOpenSearch] = useState(true)
     const [openTotal, setOpenTotal] = useState(true)
@@ -96,38 +96,38 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
         setOpenModalEmail(false)
     }
     const convertArr = (arr) => {
+        console.log("arr", arr)
         let total = {
             charging_amount: 0,
-            INTEREST: 0,
-            principal: 0,
-            GRACE_INTEREST: 0,
+            INTEREST: 0, //lãi
+            PRINCIPAL: 0, //gốc
+            GRACE_INTEREST: 0, //ân hạn
         }
 
         let listConvert = [];
         for (let i = 0; i < arr.length; i++) {
-            if (arr[i].charging_type === "GRACE_INTEREST") {
-                total.GRACE_INTEREST = total.GRACE_INTEREST + arr[i].charging_amount;
+            if (arr[i].type_date === "Ân hạn") {
+                total.GRACE_INTEREST = total.GRACE_INTEREST + arr[i].amount_paid_in_period;
+            } else if (arr[i].type_date === "Trả lãi") {
+                total.INTEREST = total.INTEREST + arr[i].amount_paid_in_period;
+                console.log("INTEREST",total.INTEREST)
+            } else if (arr[i].type_date === "Trả gốc") {
+                total.PRINCIPAL = total.PRINCIPAL + arr[i].amount_paid_in_period;
             }
-            else if (arr[i].charging_type === "INTEREST"){
-                total.INTEREST = total.INTEREST + arr[i].charging_amount;
-            }
-            else if (arr[i].charging_type === "PRINCIPAL"){
-                total.principal = total.principal + arr[i].charging_amount;
-            }
-            let key = arr[i].company.company_name + arr[i].charging_date;
+            let key = arr[i].company_name + arr[i].payable_date;
             if (listConvert.filter(e => e.key === key).length === 0) {
                 listConvert.push({
                     key: key,
-                    chargingDate: arr[i].charging_date,
-                    companyName: arr[i].company.company_name,
+                    chargingDate: arr[i].payable_date,
+                    companyName: arr[i].company_name,
                     sof: [arr[i]],
-                    total: arr[i].charging_amount
+                    total: arr[i].amount_paid_in_period
                 })
             } else
                 for (let j = 0; j < listConvert.length; j++) {
                     if (listConvert[j].key === key) {
                         listConvert[j].sof.push(arr[i]);
-                        listConvert[j].total = listConvert[j].total + arr[i].charging_amount;
+                        listConvert[j].total = listConvert[j].total + arr[i].amount_paid_in_period;
                     }
 
                 }
@@ -137,12 +137,17 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
             total.charging_amount = total.charging_amount + listConvert[i].total;
             listConvert[i].total = currencyFormatter(listConvert[i].total);
             for (let j = 0; j < listConvert[i].sof.length; j++) {
-                listConvert[i].sof[j].principal = currencyFormatter(listConvert[i].sof[j].principal)
-                listConvert[i].sof[j].charging_amount = currencyFormatter(listConvert[i].sof[j].charging_amount)
-                listConvert[i].sof[j].charging_type = listConvert[i].sof[j].charging_type === 'INTEREST' ? 'Tiền lãi' : listConvert[i].sof[j].charging_type === 'PRINCIPAL' ? 'Tiền gốc' : 'Tiền lãi ân hạn';
+                listConvert[i].sof[j].principal = currencyFormatter(listConvert[i].sof[j].amount_paid_in_period)
+                listConvert[i].sof[j].charging_amount = currencyFormatter(listConvert[i].sof[j].amount_paid_in_period)
+                // listConvert[i].sof[j].charging_type = listConvert[i].sof[j].charging_type === 'INTEREST' ? 'Tiền lãi' : listConvert[i].sof[j].charging_type === 'PRINCIPAL' ? 'Tiền gốc' : 'Tiền lãi ân hạn';
+                listConvert[i].sof[j].charging_type = listConvert[i].sof[j].type_date;
             }
         }
+        console.log("total",total);
         setTotal(total)
+        console.log("listConvert", listConvert)
+
+        listConvert.sort((a,b) => Date.parse(b.chargingDate) - Date.parse(a.chargingDate))
         return listConvert;
     }
 
@@ -164,10 +169,10 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
                 setLoading(false)
                 console.log("r", r)
                 let arr;
-                // if (r.data.payable_period_responses) {
-                //     arr = convertArr(r.data.payable_period_responses)
-                // } else arr = convertArr([])
-                setListResult({...listResult, rows: (r.data.payable_period_responses), total: r.data.page.total_elements});
+                if (r.data.payable_period_responses) {
+                    arr = convertArr(r.data.payable_period_responses)
+                } else arr = convertArr([])
+                setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
             }).catch(e => {
                 setLoading(false)
                 console.log(e)
@@ -286,7 +291,7 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
         navigate('/sof/detail?id=' + id)
     }
     const payablePeriodDetail = (id) => {
-        navigate('/detail-est/?id='+ id)
+        navigate('/detail-est/?id=' + id)
     }
     const sendEmailApi = (data) => {
         setLoadingEmail(true)
@@ -524,7 +529,7 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
                         <div className={'row'} style={{padding: '0 50px 50px 50px', justifyContent: "space-between"}}>
                             <ItemDashboard tittle={'Tổng tiền phái trả'}
                                            content={total.charging_amount}></ItemDashboard>
-                            <ItemDashboard tittle={'Tổng tiền gốc'} content={total.principal}></ItemDashboard>
+                            <ItemDashboard tittle={'Tổng tiền gốc'} content={total.PRINCIPAL}></ItemDashboard>
                             <ItemDashboard tittle={'Tổng tiền lãi'} content={total.INTEREST}></ItemDashboard>
                             <ItemDashboard tittle={'Tổng tiền lãi ân hạn'}
                                            content={total.GRACE_INTEREST}></ItemDashboard>
@@ -569,31 +574,32 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
                                 }}
                             />
                         </div>
-                        <div style={{ marginLeft: '20px',width:'30%'}}>
+                        <div style={{marginLeft: '20px', width: '30%'}}>
                             <div className={'label-input'}>Khoảng thời gian</div>
-                            <div className={''} style={{display:"flex",alignItems:"center"}}>
-                                <LocalizationProvider  dateAdapter={AdapterDayjs} >
+                            <div className={''} style={{display: "flex", alignItems: "center"}}>
+                                <LocalizationProvider dateAdapter={AdapterDayjs}>
                                     <DesktopDatePicker
-                                        style={{height:'30px'}}
+                                        style={{height: '30px'}}
                                         inputFormat="DD-MM-YYYY"
                                         value={timeSearch.start}
                                         onChange={(values) => {
                                             console.log(values)
-                                            setTimeSearch({...timeSearch,start: values})
+                                            setTimeSearch({...timeSearch, start: values})
                                         }}
 
                                         renderInput={(params) => <TextField size={"small"}  {...params} />}
                                     />
                                 </LocalizationProvider>
-                                <div style={{margin:'0 5px'}}>đến</div>
-                                <LocalizationProvider   style={{width:'50px !important',height:'30px'}}  dateAdapter={AdapterDayjs} >
+                                <div style={{margin: '0 5px'}}>đến</div>
+                                <LocalizationProvider style={{width: '50px !important', height: '30px'}}
+                                                      dateAdapter={AdapterDayjs}>
                                     <DesktopDatePicker
-                                        style={{width:'50px !important',height:'30px'}}
+                                        style={{width: '50px !important', height: '30px'}}
                                         inputFormat="DD-MM-YYYY"
                                         value={timeSearch.end}
                                         onChange={(values) => {
                                             console.log(values)
-                                            setTimeSearch({...timeSearch,end: values})
+                                            setTimeSearch({...timeSearch, end: values})
                                         }}
                                         // onChange={value => props.setFieldValue("founding_date", value)}
                                         renderInput={(params) => <TextField size={"small"}  {...params} />}
@@ -607,34 +613,20 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
                 </Collapse>
                 <Divider light/>
-                <div className={'main-content-body-result'} style={{position:"relative"}}>
+                <div className={'main-content-body-result'} style={{position: "relative"}}>
                     <TableContainer style={{height: '100%', width: '100%', overflow: "auto"}}>
                         {/*<div style={{height: '100%', width: '100%'}}>*/}
                         <Table stickyHeader className={"table-custom"}>
                             <TableHead>
                                 <TableRow>
                                     <TableCell align="center">Ngày</TableCell>
-                                    <TableCell align="center">Loại tiền</TableCell>
                                     <TableCell align="center">Công ty vay</TableCell>
-                                    <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
-
+                                    <TableCell align="center">Tổng phải trả phải trả(VNĐ)</TableCell>
                                     <TableCell align="center">Mã khoản vay</TableCell>
-
-                                    {/*<TableCell align="center">Giá trị vay(VNĐ)</TableCell>*/}
-
-                                    {/*charging_type*/}
-                                    {/*start_date*/}
-                                    {/*end_date*/}
-                                    {/*<TableCell align="center">Ngày trả gốc</TableCell>*/}
-                                    {/*/!*nums_of_interest_day*!/*/}
-                                    {/*<TableCell align="center">Ngày tính lãi</TableCell>*/}
-                                    {/*interest_rate*/}
+                                    <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
+                                    <TableCell align="center">Loại tiền</TableCell>
                                     <TableCell align="center">Lãi suất(%)</TableCell>
-                                    {/*//charging_amount*/}
-
-                                    {/*interest_period*/}
                                     <TableCell align="center">Số kỳ trả lãi</TableCell>
-                                    {/*principal_period*/}
                                     <TableCell align="center">Số kỳ trả gốc</TableCell>
                                     <TableCell align="center">Thao tác</TableCell>
                                 </TableRow>
@@ -645,34 +637,60 @@ import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
                                     có dữ liệu
                                 </div>
                                 {listResult.rows.map(item => (
-
                                     <>
                                         <TableRow>
-                                            <TableCell>{item.payable_date}</TableCell>
-
-                                            <TableCell>{item.type_date}</TableCell>
-
-                                            <TableCell><div>{item.company_name}</div></TableCell>
-
-                                            <TableCell><div className={'error-message number'}>{currencyFormatter(item.amount_paid_in_period)}</div></TableCell>
-
-                                            <TableCell><div>{item.sof_code}</div></TableCell>
-
-                                            <TableCell><div>{item.interest_rate}</div></TableCell>
-
-                                            <TableCell><div>{item.interest_period}</div></TableCell>
-
-                                            <TableCell><div>{item.principal_period}</div></TableCell>
-
-                                            <TableCell>
-                                                <div className='icon-action'>
-                                                    <Tooltip title="Xem chi tiết">
-                                                        <RemoveRedEyeIcon onClick={()=>{payablePeriodDetail(item.source_of_fund_id)}} style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon >
-                                                    </Tooltip>
+                                            <TableCell rowSpan={item.sof.length + 1}>{item.chargingDate}</TableCell>
+                                            <TableCell rowSpan={item.sof.length + 1}>
+                                                <div>{item.companyName}</div>
+                                            </TableCell>
+                                            <TableCell rowSpan={item.sof.length + 1}>
+                                                <div className={'error-message'}>
+                                                    {item.total}
                                                 </div>
                                             </TableCell>
 
+
                                         </TableRow>
+                                        {
+                                            item.sof.map(detail => (
+                                                <TableRow>
+                                                    <TableCell>
+                                                        <div>{detail.sof_code}</div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className={'error-message number'}>{currencyFormatter(detail.amount_paid_in_period)}</div>
+                                                    </TableCell>
+
+                                                    <TableCell>{detail.type_date}</TableCell>
+
+                                                    <TableCell>
+                                                        <div>{detail.interest_rate}</div>
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        <div>{detail.interest_period}</div>
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        <div>{detail.principal_period}</div>
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        <div className='icon-action'>
+                                                            {
+                                                                detail.type_date=="Trả lãi"?<Tooltip title="Xem chi tiết">
+                                                                    <RemoveRedEyeIcon onClick={() => {
+                                                                        payablePeriodDetail(detail.source_of_fund_id)
+                                                                    }}
+                                                                                      style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon>
+                                                                </Tooltip>:''
+                                                            }
+
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        }
                                         {/*{item.sof.map(detail => (*/}
                                         {/*    <TableRow>*/}
                                         {/*        <TableCell>*/}
