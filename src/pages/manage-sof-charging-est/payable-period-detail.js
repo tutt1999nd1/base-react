@@ -40,8 +40,7 @@ export default function PayablePeriodDetail(props) {
         rows: [],
         total: 0
     });
-    console.log('nguuuuuuuuuuuuuuuuuuuuu');
-    console.log(listResult);
+
     useEffect(() => {
         setIdSof(location.get('id'));
         setStart(location.get('startDate'));
