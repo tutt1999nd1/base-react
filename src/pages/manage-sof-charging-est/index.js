@@ -291,7 +291,7 @@ export default function ManageSofChargingEst() {
         navigate('/sof/detail?id=' + id)
     }
     const payablePeriodDetail = (id, startDate, endDate) => {
-        navigate('/detail-est/?id='+ id+'?startDate='+startDate+'&endDate='+endDate)
+        navigate('/detail-est/?id='+ id+'&startDate='+startDate+'&endDate='+endDate)
     }
     const sendEmailApi = (data) => {
         setLoadingEmail(true)

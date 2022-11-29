@@ -48,6 +48,7 @@ export default function PayablePeriodDetail(props) {
 
 
     }, [location])
+
     const [timeSearch, setTimeSearch] = useState(
         {
             start: (new dayjs).startOf('month'),
