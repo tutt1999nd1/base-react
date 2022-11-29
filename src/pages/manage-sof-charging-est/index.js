@@ -264,7 +264,7 @@ export default function ManageSofChargingEst() {
     }
 
     const exportChargingEst = () => {
-        Axios.post(API_MAP.EXPORT_CHARGING_EST, {
+        Axios.post(API_MAP.GET_PAYABLE_PERIOD_DETAIL, {
             'page_size': listResult.pageSize,
             'page_index': listResult.page + 1,
             'paging': false,
@@ -290,8 +290,8 @@ export default function ManageSofChargingEst() {
     const redirectToSof = (id) => {
         navigate('/sof/detail?id=' + id)
     }
-    const payablePeriodDetail = (id) => {
-        navigate('/detail-est/?id='+ id)
+    const payablePeriodDetail = (id, startDate, endDate) => {
+        navigate('/detail-est/?id='+ id+'?startDate='+startDate+'&endDate='+endDate)
     }
     const sendEmailApi = (data) => {
         setLoadingEmail(true)
@@ -677,15 +677,9 @@ export default function ManageSofChargingEst() {
 
                                                     <TableCell>
                                                         <div className='icon-action'>
-                                                            {
-                                                                detail.type_date=="Trả lãi"?<Tooltip title="Xem chi tiết">
-                                                                    <RemoveRedEyeIcon onClick={() => {
-                                                                        payablePeriodDetail(detail.source_of_fund_id)
-                                                                    }}
-                                                                                      style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon>
-                                                                </Tooltip>:''
-                                                            }
-
+                                                            <Tooltip title="Xem chi tiết">
+                                                                <RemoveRedEyeIcon onClick={()=>{payablePeriodDetail(item.source_of_fund_id, item.start_date, item.payable_date)}} style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon >
+                                                            </Tooltip>
                                                         </div>
                                                     </TableCell>
                                                 </TableRow>
