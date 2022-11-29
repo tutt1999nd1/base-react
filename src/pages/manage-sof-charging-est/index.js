@@ -677,9 +677,15 @@ export default function ManageSofChargingEst() {
 
                                                     <TableCell>
                                                         <div className='icon-action'>
-                                                            <Tooltip title="Xem chi tiết">
-                                                                <RemoveRedEyeIcon onClick={()=>{payablePeriodDetail(item.source_of_fund_id, item.start_date, item.payable_date)}} style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon >
-                                                            </Tooltip>
+                                                            {
+                                                                detail.type_date=="Trả lãi"?<Tooltip title="Xem chi tiết">
+                                                                    <RemoveRedEyeIcon onClick={() => {
+                                                                        payablePeriodDetail(detail.source_of_fund_id, detail.start_date, detail.payable_date)
+                                                                    }}
+                                                                                      style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon>
+                                                                </Tooltip>:''
+                                                            }
+
                                                         </div>
                                                     </TableCell>
                                                 </TableRow>
