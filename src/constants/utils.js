@@ -169,7 +169,7 @@ export function typeToName(type) {
         'PCT':'Phó chủ tịch',
         'HĐQT':'Hội đồng quản trị',
         'lend':'Vay thêm',
-        'pay':'Trả gốc'
+        'pay':'Trả gốc',
     }
     return object[type]||'';
 }

@@ -1,9 +1,9 @@
 // const API_DOMAIN = 'http://10.190.180.251:8088/'
 // const API_DOMAIN = 'http://10.190.160.20:8088/'
-// const API_DOMAIN = 'http://localhost:8443/'
+const API_DOMAIN = 'http://localhost:8443/'
 // const API_DOMAIN = 'http://103.151.238.62:8088/'
 // const API_DOMAIN = 'http://103.151.238.62:8089/'
-const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
+// const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
 // const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
 const API_MAP = {
     GET_LIST_ASSETS: API_DOMAIN + 'asset/search',
@@ -63,6 +63,7 @@ const API_MAP = {
     GET_LIST_CHARGING_EST: API_DOMAIN + 'charging_est/search',
     SEND_EMAIL_CHARGING_EST: API_DOMAIN + 'charging_est/send_email',
     UPDATE_CHARGING_EST: API_DOMAIN + 'charging_est',
+    UPDATE_STATUS_PAYABLE: API_DOMAIN + 'payable-period',
     EXPORT_CHARGING_EST: API_DOMAIN + 'charging_est/export_excel',
     GET_LIST_MEMBER: API_DOMAIN + 'member/search',
     CREATE_MEMBER: API_DOMAIN + 'member/create',
