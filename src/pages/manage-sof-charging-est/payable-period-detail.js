@@ -142,7 +142,7 @@ export default function PayablePeriodDetail(props) {
             hide: checkColumnVisibility('change_lending_amount','date_apply'),
             renderCell: (params) => {
 
-                return <div className='content-column'>
+                return <div className='content-column error-message'>
                     {currencyFormatter(params.value)}
                 </div>;
             },

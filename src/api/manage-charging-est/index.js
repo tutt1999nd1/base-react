@@ -8,6 +8,10 @@ class ApiManagerChargingEst{
     getListChargingEst = (data) => {
         return axiosClient.post(API_MAP.GET_PAYABLE_PERIOD,data)
     }
+    getPerPayablePeriod = (idDetail, data) => {
+        return axiosClient.post(API_MAP.GET_PER_PAYABLE_PERIOD+`/${idDetail}`,data)
+    }
+
     sendEmailChargingEst = (data) => {
         return axiosClient.post(API_MAP.SEND_EMAIL_CHARGING_EST,data)
     }

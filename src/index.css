@@ -914,7 +914,7 @@ border: 1px solid #1F2251;
 background-color: #1F2251;
 color: #fff !important;
 }
-.main-content-body-result .MuiSvgIcon-root{
+.main-content-body-result .MuiSvgIcon-root,.main-content-body .MuiSvgIcon-root{
 font-size: 1rem;
 }
 .main-content-body-tittle button{
@@ -1100,13 +1100,13 @@ border: unset;
     border-left: 1px solid #dee2e6;
     min-width: 153px!important;
 }
-.main-content-body-result tr th:last-child{
+.main-content-body-result tr th:last-child,.main-content-body tr th:last-child{
     position: sticky;
     right: 0;
     background-color: #1f2251;
     border-left: 1px solid #dee2e6;
 }
-.main-content-body-result table tbody tr > td:last-child{
+.main-content-body-result table tbody tr > td:last-child,.main-content-body table tbody tr > td:last-child{
     position: sticky;
     right: 0;
     background-color: #fff;

@@ -96,5 +96,6 @@ const API_MAP = {
     GET_INTEREST_TABLE: API_DOMAIN + 'lending-value-daily/get-all-payable-period',
     GET_PAYABLE_PERIOD: API_DOMAIN + 'lending-value-daily/search',
     GET_PAYABLE_PERIOD_DETAIL: API_DOMAIN + 'lending-value-daily/get-all-payable-period-detail',
+    GET_PER_PAYABLE_PERIOD: API_DOMAIN + 'lending-value-daily/search-per-payable-period',
 }
 export default API_MAP;
