@@ -123,6 +123,14 @@ export default function Nav() {
                                         </div>
                                     </li>
                                 </NavLink>
+                                <NavLink className={'nav-link'} to={'search-company'} onClick={isMobile?touchMenu:''}>
+                                    <li>
+                                        <div className={'nav-item li-child'}>
+                                            <div className={'nav-item-name'}><BusinessIcon></BusinessIcon>Tìm kiếm công ty
+                                            </div>
+                                        </div>
+                                    </li>
+                                </NavLink>
                                 <NavLink className={'nav-link'} to={'member'} onClick={isMobile?touchMenu:''}>
                                     <li>
                                         <div className={'nav-item li-child'}>

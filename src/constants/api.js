@@ -20,6 +20,7 @@ const API_MAP = {
     GET_ASSETS_TYPE: API_DOMAIN + 'asset_type',
     GET_ASSETS_GROUP: API_DOMAIN + 'asset_group',
     GET_LIST_COMPANY: API_DOMAIN + 'capital_company/search',
+    GET_LIST_COMPANY_SOF: API_DOMAIN + 'capital_company/search-company-sof',
     GET_LIST_COMPANY_AVAI: API_DOMAIN + 'capital_company/available',
     CREATE_COMPANY: API_DOMAIN + 'capital_company/create',
     UPDATE_COMPANY: API_DOMAIN + 'capital_company',

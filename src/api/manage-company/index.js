@@ -5,6 +5,9 @@ class ApiManagerCompany{
     getListCompany = (data) => {
         return axiosClient.post(API_MAP.GET_LIST_COMPANY,data)
     }
+    getListCompanySOF = (data) => {
+        return axiosClient.post(API_MAP.GET_LIST_COMPANY_SOF,data)
+    }
     getListCompanyAvai = (data) => {
         return axiosClient.post(API_MAP.GET_LIST_COMPANY_AVAI,data)
     }
