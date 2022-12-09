@@ -17,6 +17,7 @@ import {changeVisibilityTableAll, checkColumnVisibility, currencyFormatter, type
 import ModalChangeLendingAmount from "../manage-sof/manage-change-sof/modal-edit";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import apiChangeLendingAmount from "../../api/manage-change-lending-amount";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 
 export default function PayablePeriodDetail(props) {
     const {sourceOfFundId} = props;
@@ -142,7 +143,7 @@ export default function PayablePeriodDetail(props) {
             hide: checkColumnVisibility('change_lending_amount','date_apply'),
             renderCell: (params) => {
 
-                return <div className='content-column'>
+                return <div className='content-column error-message'>
                     {currencyFormatter(params.value)}
                 </div>;
             },
@@ -295,6 +296,9 @@ export default function PayablePeriodDetail(props) {
     const handleCloseModalEdit = () => {
         setOpenModalEdit(false)
     }
+    const backList = () => {
+        navigate('/charging_est')
+    }
     const deleteListBtn = () => {
         setIsDelList(true)
         setOpenModalDel(true)
@@ -328,6 +332,8 @@ export default function PayablePeriodDetail(props) {
                 draggable
                 pauseOnHover
             />
+            <Button onClick={backList} style={{marginBottom: '10px'}} variant="text"
+                    startIcon={<KeyboardBackspaceIcon/>}>Tính lãi</Button>
             <div className={'main-content-header'}>
                 <ModalConfirmDel name={infoDel.supplier_name} openModalDel={openModalDel}
                                  handleCloseModalDel={handleCloseModalDel}

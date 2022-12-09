@@ -104,8 +104,11 @@ export default function ManageSofChargingEst() {
             PRINCIPAL: 0, //gốc
             GRACE_INTEREST: 0, //ân hạn
         }
-
         let listConvert = [];
+        for (let i = 0; i < arr.length; i++) {
+            // var sorted = arr.sort(function(date1,date2){return date1.getTime() - date2.getTime()});
+            // sorted
+        }
         for (let i = 0; i < arr.length; i++) {
             if (arr[i].type_date === "Trả lãi ân hạn") {
                 total.GRACE_INTEREST = total.GRACE_INTEREST + arr[i].amount_paid_in_period;
@@ -168,18 +171,23 @@ export default function ManageSofChargingEst() {
                         principal_amount:listConvert[i].sof[j].payable_period_detail_entities[k].principal_amount,
                         interest_rate:listConvert[i].sof[j].payable_period_detail_entities[k].interest_rate
                     }
+                    if(listConvert[i].sof[j].charging_type === "Trả lãi ân hạn"){
+                        convertData.amount_paid_in_period = listConvert[i].sof[j].amount_paid_in_period;
+                    }
                     newArr.push(convertData)
                 }
             }
             listConvert[i].sofConvert=newArr;
 
         }
-        console.log("listConvert", listConvert)
-
+        listConvert.sort(function(a,b){
+            return new Date(a.chargingDate) - new Date(b.chargingDate)
+        })
         return listConvert;
     }
 
     useEffect(() => {
+
         // dayjs(values.founding_date).format('DD-MM-YYYY');
         if (currentUser.token) {
             getListChargingEstApi({
@@ -209,6 +217,7 @@ export default function ManageSofChargingEst() {
         }
 
     }, [listResult.page, listResult.pageSize, companySearch, timeSearch, refresh, currentUser.token])
+
     useEffect(() => {
         getListCompanyApi({paging: false}).then(r => {
             if (r.data.companies) {
@@ -651,9 +660,10 @@ export default function ManageSofChargingEst() {
                         <Table stickyHeader className={"table-custom"}>
                             <TableHead>
                                 <TableRow>
+                                    <TableCell align="center">Trạng thái</TableCell>
                                     <TableCell align="center">Ngày trả</TableCell>
                                     <TableCell align="center">Công ty vay</TableCell>
-                                    <TableCell align="center">Tổng phải trả phải trả(VNĐ)</TableCell>
+                                    <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
                                     <TableCell align="center">Mã khoản vay</TableCell>
                                     <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
                                     <TableCell align="center">Tiền gốc tham chiếu</TableCell>
@@ -662,7 +672,6 @@ export default function ManageSofChargingEst() {
                                     <TableCell align="center">Ngày bắt đầu</TableCell>
                                     <TableCell align="center">Ngày kết thúc</TableCell>
                                     <TableCell align="center">Số ngày tính lãi </TableCell>
-                                    <TableCell align="center">Trạng thái thanh toán</TableCell>
                                     <TableCell align="center">Thao tác</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -674,6 +683,24 @@ export default function ManageSofChargingEst() {
                                 {listResult.rows.map(item => (
                                     <>
                                         <TableRow>
+                                            <TableCell rowSpan={item.sofConvert.length + 1}>
+                                                <div className='icon-action'>
+                                                    {
+                                                        // detail.type_date=="Trả lãi"?<Checkbox
+                                                        //     checked={detail.status==="paid"}
+                                                        //     onChange={()=>handleUpdateStatusPayable(detail.id)}
+                                                        //     inputProps={{ 'aria-label': 'controlled' }}
+                                                        // />:'-'
+
+                                                        <Checkbox
+                                                            checked={item.status==="paid"}
+                                                            onChange={()=>handleUpdateStatusPayable(item.id)}
+                                                            inputProps={{ 'aria-label': 'controlled' }}
+                                                        />
+                                                    }
+
+                                                </div>
+                                            </TableCell>
                                             <TableCell rowSpan={item.sofConvert.length + 1}>{item.chargingDate}</TableCell>
                                             <TableCell rowSpan={item.sofConvert.length + 1}>
                                                 <div>{item.companyName}</div>
@@ -694,6 +721,7 @@ export default function ManageSofChargingEst() {
                                                     </TableCell>
                                                     <TableCell>
                                                         <div className={'error-message number'}>{currencyFormatter(detail.amount_paid_in_period)}</div>
+                                                        {/*<div className={'error/-message number'}>{detail.amount_paid_in_period}</div>*/}
                                                     </TableCell>
                                                     <TableCell>
                                                         <div className={"number"}>{currencyFormatter(detail.principal_amount)}</div>
@@ -714,24 +742,6 @@ export default function ManageSofChargingEst() {
                                                     <TableCell>
                                                         <div>{detail.type_date==="Trả gốc"?"-":detail.total_day}</div>
                                                     </TableCell>
-                                                    <TableCell>
-                                                        <div className='icon-action'>
-                                                            {
-                                                                // detail.type_date=="Trả lãi"?<Checkbox
-                                                                //     checked={detail.status==="paid"}
-                                                                //     onChange={()=>handleUpdateStatusPayable(detail.id)}
-                                                                //     inputProps={{ 'aria-label': 'controlled' }}
-                                                                // />:'-'
-
-                                                                <Checkbox
-                                                                checked={detail.status==="paid"}
-                                                                onChange={()=>handleUpdateStatusPayable(detail.id)}
-                                                                inputProps={{ 'aria-label': 'controlled' }}
-                                                                />
-                                                            }
-
-                                                        </div>
-                                                    </TableCell>
 
                                                     <TableCell>
                                                         <div className='icon-action'>
@@ -749,21 +759,14 @@ export default function ManageSofChargingEst() {
                                                 </TableRow>
                                             ))
                                         }
+                                        <TableRow>
+
+                                        </TableRow>
 
                                     </>
                                 ))}
                             </TableBody>
                         </Table>
-                        {/*<TablePagination*/}
-                        {/*    rowsPerPageOptions={[5, 10, 25]}*/}
-                        {/*    component="div"*/}
-                        {/*    count={listResult.total}*/}
-                        {/*    rowsPerPage={listResult.pageSize}*/}
-                        {/*    page={listResult.page}*/}
-                        {/*    onPageChange={(page) => setListResult((prev) => ({...prev, page}))}*/}
-                        {/*    onPageChange={handleChangePage}*/}
-                        {/*    onRowsPerPageChange={handleChangeRowsPerPage}*/}
-                        {/*/>*/}
                     </TableContainer>
 
                 </div>

@@ -9,7 +9,7 @@ import {
     TableCell,
     TableContainer,
     TableHead,
-    TableRow,
+    TableRow, Tooltip,
     Typography
 } from "@mui/material";
 import {toast, ToastContainer} from "react-toastify";
@@ -25,6 +25,8 @@ import {useSelector} from "react-redux";
 import apiManagerChargingEst from "../../api/manage-charging-est";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import {Checkbox} from "antd";
 
 export default function DetailSOF(props) {
     const navigate = useNavigate();
@@ -34,25 +36,19 @@ export default function DetailSOF(props) {
     const [openModalDel, setOpenModalDel] = useState(false)
     const [openDetail, setOpenDetail] = useState(false)
     const currentUser = useSelector(state => state.currentUser)
+    const [idSof, setIdSof] = useState(null)
+    const [refresh, setRefresh] = useState(false)
     const [listResult, setListResult] = React.useState({
         page: 0,
         pageSize: 10,
-        rows: [
-            // {
-            //     id:1,
-            //     asset_name:'2',
-            //     asset_group_name:'111',
-            //     asset_type_name:'111',
-            //     initial_value:'111',
-            //     capital_value:'111',
-            //     current_credit_value:'111',
-            //     max_capital_value:'111',
-            //     status:'111',
-            //     description:'Thông tin chứng khoán ngày hôm nay rất tệ'
-            // }
-        ],
+        rows: [],
         total: 0
     });
+    const [total, setTotal] = useState({
+        charging_amount: 0,
+        principal: 0,
+        GRACE_INTEREST: 0,
+    })
     const [info, setInfo] = useState({
         id: '',
         capital_company: {id: 0},
@@ -81,6 +77,9 @@ export default function DetailSOF(props) {
     const backList = () => {
         navigate('/sof')
     }
+    const getInterestTableApi = (id) => {
+        return apiManagerChargingEst.updateStatusPayable(id);
+    }
     useEffect(() => {
         if (idDetail) {
             getListSOFApi({id: idDetail, page_size: 1}).then(r => {
@@ -89,60 +88,122 @@ export default function DetailSOF(props) {
             }).catch(e => {
 
             })
-            getListChargingEstApi({
+            getListChargingEstApi(idDetail,{
                 'paging': false,
-                // 'charging_date_from':moment(timeSearch.start).format('DD-MM-YYYY'),
-                // 'charging_date_to':moment(timeSearch.end).format('DD-MM-YYYY'),
-                // 'company_name': nameSearch === '' ? null : nameSearch,
-                // 'contact_detail': contactSearch === 0 ? null : contactSearch,
-                // 'tax_number': taxSearch === 0 ? null : taxSearch,
                 'sof_id': idDetail,
             }).then(r => {
                 // setLoading(false)
-                console.log("r", r)
+                console.log("rrrrrrrrrrrrrr", r)
                 let arr;
-                if (r.data.sof_charging_ests) {
-                    arr = convertArr(r.data.sof_charging_ests)
-                } else arr = []
-                setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
+                if (r.data) {
+                    arr = convertArr(r.data)
+                } else arr = convertArr([])
+
+                console.log('ffffffffffffffffffffffff');
+                console.log(arr);
+
+
+                setListResult({...listResult, rows: (arr)});
             }).catch(e => {
                 // setLoading(false)
                 console.log(e)
             })
         }
     }, [idDetail])
-    const convertArr = (arr) => {
 
+    const convertArr = (arr) => {
+        console.log("arr", arr)
+        let total = {
+            charging_amount: 0,
+            INTEREST: 0, //lãi
+            PRINCIPAL: 0, //gốc
+            GRACE_INTEREST: 0, //ân hạn
+        }
         let listConvert = [];
         for (let i = 0; i < arr.length; i++) {
-            let key = arr[i].company.company_name + arr[i].charging_date;
+            // var sorted = arr.sort(function(date1,date2){return date1.getTime() - date2.getTime()});
+            // sorted
+        }
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i].type_date === "Trả lãi ân hạn") {
+                total.GRACE_INTEREST = total.GRACE_INTEREST + arr[i].amount_paid_in_period;
+            } else if (arr[i].type_date === "Trả lãi") {
+                total.INTEREST = total.INTEREST + arr[i].amount_paid_in_period;
+                console.log("INTEREST",total.INTEREST)
+            } else if (arr[i].type_date === "Trả gốc") {
+                total.PRINCIPAL = total.PRINCIPAL + arr[i].amount_paid_in_period;
+            }
+            let key = arr[i].company_name + arr[i].payable_date;
             if (listConvert.filter(e => e.key === key).length === 0) {
                 listConvert.push({
                     key: key,
-                    chargingDate: arr[i].charging_date,
-                    companyName: arr[i].company.company_name,
+                    chargingDate: arr[i].payable_date,
+                    companyName: arr[i].company_name,
                     sof: [arr[i]],
-                    total: arr[i].charging_amount
+                    total: arr[i].amount_paid_in_period
                 })
             } else
                 for (let j = 0; j < listConvert.length; j++) {
                     if (listConvert[j].key === key) {
                         listConvert[j].sof.push(arr[i]);
-                        listConvert[j].total = listConvert[j].total + arr[i].charging_amount;
+                        listConvert[j].total = listConvert[j].total + arr[i].amount_paid_in_period;
                     }
 
                 }
         }
-        console.log("listConvert", listConvert)
         for (let i = 0; i < listConvert.length; i++) {
+            total.charging_amount = total.charging_amount + listConvert[i].total;
             listConvert[i].total = currencyFormatter(listConvert[i].total);
             for (let j = 0; j < listConvert[i].sof.length; j++) {
-                listConvert[i].sof[j].principal = currencyFormatter(listConvert[i].sof[j].principal)
-                listConvert[i].sof[j].charging_amount = currencyFormatter(listConvert[i].sof[j].charging_amount)
-                listConvert[i].sof[j].charging_type = listConvert[i].sof[j].charging_type === 'INTEREST' ? 'Tiền lãi' : listConvert[i].sof[j].charging_type === 'PRINCIPAL' ? 'Tiền gốc' : 'Tiền lãi ân hạn';
+                listConvert[i].sof[j].principal = currencyFormatter(listConvert[i].sof[j].amount_paid_in_period)
+                listConvert[i].sof[j].charging_amount = currencyFormatter(listConvert[i].sof[j].amount_paid_in_period)
+                // listConvert[i].sof[j].charging_type = listConvert[i].sof[j].charging_type === 'INTEREST' ? 'Tiền lãi' : listConvert[i].sof[j].charging_type === 'PRINCIPAL' ? 'Tiền gốc' : 'Tiền lãi ân hạn';
+                listConvert[i].sof[j].charging_type = listConvert[i].sof[j].type_date;
             }
         }
+        console.log("total",total);
+        console.log("list_convert",listConvert);
+        setTotal(total)
+        for(let i = 0; i < listConvert.length; i++){
+            let newArr=[]
+            for (let j = 0; j <listConvert[i].sof.length; j++){
+                console.log(listConvert[i].sof[j].payable_period_detail_entities.length)
+                for(let k=0;k<listConvert[i].sof[j].payable_period_detail_entities.length;k++){
+                    let convertData = {
+                        amount_paid_in_period:listConvert[i].sof[j].payable_period_detail_entities[k].amount,
+                        charging_amount:null,
+                        charging_type:listConvert[i].sof[j].charging_type,
+                        company_name:listConvert[i].sof[j].company_name,
+                        id:listConvert[i].sof[j].id,
+                        status:listConvert[i].sof[j].status,
+                        principal:"",
+                        sof_code:listConvert[i].sof[j].sof_code,
+                        source_of_fund_id:listConvert[i].sof[j].source_of_fund_id,
+                        start_date:listConvert[i].sof[j].payable_period_detail_entities[k].start_date,
+                        end_date:listConvert[i].sof[j].payable_period_detail_entities[k].end_date,
+                        type_date:listConvert[i].sof[j].charging_type,
+                        total_day:listConvert[i].sof[j].payable_period_detail_entities[k].total_day,
+                        principal_amount:listConvert[i].sof[j].payable_period_detail_entities[k].principal_amount,
+                        interest_rate:listConvert[i].sof[j].payable_period_detail_entities[k].interest_rate
+                    }
+                    if(listConvert[i].sof[j].charging_type === "Trả lãi ân hạn"){
+                        convertData.amount_paid_in_period = listConvert[i].sof[j].amount_paid_in_period;
+                    }
+                    newArr.push(convertData)
+                }
+            }
+            listConvert[i].sofConvert=newArr;
+
+        }
+        listConvert.sort(function(a,b){
+            return new Date(a.chargingDate) - new Date(b.chargingDate)
+        })
         return listConvert;
+    }
+    const handleUpdateStatusPayable = (id) => {
+        getInterestTableApi(id).then(response => {
+            setRefresh(!refresh)
+        })
     }
     useEffect(() => {
         if (location.get('id')) {
@@ -173,14 +234,16 @@ export default function DetailSOF(props) {
     const getListSOFApi = (data) => {
         return apiManagerSOF.getListSOF(data);
     }
-
+    const payablePeriodDetail = (id, startDate, endDate) => {
+        navigate('/detail-est/?id='+ id+'&startDate='+startDate+'&endDate='+endDate)
+    }
 
     const update = () => {
         navigate(`/sof/update?id=${idDetail}`)
     }
-    const getListChargingEstApi = (data) => {
+    const getListChargingEstApi = (idDetail, data) => {
         // setLoading(true)
-        return apiManagerChargingEst.getListChargingEst(data);
+        return apiManagerChargingEst.getPerPayablePeriod(idDetail, data);
     }
     const deleteSOFBtn = () => {
         setOpenModalDel(true)
@@ -439,26 +502,43 @@ export default function DetailSOF(props) {
                         <Table stickyHeader className={"table-custom"}>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="center">Ngày trả lãi</TableCell>
-                                    <TableCell align="center">Công ty vay</TableCell>
-                                    <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
-
-                                    <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
-                                    <TableCell align="center">Loại tiền lãi</TableCell>
-                                    <TableCell align="center">Giá trị vay(VNĐ)</TableCell>
-                                    <TableCell align="center">Ngày vay</TableCell>
-                                    {/*end_date*/}
-                                    <TableCell align="center">Ngày trả gốc</TableCell>
-                                    {/*nums_of_interest_day*/}
-                                    <TableCell align="center">Ngày tính lãi</TableCell>
-                                    {/*interest_rate*/}
-                                    <TableCell align="center">Lãi xuất(%)</TableCell>
-                                    {/*//charging_amount*/}
-
-                                    {/*interest_period*/}
-                                    <TableCell align="center">Số kỳ trả lãi</TableCell>
-                                    {/*principal_period*/}
-                                    <TableCell align="center">Số kỳ trả gốc</TableCell>
+                                    {/*<TableCell align="center">*/}
+                                    {/*    <Tooltip title={'Trạng thái'}><div>Trạng thái</div></Tooltip>*/}
+                                    {/*</TableCell>*/}
+                                    <TableCell align="center">Ngày trả</TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Công ty vay'}><div>Công ty vay</div></Tooltip>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Tổng phải trả (VNĐ)'}><div>Tổng phải trả(VNĐ)</div></Tooltip>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Mã khoản vay'}><div>Mã khoản vay</div></Tooltip>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Số tiền phải trả(VNĐ)'}><div>Số tiền phải trả(VNĐ)</div></Tooltip>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Tiền gốc tham chiếu'}><div>Tiền gốc tham chiếu</div></Tooltip>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Lãi suất(%)'}><div>Lãi suất(%)</div></Tooltip>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Kiểu trả'}><div>Kiểu trả</div></Tooltip>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Ngày bắt đầu'}><div>Ngày bắt đầu</div></Tooltip>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Ngày kết thúc'}><div>Ngày kết thúc</div></Tooltip>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Số ngày tính lãi'}><div>Số ngày tính lãi</div></Tooltip>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Thao tác'}><div>Thao tác</div></Tooltip>
+                                    </TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody style={{overflowY: "auto"}}>
@@ -469,38 +549,77 @@ export default function DetailSOF(props) {
                                 {listResult.rows.map(item => (
                                     <>
                                         <TableRow>
+                                            {/*<TableCell rowSpan={item.sofConvert.length + 1}>*/}
+                                            {/*    <div className='icon-action'>*/}
+                                            {/*        {*/}
+                                            {/*            <Checkbox*/}
+                                            {/*                checked={item.status==="paid"}*/}
+                                            {/*                onChange={()=>handleUpdateStatusPayable(item.id)}*/}
+                                            {/*                inputProps={{ 'aria-label': 'controlled' }}*/}
+                                            {/*            />*/}
+                                            {/*        }*/}
+
+                                            {/*    </div>*/}
+                                            {/*</TableCell>*/}
+                                            <TableCell rowSpan={item.sof.length + 1}>{item.chargingDate}</TableCell>
                                             <TableCell rowSpan={item.sof.length + 1}>
-                                                {item.chargingDate}
-                                            </TableCell>
-                                            <TableCell rowSpan={item.sof.length + 1}>
-                                                {item.companyName}
+                                                <div>{item.companyName}</div>
                                             </TableCell>
                                             <TableCell rowSpan={item.sof.length + 1}>
                                                 <div className={'error-message'}>
                                                     {item.total}
                                                 </div>
                                             </TableCell>
-                                        </TableRow>
-                                        {item.sof.map(detail => (
-                                            <TableRow>
-                                                <TableCell>
-                                                    <div className={'error-message number'}>
-                                                        {detail.charging_amount}
-                                                    </div>
-                                                </TableCell>
-                                                <TableCell>{detail.charging_type}</TableCell>
-                                                <TableCell>
-                                                    <div className={'number'}>{detail.principal}</div>
-                                                </TableCell>
-                                                <TableCell>{detail.start_date}</TableCell>
-                                                <TableCell>{detail.end_date}</TableCell>
-                                                <TableCell>{detail.nums_of_interest_day}</TableCell>
-                                                <TableCell>{detail.interest_rate}</TableCell>
 
-                                                <TableCell>{detail.interest_period}</TableCell>
-                                                <TableCell>{detail.principal_period}</TableCell>
-                                            </TableRow>
-                                        ))}
+
+                                        </TableRow>
+                                        {
+                                            item.sofConvert.map(detail => (
+                                                <TableRow>
+                                                    <TableCell>
+                                                        <div>{detail.sof_code}</div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className={'error-message number'}>{currencyFormatter(detail.amount_paid_in_period)}</div>
+                                                        {/*<div className={'error/-message number'}>{detail.amount_paid_in_period}</div>*/}
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div className={"number"}>{currencyFormatter(detail.principal_amount)}</div>
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        <div>{detail.interest_rate}</div>
+                                                    </TableCell>
+                                                    <TableCell>{detail.type_date}</TableCell>
+
+                                                    <TableCell>
+                                                        <div>{detail.start_date}</div>
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        <div>{detail.end_date}</div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div>{detail.type_date==="Trả gốc"?"-":detail.total_day}</div>
+                                                    </TableCell>
+
+                                                    <TableCell>
+                                                        <div className='icon-action'>
+                                                            {
+                                                                detail.type_date=="Trả lãi"?<Tooltip title="Xem chi tiết">
+                                                                    <RemoveRedEyeIcon onClick={() => {
+                                                                        payablePeriodDetail(detail.source_of_fund_id, detail.start_date, detail.end_date)
+                                                                    }}
+                                                                                      style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon>
+                                                                </Tooltip>:''
+                                                            }
+
+                                                        </div>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))
+                                        }
+
                                     </>
                                 ))}
                             </TableBody>
