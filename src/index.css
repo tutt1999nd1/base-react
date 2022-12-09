@@ -214,7 +214,7 @@ input:has(> div){
 }
 
 .main-content {
-    position: relative;
+    /*position: relative;*/
     padding: 30px;
     /*width: 97%;*/
     /*height: 95%;*/
@@ -1077,7 +1077,10 @@ border: unset;
         white-space: unset;
     }
 }
-
+.tutt20 .MuiDataGrid-columnHeaders:after {
+    content: "Thao tác";
+    width: 177px !important;
+}
 
 .sticky-body .MuiDataGrid-columnHeaders:after {
     content: "Thao tác";
@@ -1116,4 +1119,63 @@ border: unset;
 .icon-action svg:not(svg:last-child){
     border-right: 1px dashed rgb(206 206 206);
     padding-right: 8px;
+}
+.symbol-percent:after {
+    content: "%";
+
+}
+.flexible-modal {
+    position: absolute;
+    z-index: 1000 !important;
+    border: 1px solid #ccc;
+    background: white;
+}
+.flexible-modal-mask {
+    position: fixed;
+    height: 100%;
+    background: rgba(55, 55, 55, 0.6);
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:999;
+}
+
+.flexible-modal-resizer {
+    position:absolute;
+    right:0;
+    bottom:0;
+    cursor:se-resize;
+    margin:5px;
+    border-bottom: solid 2px #333;
+    border-right: solid 2px #333;
+}
+.flexible-modal-drag-area{
+    background: white !important ;
+    height: 50px;
+    position:absolute;
+    right:0;
+    top:0;
+    cursor:move;
+}
+.modal-header-resize{
+    color:black;
+    display:flex;
+    align-items:center;
+    height: 50px;
+    background: white !important;
+
+}
+.modal-header-resize-tittle{
+    color:black;
+    z-index: 1;
+    font-weight: 500;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    letter-spacing: 0.0075em;
+    padding-left: 10px;
+}
+.modal-body-resize{
+    height: 80%;
+    width: 100%;
 }

@@ -24,6 +24,9 @@ class ApiManagerChargingEst{
     updateChargingEst= (id,data) => {
         return axiosClient.put(API_MAP.UPDATE_CHARGING_EST+`/${id}`,data)
     }
+    updateStatusPayable= (id) => {
+        return axiosClient.post(API_MAP.UPDATE_STATUS_PAYABLE+`/${id}`)
+    }
 
 }
 

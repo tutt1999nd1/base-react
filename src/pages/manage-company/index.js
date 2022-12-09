@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {ClipLoader} from "react-spinners";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
-import {Autocomplete, Button, Collapse, css, Divider, IconButton, TextField, Tooltip, Typography} from "@mui/material";
+import {Autocomplete, Button, Collapse, Divider, IconButton, TextField, Tooltip, Typography} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
@@ -10,41 +9,39 @@ import {toast, ToastContainer} from "react-toastify";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import Highlighter from "react-highlight-words";
+import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
+import HistoryIcon from '@mui/icons-material/History';
+import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, viVN} from "@mui/x-data-grid";
 import BorderColorIcon from '@mui/icons-material/BorderColor';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 
-import {
-    DataGrid,
-    GridColDef,
-    GridToolbarColumnsButton,
-    GridToolbarContainer,
-    GridToolbarDensitySelector,
-    viVN
-} from "@mui/x-data-grid";
+
 import {useNavigate} from "react-router-dom";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import {
-    changeVisibilityTable,
     changeVisibilityTableAll,
-    checkColumnVisibility, convertToAutoComplete,
+    checkColumnVisibility,
+    convertToAutoComplete,
     currencyFormatter,
-    pending, typeToName
+    pending,
+    typeToName
 } from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import {useSelector} from "react-redux";
-import apiManagerAssets from "../../api/manage-assets";
 import Axios from "axios";
 import API_MAP from "../../constants/api";
 import FileDownload from "js-file-download";
 import SimCardDownloadIcon from "@mui/icons-material/SimCardDownload";
 import apiManagerMember from "../../api/manage-member";
+import ModalViewSelected from "./modal-view-selected";
 
 export default function ManageCompany() {
     const currentUser = useSelector(state => state.currentUser)
     const [openSearch, setOpenSearch] = useState(true)
+    const [openModalViewSelected, setOpenModalViewSelected] = useState(false)
     const [listDelete, setListDelete] = useState([]);
     const [isDelList,setIsDelList] =  useState(false)
     const [nameSearch,setNameSearch] =useState(null)
@@ -65,6 +62,7 @@ export default function ManageCompany() {
         ],
         total: 0
     });
+    const [listRowSelect, setListRowSelect] = React.useState([]);
     const [infoDel, setInfoDel] = useState({})
 
     const columns: GridColDef[] = [
@@ -119,6 +117,48 @@ export default function ManageCompany() {
                     />
                 </div>;
             },
+        },
+        ,
+        {
+            filterable: false,
+            sortable: false,
+            field: 'member',
+            headerName: 'Ban điều hành',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 250,
+            flex:1,
+            hide: checkColumnVisibility('company','member'),
+            renderCell: (params) => {
+
+                return <div className='content-column row-member'>
+                    <Highlighter
+                        highlightClassName="test-highlight"
+                        searchWords={[member.memberName]}
+                        autoEscape={true}
+                        textToHighlight={params.value}
+                    />                </div>;
+            },
+
+        }, {
+            filterable: false,
+            sortable: false,
+            field: 'council',
+            headerName: 'Hội đồng quản trị',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 250,
+            flex:1,
+            hide: checkColumnVisibility('company','council'),
+            renderCell: (params) => {
+
+                return <div className='content-column row-member'>
+                    <Highlighter
+                        highlightClassName="test-highlight"
+                        searchWords={[council.memberName]}
+                        autoEscape={true}
+                        textToHighlight={params.value}
+                    />                </div>;
+            },
+
         },
         {
             filterable: false,
@@ -186,47 +226,6 @@ export default function ManageCompany() {
                     <Highlighter
                         highlightClassName="test-highlight"
                         searchWords={[contactSearch]}
-                        autoEscape={true}
-                        textToHighlight={params.value}
-                    />                </div>;
-            },
-
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'member',
-            headerName: 'Ban điều hành',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 250,
-            flex:1,
-            hide: checkColumnVisibility('company','member'),
-            renderCell: (params) => {
-
-                return <div className='content-column row-member'>
-                    <Highlighter
-                        highlightClassName="test-highlight"
-                        searchWords={[member.memberName]}
-                        autoEscape={true}
-                        textToHighlight={params.value}
-                    />                </div>;
-            },
-
-        }, {
-            filterable: false,
-            sortable: false,
-            field: 'council',
-            headerName: 'Hội đồng quản trị',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 250,
-            flex:1,
-            hide: checkColumnVisibility('company','council'),
-            renderCell: (params) => {
-
-                return <div className='content-column row-member'>
-                    <Highlighter
-                        highlightClassName="test-highlight"
-                        searchWords={[council.memberName]}
                         autoEscape={true}
                         textToHighlight={params.value}
                     />                </div>;
@@ -307,10 +306,10 @@ export default function ManageCompany() {
             hide: checkColumnVisibility('company','action'),
             headerName: 'Thao tác',
             sortable: false,
-            width: 150,
-            minWidth: 150,
+            width: 170,
+            minWidth: 170,
             align: 'center',
-            maxWidth: 150,
+            maxWidth: 170,
             // flex: 1,
             renderCell: (params) => {
 
@@ -332,6 +331,12 @@ export default function ManageCompany() {
                     // });
                 }
                 return <div className='icon-action'>
+                    <Tooltip title="Lịch sử thay đổi công ty" onClick={()=>navigate(`/company/history?id=${params.id}`)}>
+                        <HistoryIcon style={{color: "rgb(107, 114, 128)"}}></HistoryIcon>
+                    </Tooltip>
+                    <Tooltip title="Thành viên" onClick={()=>navigate(`/company/member?id=${params.id}`)}>
+                        <PersonOutlineIcon style={{color: "rgb(107, 114, 128)"}}></PersonOutlineIcon>
+                    </Tooltip>
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
                         <BorderColorIcon style={{color: "rgb(107, 114, 128)"}}></BorderColorIcon>
                     </Tooltip>
@@ -360,6 +365,9 @@ export default function ManageCompany() {
     }
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
+    }
+    const handleCloseModalViewSelected = () => {
+        setOpenModalViewSelected(false)
     }
 
     const redirectAddPage = () => {
@@ -439,15 +447,37 @@ export default function ManageCompany() {
             })
         }
     },[currentUser.token])
+    useEffect(()=>{
+        let listSelect = [];
+        console.log("listDelete",listDelete)
+        console.log("listResult.rows",listResult.rows)
+        for (let i = 0; i < listDelete.length; i++){
+            console.log("i",i)
+            for (let j = 0; j < listResult.rows.length; j++){
+                console.log("j",j)
+                if(listDelete[i] === listResult.rows[j].id){
+                    listSelect.push(listResult.rows[j]);
+                }
+            }
+        }
+        setListRowSelect(listSelect);
+        console.log("listSelect",listSelect);
+    },[listDelete])
     function CustomToolbar() {
         return (
             <GridToolbarContainer>
                 <GridToolbarColumnsButton/>
                 {/*<GridToolbarDensitySelector/>*/}
                 {listDelete.length > 0 ?
-                    <Tooltip title="Xóa">
-                        <Button onClick={deleteListBtn} variant={"outlined"} style={{right:"20px",position:'absolute'}} color={"error"}>Xóa</Button>
-                    </Tooltip> : ''}
+                    <div style={{right:"5px",position:'absolute'}}>
+                        <Tooltip title="Xóa">
+                            <Button onClick={deleteListBtn} variant={"outlined"}  color={"error"}>Xóa</Button>
+                        </Tooltip>
+                        <Tooltip title="Danh sách đã chọn">
+                            <Button style={{marginLeft:"10px"}} onClick={()=>{setOpenModalViewSelected(true)}} variant={"outlined"}  color={"primary"}>Danh sách đã chọn</Button>
+                        </Tooltip>
+                    </div>
+                    : ''}
             </GridToolbarContainer>
         );
     }
@@ -578,6 +608,8 @@ export default function ManageCompany() {
                 draggable
                 pauseOnHover
             />
+            <ModalViewSelected columns={columns} listResult={listRowSelect} openModalViewSelected={openModalViewSelected} handleCloseModalViewSelected={handleCloseModalViewSelected}></ModalViewSelected>
+
             <div className={'main-content-header'}>
                 <ModalConfirmDel name={infoDel.company_name} openModalDel={openModalDel}
                                  handleCloseModalDel={handleCloseModalDel}
@@ -718,7 +750,7 @@ export default function ManageCompany() {
                                 }
                                 }
 
-                                renderInput={(params) => < TextField placeholder={'Nhân viên'} {...params} />}
+                                renderInput={(params) => < TextField  {...params} />}
                                 size={"small"}
                                 onChange={(event, newValue) => {
                                     // setCompanySearch(newValue)
@@ -773,7 +805,7 @@ export default function ManageCompany() {
 
                 </Collapse>
                 <Divider light/>
-                <div className={'main-content-body-result sticky-body'}>
+                <div className={'main-content-body-result sticky-body tutt20'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
                             onColumnVisibilityModelChange={(event) =>{

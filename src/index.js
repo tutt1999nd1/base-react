@@ -8,16 +8,16 @@ import {persistStore} from "redux-persist";
 import store from "./store/store";
 import {PersistGate} from "redux-persist/integration/react";
 import {BrowserRouter} from "react-router-dom";
-import { PublicClientApplication } from "@azure/msal-browser";
-import { MsalProvider } from "@azure/msal-react";
+import {PublicClientApplication} from "@azure/msal-browser";
+import {MsalProvider} from "@azure/msal-react";
 import {msalConfig} from "./constants/authConfig";
+
 const msalInstance = new PublicClientApplication(msalConfig);
 let persistor = persistStore(store);
 const root = ReactDOM.createRoot(document.getElementById('root'));
-if (window.location.hash !== ''){
+if (window.location.hash !== '') {
     console.log("hash found" + window.location.hash);
-}
-else {
+} else {
     root.render(
         <Provider store={store}>
             <PersistGate loading={null} persistor={persistor}>
@@ -39,4 +39,3 @@ reportWebVitals();
 
 
 //js resposive mobile
-

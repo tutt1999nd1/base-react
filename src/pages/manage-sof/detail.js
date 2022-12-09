@@ -26,6 +26,7 @@ import apiManagerChargingEst from "../../api/manage-charging-est";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import {Checkbox} from "antd";
 
 export default function DetailSOF(props) {
     const navigate = useNavigate();
@@ -36,6 +37,7 @@ export default function DetailSOF(props) {
     const [openDetail, setOpenDetail] = useState(false)
     const currentUser = useSelector(state => state.currentUser)
     const [idSof, setIdSof] = useState(null)
+    const [refresh, setRefresh] = useState(false)
     const [listResult, setListResult] = React.useState({
         page: 0,
         pageSize: 10,
@@ -74,6 +76,9 @@ export default function DetailSOF(props) {
     }
     const backList = () => {
         navigate('/sof')
+    }
+    const getInterestTableApi = (id) => {
+        return apiManagerChargingEst.updateStatusPayable(id);
     }
     useEffect(() => {
         if (idDetail) {
@@ -114,10 +119,13 @@ export default function DetailSOF(props) {
             PRINCIPAL: 0, //gốc
             GRACE_INTEREST: 0, //ân hạn
         }
-
         let listConvert = [];
         for (let i = 0; i < arr.length; i++) {
-            if (arr[i].type_date === "Ân hạn") {
+            // var sorted = arr.sort(function(date1,date2){return date1.getTime() - date2.getTime()});
+            // sorted
+        }
+        for (let i = 0; i < arr.length; i++) {
+            if (arr[i].type_date === "Trả lãi ân hạn") {
                 total.GRACE_INTEREST = total.GRACE_INTEREST + arr[i].amount_paid_in_period;
             } else if (arr[i].type_date === "Trả lãi") {
                 total.INTEREST = total.INTEREST + arr[i].amount_paid_in_period;
@@ -143,7 +151,6 @@ export default function DetailSOF(props) {
 
                 }
         }
-        console.log("listConvert", listConvert)
         for (let i = 0; i < listConvert.length; i++) {
             total.charging_amount = total.charging_amount + listConvert[i].total;
             listConvert[i].total = currencyFormatter(listConvert[i].total);
@@ -155,11 +162,48 @@ export default function DetailSOF(props) {
             }
         }
         console.log("total",total);
+        console.log("list_convert",listConvert);
         setTotal(total)
-        console.log("listConvert", listConvert)
+        for(let i = 0; i < listConvert.length; i++){
+            let newArr=[]
+            for (let j = 0; j <listConvert[i].sof.length; j++){
+                console.log(listConvert[i].sof[j].payable_period_detail_entities.length)
+                for(let k=0;k<listConvert[i].sof[j].payable_period_detail_entities.length;k++){
+                    let convertData = {
+                        amount_paid_in_period:listConvert[i].sof[j].payable_period_detail_entities[k].amount,
+                        charging_amount:null,
+                        charging_type:listConvert[i].sof[j].charging_type,
+                        company_name:listConvert[i].sof[j].company_name,
+                        id:listConvert[i].sof[j].id,
+                        status:listConvert[i].sof[j].status,
+                        principal:"",
+                        sof_code:listConvert[i].sof[j].sof_code,
+                        source_of_fund_id:listConvert[i].sof[j].source_of_fund_id,
+                        start_date:listConvert[i].sof[j].payable_period_detail_entities[k].start_date,
+                        end_date:listConvert[i].sof[j].payable_period_detail_entities[k].end_date,
+                        type_date:listConvert[i].sof[j].charging_type,
+                        total_day:listConvert[i].sof[j].payable_period_detail_entities[k].total_day,
+                        principal_amount:listConvert[i].sof[j].payable_period_detail_entities[k].principal_amount,
+                        interest_rate:listConvert[i].sof[j].payable_period_detail_entities[k].interest_rate
+                    }
+                    if(listConvert[i].sof[j].charging_type === "Trả lãi ân hạn"){
+                        convertData.amount_paid_in_period = listConvert[i].sof[j].amount_paid_in_period;
+                    }
+                    newArr.push(convertData)
+                }
+            }
+            listConvert[i].sofConvert=newArr;
 
-        listConvert.sort((a,b) => Date.parse(b.chargingDate) - Date.parse(a.chargingDate))
+        }
+        listConvert.sort(function(a,b){
+            return new Date(a.chargingDate) - new Date(b.chargingDate)
+        })
         return listConvert;
+    }
+    const handleUpdateStatusPayable = (id) => {
+        getInterestTableApi(id).then(response => {
+            setRefresh(!refresh)
+        })
     }
     useEffect(() => {
         if (location.get('id')) {
@@ -458,7 +502,10 @@ export default function DetailSOF(props) {
                         <Table stickyHeader className={"table-custom"}>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="center">Ngày</TableCell>
+                                    {/*<TableCell align="center">*/}
+                                    {/*    <Tooltip title={'Trạng thái'}><div>Trạng thái</div></Tooltip>*/}
+                                    {/*</TableCell>*/}
+                                    <TableCell align="center">Ngày trả</TableCell>
                                     <TableCell align="center">
                                         <Tooltip title={'Công ty vay'}><div>Công ty vay</div></Tooltip>
                                     </TableCell>
@@ -472,16 +519,22 @@ export default function DetailSOF(props) {
                                         <Tooltip title={'Số tiền phải trả(VNĐ)'}><div>Số tiền phải trả(VNĐ)</div></Tooltip>
                                     </TableCell>
                                     <TableCell align="center">
-                                        <Tooltip title={'Loại tiền'}><div>Loại tiền</div></Tooltip>
+                                        <Tooltip title={'Tiền gốc tham chiếu'}><div>Tiền gốc tham chiếu</div></Tooltip>
                                     </TableCell>
                                     <TableCell align="center">
                                         <Tooltip title={'Lãi suất(%)'}><div>Lãi suất(%)</div></Tooltip>
                                     </TableCell>
                                     <TableCell align="center">
-                                        <Tooltip title={'Số kỳ trả lãi'}><div>Số kỳ trả lãi</div></Tooltip>
+                                        <Tooltip title={'Kiểu trả'}><div>Kiểu trả</div></Tooltip>
                                     </TableCell>
                                     <TableCell align="center">
-                                        <Tooltip title={'Số kỳ trả gốc'}><div>Số kỳ trả gốc</div></Tooltip>
+                                        <Tooltip title={'Ngày bắt đầu'}><div>Ngày bắt đầu</div></Tooltip>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Ngày kết thúc'}><div>Ngày kết thúc</div></Tooltip>
+                                    </TableCell>
+                                    <TableCell align="center">
+                                        <Tooltip title={'Số ngày tính lãi'}><div>Số ngày tính lãi</div></Tooltip>
                                     </TableCell>
                                     <TableCell align="center">
                                         <Tooltip title={'Thao tác'}><div>Thao tác</div></Tooltip>
@@ -496,6 +549,18 @@ export default function DetailSOF(props) {
                                 {listResult.rows.map(item => (
                                     <>
                                         <TableRow>
+                                            {/*<TableCell rowSpan={item.sofConvert.length + 1}>*/}
+                                            {/*    <div className='icon-action'>*/}
+                                            {/*        {*/}
+                                            {/*            <Checkbox*/}
+                                            {/*                checked={item.status==="paid"}*/}
+                                            {/*                onChange={()=>handleUpdateStatusPayable(item.id)}*/}
+                                            {/*                inputProps={{ 'aria-label': 'controlled' }}*/}
+                                            {/*            />*/}
+                                            {/*        }*/}
+
+                                            {/*    </div>*/}
+                                            {/*</TableCell>*/}
                                             <TableCell rowSpan={item.sof.length + 1}>{item.chargingDate}</TableCell>
                                             <TableCell rowSpan={item.sof.length + 1}>
                                                 <div>{item.companyName}</div>
@@ -509,27 +574,33 @@ export default function DetailSOF(props) {
 
                                         </TableRow>
                                         {
-                                            item.sof.map(detail => (
+                                            item.sofConvert.map(detail => (
                                                 <TableRow>
                                                     <TableCell>
                                                         <div>{detail.sof_code}</div>
                                                     </TableCell>
                                                     <TableCell>
                                                         <div className={'error-message number'}>{currencyFormatter(detail.amount_paid_in_period)}</div>
+                                                        {/*<div className={'error/-message number'}>{detail.amount_paid_in_period}</div>*/}
                                                     </TableCell>
-
-                                                    <TableCell>{detail.type_date}</TableCell>
+                                                    <TableCell>
+                                                        <div className={"number"}>{currencyFormatter(detail.principal_amount)}</div>
+                                                    </TableCell>
 
                                                     <TableCell>
                                                         <div>{detail.interest_rate}</div>
                                                     </TableCell>
+                                                    <TableCell>{detail.type_date}</TableCell>
 
                                                     <TableCell>
-                                                        <div>{detail.interest_period}</div>
+                                                        <div>{detail.start_date}</div>
                                                     </TableCell>
 
                                                     <TableCell>
-                                                        <div>{detail.principal_period}</div>
+                                                        <div>{detail.end_date}</div>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <div>{detail.type_date==="Trả gốc"?"-":detail.total_day}</div>
                                                     </TableCell>
 
                                                     <TableCell>
@@ -537,7 +608,7 @@ export default function DetailSOF(props) {
                                                             {
                                                                 detail.type_date=="Trả lãi"?<Tooltip title="Xem chi tiết">
                                                                     <RemoveRedEyeIcon onClick={() => {
-                                                                        payablePeriodDetail(detail.source_of_fund_id, detail.start_date, detail.payable_date)
+                                                                        payablePeriodDetail(detail.source_of_fund_id, detail.start_date, detail.end_date)
                                                                     }}
                                                                                       style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon>
                                                                 </Tooltip>:''

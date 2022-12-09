@@ -63,6 +63,7 @@ const API_MAP = {
     GET_LIST_CHARGING_EST: API_DOMAIN + 'charging_est/search',
     SEND_EMAIL_CHARGING_EST: API_DOMAIN + 'charging_est/send_email',
     UPDATE_CHARGING_EST: API_DOMAIN + 'charging_est',
+    UPDATE_STATUS_PAYABLE: API_DOMAIN + 'payable-period',
     EXPORT_CHARGING_EST: API_DOMAIN + 'charging_est/export_excel',
     GET_LIST_MEMBER: API_DOMAIN + 'member/search',
     CREATE_MEMBER: API_DOMAIN + 'member/create',

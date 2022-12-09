@@ -310,21 +310,22 @@ export default function EditCategory(props) {
                                                                                       error={touched.member_id && Boolean(errors.member_id)}
                                                                                       helperText={touched.member_id && errors.member_id}/>}
                                                 size={"small"}
-                                                // onChange={(event, newValue) => {
-                                                //     // setCompanySearch(newValue)
-                                                //     console.log("new_value", newValue)
-                                                //     if (newValue){
-                                                //         setFieldValue('member_id', newValue.id)
-                                                //         setFieldValue('member_name', newValue.label)
-                                                //
-                                                //     }
-                                                //     else{
-                                                //         setFieldValue('member_id', '')
-                                                //         setFieldValue('member_name', '')
-                                                //     }
-                                                // }}
+                                                onChange={(event, newValue) => {
+                                                    // setCompanySearch(newValue)
+                                                    console.log("new_value", newValue)
+                                                    if (newValue){
+                                                        setFieldValue('member_id', newValue.id)
+                                                        setFieldValue('member_name', newValue.label)
+
+                                                    }
+                                                    else{
+                                                        setFieldValue('member_id', '')
+                                                        setFieldValue('member_name', '')
+                                                    }
+                                                }}
                                                 onInputChange={(event, value) => {
                                                     setFieldValue('member_name', value)
+                                                    setFieldValue('member_id', '')
                                                 }
                                                 }
                                             />

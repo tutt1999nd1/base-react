@@ -5,7 +5,7 @@ import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import {useNavigate, useSearchParams} from "react-router-dom";
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import {checkColumnVisibility, currencyFormatter} from "../../constants/utils";
+import {calculatePercent, checkColumnVisibility, currencyFormatter, typeToName} from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import AddIcon from "@mui/icons-material/Add";
 import {DataGrid, GridColDef, viVN} from "@mui/x-data-grid";
@@ -17,11 +17,12 @@ import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import ModalAddShareholder from "./modal-add-shareholder";
 import ModalAddCouncil from "./modal-add-council";
 
-export default function DetailCategory(props) {
+export default function CompanyMember(props) {
     const navigate = useNavigate();
     const [location,setLocation] = useSearchParams();
     const [idDetail,setIdDetail] = useState(null)
     const [idUpdateHistory,setIdUpdateHistory] = useState(0)
+    const [sumAmountShareholder,setSumAmountShareholder] = useState(0)
     const [openModalDel,setOpenModalDel] = useState(false)
     const [listMember, setListMember] = useState([]);
     const [listHistory, setListHistory] = useState([]);
@@ -32,7 +33,9 @@ export default function DetailCategory(props) {
     const [openModalAddCouncil,setOpenModalAddCouncil] = useState(false)
     const [openModalAddHistory,setOpenModalAddHistory] = useState(false)
     const [openModalAddShareholder,setOpenModalAddShareholder] = useState(false)
-    const [isAddHistory,setIsAddHistory] = useState(false)
+    const [isAddShareholder,setIsAddShareholder] = useState(false)
+    const [infoShareholder,setInfoShareholder] = useState({amount_share:'',id:'',name:'',member_id:'',type:'',position:''})
+    const [idUpdateShareholder,setIdUpdateShareholder] = useState(false)
     const [openModalRemoveMember,setOpenModalRemoveMember] = useState(false)
     const [openModalRemoveShareholder,setOpenModalRemoveShareholder] = useState(false)
     const [openModalRemoveHistory,setOpenModalRemoveHistory] = useState(false)
@@ -100,12 +103,7 @@ export default function DetailCategory(props) {
             console.log(e)
         })
     }
-    const updateCompanyMemberApi = (data) => {
-        return apiManagerCompany.updateCompanyMember(data);
-    }
-    const updateCompanyShareholderApi = (data) => {
-        return apiManagerCompany.updateCompanyShareholder(data);
-    }
+
     const columnsMember: GridColDef[] = [
         {
             sortable: false,
@@ -272,90 +270,6 @@ export default function DetailCategory(props) {
 
         // { field: 'document', headerName: 'Nhóm tài sản' },
     ];
-    const columnsHistory: GridColDef[] = [
-        {
-            sortable: false,
-            field: 'index',
-            headerName: 'STT',
-            maxWidth: 60,
-            filterable: false,
-            headerClassName: 'super-app-theme--header',
-            renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'change_date',
-            headerName: 'Ngày thay đổi',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 300,
-            renderCell: (params) => {
-                return <div className='content-column '>
-                    {params.value}
-                </div>;
-            },
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'changing_content',
-            headerName: 'Nội dung thay đổi',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 200,
-            flex:1,
-            hide: checkColumnVisibility('company','tax_number'),
-            renderCell: (params) => {
-                return <div className='content-column '>
-                    {params.value}
-                </div>;
-            },
-        },
-        {
-            field: 'action',
-            headerClassName: 'super-app-theme--header',
-            hide: checkColumnVisibility('company','action'),
-            headerName: 'Thao tác',
-            sortable: false,
-            width: 200,
-            align: 'center',
-            maxWidth: 130,
-            // flex: 1,
-            renderCell: (params) => {
-
-                const deleteBtn = (e) => {
-                    e.stopPropagation();
-                    console.log(params)
-                    // setIsDelList(false)
-                    // setOpenModalDel(true)
-                    // setInfoDel(params.row)
-                    setIsAddHistory(true);
-                    setOpenModalRemoveHistory(true)
-                    setIdRemoveHistory(params.id)
-                }
-
-                const updateBtn = (e) => {
-                    e.stopPropagation();
-                    console.log(params)
-                    // setIsDelList(false)
-                    // setOpenModalDel(true)
-                    // setInfoDel(params.row)
-                    setIsAddHistory(false);
-                    setIdUpdateHistory(params.id)
-                    setOpenModalAddHistory(true)
-                }
-                return <div className='icon-action'>
-                    <Tooltip title="Cập nhật" onClick={updateBtn}>
-                        <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
-                    </Tooltip>
-                    <Tooltip title="Xóa" onClick={deleteBtn}>
-                        <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
-                    </Tooltip>
-                </div>;
-            },
-        },
-
-        // { field: 'document', headerName: 'Nhóm tài sản' },
-    ];
     const columnsShareholder: GridColDef[] = [
         {
             sortable: false,
@@ -387,23 +301,54 @@ export default function DetailCategory(props) {
             headerName: 'Vị trí',
             headerClassName: 'super-app-theme--header',
             minWidth: 200,
+            flex: 1,
             hide: checkColumnVisibility('company','tax_number'),
             renderCell: (params) => {
                 return <div className='content-column'>
-                    <FormControl fullWidth>
-                        <Select
-                            className={''}
-                            size={'small'}
-                            value={params.value}
-                            onChange={(e)=>handleChangePositionShareholder(e,params.row)}
-                            // size='small'
-                        >
-                            <MenuItem value={'CTHĐQT'}>Chủ tịch hội đồng quản trị</MenuItem>
-                            <MenuItem value={'PCTHĐQT'}>Phó chủ tịch hội đồng quản trị</MenuItem>
-                            <MenuItem value={'CĐ'}>Cổ đông</MenuItem>
+                    {typeToName(params.value)}
+                    {/*<FormControl fullWidth>*/}
+                    {/*    <Select*/}
+                    {/*        className={''}*/}
+                    {/*        size={'small'}*/}
+                    {/*        value={params.value}*/}
+                    {/*        onChange={(e)=>handleChangePositionShareholder(e,params.row)}*/}
+                    {/*        // size='small'*/}
+                    {/*    >*/}
+                    {/*        <MenuItem value={'CTHĐQT'}>Chủ tịch hội đồng quản trị</MenuItem>*/}
+                    {/*        <MenuItem value={'PCTHĐQT'}>Phó chủ tịch hội đồng quản trị</MenuItem>*/}
+                    {/*        <MenuItem value={'CĐ'}>Cổ đông</MenuItem>*/}
 
-                        </Select>
-                    </FormControl>
+                    {/*    </Select>*/}
+                    {/*</FormControl>*/}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'amount_share',
+            headerName: 'Số lượng cổ phần/Vốn góp',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 200,
+            flex: 1,
+            hide: checkColumnVisibility('company','tax_number'),
+            renderCell: (params) => {
+                return <div className='content-column number'>
+                    {currencyFormatter(params.value)}
+                </div>;
+            },
+        },{
+            filterable: false,
+            sortable: false,
+            field: 'percent',
+            headerName: 'Tỷ lệ',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 200,
+            flex: 1,
+            hide: checkColumnVisibility('company','tax_number'),
+            renderCell: (params) => {
+                return <div className='content-column number symbol-percent'>
+                    {params.value}
                 </div>;
             },
         },
@@ -428,8 +373,22 @@ export default function DetailCategory(props) {
                     setOpenModalRemoveShareholder(true)
                     setIdRemoveShareholder(params.id)
                 }
+                const updateBtn = (e) => {
+                    e.stopPropagation();
+                    console.log(params.row)
+                    // setIsDelList(false)
+                    // setOpenModalDel(true)
+                    // setInfoDel(params.row)
+                    setInfoShareholder(params.row)
+                    setIsAddShareholder(false);
+                    setIdUpdateShareholder(params.id)
+                    setOpenModalAddShareholder(true)
+                }
 
                 return <div className='icon-action'>
+                    <Tooltip title="Cập nhật" onClick={updateBtn}>
+                        <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
+                    </Tooltip>
                     <Tooltip title="Xóa" onClick={deleteBtn}>
                         <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
                     </Tooltip>
@@ -463,10 +422,15 @@ export default function DetailCategory(props) {
             })
             getShareholderApi(idDetail).then(r=>{
                 console.log("member",r)
-                setListShareholder(r.data)
+
+                let arrConvert = convertShareholder(r.data);
+                setListShareholder(arrConvert)
             })
         }
     },[idDetail,isRefresh])
+    useEffect(() => {
+
+    },[listShareholder])
     useEffect(()=>{
         if(location.get('id')){
             setIdDetail(location.get('id'));
@@ -474,6 +438,24 @@ export default function DetailCategory(props) {
         else navigate('/company')
 
     },[location])
+    const convertShareholder = (arr) => {
+        let sum = arr.reduce((total, value) => {
+            return total + value.amount_share;
+        }, 0);
+        setSumAmountShareholder(sum);
+        let total = 0;
+      for(let i = 0; i < arr.length; i++){
+          if(i!=arr.length-1){
+              arr[i].percent = ((arr[i].amount_share*100)/sum).toFixed(2)
+              total = total + parseFloat(((arr[i].amount_share*100)/sum).toFixed(2))
+          }
+          else {
+              arr[i].percent = 100-total
+          }
+      }
+      return arr;
+    }
+
     const submitDelete = () => {
         // alert("tutt20")
         deleteCompanyApi(info.id).then(r=>{
@@ -601,7 +583,12 @@ export default function DetailCategory(props) {
     const getShareholderApi = (id) => {
         return apiManagerCompany.getShareHolder(id);
     }
-
+    const updateCompanyMemberApi = (data) => {
+        return apiManagerCompany.updateCompanyMember(data);
+    }
+    const updateCompanyShareholderApi = (data) => {
+        return apiManagerCompany.updateCompanyShareholder(data);
+    }
     return (
         <div className={'main-content main-content-detail'}>
             {/*<div className={`loading ${false ? '' : ''}`}>*/}
@@ -609,14 +596,13 @@ export default function DetailCategory(props) {
             {/*    <ClipLoader*/}
             {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
             {/*</div>*/}
-            {/*<ModalConfirmDel name={info.company_name} openModalDel={openModalDel} handleCloseModalDel={handleCloseModalDel} submitDelete={submitDelete} ></ModalConfirmDel>*/}
-            {/*<ModalConfirmDel openModalDel={openModalRemoveMember} handleCloseModalDel={handleCloseModalRemoveMember} submitDelete={submitRemove} ></ModalConfirmDel>*/}
-            {/*<ModalConfirmDel openModalDel={openModalRemoveHistory} handleCloseModalDel={handleCloseModalRemoveHistory} submitDelete={submitDeleteHistory} ></ModalConfirmDel>*/}
-            {/*<ModalConfirmDel openModalDel={openModalRemoveShareholder} handleCloseModalDel={handleCloseModalRemoveShareholder} submitDelete={submitDeleteShareholder} ></ModalConfirmDel>*/}
-            {/*<ModalAddMember isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddMember={openModalAddMember} handleCloseModalAddMember={handleCloseModalAddMember} companyId={idDetail}></ModalAddMember>*/}
-            {/*<ModalAddCouncil isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddCouncil={openModalAddCouncil} handleCloseModalAddCouncil={handleCloseModalAddCouncil} companyId={idDetail}></ModalAddCouncil>*/}
-            {/*<ModalAddShareholder isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddShareholder={openModalAddShareholder} handleCloseModalAddShareholder={handleCloseModalAddShareholder} companyId={idDetail}></ModalAddShareholder>*/}
-            {/*<ModalEditHistory idUpdateHistory={idUpdateHistory} isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddHistory={openModalAddHistory} handleCloseModalAddHistory={handleCloseModalAddHistory} isAddHistory={isAddHistory} companyId={idDetail}></ModalEditHistory>*/}
+            <ModalConfirmDel name={info.company_name} openModalDel={openModalDel} handleCloseModalDel={handleCloseModalDel} submitDelete={submitDelete} ></ModalConfirmDel>
+            <ModalConfirmDel openModalDel={openModalRemoveMember} handleCloseModalDel={handleCloseModalRemoveMember} submitDelete={submitRemove} ></ModalConfirmDel>
+            <ModalConfirmDel openModalDel={openModalRemoveHistory} handleCloseModalDel={handleCloseModalRemoveHistory} submitDelete={submitDeleteHistory} ></ModalConfirmDel>
+            <ModalConfirmDel openModalDel={openModalRemoveShareholder} handleCloseModalDel={handleCloseModalRemoveShareholder} submitDelete={submitDeleteShareholder} ></ModalConfirmDel>
+            <ModalAddMember isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddMember={openModalAddMember} handleCloseModalAddMember={handleCloseModalAddMember} companyId={idDetail}></ModalAddMember>
+            <ModalAddCouncil isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddCouncil={openModalAddCouncil} handleCloseModalAddCouncil={handleCloseModalAddCouncil} companyId={idDetail}></ModalAddCouncil>
+            <ModalAddShareholder infoShareholder={infoShareholder} isAddShareholder={isAddShareholder} idUpdateShareholder={idUpdateShareholder} sumAmountShareholder={sumAmountShareholder} isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddShareholder={openModalAddShareholder} handleCloseModalAddShareholder={handleCloseModalAddShareholder} companyId={idDetail}></ModalAddShareholder>
 
             <ToastContainer
                 position="top-right"
@@ -630,128 +616,114 @@ export default function DetailCategory(props) {
                 pauseOnHover
             />
             <Button onClick={backList} style={{marginBottom:'10px'}} variant="text" startIcon={<KeyboardBackspaceIcon />}>Công ty</Button>
-
-            <div className={'main-content-header'}>
-                <div className={'row'} style={{justifyContent:'space-between'}}>
-                    <Typography variant="h5" className={'main-content-tittle'}>
-                        {info.company_name}
-                    </Typography>
-                    <Button onClick={update} style={{marginBottom:'10px'}} variant="outlined" startIcon={<BorderColorOutlinedIcon />}>Cập nhật</Button>
-
+            <div className={'main-content-body'}>
+                <div className={'main-content-body-tittle'}>
+                    <h4>Ban điều hành công ty</h4>
+                    <div>
+                        <Button  variant="outlined" onClick={()=>{setOpenModalAddMember(true)}} startIcon={<AddIcon/>}>
+                            Thêm thành viên vào ban điều hành
+                        </Button>
+                    </div>
                 </div>
+                <div style={{height: '400px', width: '100%',marginTop:'10px'}}>
+
+                    <DataGrid
+                        // getRowHeight={() => 'auto'}
+                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
+                        labelRowsPerPage={"Số kết quả"}
+                        density="standard"
+                        rows={listMember}
+                        columns={columnsMember}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        // loading={loading}
+                        disableSelectionOnClick
+                        sx={{
+                            // boxShadow: 2,
+                            overflowX: 'scroll',
+                            border: 1,
+                            borderColor: 'rgb(255, 255, 255)',
+                            '& .MuiDataGrid-iconSeparator': {
+                                display: 'none',
+                            }
+                        }}
+
+                    />
+                </div>
+
             </div>
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
-                    <h4>Thông tin chi tiết</h4>
-                </div>
-                <Divider light />
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Tên công ty
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.company_name}
+                    <h4>Thành viên hội đồng quản trị</h4>
+                    <div>
+                        <Button  variant="outlined" onClick={()=>{setOpenModalAddCouncil(true)}} startIcon={<AddIcon/>}>
+                            Thêm thành viên vào hội đồng quản trị
+                        </Button>
                     </div>
                 </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Loại công ty
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.company_type==='SUPPLIER'?'Công ty cho vay':'Công ty vay'}
-                    </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Tài sản đảm bảo
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.collateral}
-                    </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Người đại diện pháp luật
-                    </div>
-                    <div className={'text-info-content text-decoration'} onClick={()=>{navigate(`/member/detail?id=${info.member.id}`)}}>
-                        {info.member?info.member.name:''}
-                    </div>
-                </div>
-                <Divider></Divider>
+                <div style={{height: '400px', width: '100%',marginTop:'10px'}}>
 
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Đại chỉ
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.address}
-                    </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Thông tin liên hệ
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.contact_detail}
+                    <DataGrid
+                        // getRowHeight={() => 'auto'}
+                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
+                        labelRowsPerPage={"Số kết quả"}
+                        density="standard"
+                        rows={listCouncil}
+                        columns={columnsCouncil}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        // loading={loading}
+                        disableSelectionOnClick
+                        sx={{
+                            // boxShadow: 2,
+                            overflowX: 'scroll',
+                            border: 1,
+                            borderColor: 'rgb(255, 255, 255)',
+                            '& .MuiDataGrid-iconSeparator': {
+                                display: 'none',
+                            }
+                        }}
 
-                    </div>
+                    />
                 </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Mã số thuế
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.tax_number}
-                    </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Vốn điều lệ
-                    </div>
-                    <div className={'text-info-content'}>
-                        {currencyFormatter(info.charter_capital)}
-                    </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                       Số tiền vay tối đa
-                    </div>
-                    <div className={'text-info-content'}>
-                        {currencyFormatter(info.capital_limit)}
-                    </div>
-                </div>
-                <Divider></Divider>
-                <div className={'row-detail'}>
-                    <div className={'text-info-tittle'}>
-                        Ngày thành lập
-                    </div>
-                    <div className={'text-info-content'}>
-                        {info.founding_date}
-                    </div>
-                </div>
-                <Divider></Divider>
+
             </div>
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
-                    <h4>Quản lý</h4>
-                </div>
-                <Divider light />
-                <div style={{padding:'20px'}}>
-                    <Button onClick={deleteCompanyBtn}  color={'error'} style={{marginBottom:'10px'}} variant="outlined" >Xóa dữ liệu</Button>
-                    <div className={'text-info-content'}>
-                        Thao tác này sẽ xóa toàn bộ dữ liệu của bản ghi
+                    <h4>Danh sách cổ đông</h4>
+                    <div>
+                        <Button  variant="outlined" onClick={()=>{setOpenModalAddShareholder(true);setIsAddShareholder(true)}} startIcon={<AddIcon/>}>
+                            Thêm cổ đông
+                        </Button>
                     </div>
+                </div>
+                <div style={{height: '400px', width: '100%',marginTop:'10px'}}>
+
+                    <DataGrid
+                        // getRowHeight={() => 'auto'}
+                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
+                        labelRowsPerPage={"Số kết quả"}
+                        density="standard"
+                        rows={listShareholder}
+                        columns={columnsShareholder}
+                        pageSize={5}
+                        rowsPerPageOptions={[5]}
+                        // loading={loading}
+                        disableSelectionOnClick
+                        sx={{
+                            // boxShadow: 2,
+                            overflowX: 'scroll',
+                            border: 1,
+                            borderColor: 'rgb(255, 255, 255)',
+                            '& .MuiDataGrid-iconSeparator': {
+                                display: 'none',
+                            }
+                        }}
+
+                    />
                 </div>
 
             </div>
-
         </div>
     )
 }
