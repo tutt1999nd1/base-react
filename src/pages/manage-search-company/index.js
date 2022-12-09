@@ -109,23 +109,8 @@ export default function ManageSearchCompany() {
             field: 'status',
             headerName: 'Tình trạng',
             headerClassName: 'super-app-theme--header',
-            minWidth: 250,
-            hide: checkColumnVisibility('sof','capital_company_name'),
-            renderCell: (params) => {
-
-                return <div className='content-column'>
-                    {params.value}
-                </div>;
-            },
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'capital_limit',
-            headerName: 'Vốn điều lệ',
-            headerClassName: 'super-app-theme--header',
             minWidth: 150,
-            hide: checkColumnVisibility('sof','supplier_name'),
+            hide: checkColumnVisibility('sof','capital_company_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -151,6 +136,22 @@ export default function ManageSearchCompany() {
         {
             filterable: false,
             sortable: false,
+            field: 'capital_limit',
+            headerName: 'Vốn điều lệ',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 250,
+            hide: checkColumnVisibility('sof','supplier_name'),
+            renderCell: (params) => {
+
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+        },
+
+        {
+            filterable: false,
+            sortable: false,
             field: 'lending_amount',
             headerName: 'Số tiền đã vay',
             headerClassName: 'super-app-theme--header',
@@ -169,7 +170,7 @@ export default function ManageSearchCompany() {
             field: 'remain_amount',
             headerName: 'Số tiền vay còn lại',
             headerClassName: 'super-app-theme--header',
-            minWidth: 150,
+            minWidth: 250,
             hide: checkColumnVisibility('sof','status'),
             renderCell: (params) => {
 
@@ -200,6 +201,7 @@ export default function ManageSearchCompany() {
             headerName: 'Đối tượng cung cấp vốn',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
+            flex:1,
             hide: checkColumnVisibility('sof','remain_lending_amount'),
             renderCell: (params) => {
 
@@ -207,22 +209,6 @@ export default function ManageSearchCompany() {
                     {params.value}
                 </div>;
             },
-        },
-        {
-            filterable: false,
-            sortable: false,
-            field: 'owner_full_name',
-            headerName: 'Người quản lý',
-            headerClassName: 'super-app-theme--header',
-            minWidth: 150,
-            hide: checkColumnVisibility('sof','owner_full_name'),
-            renderCell: (params) => {
-
-                return <div className='content-column'>
-                    {params.value}
-                </div>;
-            },
-
         }
         // { field: 'document', headerName: 'Nhóm tài sản' },
     ];
@@ -453,7 +439,7 @@ export default function ManageSearchCompany() {
                 </div>
 
             </div>
-            <div className={'main-content-body'}>
+            <div className={'main-content-body company-manage-body'}>
                 <div className={'main-content-body-tittle'}>
                     <h4>Tìm kiếm</h4>
                     {openSearch ? <IconButton color="primary" style={{cursor: 'pointer'}}
@@ -609,10 +595,7 @@ export default function ManageSearchCompany() {
                             loading={loading}
                             rowsPerPageOptions={[5, 10, 25]}
                             disableSelectionOnClick
-                            onSelectionModelChange={(newSelectionModel) => {
-                                setListDelete(newSelectionModel)
-                            }}
-                            checkboxSelection
+
                             sx={{
                                 overflowX: 'scroll',
                                 // boxShadow: 2,

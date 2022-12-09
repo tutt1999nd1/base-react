@@ -1082,7 +1082,7 @@ border: unset;
     width: 177px !important;
 }
 
-.sticky-body .MuiDataGrid-columnHeaders:after {
+.main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-columnHeaders:after {
     content: "Thao tác";
     width: 157px;
     height: 56px;
@@ -1095,7 +1095,7 @@ border: unset;
     font-family: Roboto,Helvetica,Arial,sans-serif;
     font-weight: 500;
 }
-.sticky-body .MuiDataGrid-row .MuiDataGrid-cell:last-child {
+.main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-row .MuiDataGrid-cell:last-child {
     position: sticky;
     right: 0px;
     background-color: #fff;
