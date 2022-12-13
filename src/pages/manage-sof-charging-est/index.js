@@ -180,9 +180,10 @@ export default function ManageSofChargingEst() {
             listConvert[i].sofConvert=newArr;
 
         }
-        listConvert.sort(function(a,b){
-            return new Date(a.chargingDate) - new Date(b.chargingDate)
-        })
+        // listConvert.sort(function(a,b){
+        //     return new Date(a.chargingDate) - new Date(b.chargingDate)
+        // })
+        console.log("tutt",listConvert)
         return listConvert;
     }
 
@@ -676,8 +677,11 @@ export default function ManageSofChargingEst() {
                                 </TableRow>
                             </TableHead>
                             <TableBody style={{overflowY: "auto"}}>
+                                <div className={`message-table-empty ${loading?'':'hidden'}`} >
+                                    <CircularProgress size={30}></CircularProgress>
+                                </div>
                                 <div
-                                    className={`message-table-empty ${listResult.rows.length === 0 ? '' : 'hidden'}`}>Không
+                                    className={`message-table-empty ${listResult.rows.length === 0 && !loading ? '' : 'hidden'}`}>Không
                                     có dữ liệu
                                 </div>
                                 {listResult.rows.map(item => (

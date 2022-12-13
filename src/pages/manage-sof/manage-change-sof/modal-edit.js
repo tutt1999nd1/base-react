@@ -1,6 +1,6 @@
 import DialogContent from "@mui/material/DialogContent";
 import {
-    Button,
+    Button, Divider,
     FormControl,
     FormHelperText,
     Grid,
@@ -27,10 +27,13 @@ import apiManagerCompany from "../../../api/manage-company";
 import apiManagerMember from "../../../api/manage-member";
 import apiChangeLendingAmount from "../../../api/manage-change-lending-amount";
 import {toast} from "react-toastify";
+import ControlPointIcon from "@mui/icons-material/ControlPoint";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 
 export default function ModalChangeLendingAmount(props) {
     const {openModal, handleCloseModal,info,isUpdate,setRefresh,refresh,sourceOfFundId} = props
+    const [listFile, setListFile] = useState([])
     const validationSchema = yup.object({
         paid_amount: yup
             .string()
@@ -41,6 +44,52 @@ export default function ModalChangeLendingAmount(props) {
         // alert(name)
 
     }, [openModal,isUpdate])
+    const uploadFile = () => {
+        var el = window._protected_reference = document.createElement("INPUT");
+        el.type = "file";
+        // el.accept = "image/*,.txt";
+        el.multiple = "multiple";
+        el.addEventListener('change', function (ev2) {
+            let result = [];
+            let resultFiles = [];
+            if (el.files.length) {
+                for (let i = 0; i < el.files.length; i++) {
+                    // if (!checkFileLocaleAlready(el.files[i].name)) {
+                    //     resultFiles.push(el.files[i])
+                    // }
+                    resultFiles.push(el.files[i])
+                }
+            }
+            new Promise(function (resolve) {
+                setTimeout(function () {
+                    console.log(el.files);
+                    resolve();
+
+                }, 1000);
+
+                let copyState = [...listFile];
+                // copyState.concat(resultFiles)
+                copyState.push.apply(copyState, resultFiles);
+
+                setListFile(copyState)
+            })
+                .then(function () {
+                    // clear / free reference
+                    el = window._protected_reference = undefined;
+                });
+        });
+
+        el.click();
+    }
+    const deleteFile = (name) => {
+        let arr = [...listFile]
+        let indexRemove = listFile.findIndex(e => e.name === name)
+        if (indexRemove !== -1) {
+            arr.splice(indexRemove, 1);
+            setListFile(arr)
+        }
+
+    }
     const createChangeLendingAmountApi = (data) => {
         return apiChangeLendingAmount.createChangeLendingAmount(data);
     }
@@ -135,7 +184,7 @@ export default function ModalChangeLendingAmount(props) {
                     } = props;
                     return (
                         <Form onSubmit={handleSubmit}>
-                            <DialogContent style={{width: '450px', height: '300px'}} dividers className={"model-account-form"}>
+                            <DialogContent style={{width: '450px', height: '400px'}} dividers className={"model-account-form"}>
                                 <Grid container spacing={4}>
                                     <Grid item xs={6} md={12}>
                                         <div className={'label-input'}>{values.type==="lend"?"Số tiền vay thêm":"Số tiền trả"} (VNĐ)<span
@@ -206,6 +255,36 @@ export default function ModalChangeLendingAmount(props) {
                                             />
                                         </LocalizationProvider>
 
+                                    </Grid>
+                                    <Grid item xs={6} md={12}>
+                                        <div className={'label-input'} style={{
+                                            display: "flex",
+                                            alignItems: "center",
+                                            // justifyContent: 'space-between'
+                                        }}>Tập đính
+                                            kèm <ControlPointIcon style={{cursor: "pointer", marginLeft: '10px'}}
+                                                                  color="primary"
+                                                                  onClick={uploadFile}> </ControlPointIcon></div>
+                                        <div className={'list-file'}>
+                                            {
+                                                listFile.map((e) => (
+                                                    <>
+                                                        <div className={'item-file'}>
+                                                            <div className={'name-file '}>{e.name}</div>
+                                                            <div className={'delete-file'}><DeleteOutlineIcon
+                                                                style={{cursor: "pointer"}}
+                                                                color={"error"}
+                                                                onClick={() => {
+                                                                    deleteFile(e.name)
+                                                                }}></DeleteOutlineIcon></div>
+                                                        </div>
+                                                        <Divider light/>
+                                                    </>
+
+                                                ))
+                                            }
+
+                                        </div>
                                     </Grid>
                                 </Grid>
                             </DialogContent>

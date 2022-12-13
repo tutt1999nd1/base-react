@@ -55,6 +55,8 @@ export default function ManageSearchCompany() {
     const [listDelete, setListDelete] = useState([]);
     const [isDelList,setIsDelList] =  useState(false)
     const navigate = useNavigate();
+    const [openUpdate, setOpenUpdate] = useState(true)
+    const [capitalLimit, setCapitalLimit] = useState(0)
     const [listCompany, setListCompany] = useState([]);
     const [listCompanySupplier, setListCompanySupplier] = useState([]);
     const [listCampaign, setListCampaign] = useState([]);
@@ -70,7 +72,7 @@ export default function ManageSearchCompany() {
     const [companySearch, setCompanySearch] = useState(0)
     const [companySupplierSearch, setCompanySupplierSearch] = useState(0)
     const [remainAmount, setRemainAmount] = useState(0)
-    const [statusSearch, setStatusSearch] = useState(0)
+    const [statusSearch, setStatusSearch] = useState(true)
     const [openSearch, setOpenSearch] = useState(true)
     const [listResult, setListResult] = React.useState({
         page: 0,
@@ -137,18 +139,31 @@ export default function ManageSearchCompany() {
             filterable: false,
             sortable: false,
             field: 'capital_limit',
-            headerName: 'Vốn điều lệ',
+            headerName: 'Số tiền vay tối đa',
             headerClassName: 'super-app-theme--header',
             minWidth: 250,
             hide: checkColumnVisibility('sof','supplier_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
-                    {params.value}
+                    {currencyFormatter(Number(params.value))}
                 </div>;
             },
         },
 
+        {
+            filterable: false,
+            sortable: false,
+            field: "sof_code",
+            headerName: 'Mã khoản vay',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 250,
+            renderCell: (params) => {
+                return <div className='content-column'>
+                    {params.value}
+                </div>;
+            },
+        },
         {
             filterable: false,
             sortable: false,
@@ -160,7 +175,7 @@ export default function ManageSearchCompany() {
             renderCell: (params) => {
 
                 return <div className='content-column'>
-                    {params.value}
+                    {currencyFormatter(Number(params.value))}
                 </div>;
             },
         },
@@ -175,7 +190,7 @@ export default function ManageSearchCompany() {
             renderCell: (params) => {
 
                 return <div className='content-column'>
-                    {params.value}
+                    {currencyFormatter(Number(params.value))}
                 </div>;
             },
         },
@@ -221,11 +236,15 @@ export default function ManageSearchCompany() {
         navigate('/sof/create')
     }
     const convertArr = (arr) => {
+        console.log("tutt arr",arr)
         for (let i = 0; i < arr.length; i++) {
             arr[i].index = (listResult.page) * listResult.pageSize + i +1;
             arr[i].id = (listResult.page) * listResult.pageSize + i +1;
 
-            arr[i].status = arr[i].status==1?"Đang vay":"Free"
+            arr[i].status = arr[i].status==1?"Đang vay":"Chưa vay"
+            if(arr[i].remain_amount==0 || arr[i].remain_amount==null){
+                arr[i].remain_amount =  arr[i].capital_limit
+            }
             // arr[i].capital_limit = currencyFormatter(arr[i].lending_amount)
             // arr[i].remain_lending_amount = currencyFormatter(arr[i].remain_lending_amount)
 
@@ -265,7 +284,12 @@ export default function ManageSearchCompany() {
             setLoading(false)
             console.log(e)
         })
-    }, [listResult.page, listResult.pageSize, campaignSearch, companySearch,companySupplierSearch, statusSearch, refresh,currentUser.token])
+        getCapitalLimitApi().then(r => {
+            if(r.data.length > 0) {
+                setCapitalLimit(r.data[0].amount)
+            }
+        })
+    }, [listResult.page, listResult.pageSize, campaignSearch, companySearch,companySupplierSearch, statusSearch, refresh,currentUser.token,remainAmount])
     useEffect(() => {
         getListCategoryApi({paging: false}).then(r => {
             if (r.data.categories) {
@@ -372,7 +396,23 @@ export default function ManageSearchCompany() {
         setIsDelList(true)
         setOpenModalDel(true)
     }
+    const submitUpdateCapitalLimit= () => {
+        updateCapitalLimitApi(capitalLimit).then(r => {
 
+            toast.success('Cập nhật thành công', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            })
+            setRefresh(!refresh)
+        }).catch(e=>{
+
+        })
+
+    }
     const deleteListApi = (data) => {
         return apiManagerSOF.deleteListSOF(data);
     }
@@ -387,6 +427,7 @@ export default function ManageSearchCompany() {
         return apiManagerCompany.getListCompany(data);
     }
     const getListCompanySOFApi = (data) => {
+        setLoading(true)
         return apiManagerCompany.getListCompanySOF(data);
     }
     const getListCategoryApi = (data) => {
@@ -409,6 +450,13 @@ export default function ManageSearchCompany() {
     }
     const cancelApproveSOFApi = (data) => {
         return apiManagerSOF.cancelApproveSOF(data);
+    }
+    const updateCapitalLimitApi = (amount) => {
+        setLoading(true)
+        return apiManagerCompany.updateCapitalLimit(amount);
+    }
+    const getCapitalLimitApi = () => {
+        return apiManagerCompany.getDefaultCapitalLimit();
     }
     return (
         <div className={'main-content'}>
@@ -526,8 +574,8 @@ export default function ManageSearchCompany() {
                                     size={"small"}
                                 >
                                     <MenuItem value={3}>Tất cả</MenuItem>
-                                    <MenuItem value={0}>Đang vay</MenuItem>
-                                    <MenuItem value={1}>Chưa vay</MenuItem>
+                                    <MenuItem value={false}>Đang vay</MenuItem>
+                                    <MenuItem value={true}>Chưa vay</MenuItem>
 
 
                                 </Select>
@@ -564,6 +612,63 @@ export default function ManageSearchCompany() {
 
                                 }}
                             />
+                        </div>
+                    </div>
+
+                </Collapse>
+                <Divider light/>
+                <div className={'main-content-body-tittle'}>
+                    <h4>Số tiền vay tối đa</h4>
+                    {openUpdate ? <IconButton color="primary" style={{cursor: 'pointer'}}
+                                              onClick={() => setOpenUpdate(false)}>
+                            <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>
+                        </IconButton> :
+                        <IconButton style={{cursor: 'pointer'}} color="primary"
+                                    onClick={() => setOpenUpdate(true)}>
+                            <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
+                        </IconButton>
+                    }
+
+                </div>
+                <Divider light/>
+
+                <Collapse in={openUpdate} timeout="auto" unmountOnExit>
+                    <div className={'main-content-body-search'} >
+                        <div style={{width: '20%'}}>
+                            <div className={'label-input'}>Cập nhật số tiền vay tối đa</div>
+                            <NumericFormat
+                                id='max_capital_value'
+                                name='max_capital_value'
+                                className={'formik-input text-right'}
+                                size={"small"}
+                                // type={"number"}
+                                // variant="standard"
+                                value={capitalLimit}
+                                // onChange={handleChange}
+                                customInput={TextField}
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
+
+                                }}
+                                thousandSeparator={"."}
+                                decimalSeparator={","}
+                                onValueChange={(values) => {
+                                    const {formattedValue, value, floatValue} = values;
+                                    // do something with floatValue
+                                    const re = /^[0-9\b]+$/;
+                                    if (re.test(floatValue)) {
+                                        // setFieldValue('max_capital_value', floatValue)
+                                        // setRemainAmount(floatValue)
+                                        setCapitalLimit(floatValue)
+                                    }
+                                    // setFieldValue('max_capital_value', formattedValue)
+
+                                }}
+                            />
+
+                        </div>
+                        <div style={{marginTop:"17px",marginLeft:"10px"}}>
+                            <Button onClick={submitUpdateCapitalLimit} style={{color:"white !important"}} variant={'contained'} >Cập nhật</Button>
                         </div>
                     </div>
 

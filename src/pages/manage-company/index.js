@@ -1,7 +1,17 @@
 import React, {useEffect, useState} from "react";
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 
-import {Autocomplete, Button, Collapse, Divider, IconButton, TextField, Tooltip, Typography} from "@mui/material";
+import {
+    Autocomplete,
+    Button,
+    Collapse,
+    Divider,
+    IconButton,
+    InputAdornment,
+    TextField,
+    Tooltip,
+    Typography
+} from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
@@ -37,10 +47,12 @@ import FileDownload from "js-file-download";
 import SimCardDownloadIcon from "@mui/icons-material/SimCardDownload";
 import apiManagerMember from "../../api/manage-member";
 import ModalViewSelected from "./modal-view-selected";
+import {NumericFormat} from "react-number-format";
 
 export default function ManageCompany() {
     const currentUser = useSelector(state => state.currentUser)
     const [openSearch, setOpenSearch] = useState(true)
+    const [openUpdate, setOpenUpdate] = useState(true)
     const [openModalViewSelected, setOpenModalViewSelected] = useState(false)
     const [listDelete, setListDelete] = useState([]);
     const [isDelList,setIsDelList] =  useState(false)
@@ -53,6 +65,7 @@ export default function ManageCompany() {
     const [listMember, setListMember] = useState([]);
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false)
+    const [capitalLimit, setCapitalLimit] = useState(0)
     const [refresh, setRefresh] = useState(false)
     const [openModalDel, setOpenModalDel] = useState(false)
     const [listResult, setListResult] = React.useState({
@@ -427,6 +440,12 @@ export default function ManageCompany() {
                 setLoading(false)
                 console.log(e)
             })
+
+            getCapitalLimitApi().then(r => {
+                if(r.data.length > 0) {
+                    setCapitalLimit(r.data[0].amount)
+                }
+            })
         }
 
     }, [listResult.page, listResult.pageSize,nameSearch,contactSearch,taxSearch ,refresh,currentUser.token,member,represent,council])
@@ -573,6 +592,23 @@ export default function ManageCompany() {
         setOpenModalDel(true)
     }
 
+    const submitUpdateCapitalLimit= () => {
+        updateCapitalLimitApi(capitalLimit).then(r => {
+
+            toast.success('Cập nhật thành công', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            })
+            setRefresh(!refresh)
+        }).catch(e=>{
+
+        })
+
+    }
     const deleteListApi = (data) => {
         return apiManagerCompany.deleteListCompany(data);
     }
@@ -589,6 +625,13 @@ export default function ManageCompany() {
     const deleteCompanyApi = (id) => {
         setLoading(true)
         return apiManagerCompany.deleteCompany(id);
+    }
+    const updateCapitalLimitApi = (amount) => {
+        setLoading(true)
+        return apiManagerCompany.updateCapitalLimit(amount);
+    }
+    const getCapitalLimitApi = () => {
+        return apiManagerCompany.getDefaultCapitalLimit();
     }
     return (
         <div className={'main-content'}>
@@ -650,6 +693,7 @@ export default function ManageCompany() {
 
                 </div>
                 <Divider light/>
+
                 <Collapse in={openSearch} timeout="auto" unmountOnExit>
                     <div className={'main-content-body-search'}>
                         <div style={{width: '20%'}}>
@@ -800,6 +844,64 @@ export default function ManageCompany() {
                                     }
                                 }}
                             />
+                        </div>
+                    </div>
+
+                </Collapse>
+                <Divider light/>
+
+                <div className={'main-content-body-tittle'}>
+                    <h4>Số tiền vay tối đa</h4>
+                    {openUpdate ? <IconButton color="primary" style={{cursor: 'pointer'}}
+                                              onClick={() => setOpenUpdate(false)}>
+                            <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>
+                        </IconButton> :
+                        <IconButton style={{cursor: 'pointer'}} color="primary"
+                                    onClick={() => setOpenUpdate(true)}>
+                            <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
+                        </IconButton>
+                    }
+
+                </div>
+                <Divider light/>
+
+                <Collapse in={openUpdate} timeout="auto" unmountOnExit>
+                    <div className={'main-content-body-search'} >
+                        <div style={{width: '20%'}}>
+                            <div className={'label-input'}>Cập nhật số tiền vay tối đa</div>
+                            <NumericFormat
+                                id='max_capital_value'
+                                name='max_capital_value'
+                                className={'formik-input text-right'}
+                                size={"small"}
+                                // type={"number"}
+                                // variant="standard"
+                                value={capitalLimit}
+                                // onChange={handleChange}
+                                customInput={TextField}
+                                InputProps={{
+                                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
+
+                                }}
+                                thousandSeparator={"."}
+                                decimalSeparator={","}
+                                onValueChange={(values) => {
+                                    const {formattedValue, value, floatValue} = values;
+                                    // do something with floatValue
+                                    const re = /^[0-9\b]+$/;
+                                    if (re.test(floatValue)) {
+                                        // setFieldValue('max_capital_value', floatValue)
+                                        // setRemainAmount(floatValue)
+                                        setCapitalLimit(floatValue)
+                                    }
+                                    // setFieldValue('max_capital_value', formattedValue)
+
+                                }}
+                            />
+
+                        </div>
+                        <div style={{marginTop:"17px",marginLeft:"10px"}}>
+                            <Button onClick={submitUpdateCapitalLimit} style={{color:"white !important"}} variant={'contained'} >Cập nhật</Button>
                         </div>
                     </div>
 
