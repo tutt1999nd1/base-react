@@ -48,6 +48,18 @@ export default function ModalChangeLendingAmount(props) {
         // alert(name)
 
     }, [openModal,isUpdate])
+    useState(()=> {
+        console.log("fileAttachment",fileAttachment)
+    })
+    const deleteFile = (name) => {
+        let arr = [...fileAttachment]
+        let indexRemove = fileAttachment.findIndex(e => e.name === name)
+        if (indexRemove !== -1) {
+            arr.splice(indexRemove, 1);
+            setFileAttachment(arr)
+        }
+
+    }
     const createChangeLendingAmountApi = (data) => {
         return apiChangeLendingAmount.createChangeLendingAmount(data);
     }
@@ -70,13 +82,16 @@ export default function ModalChangeLendingAmount(props) {
 
         var el = window._protected_reference = document.createElement("INPUT");
         el.type = "file";
-        el.accept = ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
+        // el.accept = ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
         // el.multiple = "multiple";
         el.addEventListener('change', function (ev2) {
-            let resultFiles;
+            let result = [];
+            let resultFiles = [];
             console.log("el.files",el.files)
             if (el.files.length) {
-                resultFiles = el.files[0];
+                for (let i = 0; i < el.files.length; i++) {
+                    resultFiles.push(el.files[i])
+                }
             }
             new Promise(function (resolve) {
                 setTimeout(function () {
@@ -85,10 +100,14 @@ export default function ModalChangeLendingAmount(props) {
 
                 }, 1000);
 
-                if (resultFiles)
-                    setFileAttachment(resultFiles)
+                let copyState = [...fileAttachment];
+                // copyState.concat(resultFiles)
+                copyState.push.apply(copyState, resultFiles);
+
+                setFileAttachment(copyState)
             })
                 .then(function () {
+                    // clear / free reference
                     el = window._protected_reference = undefined;
                 });
         });
@@ -151,7 +170,7 @@ export default function ModalChangeLendingAmount(props) {
                             console.log("valueConvert.date_apply",valueConvert.date_apply);
                             console.log(fileAttachment)
                              let formData = new FormData();
-                            formData.append('file', fileAttachment);
+                            formData.append('file', fileAttachment[0]);
                             formData.append('sourceOfFundId', sourceOfFundId);
                             formData.append('dateApply', valueConvert.date_apply);
                             formData.append('paidAmount', valueConvert.paid_amount);
@@ -216,7 +235,7 @@ export default function ModalChangeLendingAmount(props) {
                     } = props;
                     return (
                         <Form onSubmit={handleSubmit}>
-                            <DialogContent style={{width: '450px', height: '300px'}} dividers className={"model-account-form"}>
+                            <DialogContent style={{width: '450px', height: '450px'}} dividers className={"model-account-form"}>
                                 <Grid container spacing={4}>
                                     <Grid item xs={6} md={12}>
                                         <div className={'label-input'}>{values.type==="lend"?"Số tiền vay thêm":"Số tiền trả"} (VNĐ)<span
@@ -289,11 +308,33 @@ export default function ModalChangeLendingAmount(props) {
                                         </LocalizationProvider>
 
                                     </Grid>
-                                    <Grid item xs={6} md={6}>
+                                    <Grid item xs={6} md={12}>
                                         <div style={{display: "flex", alignItems: "center"}}>Tập đính
                                             kèm <ControlPointIcon style={{cursor: "pointer", marginLeft: '10px'}}
                                                                   color="primary"
                                                                   onClick={uploadFile}> </ControlPointIcon></div>
+
+
+                                        <div className={'list-file'}>
+                                            {
+                                                fileAttachment.map((e) => (
+                                                    <>
+                                                        <div className={'item-file'}>
+                                                            <div className={'name-file '}>{e.name}</div>
+                                                            <div className={'delete-file'}><DeleteOutlineIcon
+                                                                style={{cursor: "pointer"}}
+                                                                color={"error"}
+                                                                onClick={() => {
+                                                                    deleteFile(e.name)
+                                                                }}></DeleteOutlineIcon></div>
+                                                        </div>
+                                                        <Divider light/>
+                                                    </>
+
+                                                ))
+                                            }
+
+                                        </div>
                                     </Grid>
 
                                 </Grid>

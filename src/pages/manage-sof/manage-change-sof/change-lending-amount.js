@@ -69,7 +69,8 @@ export default function ChangeLendingAmount(props) {
 
     const downloadFile = (id) => {
         if(id){
-            Axios.get('http://localhost:8443/attachment/'+id, {
+            // Axios.get('http://localhost:8443/attachment/'+id, {
+            Axios.get(API_MAP.LINK_FILE+id, {
                 headers: {'Authorization': `Bearer ${currentUser.token}`},
                 responseType: 'blob'
             }).then(response => {
