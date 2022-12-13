@@ -47,6 +47,7 @@ import dayjs from "dayjs";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import {Checkbox} from "antd";
+import LinkIcon from "@mui/icons-material/Link";
 
 export default function ManageSofChargingEst() {
     const currentUser = useSelector(state => state.currentUser)
@@ -169,7 +170,8 @@ export default function ManageSofChargingEst() {
                         type_date:listConvert[i].sof[j].charging_type,
                         total_day:listConvert[i].sof[j].payable_period_detail_entities[k].total_day,
                         principal_amount:listConvert[i].sof[j].payable_period_detail_entities[k].principal_amount,
-                        interest_rate:listConvert[i].sof[j].payable_period_detail_entities[k].interest_rate
+                        interest_rate:listConvert[i].sof[j].payable_period_detail_entities[k].interest_rate,
+                        attachment_id:listConvert[i].sof[j].payable_period_detail_entities[k].attachment_id
                     }
                     if(listConvert[i].sof[j].charging_type === "Trả lãi ân hạn"){
                         convertData.amount_paid_in_period = listConvert[i].sof[j].amount_paid_in_period;
@@ -178,7 +180,6 @@ export default function ManageSofChargingEst() {
                 }
             }
             listConvert[i].sofConvert=newArr;
-
         }
         // listConvert.sort(function(a,b){
         //     return new Date(a.chargingDate) - new Date(b.chargingDate)
@@ -358,6 +359,19 @@ export default function ManageSofChargingEst() {
     }
     const updateChargingEstApi = (id, data) => {
         return apiManagerChargingEst.updateChargingEst(id, data);
+    }
+    const downloadFile = (id) => {
+        if(id){
+            Axios.get('http://localhost:8443/attachment/'+id, {
+                headers: {'Authorization': `Bearer ${currentUser.token}`},
+                responseType: 'blob'
+            }).then(response => {
+                let nameFile = response.headers['content-disposition'].split(`"`)[1]
+                FileDownload(response.data, nameFile);
+            }).catch(e => {
+            })
+        }
+        // return apiManagerSOF.downloadFile(id);
     }
 
     return (
@@ -661,7 +675,7 @@ export default function ManageSofChargingEst() {
                         <Table stickyHeader className={"table-custom"}>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell align="center">Trạng thái</TableCell>
+
                                     <TableCell align="center">Ngày trả</TableCell>
                                     <TableCell align="center">Công ty vay</TableCell>
                                     <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
@@ -674,6 +688,7 @@ export default function ManageSofChargingEst() {
                                     <TableCell align="center">Ngày kết thúc</TableCell>
                                     <TableCell align="center">Số ngày tính lãi </TableCell>
                                     <TableCell align="center">Thao tác</TableCell>
+                                    <TableCell align="center">Trạng thái</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody style={{overflowY: "auto"}}>
@@ -687,24 +702,7 @@ export default function ManageSofChargingEst() {
                                 {listResult.rows.map(item => (
                                     <>
                                         <TableRow>
-                                            <TableCell rowSpan={item.sofConvert.length + 1}>
-                                                <div className='icon-action'>
-                                                    {
-                                                        // detail.type_date=="Trả lãi"?<Checkbox
-                                                        //     checked={detail.status==="paid"}
-                                                        //     onChange={()=>handleUpdateStatusPayable(detail.id)}
-                                                        //     inputProps={{ 'aria-label': 'controlled' }}
-                                                        // />:'-'
 
-                                                        <Checkbox
-                                                            checked={item.status==="paid"}
-                                                            onChange={()=>handleUpdateStatusPayable(item.id)}
-                                                            inputProps={{ 'aria-label': 'controlled' }}
-                                                        />
-                                                    }
-
-                                                </div>
-                                            </TableCell>
                                             <TableCell rowSpan={item.sofConvert.length + 1}>{item.chargingDate}</TableCell>
                                             <TableCell rowSpan={item.sofConvert.length + 1}>
                                                 <div>{item.companyName}</div>
@@ -714,8 +712,6 @@ export default function ManageSofChargingEst() {
                                                     {item.total}
                                                 </div>
                                             </TableCell>
-
-
                                         </TableRow>
                                         {
                                             item.sofConvert.map(detail => (
@@ -746,9 +742,31 @@ export default function ManageSofChargingEst() {
                                                     <TableCell>
                                                         <div>{detail.type_date==="Trả gốc"?"-":detail.total_day}</div>
                                                     </TableCell>
+                                                    <TableCell >
+                                                        <div className='icon-action'>
+                                                            {
+                                                                // detail.type_date=="Trả lãi"?<Checkbox
+                                                                //     checked={detail.status==="paid"}
+                                                                //     onChange={()=>handleUpdateStatusPayable(detail.id)}
+                                                                //     inputProps={{ 'aria-label': 'controlled' }}
+                                                                // />:'-'
 
+                                                                <Checkbox
+                                                                    checked={detail.status==="paid"}
+                                                                    onChange={()=>handleUpdateStatusPayable(detail.id)}
+                                                                    inputProps={{ 'aria-label': 'controlled' }}
+                                                                />
+                                                            }
+
+                                                        </div>
+                                                    </TableCell>
                                                     <TableCell>
                                                         <div className='icon-action'>
+                                                            {detail.attachment_id != null &&
+                                                                <Tooltip title="File thay đổi" onClick={() => downloadFile(detail.attachment_id)}>
+                                                                    <LinkIcon style={{color: "rgb(107, 114, 128)"}}></ LinkIcon>
+                                                                </Tooltip>
+                                                            }
                                                             {
                                                                 detail.type_date=="Trả lãi"?<Tooltip title="Xem chi tiết">
                                                                     <RemoveRedEyeIcon onClick={() => {
@@ -757,7 +775,6 @@ export default function ManageSofChargingEst() {
                                                                                       style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon>
                                                                 </Tooltip>:''
                                                             }
-
                                                         </div>
                                                     </TableCell>
                                                 </TableRow>

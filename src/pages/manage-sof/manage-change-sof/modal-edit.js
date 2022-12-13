@@ -27,13 +27,17 @@ import apiManagerCompany from "../../../api/manage-company";
 import apiManagerMember from "../../../api/manage-member";
 import apiChangeLendingAmount from "../../../api/manage-change-lending-amount";
 import {toast} from "react-toastify";
+import VerticalAlignTopIcon from "@mui/icons-material/VerticalAlignTop";
+import apiManagerAssets from "../../../api/manage-assets";
+import {useSearchParams} from "react-router-dom";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 
 export default function ModalChangeLendingAmount(props) {
+    const [fileAttachment, setFileAttachment] = useState([]);
+
     const {openModal, handleCloseModal,info,isUpdate,setRefresh,refresh,sourceOfFundId} = props
-    const [listFile, setListFile] = useState([])
     const validationSchema = yup.object({
         paid_amount: yup
             .string()
@@ -44,21 +48,35 @@ export default function ModalChangeLendingAmount(props) {
         // alert(name)
 
     }, [openModal,isUpdate])
+    const createChangeLendingAmountApi = (data) => {
+        return apiChangeLendingAmount.createChangeLendingAmount(data);
+    }
+    const createChangeLendingAmountApiFile = (data) => {
+        return apiChangeLendingAmount.createChangeLendingAmountFile(data);
+    }
+    const updateChangeLendingAmountApi = (data) => {
+        return apiChangeLendingAmount.updateChangeLendingAmount(info.id, data);
+    }
+
+    const updateChangeLendingAmountApiFile = (data) => {
+        return apiChangeLendingAmount.updateChangeLendingAmountFile(info.id, data);
+    }
+
+    const importAssetApi = (data) => {
+        return apiManagerAssets.importFile(data);
+    }
+    const [newFormData, setNewFormData] = useSearchParams();
     const uploadFile = () => {
+
         var el = window._protected_reference = document.createElement("INPUT");
         el.type = "file";
-        // el.accept = "image/*,.txt";
-        el.multiple = "multiple";
+        el.accept = ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
+        // el.multiple = "multiple";
         el.addEventListener('change', function (ev2) {
-            let result = [];
-            let resultFiles = [];
+            let resultFiles;
+            console.log("el.files",el.files)
             if (el.files.length) {
-                for (let i = 0; i < el.files.length; i++) {
-                    // if (!checkFileLocaleAlready(el.files[i].name)) {
-                    //     resultFiles.push(el.files[i])
-                    // }
-                    resultFiles.push(el.files[i])
-                }
+                resultFiles = el.files[0];
             }
             new Promise(function (resolve) {
                 setTimeout(function () {
@@ -67,36 +85,37 @@ export default function ModalChangeLendingAmount(props) {
 
                 }, 1000);
 
-                let copyState = [...listFile];
-                // copyState.concat(resultFiles)
-                copyState.push.apply(copyState, resultFiles);
-
-                setListFile(copyState)
+                if (resultFiles)
+                    setFileAttachment(resultFiles)
             })
                 .then(function () {
-                    // clear / free reference
                     el = window._protected_reference = undefined;
                 });
         });
 
         el.click();
     }
-    const deleteFile = (name) => {
-        let arr = [...listFile]
-        let indexRemove = listFile.findIndex(e => e.name === name)
-        if (indexRemove !== -1) {
-            arr.splice(indexRemove, 1);
-            setListFile(arr)
-        }
 
+    const callApiFromData = () => {
+        importAssetApi(newFormData).then(r=>{
+            console.log(r);
+            toast.success('Nhập dữ liệu thành công', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+            setRefresh(!refresh)
+
+        }).catch(err => {
+            console.log(err)
+        })
     }
-    const createChangeLendingAmountApi = (data) => {
-        return apiChangeLendingAmount.createChangeLendingAmount(data);
-    }
-    const updateChangeLendingAmountApi = (data) => {
-        return apiChangeLendingAmount.updateChangeLendingAmount(info.id, data);
-    }
+
     return (
+
         <div>
             <Dialog open={openModal} onClose={handleCloseModal}>
                 <DialogTitle>
@@ -129,8 +148,22 @@ export default function ModalChangeLendingAmount(props) {
                         (values, actions) => {
                             let valueConvert = {...values};
                             valueConvert.date_apply = dayjs(values.date_apply).format('DD-MM-YYYY');
+                            console.log("valueConvert.date_apply",valueConvert.date_apply);
+                            console.log(fileAttachment)
+                             let formData = new FormData();
+                            formData.append('file', fileAttachment);
+                            formData.append('sourceOfFundId', sourceOfFundId);
+                            formData.append('dateApply', valueConvert.date_apply);
+                            formData.append('paidAmount', valueConvert.paid_amount);
+                            formData.append('type', info.type);
+    //
+    //                         // formData.append('id', sourceOfFundId)
+    //                         // formData.append('date',document.getElementsByClassName('new-date-apply')[0].getElementsByTagName('input')[0].value)
+    //                         setNewFormData(formData);
+    //                         console.log('newFormData');
+    //                         console.log(newFormData);
                             if (isUpdate) {
-                                updateChangeLendingAmountApi(valueConvert).then(r => {
+                                updateChangeLendingAmountApiFile(valueConvert).then(r => {
                                     toast.success('Cập nhật thành công', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -144,14 +177,13 @@ export default function ModalChangeLendingAmount(props) {
                                         handleCloseModal();
                                         setRefresh(!refresh)
                                     }, 500);
+                                    callApiFromData();
 
                                 }).catch(e => {
                                     console.log(e)
                                 })
-
-
                             } else {
-                                createChangeLendingAmountApi(valueConvert).then(r => {
+                                createChangeLendingAmountApiFile(formData).then(r => {
                                     toast.success('Thêm mới thành công', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -184,7 +216,7 @@ export default function ModalChangeLendingAmount(props) {
                     } = props;
                     return (
                         <Form onSubmit={handleSubmit}>
-                            <DialogContent style={{width: '450px', height: '400px'}} dividers className={"model-account-form"}>
+                            <DialogContent style={{width: '450px', height: '300px'}} dividers className={"model-account-form"}>
                                 <Grid container spacing={4}>
                                     <Grid item xs={6} md={12}>
                                         <div className={'label-input'}>{values.type==="lend"?"Số tiền vay thêm":"Số tiền trả"} (VNĐ)<span
@@ -240,10 +272,11 @@ export default function ModalChangeLendingAmount(props) {
                                         </FormControl>
                                     </Grid>
                                     <Grid item xs={6} md={12}>
-                                        <div className={'label-input'}>Ngày áo dụng gốc mới<span
+                                        <div className={'label-input'}>Ngày áp dụng gốc mới<span
                                             className={'error-message'}>*</span></div>
                                         <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
                                             <DesktopDatePicker
+                                                className={'new-date-apply'}
                                                 style={{width: '100% !important', height: '30px'}}
                                                 inputFormat="DD-MM-YYYY"
                                                 value={values.date_apply}
@@ -256,36 +289,13 @@ export default function ModalChangeLendingAmount(props) {
                                         </LocalizationProvider>
 
                                     </Grid>
-                                    <Grid item xs={6} md={12}>
-                                        <div className={'label-input'} style={{
-                                            display: "flex",
-                                            alignItems: "center",
-                                            // justifyContent: 'space-between'
-                                        }}>Tập đính
+                                    <Grid item xs={6} md={6}>
+                                        <div style={{display: "flex", alignItems: "center"}}>Tập đính
                                             kèm <ControlPointIcon style={{cursor: "pointer", marginLeft: '10px'}}
                                                                   color="primary"
                                                                   onClick={uploadFile}> </ControlPointIcon></div>
-                                        <div className={'list-file'}>
-                                            {
-                                                listFile.map((e) => (
-                                                    <>
-                                                        <div className={'item-file'}>
-                                                            <div className={'name-file '}>{e.name}</div>
-                                                            <div className={'delete-file'}><DeleteOutlineIcon
-                                                                style={{cursor: "pointer"}}
-                                                                color={"error"}
-                                                                onClick={() => {
-                                                                    deleteFile(e.name)
-                                                                }}></DeleteOutlineIcon></div>
-                                                        </div>
-                                                        <Divider light/>
-                                                    </>
-
-                                                ))
-                                            }
-
-                                        </div>
                                     </Grid>
+
                                 </Grid>
                             </DialogContent>
                             <DialogActions>

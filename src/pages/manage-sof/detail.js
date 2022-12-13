@@ -27,6 +27,7 @@ import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import {Checkbox} from "antd";
+import LinkIcon from "@mui/icons-material/Link";
 
 export default function DetailSOF(props) {
     const navigate = useNavigate();
@@ -94,6 +95,35 @@ export default function DetailSOF(props) {
             }).then(r => {
                 // setLoading(false)
                 console.log("rrrrrrrrrrrrrr", r)
+
+                // let newR = [];
+                // for(let i = 0; i < r.data.length; i++){
+                //     let newConvertData = {
+                //         amount_paid_in_period: r.data[i].amount_paid_in_period,
+                //         charging_amount: r.data[i].amount_paid_in_period,
+                //         charging_type: r.data[i].amount_paid_in_period,
+                //         company_name: r.data[i].amount_paid_in_period,
+                //         create_at: r.data[i].amount_paid_in_period,
+                //         id: r.data[i].amount_paid_in_period,
+                //         interest_period: r.data[i].amount_paid_in_period,
+                //         interest_rate: r.data[i].amount_paid_in_period,
+                //         interest_rate_rage: r.data[i].amount_paid_in_period,
+                //         interest_rate_type: r.data[i].amount_paid_in_period,
+                //         modify_at: r.data[i].amount_paid_in_period,
+                //       //  payable_date: r.data[i].amount_paid_in_period,
+                //         payable_period_detail_entities: r.data[i].amount_paid_in_period,
+                //         principal: r.data[i].amount_paid_in_period,
+                //         principal_period: r.data[i].amount_paid_in_period,
+                //         reference_interest_rate: r.data[i].amount_paid_in_period,
+                //         sof_code: r.data[i].amount_paid_in_period,
+                //         source_of_fund_id: r.data[i].amount_paid_in_period,
+                //     //    start_date: r.data[i].amount_paid_in_period,
+                //         status: r.data[i].amount_paid_in_period,
+                //         type_date: r.data[i].amount_paid_in_period,
+                //     }
+                // }
+
+
                 let arr;
                 if (r.data) {
                     arr = convertArr(r.data)
@@ -561,20 +591,19 @@ export default function DetailSOF(props) {
 
                                             {/*    </div>*/}
                                             {/*</TableCell>*/}
-                                            <TableCell rowSpan={item.sof.length + 1}>{item.chargingDate}</TableCell>
-                                            <TableCell rowSpan={item.sof.length + 1}>
+                                            <TableCell rowSpan={item.sofConvert.length + 1}>{item.chargingDate}</TableCell>
+                                            <TableCell rowSpan={item.sofConvert.length + 1}>
                                                 <div>{item.companyName}</div>
                                             </TableCell>
-                                            <TableCell rowSpan={item.sof.length + 1}>
+                                            <TableCell rowSpan={item.sofConvert.length + 1}>
                                                 <div className={'error-message'}>
                                                     {item.total}
                                                 </div>
                                             </TableCell>
-
-
                                         </TableRow>
                                         {
                                             item.sofConvert.map(detail => (
+
                                                 <TableRow>
                                                     <TableCell>
                                                         <div>{detail.sof_code}</div>
@@ -612,7 +641,10 @@ export default function DetailSOF(props) {
                                                                     }}
                                                                                       style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon>
                                                                 </Tooltip>:''
+
+
                                                             }
+
 
                                                         </div>
                                                     </TableCell>

@@ -6,6 +6,7 @@ const API_DOMAIN = 'http://localhost:8443/'
 // const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
 // const API_DOMAIN = 'https://cashflow.amberholdings.vn:8443/'
 const API_MAP = {
+    DOWLOAD_FILE: API_DOMAIN + 'attachment',
     GET_LIST_ASSETS: API_DOMAIN + 'asset/search',
     GET_LIST_ASSETS_DASHBOARD: API_DOMAIN + 'dashboard/asset_aggregate',
     GET_LIST_SOF_DASHBOARD: API_DOMAIN + 'dashboard/sof_aggregate',
@@ -14,6 +15,7 @@ const API_MAP = {
     UPDATE_ASSETS: API_DOMAIN + 'asset',
     DELETE_ASSETS: API_DOMAIN + 'asset',
     IMPORT_ASSETS: API_DOMAIN + 'asset/import-excel',
+    IMPORT_FILES: API_DOMAIN + 'change-lending-amount/import-file',
     IMPORT_COMPANY: API_DOMAIN + 'capital_company/import-excel',
     DOWN_TEMPLATE_ASSETS: API_DOMAIN + 'template/import_asset_template',
     DOWN_TEMPLATE_COMPANY: API_DOMAIN + 'template/import_company_template',
@@ -89,6 +91,7 @@ const API_MAP = {
     ADD_SHAREHOLDER: API_DOMAIN + 'capital_company/add-shareholder',
     GET_LIST_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount/search',
     CREATE_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount/create',
+    CREATE_CHANGE_LENDING_AMOUNT_FILE: API_DOMAIN + 'change-lending-amount/create-file',
     UPDATE_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount',
     DELETE_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount',
     DELETE_LIST_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount/delete',
