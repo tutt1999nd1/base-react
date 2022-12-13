@@ -17,6 +17,12 @@ import {AdapterDayjs} from "@mui/x-date-pickers/AdapterDayjs";
 import dayjs from "dayjs";
 import apiChangeLendingAmount from "../../../api/manage-change-lending-amount";
 import ModalChangeLendingAmount from "./modal-edit";
+import LinkIcon from '@mui/icons-material/Link';
+import Axios from "axios";
+import FileDownload from "js-file-download";
+import axiosClient from "../../../api/axiosClient";
+import API_MAP from "../../../constants/api";
+import apiManagerSOF from "../../../api/manage-sof";
 
 export default function ChangeLendingAmount(props) {
     const {sourceOfFundId} = props;
@@ -42,6 +48,7 @@ export default function ChangeLendingAmount(props) {
             end: (new dayjs).endOf('month'),
         }
     )
+
     const [infoDel, setInfoDel] = useState({})
     const [info, setInfo] = useState({
         "paid_amount":"",
@@ -59,6 +66,20 @@ export default function ChangeLendingAmount(props) {
             })
         }
     },[openModalEdit])
+
+    const downloadFile = (id) => {
+        if(id){
+            Axios.get('http://localhost:8443/attachment/'+id, {
+                headers: {'Authorization': `Bearer ${currentUser.token}`},
+                responseType: 'blob'
+            }).then(response => {
+                let nameFile = response.headers['content-disposition'].split(`"`)[1]
+                FileDownload(response.data, nameFile);
+            }).catch(e => {
+            })
+        }
+        // return apiManagerSOF.downloadFile(id);
+    }
     const columns: GridColDef[] = [
         {
             sortable: false,
@@ -145,6 +166,12 @@ export default function ChangeLendingAmount(props) {
                     // });
                 }
                 return <div className='icon-action'>
+
+                    {params.row.attachment_id != null &&
+                    <Tooltip title="File thay đổi" onClick={() => downloadFile(params.row.attachment_id)}>
+                        <LinkIcon style={{color: "rgb(107, 114, 128)"}}></ LinkIcon>
+                    </Tooltip>
+                    }
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
                         <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
                     </Tooltip>

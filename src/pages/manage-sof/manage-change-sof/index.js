@@ -8,7 +8,10 @@ import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
 import ChangeInterestRate from "./change-interest_rate";
 import BorderColorOutlinedIcon from "@mui/icons-material/BorderColorOutlined";
 import apiManagerSOF from "../../../api/manage-sof";
-
+import axios from 'axios';
+import VerticalAlignTopIcon from "@mui/icons-material/VerticalAlignTop";
+import {toast} from "react-toastify";
+import apiManagerAssets from "../../../api/manage-assets";
 export default function ManageChangeSof(props) {
     const navigate = useNavigate();
     const [info, setInfo] = useState({
@@ -65,6 +68,11 @@ export default function ManageChangeSof(props) {
 
     return (
         <div className={'main-content change-lending-amount'}>
+
+
+
+
+
             <Box sx={{width: '100%'}}>
                     <Button onClick={backList} style={{marginBottom: '10px'}} variant="text"
                             startIcon={<KeyboardBackspaceIcon/>}>Nguồn vốn</Button>
@@ -72,6 +80,7 @@ export default function ManageChangeSof(props) {
                     {/*Mã khoản vay: {info.sof_code}*/}
                     Mã khoản vay: {info.sof_code}
                 </Typography>
+
 
                     <Tabs value={tab} onChange={handleChangeTab} aria-label="basic tabs example">
                         <Tab label="Thay đổi tiền gốc" {...a11yProps(0)} />

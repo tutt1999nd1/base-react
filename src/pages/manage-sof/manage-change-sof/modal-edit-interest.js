@@ -266,7 +266,7 @@ export default function ModalEditInterest(props) {
                                         />
                                     </Grid>
                                     <Grid item xs={12} md={12}>
-                                        <div className={'label-input'}>Ngày áo dụng gốc mới<span
+                                        <div className={'label-input'}>Ngày áp dụng gốc mới<span
                                             className={'error-message'}>*</span></div>
                                         <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
                                             <DesktopDatePicker

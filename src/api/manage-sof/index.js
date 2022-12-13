@@ -35,6 +35,9 @@ class ApiManagerSOF{
     deleteSOF = (id) => {
         return axiosClient.delete(API_MAP.DELETE_SOF+`/${id}`)
     }
+    downloadFile = (id) => {
+        return axiosClient.put(API_MAP.DOWLOAD_FILE+`/${id}`)
+    }
     deleteListSOF= (data) => {
         return axiosClient.post(API_MAP.DELETE_LIST_SOF,data)
     }
