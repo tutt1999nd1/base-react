@@ -54,13 +54,14 @@ export default function ManageSofChargingEst() {
     const [openSearch, setOpenSearch] = useState(true)
     const [openTotal, setOpenTotal] = useState(true)
     const [loadingEmail, setLoadingEmail] = useState(false)
+    const [loadingExport, setLoadingExport] = useState(false)
     const navigate = useNavigate();
     const [infoUpdate, setInfoUpdate] = useState({id: '', amount: 0})
     const [openModalEdit, setOpenModalEdit] = useState(false)
     const [openModalEmail, setOpenModalEmail] = useState(false)
     const [listUser, setListUser] = useState([{id: '1', 'label': '1'}])
     const [email, setEmail] = useState([])
-    const [listInterestDay, setListInterestDay] = useState([])
+    const [listUpdateEst, setListUpdateEst] = useState([])
     const [cc, setCc] = useState([])
     const [bcc, setBcc] = useState([])
     const [total, setTotal] = useState({
@@ -161,6 +162,7 @@ export default function ManageSofChargingEst() {
                         charging_type:listConvert[i].sof[j].charging_type,
                         company_name:listConvert[i].sof[j].company_name,
                         id:listConvert[i].sof[j].id,
+                        id_detail:listConvert[i].sof[j].payable_period_detail_entities[k].id,
                         status:listConvert[i].sof[j].status,
                         principal:"",
                         sof_code:listConvert[i].sof[j].sof_code,
@@ -243,7 +245,7 @@ export default function ManageSofChargingEst() {
         })
     }, [currentUser.token])
     useEffect(() => {
-        console.log(listResult)
+        // console.log(listResult)
     }, [listResult])
     const handleChangeDateRange = (event, picker) => {
         setTimeSearch({start: picker.startDate, end: picker.endDate})
@@ -260,8 +262,8 @@ export default function ManageSofChargingEst() {
             'page_size': listResult.pageSize,
             'page_index': listResult.page + 1,
             'paging': false,
-            'charging_date_from': dayjs(timeSearch.start).format('DD-MM-YYYY'),
-            'charging_date_to': dayjs(timeSearch.end).format('DD-MM-YYYY'),
+            'start_date': dayjs(timeSearch.start).format('DD-MM-YYYY'),
+            'end_date': dayjs(timeSearch.end).format('DD-MM-YYYY'),
             // 'company_name': nameSearch === '' ? null : nameSearch,
             // 'contact_detail': contactSearch === 0 ? null : contactSearch,
             // 'tax_number': taxSearch === 0 ? null : taxSearch,
@@ -303,12 +305,13 @@ export default function ManageSofChargingEst() {
     }
 
     const exportChargingEst = () => {
+        setLoadingExport(true)
         Axios.post(API_MAP.EXPORT_CHARGING_EST, {
             'page_size': listResult.pageSize,
             'page_index': listResult.page + 1,
             'paging': false,
-            'charging_date_from': dayjs(timeSearch.start).format('DD-MM-YYYY'),
-            'charging_date_to': dayjs(timeSearch.end).format('DD-MM-YYYY'),
+            'start_date': dayjs(timeSearch.start).format('DD-MM-YYYY'),
+            'end_date': dayjs(timeSearch.end).format('DD-MM-YYYY'),
             // 'company_name': nameSearch === '' ? null : nameSearch,
             // 'contact_detail': contactSearch === 0 ? null : contactSearch,
             // 'tax_number': taxSearch === 0 ? null : taxSearch,
@@ -317,16 +320,81 @@ export default function ManageSofChargingEst() {
             headers: {'Authorization': `Bearer ${currentUser.token}`},
             responseType: 'blob'
         }).then(response => {
+            setLoadingExport(false)
             let nameFile = response.headers['content-disposition'].split(`"`)[1]
             FileDownload(response.data, nameFile);
 
         }).catch(e => {
+            setLoadingExport(false)
         })
     }
-    const handleUpdateStatusPayable = (id) => {
-        getInterestTableApi(id).then(response => {
+    const handleUpdateStatusPayable = (e,i,j,id,idDetail) => {
+        let listUpdate = [...listUpdateEst];
+        let ob = {id:id,idDetail:idDetail,status:e.target.checked};
+        if(!checkExist(listUpdate,ob)){
+            listUpdate.push(ob);
+            console.log("exist")
+        }
+        else{
+            listUpdate = listUpdate.filter(x => x.id != ob.id && x.idDetail !=ob.idDetail)
+        }
+        let listId = [];
+        let group = listUpdate.reduce(function (r, a) {
+                r[a.id] = r[a.id] || [];
+                r[a.id].push(a);
+                return r;
+            }, Object.create(null));
+        console.log("group",group);
+        for (const property in group) {
+            let check = true;
+            for(let j = 0; j < group[property].length; j++){
+                console.log("group[property]",group[property][j])
+                console.log("group[property].length",group[property].length)
+                if(j!=group[property].length-1)
+                if(group[property][j].status !=group[property][j+1].status){
+                    check = false;
+                    break;
+                }
+            }
+            if(check){
+                listId.push(group[property][0].id);
+            }
+        }
+        console.log("listId",listId)
+        for( let i = 0; i < group.length; i++){
+            let check = true;
+            for(let j = 0; j < group[i].length; j++){
+                if(group[i][j].status !=group[i][j+1].status){
+                    check = false;
+                    break;
+                }
+            }
+            if(check){
+                listId.push(group[0].id);
+            }
+        }
+        console.log("list ID ",listId)
+        setListUpdateEst(listUpdate)
+        let listResultCopy = {...listResult};
+
+        if(e.target.checked){
+            listResultCopy.rows[i].sofConvert[j].status = "paid"
+        }
+        else listResultCopy.rows[i].sofConvert[j].status = "unpaid"
+
+        setListResult(listResultCopy)
+
+        getInterestTableApi({list_id:listId}).then(response => {
           setRefresh(!refresh)
         })
+    }
+    const checkExist = (arr,ob) => {
+        for (let i = 0; i < arr.length; i++){
+            if(ob.id == arr[i].id && ob.idDetail == arr[i].idDetail){
+                return true;
+            }
+        }
+        return false;
     }
     const sendEmailBtn = () => {
         setOpenModalEmail(true)
@@ -560,9 +628,14 @@ export default function ManageSofChargingEst() {
                         Tính lãi
                     </Typography>
                     <div>
-                        <Button onClick={exportChargingEst} style={{marginLeft: '10px', marginRight: '10px'}}
-                                variant="text"
-                                startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
+
+                        {
+                            loadingExport ? <CircularProgress size={30}></CircularProgress> :
+                                <Button onClick={exportChargingEst} style={{marginLeft: '10px', marginRight: '10px'}}
+                                        variant="text"
+                                        startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
+                        }
+
                         <Button onClick={sendEmailBtn} variant="text" startIcon={<ForwardToInboxIcon/>}>Gửi thống kê về
                             email</Button>
                     </div>
@@ -670,12 +743,14 @@ export default function ManageSofChargingEst() {
                 </Collapse>
                 <Divider light/>
                 <div className={'main-content-body-result'} style={{position: "relative"}}>
+                    <Tooltip title="Danh sách đã chọn">
+                        <Button className={`${listUpdateEst.length>0 ?'':'hidden'}`} style={{float:"right",marginRight:"10px"}} onClick={()=>{}} variant={"outlined"}  color={"primary"}>Cập nhật trạng thái</Button>
+                    </Tooltip>
                     <TableContainer style={{height: '100%', width: '100%', overflow: "auto"}}>
                         {/*<div style={{height: '100%', width: '100%'}}>*/}
                         <Table stickyHeader className={"table-custom"}>
                             <TableHead>
                                 <TableRow>
-
                                     <TableCell align="center">Ngày trả</TableCell>
                                     <TableCell align="center">Công ty vay</TableCell>
                                     <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
@@ -687,8 +762,8 @@ export default function ManageSofChargingEst() {
                                     <TableCell align="center">Ngày bắt đầu</TableCell>
                                     <TableCell align="center">Ngày kết thúc</TableCell>
                                     <TableCell align="center">Số ngày tính lãi </TableCell>
-                                    <TableCell align="center">Thao tác</TableCell>
                                     <TableCell align="center">Trạng thái</TableCell>
+                                    <TableCell align="center">Thao tác</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody style={{overflowY: "auto"}}>
@@ -699,7 +774,7 @@ export default function ManageSofChargingEst() {
                                     className={`message-table-empty ${listResult.rows.length === 0 && !loading ? '' : 'hidden'}`}>Không
                                     có dữ liệu
                                 </div>
-                                {listResult.rows.map(item => (
+                                {listResult.rows.map((item,i) => (
                                     <>
                                         <TableRow>
 
@@ -714,7 +789,7 @@ export default function ManageSofChargingEst() {
                                             </TableCell>
                                         </TableRow>
                                         {
-                                            item.sofConvert.map(detail => (
+                                            item.sofConvert.map((detail,j) => (
                                                 <TableRow>
                                                     <TableCell>
                                                         <div>{detail.sof_code}</div>
@@ -753,7 +828,7 @@ export default function ManageSofChargingEst() {
 
                                                                 <Checkbox
                                                                     checked={detail.status==="paid"}
-                                                                    onChange={()=>handleUpdateStatusPayable(detail.id)}
+                                                                    onChange={(e)=>handleUpdateStatusPayable(e,i,j,detail.id,detail.id_detail)}
                                                                     inputProps={{ 'aria-label': 'controlled' }}
                                                                 />
                                                             }
