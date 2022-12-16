@@ -147,9 +147,10 @@ export default function ManageSofChargingEst() {
                 listConvert[i].sof[j].charging_type = listConvert[i].sof[j].type_date;
             }
         }
-        console.log("total",total);
-        console.log("list_convert",listConvert);
+
         setTotal(total)
+        let totalInterest = 0;
+        let totalPrincipal = 0;
         for(let i = 0; i < listConvert.length; i++){
             let newArr=[]
             for (let j = 0; j <listConvert[i].sof.length; j++){
@@ -173,19 +174,30 @@ export default function ManageSofChargingEst() {
                         interest_rate:listConvert[i].sof[j].payable_period_detail_entities[k].interest_rate,
                         attachment_id:listConvert[i].sof[j].payable_period_detail_entities[k].attachment_id
                     }
-                    if(listConvert[i].sof[j].charging_type === "Trả lãi ân hạn"){
-                        convertData.amount_paid_in_period = listConvert[i].sof[j].amount_paid_in_period;
-                    }
+
+
                     newArr.push(convertData)
                 }
+                // if(listConvert[i].sof[j].charging_type == "Trả lãi ân hạn" || listConvert[i].sof[j].charging_type == "Trả lãi"){
+                //     totalInterest += listConvert[i].sof[j].amount_paid_in_period;
+                // }else {
+                //     totalPrincipal += listConvert[i].sof[j].amount_paid_in_period;
+                // }
             }
             listConvert[i].sofConvert=newArr;
+            // listConvert[i].totalInterest=totalInterest;
+            // listConvert[i].totalPrincipal=totalInterest;
         }
-        // listConvert.sort(function(a,b){
-        //     return new Date(a.chargingDate) - new Date(b.chargingDate)
-        // })
-        console.log("tutt",listConvert)
+        listConvert.sort(function(a,b){
+            return new Date(convertDate(a.chargingDate)) - new Date(convertDate(b.chargingDate));
+        })
+
         return listConvert;
+    }
+    function convertDate(myDate){
+        myDate = myDate.split("-");
+        var newDate = new Date( myDate[2], myDate[1] - 1, myDate[0]);
+        return newDate;
     }
 
     useEffect(() => {
@@ -679,6 +691,8 @@ export default function ManageSofChargingEst() {
                                     <TableCell align="center">Ngày trả</TableCell>
                                     <TableCell align="center">Công ty vay</TableCell>
                                     <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
+                                    <TableCell align="center">Tổng gốc phải trả(VNĐ)</TableCell>
+                                    <TableCell align="center">Tổng lãi phải trả(VNĐ)</TableCell>
                                     <TableCell align="center">Mã khoản vay</TableCell>
                                     <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
                                     <TableCell align="center">Tiền gốc tham chiếu</TableCell>
@@ -699,13 +713,25 @@ export default function ManageSofChargingEst() {
                                     className={`message-table-empty ${listResult.rows.length === 0 && !loading ? '' : 'hidden'}`}>Không
                                     có dữ liệu
                                 </div>
+                                {console.log('vvvvvvvvvvvvvvvvvvvvvvvvvv')}
+                                {console.log(listResult)}
                                 {listResult.rows.map(item => (
+
                                     <>
                                         <TableRow>
-
                                             <TableCell rowSpan={item.sofConvert.length + 1}>{item.chargingDate}</TableCell>
                                             <TableCell rowSpan={item.sofConvert.length + 1}>
                                                 <div>{item.companyName}</div>
+                                            </TableCell>
+                                            <TableCell rowSpan={item.sofConvert.length + 1}>
+                                                <div className={'error-message'}>
+                                                    {item.total}
+                                                </div>
+                                            </TableCell>
+                                            <TableCell rowSpan={item.sofConvert.length + 1}>
+                                                <div className={'error-message'}>
+                                                    {item.sof}
+                                                </div>
                                             </TableCell>
                                             <TableCell rowSpan={item.sofConvert.length + 1}>
                                                 <div className={'error-message'}>

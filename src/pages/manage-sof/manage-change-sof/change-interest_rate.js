@@ -19,6 +19,10 @@ import apiChangeLendingAmount from "../../../api/manage-change-lending-amount";
 import ModalChangeLendingAmount from "./modal-edit";
 import apiChangeInterestRate from "../../../api/manage-change-interest_rate";
 import ModalEditInterest from "./modal-edit-interest";
+import LinkIcon from "@mui/icons-material/Link";
+import Axios from "axios";
+import API_MAP from "../../../constants/api";
+import FileDownload from "js-file-download";
 
 export default function ChangeInterestRate(props) {
     const {sourceOfFundId} = props;
@@ -54,6 +58,20 @@ export default function ChangeInterestRate(props) {
         "reference_interest_rate":"",
         "source_of_fund_id":sourceOfFundId
     })
+    const downloadFile = (id) => {
+        if(id){
+            // Axios.get('http://localhost:8443/attachment/'+id, {
+            Axios.get(API_MAP.LINK_FILE+id, {
+                headers: {'Authorization': `Bearer ${currentUser.token}`},
+                responseType: 'blob'
+            }).then(response => {
+                let nameFile = response.headers['content-disposition'].split(`"`)[1]
+                FileDownload(response.data, nameFile);
+            }).catch(e => {
+            })
+        }
+        // return apiManagerSOF.downloadFile(id);
+    }
     useEffect(()=>{
         if(!openModalEdit){
             setInfo({
@@ -145,7 +163,7 @@ export default function ChangeInterestRate(props) {
             filterable: false,
             sortable: false,
             field: 'date_apply',
-            headerName: 'Ngày áp dụng gốc mới',
+            headerName: 'Ngày áp dụng lãi mới',
             headerClassName: 'super-app-theme--header',
             minWidth: 120,
             flex: 1,
@@ -187,6 +205,11 @@ export default function ChangeInterestRate(props) {
                     // });
                 }
                 return <div className='icon-action'>
+                    {params.row.attachment_id != null &&
+                        <Tooltip title="File thay đổi" onClick={() => downloadFile(params.row.attachment_id)}>
+                            <LinkIcon style={{color: "rgb(107, 114, 128)"}}></ LinkIcon>
+                        </Tooltip>
+                    }
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
                         <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
                     </Tooltip>

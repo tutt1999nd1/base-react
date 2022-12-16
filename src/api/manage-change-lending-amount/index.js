@@ -11,17 +11,17 @@ class ApiChangeLendingAmount{
     createChangeLendingAmount = (data) => {
         return axiosClient.post(API_MAP.CREATE_CHANGE_LENDING_AMOUNT,data)
     }
+    updateChangeLendingAmount = (id,data) => {
+        return axiosClient.put(API_MAP.UPDATE_CHANGE_LENDING_AMOUNT+`/${id}`,data)
+    }
     createChangeLendingAmountFile = (data) => {
         return axiosClient.post(API_MAP.CREATE_CHANGE_LENDING_AMOUNT_FILE,data,{
             // params: description,
             headers: {'content-type': 'multipart/form-data'}
         })
     }
-    updateChangeLendingAmount = (id,data) => {
-        return axiosClient.put(API_MAP.UPDATE_CHANGE_LENDING_AMOUNT+`/${id}`,data)
-    }
     updateChangeLendingAmountFile = (id,data) => {
-        return axiosClient.post(API_MAP.CREATE_CHANGE_LENDING_AMOUNT_FILE+`/${id}`,data,{
+        return axiosClient.post(API_MAP.UPDATE_CHANGE_LENDING_AMOUNT+`/${id}`,data,{
             // params: description,
             headers: {'content-type': 'multipart/form-data'}
         })

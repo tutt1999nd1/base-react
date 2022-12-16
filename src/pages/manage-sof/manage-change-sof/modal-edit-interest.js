@@ -1,6 +1,6 @@
 import DialogContent from "@mui/material/DialogContent";
 import {
-    Button,
+    Button, Divider,
     FormControl,
     FormHelperText,
     Grid,
@@ -28,10 +28,13 @@ import apiManagerMember from "../../../api/manage-member";
 import apiChangeLendingAmount from "../../../api/manage-change-lending-amount";
 import {toast} from "react-toastify";
 import apiChangeInterestRate from "../../../api/manage-change-interest_rate";
+import ControlPointIcon from "@mui/icons-material/ControlPoint";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 
 export default function ModalEditInterest(props) {
     const {openModal, handleCloseModal,info,isUpdate,setRefresh,refresh,sourceOfFundId} = props
+    const [fileAttachment, setFileAttachment] = useState([]);
     const validationSchema = yup.object({
         interest_rate_type: yup.string()
             .trim()
@@ -48,8 +51,59 @@ export default function ModalEditInterest(props) {
     const createChangeInterestRateApi = (data) => {
         return apiChangeInterestRate.createChangeInterestRate(data);
     }
+    const createChangeInterestRateApiFile = (data) => {
+        return apiChangeInterestRate.createChangeInterestRateFile(data);
+    }
+
     const updateChangeInterestRateApi = (data) => {
         return apiChangeInterestRate.updateChangeInterestRate(info.id, data);
+    }
+
+    const uploadFile = () => {
+
+        var el = window._protected_reference = document.createElement("INPUT");
+        el.type = "file";
+        // el.accept = ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
+        // el.multiple = "multiple";
+        el.addEventListener('change', function (ev2) {
+            let result = [];
+            let resultFiles = [];
+            console.log("el.files",el.files)
+            if (el.files.length) {
+                for (let i = 0; i < el.files.length; i++) {
+                    resultFiles.push(el.files[i])
+                }
+            }
+            new Promise(function (resolve) {
+                setTimeout(function () {
+                    console.log(el.files);
+                    resolve();
+
+                }, 1000);
+
+                let copyState = [...fileAttachment];
+                // copyState.concat(resultFiles)
+                copyState.push.apply(copyState, resultFiles);
+
+                setFileAttachment(copyState)
+            })
+                .then(function () {
+                    // clear / free reference
+                    el = window._protected_reference = undefined;
+                });
+        });
+
+        el.click();
+    }
+
+    const deleteFile = (name) => {
+        let arr = [...fileAttachment]
+        let indexRemove = fileAttachment.findIndex(e => e.name === name)
+        if (indexRemove !== -1) {
+            arr.splice(indexRemove, 1);
+            setFileAttachment(arr)
+        }
+
     }
     return (
         <div>
@@ -86,6 +140,16 @@ export default function ModalEditInterest(props) {
                         (values, actions) => {
                             let valueConvert = {...values};
                             valueConvert.date_apply = dayjs(values.date_apply).format('DD-MM-YYYY');
+
+                            let formData = new FormData();
+                            valueConvert.source_of_fund_id = parseInt(valueConvert.source_of_fund_id);
+                            const request = new Blob([JSON.stringify(valueConvert)], {
+                                type: 'application/json'
+                            });
+
+                            formData.append('file', fileAttachment[0] || null);
+                            formData.append('request', request);
+                            console.log("formData",formData)
                             if (isUpdate) {
                                 updateChangeInterestRateApi(valueConvert).then(r => {
                                     toast.success('Cập nhật thành công', {
@@ -108,7 +172,7 @@ export default function ModalEditInterest(props) {
 
 
                             } else {
-                                createChangeInterestRateApi(valueConvert).then(r => {
+                                createChangeInterestRateApiFile(formData).then(r => {
                                     toast.success('Thêm mới thành công', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -266,7 +330,7 @@ export default function ModalEditInterest(props) {
                                         />
                                     </Grid>
                                     <Grid item xs={12} md={12}>
-                                        <div className={'label-input'}>Ngày áp dụng gốc mới<span
+                                        <div className={'label-input'}>Ngày áp dụng lãi mới<span
                                             className={'error-message'}>*</span></div>
                                         <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
                                             <DesktopDatePicker
@@ -283,6 +347,34 @@ export default function ModalEditInterest(props) {
 
                                     </Grid>
 
+                                    <Grid item xs={6} md={12}>
+                                        <div style={{display: "flex", alignItems: "center"}}>Tập đính
+                                            kèm <ControlPointIcon style={{cursor: "pointer", marginLeft: '10px'}}
+                                                                  color="primary"
+                                                                  onClick={uploadFile}> </ControlPointIcon></div>
+
+
+                                        <div className={'list-file'}>
+                                            {
+                                                fileAttachment.map((e) => (
+                                                    <>
+                                                        <div className={'item-file'}>
+                                                            <div className={'name-file '}>{e.name}</div>
+                                                            <div className={'delete-file'}><DeleteOutlineIcon
+                                                                style={{cursor: "pointer"}}
+                                                                color={"error"}
+                                                                onClick={() => {
+                                                                    deleteFile(e.name)
+                                                                }}></DeleteOutlineIcon></div>
+                                                        </div>
+                                                        <Divider light/>
+                                                    </>
+
+                                                ))
+                                            }
+
+                                        </div>
+                                    </Grid>
                                 </Grid>
 
                             </DialogContent>

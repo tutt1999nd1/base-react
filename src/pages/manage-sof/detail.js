@@ -216,9 +216,6 @@ export default function DetailSOF(props) {
                         principal_amount:listConvert[i].sof[j].payable_period_detail_entities[k].principal_amount,
                         interest_rate:listConvert[i].sof[j].payable_period_detail_entities[k].interest_rate
                     }
-                    if(listConvert[i].sof[j].charging_type === "Trả lãi ân hạn"){
-                        convertData.amount_paid_in_period = listConvert[i].sof[j].amount_paid_in_period;
-                    }
                     newArr.push(convertData)
                 }
             }
@@ -226,7 +223,7 @@ export default function DetailSOF(props) {
 
         }
         listConvert.sort(function(a,b){
-            return new Date(a.chargingDate) - new Date(b.chargingDate)
+            return new Date(convertDate(a.chargingDate)) - new Date(convertDate(b.chargingDate));
         })
         return listConvert;
     }
@@ -235,6 +232,13 @@ export default function DetailSOF(props) {
             setRefresh(!refresh)
         })
     }
+    function convertDate(myDate){
+        myDate = myDate.split("-");
+        var newDate = new Date( myDate[2], myDate[1] - 1, myDate[0]);
+        return newDate;
+    }
+
+
     useEffect(() => {
         if (location.get('id')) {
             setIdDetail(location.get('id'));
@@ -641,8 +645,6 @@ export default function DetailSOF(props) {
                                                                     }}
                                                                                       style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon>
                                                                 </Tooltip>:''
-
-
                                                             }
 
 

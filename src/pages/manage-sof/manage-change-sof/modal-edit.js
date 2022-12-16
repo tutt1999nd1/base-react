@@ -115,24 +115,6 @@ export default function ModalChangeLendingAmount(props) {
         el.click();
     }
 
-    const callApiFromData = () => {
-        importAssetApi(newFormData).then(r=>{
-            console.log(r);
-            toast.success('Nhập dữ liệu thành công', {
-                position: "top-right",
-                autoClose: 1500,
-                hideProgressBar: true,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-            });
-            setRefresh(!refresh)
-
-        }).catch(err => {
-            console.log(err)
-        })
-    }
-
     return (
 
         <div>
@@ -169,18 +151,13 @@ export default function ModalChangeLendingAmount(props) {
                             valueConvert.date_apply = dayjs(values.date_apply).format('DD-MM-YYYY');
                             console.log("valueConvert.date_apply",valueConvert.date_apply);
                             console.log(fileAttachment)
-                             let formData = new FormData();
+                            let formData = new FormData();
                             formData.append('file', fileAttachment[0]);
                             formData.append('sourceOfFundId', sourceOfFundId);
                             formData.append('dateApply', valueConvert.date_apply);
                             formData.append('paidAmount', valueConvert.paid_amount);
                             formData.append('type', info.type);
-    //
-    //                         // formData.append('id', sourceOfFundId)
-    //                         // formData.append('date',document.getElementsByClassName('new-date-apply')[0].getElementsByTagName('input')[0].value)
-    //                         setNewFormData(formData);
-    //                         console.log('newFormData');
-    //                         console.log(newFormData);
+
                             if (isUpdate) {
                                 updateChangeLendingAmountApiFile(valueConvert).then(r => {
                                     toast.success('Cập nhật thành công', {
@@ -196,7 +173,7 @@ export default function ModalChangeLendingAmount(props) {
                                         handleCloseModal();
                                         setRefresh(!refresh)
                                     }, 500);
-                                    callApiFromData();
+                                    //callApiFromData();
 
                                 }).catch(e => {
                                     console.log(e)
