@@ -48,6 +48,7 @@ import BorderColorIcon from "@mui/icons-material/BorderColor";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import {Checkbox} from "antd";
 import LinkIcon from "@mui/icons-material/Link";
+import ModalConfirm from "../../components/ModalConfirm";
 
 export default function ManageSofChargingEst() {
     const currentUser = useSelector(state => state.currentUser)
@@ -64,6 +65,9 @@ export default function ManageSofChargingEst() {
     const [listUpdateEst, setListUpdateEst] = useState([])
     const [cc, setCc] = useState([])
     const [bcc, setBcc] = useState([])
+    const [listId, setListId] = useState([])
+    const [openModalConfirm, setOpenModalConfirm] = useState(false)
+
     const [total, setTotal] = useState({
         charging_amount: 0,
         principal: 0,
@@ -92,6 +96,10 @@ export default function ManageSofChargingEst() {
         }
         return newArr;
     }
+    const handleCloseModalConfirm = () => {
+        setOpenModalConfirm(false)
+    }
+
     const handleCloseModalEdit = () => {
         setOpenModalEdit(false)
     }
@@ -267,7 +275,7 @@ export default function ManageSofChargingEst() {
             // 'company_name': nameSearch === '' ? null : nameSearch,
             // 'contact_detail': contactSearch === 0 ? null : contactSearch,
             // 'tax_number': taxSearch === 0 ? null : taxSearch,
-            'capital_company_id': companySearch === 0 ? null : companySearch,
+            'company_id': companySearch === 0 ? null : companySearch,
         }).then(r => {
             setLoadingEmail(false)
             toast.success('Gửi báo cáo thành công, vui lòng kiểm tra email.', {
@@ -315,7 +323,7 @@ export default function ManageSofChargingEst() {
             // 'company_name': nameSearch === '' ? null : nameSearch,
             // 'contact_detail': contactSearch === 0 ? null : contactSearch,
             // 'tax_number': taxSearch === 0 ? null : taxSearch,
-            'capital_company_id': companySearch === 0 ? null : companySearch,
+            'company_id': companySearch === 0 ? null : companySearch,
         }, {
             headers: {'Authorization': `Bearer ${currentUser.token}`},
             responseType: 'blob'
@@ -361,6 +369,7 @@ export default function ManageSofChargingEst() {
             }
         }
         console.log("listId",listId)
+        setListId(listId);
         for( let i = 0; i < group.length; i++){
             let check = true;
             for(let j = 0; j < group[i].length; j++){
@@ -384,8 +393,22 @@ export default function ManageSofChargingEst() {
 
         setListResult(listResultCopy)
 
-        getInterestTableApi({list_id:listId}).then(response => {
-          setRefresh(!refresh)
+
+    }
+    const submitUpdateEst = () => {
+        updateEstApi({list_id:listId}).then(response => {
+            toast.success('Cập nhật thành công', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+          setRefresh(!refresh);
+          setListUpdateEst([]);
+          setListId([]);
+          handleCloseModalConfirm();
         })
     }
     const checkExist = (arr,ob) => {
@@ -409,9 +432,7 @@ export default function ManageSofChargingEst() {
         setLoadingEmail(true)
         return apiManagerChargingEst.sendEmailChargingEst(data);
     }
-    const exportApi = (data) => {
-        return apiManagerChargingEst.exportChargingEst(data);
-    }
+
     const getListCompanyApi = (data) => {
         return apiManagerCompany.getListCompany(data);
     }
@@ -422,7 +443,7 @@ export default function ManageSofChargingEst() {
         setLoading(true)
         return apiManagerChargingEst.getListChargingEst(data);
     }
-    const getInterestTableApi = (id) => {
+    const updateEstApi = (id) => {
         return apiManagerChargingEst.updateStatusPayable(id);
     }
     const updateChargingEstApi = (id, data) => {
@@ -449,6 +470,9 @@ export default function ManageSofChargingEst() {
             {/*    <ClipLoader*/}
             {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
             {/*</div>*/}
+            <ModalConfirm open={openModalConfirm}
+                          handleCloseModal={handleCloseModalConfirm}
+                          submit={submitUpdateEst}></ModalConfirm>
             <Dialog open={openModalEdit} onClose={handleCloseModalEdit}>
                 <DialogTitle>
                     <div className={'vmp-tittle'}>
@@ -715,7 +739,6 @@ export default function ManageSofChargingEst() {
                                             console.log(values)
                                             setTimeSearch({...timeSearch, start: values})
                                         }}
-
                                         renderInput={(params) => <TextField size={"small"}  {...params} />}
                                     />
                                 </LocalizationProvider>
@@ -744,126 +767,128 @@ export default function ManageSofChargingEst() {
                 <Divider light/>
                 <div className={'main-content-body-result'} style={{position: "relative"}}>
                     <Tooltip title="Danh sách đã chọn">
-                        <Button className={`${listUpdateEst.length>0 ?'':'hidden'}`} style={{float:"right",marginRight:"10px"}} onClick={()=>{}} variant={"outlined"}  color={"primary"}>Cập nhật trạng thái</Button>
+                        <Button className={`${listUpdateEst.length>0 ?'':'hidden'}`} style={{float:"right",margin:"10px"}} onClick={()=>{setOpenModalConfirm(true)}} variant={"outlined"}  color={"primary"}>Cập nhật trạng thái</Button>
                     </Tooltip>
-                    <TableContainer style={{height: '100%', width: '100%', overflow: "auto"}}>
-                        {/*<div style={{height: '100%', width: '100%'}}>*/}
-                        <Table stickyHeader className={"table-custom"}>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell align="center">Ngày trả</TableCell>
-                                    <TableCell align="center">Công ty vay</TableCell>
-                                    <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
-                                    <TableCell align="center">Mã khoản vay</TableCell>
-                                    <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
-                                    <TableCell align="center">Tiền gốc tham chiếu</TableCell>
-                                    <TableCell align="center">Lãi suất(%)</TableCell>
-                                    <TableCell align="center">Kiểu trả</TableCell>
-                                    <TableCell align="center">Ngày bắt đầu</TableCell>
-                                    <TableCell align="center">Ngày kết thúc</TableCell>
-                                    <TableCell align="center">Số ngày tính lãi </TableCell>
-                                    <TableCell align="center">Trạng thái</TableCell>
-                                    <TableCell align="center">Thao tác</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody style={{overflowY: "auto"}}>
-                                <div className={`message-table-empty ${loading?'':'hidden'}`} >
-                                    <CircularProgress size={30}></CircularProgress>
-                                </div>
-                                <div
-                                    className={`message-table-empty ${listResult.rows.length === 0 && !loading ? '' : 'hidden'}`}>Không
-                                    có dữ liệu
-                                </div>
-                                {listResult.rows.map((item,i) => (
-                                    <>
-                                        <TableRow>
+                    <div style={{height:'100%'}}>
+                        <TableContainer style={{height: '100%', width: '100%', overflow: "auto"}}>
+                            {/*<div style={{height: '100%', width: '100%'}}>*/}
+                            <Table stickyHeader className={"table-custom"}>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell align="center">Ngày trả</TableCell>
+                                        <TableCell align="center">Công ty vay</TableCell>
+                                        <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
+                                        <TableCell align="center">Mã khoản vay</TableCell>
+                                        <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
+                                        <TableCell align="center">Tiền gốc tham chiếu</TableCell>
+                                        <TableCell align="center">Lãi suất(%)</TableCell>
+                                        <TableCell align="center">Kiểu trả</TableCell>
+                                        <TableCell align="center">Ngày bắt đầu</TableCell>
+                                        <TableCell align="center">Ngày kết thúc</TableCell>
+                                        <TableCell align="center">Số ngày tính lãi </TableCell>
+                                        <TableCell align="center">Trạng thái</TableCell>
+                                        <TableCell align="center">Thao tác</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody style={{overflowY: "auto"}}>
+                                    <div className={`message-table-empty ${loading?'':'hidden'}`} >
+                                        <CircularProgress size={30}></CircularProgress>
+                                    </div>
+                                    <div
+                                        className={`message-table-empty ${listResult.rows.length === 0 && !loading ? '' : 'hidden'}`}>Không
+                                        có dữ liệu
+                                    </div>
+                                    {listResult.rows.map((item,i) => (
+                                        <>
+                                            <TableRow>
+                                                <TableCell rowSpan={item.sofConvert.length + 1}>{item.chargingDate}</TableCell>
+                                                <TableCell rowSpan={item.sofConvert.length + 1}>
+                                                    <div>{item.companyName}</div>
+                                                </TableCell>
+                                                <TableCell rowSpan={item.sofConvert.length + 1}>
+                                                    <div className={'error-message'}>
+                                                        {item.total}
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                            {
+                                                item.sofConvert.map((detail,j) => (
+                                                    <TableRow>
+                                                        <TableCell>
+                                                            <div>{detail.sof_code}</div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div className={'error-message number'}>{currencyFormatter(detail.amount_paid_in_period)}</div>
+                                                            {/*<div className={'error/-message number'}>{detail.amount_paid_in_period}</div>*/}
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div className={"number"}>{currencyFormatter(detail.principal_amount)}</div>
+                                                        </TableCell>
 
-                                            <TableCell rowSpan={item.sofConvert.length + 1}>{item.chargingDate}</TableCell>
-                                            <TableCell rowSpan={item.sofConvert.length + 1}>
-                                                <div>{item.companyName}</div>
-                                            </TableCell>
-                                            <TableCell rowSpan={item.sofConvert.length + 1}>
-                                                <div className={'error-message'}>
-                                                    {item.total}
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                        {
-                                            item.sofConvert.map((detail,j) => (
-                                                <TableRow>
-                                                    <TableCell>
-                                                        <div>{detail.sof_code}</div>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div className={'error-message number'}>{currencyFormatter(detail.amount_paid_in_period)}</div>
-                                                        {/*<div className={'error/-message number'}>{detail.amount_paid_in_period}</div>*/}
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div className={"number"}>{currencyFormatter(detail.principal_amount)}</div>
-                                                    </TableCell>
+                                                        <TableCell>
+                                                            <div>{detail.interest_rate}</div>
+                                                        </TableCell>
+                                                        <TableCell>{detail.type_date}</TableCell>
 
-                                                    <TableCell>
-                                                        <div>{detail.interest_rate}</div>
-                                                    </TableCell>
-                                                    <TableCell>{detail.type_date}</TableCell>
+                                                        <TableCell>
+                                                            <div>{detail.start_date}</div>
+                                                        </TableCell>
 
-                                                    <TableCell>
-                                                        <div>{detail.start_date}</div>
-                                                    </TableCell>
+                                                        <TableCell>
+                                                            <div>{detail.end_date}</div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div>{detail.type_date==="Trả gốc"?"-":detail.total_day}</div>
+                                                        </TableCell>
+                                                        <TableCell >
+                                                            <div className='icon-action'>
+                                                                {
+                                                                    // detail.type_date=="Trả lãi"?<Checkbox
+                                                                    //     checked={detail.status==="paid"}
+                                                                    //     onChange={()=>handleUpdateStatusPayable(detail.id)}
+                                                                    //     inputProps={{ 'aria-label': 'controlled' }}
+                                                                    // />:'-'
 
-                                                    <TableCell>
-                                                        <div>{detail.end_date}</div>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div>{detail.type_date==="Trả gốc"?"-":detail.total_day}</div>
-                                                    </TableCell>
-                                                    <TableCell >
-                                                        <div className='icon-action'>
-                                                            {
-                                                                // detail.type_date=="Trả lãi"?<Checkbox
-                                                                //     checked={detail.status==="paid"}
-                                                                //     onChange={()=>handleUpdateStatusPayable(detail.id)}
-                                                                //     inputProps={{ 'aria-label': 'controlled' }}
-                                                                // />:'-'
+                                                                    <Checkbox
+                                                                        checked={detail.status==="paid"}
+                                                                        onChange={(e)=>handleUpdateStatusPayable(e,i,j,detail.id,detail.id_detail)}
+                                                                        inputProps={{ 'aria-label': 'controlled' }}
+                                                                    />
+                                                                }
 
-                                                                <Checkbox
-                                                                    checked={detail.status==="paid"}
-                                                                    onChange={(e)=>handleUpdateStatusPayable(e,i,j,detail.id,detail.id_detail)}
-                                                                    inputProps={{ 'aria-label': 'controlled' }}
-                                                                />
-                                                            }
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div className='icon-action'>
+                                                                {detail.attachment_id != null &&
+                                                                    <Tooltip title="File thay đổi" onClick={() => downloadFile(detail.attachment_id)}>
+                                                                        <LinkIcon style={{color: "rgb(107, 114, 128)"}}></ LinkIcon>
+                                                                    </Tooltip>
+                                                                }
+                                                                {
+                                                                    detail.type_date=="Trả lãi"?<Tooltip title="Xem chi tiết">
+                                                                        <RemoveRedEyeIcon onClick={() => {
+                                                                            payablePeriodDetail(detail.source_of_fund_id, detail.start_date, detail.end_date)
+                                                                        }}
+                                                                                          style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon>
+                                                                    </Tooltip>:''
+                                                                }
+                                                            </div>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))
+                                            }
+                                            <TableRow>
 
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div className='icon-action'>
-                                                            {detail.attachment_id != null &&
-                                                                <Tooltip title="File thay đổi" onClick={() => downloadFile(detail.attachment_id)}>
-                                                                    <LinkIcon style={{color: "rgb(107, 114, 128)"}}></ LinkIcon>
-                                                                </Tooltip>
-                                                            }
-                                                            {
-                                                                detail.type_date=="Trả lãi"?<Tooltip title="Xem chi tiết">
-                                                                    <RemoveRedEyeIcon onClick={() => {
-                                                                        payablePeriodDetail(detail.source_of_fund_id, detail.start_date, detail.end_date)
-                                                                    }}
-                                                                                      style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon>
-                                                                </Tooltip>:''
-                                                            }
-                                                        </div>
-                                                    </TableCell>
-                                                </TableRow>
-                                            ))
-                                        }
-                                        <TableRow>
+                                            </TableRow>
 
-                                        </TableRow>
+                                        </>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
 
-                                    </>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    </div>
 
                 </div>
             </div>
