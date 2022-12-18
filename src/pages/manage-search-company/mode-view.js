@@ -1,62 +1,43 @@
 import React, {useEffect, useState} from "react";
 import Collapse from "@mui/material/Collapse";
 import 'react-dropdown-tree-select/dist/styles.css'
-import PaidIcon from '@mui/icons-material/Paid';
-import BorderColorIcon from '@mui/icons-material/BorderColor';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 // import 'antd/dist/antd.css';
 import {TreeSelect} from 'antd';
 
 import {
     Autocomplete,
-    Button,
     Divider,
     FormControl,
-    IconButton, InputAdornment,
+    IconButton,
+    InputAdornment,
     MenuItem,
     Select,
     TextField,
-    Tooltip,
     Typography
 } from "@mui/material";
 import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
-import AddIcon from '@mui/icons-material/Add';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
-import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
 import {toast, ToastContainer} from "react-toastify";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, viVN} from "@mui/x-data-grid";
+import {DataGrid, GridColDef, viVN} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
-import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import {
     capitalizeFirstLetter,
-    changeVisibilityTableAll,
     checkColumnVisibility,
     convertToAutoComplete,
     currencyFormatter,
-    pending, VNnum2words
+    VNnum2words
 } from "../../constants/utils";
 import apiManagerSOF from "../../api/manage-sof";
 import apiManagerCompany from "../../api/manage-company";
 import apiManagerCategory from "../../api/manage-category";
 import apiManagerCampaign from "../../api/manage-campaign";
-import {useDispatch, useSelector} from "react-redux";
-import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
-import CancelPresentationOutlinedIcon from '@mui/icons-material/CancelPresentationOutlined';
+import {useSelector} from "react-redux";
 import apiManagerSupplier from "../../api/manage-supplier";
-import apiManagerAssets from "../../api/manage-assets";
-import HistoryIcon from '@mui/icons-material/History';
 import {NumericFormat} from "react-number-format";
 import apiManagerMember from "../../api/manage-member";
 import ModalConfirm from "../../components/ModalConfirm";
-import {updateSelectCompany} from "../../store/user/userSlice";
 
-export default function ManageSearchCompany() {
-    const dispatch = useDispatch();
+export default function ModeView() {
     const currentUser = useSelector(state => state.currentUser)
     const [isDelList, setIsDelList] = useState(false)
     const [listDelete, setListDelete] = useState([]);
@@ -76,18 +57,18 @@ export default function ManageSearchCompany() {
     const [refresh, setRefresh] = useState(false)
     const [openModalConfirm, setOpenModalConfirm] = useState(false)
     const [campaignSearch, setCampaignSearch] = useState()
-    const [companySearch, setCompanySearch] = useState(0)
-    const [companySupplierSearch, setCompanySupplierSearch] = useState(0)
+    const [companySearch, setCompanySearch] = useState()
+    const [companySupplierSearch, setCompanySupplierSearch] = useState()
     const [remainAmount, setRemainAmount] = useState(0)
     const [statusSearch, setStatusSearch] = useState(3)
     const [openSearch, setOpenSearch] = useState(true)
-    const [listResult, setListResult] = React.useState({
-        page: 0,
-        pageSize: 10,
-        rows: [],
-        total: 0
-    });
+    const [listResult,setListResult] = useState([])
+    const [listConvert,setListConvert] = useState([])
+
+
     window.addEventListener("storage", message_receive);
+
+
     function message_receive(e) {
         if (e.key == 'broadcast') {
             var message = JSON.parse(e.newValue); // chỉ check với key là 'broadcast'
@@ -97,12 +78,60 @@ export default function ManageSearchCompany() {
 
         // Ở đây bạn có thể xử lý message đã nhận.
         // bạn có thể gửi object dạng { 'title': 'tiêu đề', 'message': 'nội dung' }
-        alert(message);
+        console.log("message",message);
+        setListResult(message)
         // vân vân.
         // mây mây.
     };
-    const [infoDel, setInfoDel] = useState({})
+    useEffect(() => {
+        setListResult(currentUser.listSelectCompany);
 
+    },[])
+    useEffect(() => {
+        let objectCampaignSearch = listCampaign.filter(e=>e.id === campaignSearch)
+        let nameCampaign=undefined;
+        if(objectCampaignSearch.length>0){
+            nameCampaign = objectCampaignSearch[0].campaign_name
+        }
+        let listSearch = listResult.filter(e=>checkSearch(e,nameCampaign,companySearch,companySupplierSearch,statusSearch,remainAmount,represent))
+        for(let i = 0; i < listSearch.length; i++) {
+            listResult[i].index = i+1;
+        }
+        setListConvert(listSearch);
+    },[listResult,campaignSearch, companySearch, companySupplierSearch, statusSearch, remainAmount, represent])
+    function checkSearch(e,campaignSearch,companySearch,companySupplierSearch,statusSearch,remainAmount,represent) {
+        let status= undefined;
+        console.log("statusSearch",statusSearch)
+        if(statusSearch==true){
+            status="Chưa vay"
+        }
+        else if(statusSearch==false){
+            status="Đang vay"
+        }
+
+        if(campaignSearch&&e.campaign_name!=campaignSearch){
+            return false;
+        }
+        if(companySearch&&e.company_name!=companySearch){
+            return false;
+        }
+        if(companySupplierSearch&&e.supplier_name!=companySupplierSearch){
+            return false;
+        }
+        console.log("status",status)
+        console.log("e.status",e.status)
+        if(status&&e.status!=status){
+            return false;
+        }
+        if(represent.memberName!=''&&e.member_name!=represent.memberName){
+            return false;
+        }
+
+        if(parseFloat(e.remain_amount)<remainAmount){
+            return false;
+        }
+        return true;
+    }
     const columns: GridColDef[] = [
         {
             sortable: false,
@@ -252,78 +281,17 @@ export default function ManageSearchCompany() {
         setOpenModalConfirm(false)
     }
 
-    const redirectAddPage = () => {
-        navigate('/sof/create')
-    }
-    const convertArr = (arr) => {
-        for (let i = 0; i < arr.length; i++) {
-            arr[i].index = (listResult.page) * listResult.pageSize + i + 1;
-            arr[i].id = (listResult.page) * listResult.pageSize + i + 1;
-
-            arr[i].status = arr[i].status == 1 ? "Đang vay" : "Chưa vay"
-            if (arr[i].remain_amount == 0 || arr[i].remain_amount == null) {
-                arr[i].remain_amount = arr[i].capital_limit
-            }
-            // arr[i].capital_limit = currencyFormatter(arr[i].lending_amount)
-            // arr[i].remain_lending_amount = currencyFormatter(arr[i].remain_lending_amount)
-
-        }
-        return arr;
-    }
 
     const handleChangeCampaign = (e) => {
+        console.log("e",e)
         setCampaignSearch(e)
     };
     const handleChangeStatus = (e) => {
         setStatusSearch(e.target.value)
     };
     useEffect(() => {
-        getListCompanySOFApi({
-            'page_size': listResult.pageSize,
-            'page_index': listResult.page,
-            'paging': true,
-            'company_id': companySearch === 0 ? null : companySearch,
-            // 'supplier_id': companySupplierSearch === 0 ? null : companySupplierSearch,
-            // 'capital_limit': companySupplierSearch === 0 ? null : companySupplierSearch,
-            // 'member_id': campaignSearch ? campaignSearch : null,
-            'remain_amount': remainAmount,
-            'supplier_id': companySupplierSearch ? companySupplierSearch : null,
-            'campaign_id': campaignSearch ? campaignSearch : null,
-            'status': statusSearch === 3 ? null : statusSearch,
-            'member_id': represent.memberId === '' ? null : represent.memberId
 
-        }).then(r => {
-            setLoading(false)
-            console.log("r", r)
-            let arr;
-            if (r.data.custom_company_dtos)
-                arr = convertArr(r.data.custom_company_dtos)
-            else arr = [];
-            console.log("arr tutt", arr)
-            setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
-        }).catch(e => {
-            setLoading(false)
-            console.log(e)
-        })
-        getCapitalLimitApi().then(r => {
-            if (r.data.length > 0) {
-                setCapitalLimit(r.data[0].amount)
-            }
-        })
-        getListMemberApi({paging: false}).then(r => {
-            // console.log("r.data.companies",r.data);
-
-            if (r.data.member_entities) {
-                setListMember(convertToAutoComplete(r.data.member_entities, 'name'))
-
-            } else {
-                setListMember([])
-            }
-
-        }).catch(e => {
-
-        })
-    }, [listResult.page, listResult.pageSize, campaignSearch, companySearch, companySupplierSearch, statusSearch, refresh, currentUser.token, remainAmount, represent])
+    }, [ campaignSearch, companySearch, companySupplierSearch, statusSearch, refresh, currentUser.token, remainAmount, represent])
     useEffect(() => {
         getListCategoryApi({paging: false}).then(r => {
             if (r.data.categories) {
@@ -373,6 +341,24 @@ export default function ManageSearchCompany() {
         }).catch(e => {
             console.log(e)
         })
+        getCapitalLimitApi().then(r => {
+            if (r.data.length > 0) {
+                setCapitalLimit(r.data[0].amount)
+            }
+        })
+        getListMemberApi({paging: false}).then(r => {
+            // console.log("r.data.companies",r.data);
+
+            if (r.data.member_entities) {
+                setListMember(convertToAutoComplete(r.data.member_entities, 'name'))
+
+            } else {
+                setListMember([])
+            }
+
+        }).catch(e => {
+
+        })
 
     }, [currentUser.token])
 
@@ -381,24 +367,7 @@ export default function ManageSearchCompany() {
     //     rowLength: 20,
     //     maxColumns: 5,
     // });
-    useEffect(()=>{
-        let listSelect = [];
-        console.log("listDelete",listDelete)
-        console.log("listResult.rows",listResult.rows)
-        for (let i = 0; i < listDelete.length; i++){
-            console.log("i",i)
-            for (let j = 0; j < listResult.rows.length; j++){
-                console.log("j",j)
-                if(listDelete[i] === listResult.rows[j].id){
-                    listSelect.push(listResult.rows[j]);
-                }
-            }
-        }
-        dispatch(updateSelectCompany(listSelect))
-        console.log("listSelect",listSelect);
-        // localStorage.setItem("broadcast",listSelect)
-        localStorage.setItem("broadcast",JSON.stringify(listSelect))
-    },[listDelete])
+
 
     const submitUpdateCapitalLimit = () => {
         updateCapitalLimitApi(capitalLimit).then(r => {
@@ -419,21 +388,7 @@ export default function ManageSearchCompany() {
         })
 
     }
-    function CustomToolbar() {
-        return (
-            <GridToolbarContainer>
-                <GridToolbarColumnsButton/>
-                {/*<GridToolbarDensitySelector/>*/}
-                {listDelete.length > 0 ?
-                    <div style={{right:"5px",position:'absolute'}}>
-                        <Tooltip title="Danh sách đã chọn">
-                            <Button style={{marginLeft:"10px"}} variant={"outlined"}  onClick={()=>{ window.open('/search-company/view', '_blank').focus();}}  color={"primary"}>Danh sách đã chọn</Button>
-                        </Tooltip>
-                    </div>
-                    : ''}
-            </GridToolbarContainer>
-        );
-    }
+
     const deleteListApi = (data) => {
         return apiManagerSOF.deleteListSOF(data);
     }
@@ -506,7 +461,7 @@ export default function ManageSearchCompany() {
                               submit={submitUpdateCapitalLimit}></ModalConfirm>
                 <div className={'row'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
-                        Tìm kiếm công ty
+                        Danh sách làm việc
                     </Typography>
                 </div>
 
@@ -542,7 +497,7 @@ export default function ManageSearchCompany() {
                                 onChange={(event, newValue) => {
                                     console.log("new_value", newValue)
                                     if (newValue)
-                                        setCompanySearch(newValue.id)
+                                        setCompanySearch(newValue.label)
                                     else setCompanySearch(null)
                                 }}
                             />
@@ -590,14 +545,14 @@ export default function ManageSearchCompany() {
                                 onChange={(event, newValue) => {
                                     console.log("new_value", newValue)
                                     if (newValue)
-                                        setCompanySupplierSearch(newValue.id)
+                                        setCompanySupplierSearch(newValue.label)
                                     else setCompanySupplierSearch(null)
                                 }}
                             />
                         </div>
                         <div style={{width: '20%', marginLeft: '20px'}}>
                             <div className={'label-input'}>Mục đích vay</div>
-                            <TreeSelect
+                                <TreeSelect
                                 style={{width: '100%'}}
                                 showSearch
                                 value={campaignSearch}
@@ -607,6 +562,7 @@ export default function ManageSearchCompany() {
                                 allowClear
                                 treeDefaultExpandAll
                                 onChange={handleChangeCampaign}
+
                                 filterTreeNode={(search, item) => {
                                     return item.campaign_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
                                 }}
@@ -675,120 +631,29 @@ export default function ManageSearchCompany() {
 
                 </Collapse>
                 <Divider light/>
-                <div className={'main-content-body-tittle'}>
-                    <h4>Số tiền vay tối đa</h4>
-                    {openUpdate ? <IconButton color="primary" style={{cursor: 'pointer'}}
-                                              onClick={() => setOpenUpdate(false)}>
-                            <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>
-                        </IconButton> :
-                        <IconButton style={{cursor: 'pointer'}} color="primary"
-                                    onClick={() => setOpenUpdate(true)}>
-                            <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
-                        </IconButton>
-                    }
-
-                </div>
-                <Divider light/>
-
-                <Collapse in={openUpdate} timeout="auto" unmountOnExit>
-                    <div className={'main-content-body-search'} style={{display: 'block', height: '110px',paddingTop:'20px'}}>
-                        <div style={{display: 'flex'}}>
-                            <div style={{width:'25%'}}>
-                                <div className={'label-input'}>Cập nhật số tiền vay tối đa</div>
-                                <div>
-                                    <NumericFormat
-                                        id='max_capital_value'
-                                        name='max_capital_value'
-                                        className={'formik-input text-right'}
-                                        size={"small"}
-                                        // type={"number"}
-                                        // variant="standard"
-                                        value={capitalLimit}
-                                        // onChange={handleChange}
-                                        customInput={TextField}
-                                        InputProps={{
-                                            endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
-
-                                        }}
-                                        thousandSeparator={"."}
-                                        decimalSeparator={","}
-                                        onValueChange={(values) => {
-                                            const {formattedValue, value, floatValue} = values;
-                                            // do something with floatValue
-                                            const re = /^[0-9\b]+$/;
-                                            if (re.test(floatValue) || floatValue === undefined) {
-                                                // setFieldValue('max_capital_value', floatValue)
-                                                // setRemainAmount(floatValue)
-                                                setCapitalLimit(floatValue)
-                                            }
-                                            // setFieldValue('max_capital_value', formattedValue)
-
-                                        }}
-                                    />
-
-                                </div>
-                            </div>
-                            <div style={{marginTop: '17px', marginLeft: "30px"}}>
-                                <Button
-                                    disabled={capitalLimit == 0 || capitalLimit == '' || capitalLimit == null ? true : false}
-                                    onClick={() => setOpenModalConfirm(true)} style={{color: "white !important"}}
-                                    variant={"outlined"}  color={"primary"}>Cập nhật</Button>
-                            </div>
-                        </div>
-                        <div style={{width:'25%'}}>
-                            <Typography className={'uppercase'} variant="caption" display="block"
-                                        gutterBottom>
-                                {capitalLimit ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(capitalLimit))} đồng` : ''}
-                            </Typography>
-                        </div>
-
-                    </div>
-
-                </Collapse>
-                <Divider light/>
                 <div className={'main-content-body-result sticky-body'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
-                            getRowHeight={() => 'auto'}
+                            // getRowHeight={() => 'auto'}
                             localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
                             labelRowsPerPage={"Số kết quả"}
                             density="standard"
+                            rows={listConvert}
                             columns={columns}
-                            pagination
-                            rowCount={listResult.total}
-                            {...listResult}
-                            paginationMode="server"
-                            // onPageChange={(page) => setCurrentPage(page)}
-                            // onPageSizeChange={(pageSize) =>
-                            //    setCurrentSize(pageSize)
-                            // }
-                            onColumnVisibilityModelChange={(event) => {
-                                changeVisibilityTableAll('sof', event)
-                            }}
-                            onPageChange={(page) => setListResult((prev) => ({...prev, page}))}
-                            onPageSizeChange={(pageSize) =>
-                                setListResult((prev) => ({...prev, pageSize}))
-                            }
-                            loading={loading}
-                            rowsPerPageOptions={[5, 10, 25]}
+                            pageSize={10}
+                            rowsPerPageOptions={[5]}
+                            // loading={loading}
                             disableSelectionOnClick
-                            checkboxSelection
-                            onSelectionModelChange={(newSelectionModel) => {
-                                setListDelete(newSelectionModel)
-                            }}
                             sx={{
-                                overflowX: 'scroll',
                                 // boxShadow: 2,
+                                overflowX: 'scroll',
                                 border: 1,
                                 borderColor: 'rgb(255, 255, 255)',
                                 '& .MuiDataGrid-iconSeparator': {
                                     display: 'none',
-                                },
+                                }
+                            }}
 
-                            }}
-                            components={{
-                                Toolbar: CustomToolbar,
-                            }}
                         />
                     </div>
 
