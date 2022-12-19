@@ -117,14 +117,14 @@ export default function EditAssets(props) {
         }, ...listLink.slice(index + 1)
         ])
     }
-    const deleteValueLink = (index,item) => {
+    const deleteValueLink = (index, item) => {
         setListLink([...listLink.slice(0, index), ...listLink.slice(index + 1)
         ])
     }
-    const deleteValueLinkServer = (index,item) => {
+    const deleteValueLinkServer = (index, item) => {
         setListLinkServer([...listLinkServer.slice(0, index), ...listLinkServer.slice(index + 1)
         ])
-        setListDeleteLinkServer([...listDeleteLinkServer,item.id])
+        setListDeleteLinkServer([...listDeleteLinkServer, item.id])
     }
     useEffect(() => {
         if (isUpdate) {
@@ -178,10 +178,10 @@ export default function EditAssets(props) {
     useEffect(() => {
         console.log("listFile", listFileLocal)
         let arrLocal = [...info.list_attachments];
-        arrLocal = arrLocal.filter(e=>e.attachment_type==='LOCAL')
+        arrLocal = arrLocal.filter(e => e.attachment_type === 'LOCAL')
         setListFileServer(arrLocal)
         let arrServer = [...info.list_attachments]
-        arrServer = arrServer.filter(e=>e.attachment_type!='LOCAL')
+        arrServer = arrServer.filter(e => e.attachment_type != 'LOCAL')
         setListLinkServer(arrServer)
     }, [info])
 
@@ -363,7 +363,7 @@ export default function EditAssets(props) {
                                     });
 
                                     setTimeout(() => {
-                                        console.log("r.data.id",r.data.id)
+                                        console.log("r.data.id", r.data.id)
                                         navigate(`/assets/detail?id=${r.data.id}`)
                                     }, 1050);
 
@@ -403,8 +403,7 @@ export default function EditAssets(props) {
                                             />
                                         </Grid>
                                         <Grid item xs={6} md={6}>
-                                            <div className={'label-input'}>Nhóm tài sản <span
-                                                className={'error-message'}>*</span></div>
+                                            <div className={'label-input'}>Nhóm tài sản</div>
                                             <TreeSelect
                                                 style={{width: '100%'}}
                                                 showSearch
@@ -421,11 +420,14 @@ export default function EditAssets(props) {
                                                 filterTreeNode={(search, item) => {
                                                     return item.category_name.toLowerCase().indexOf(search.toLowerCase()) >= 0;
                                                 }}
-                                                fieldNames={{label: 'group_name', value: 'id', children: 'child_asset_groups'}}
+                                                fieldNames={{
+                                                    label: 'group_name',
+                                                    value: 'id',
+                                                    children: 'child_asset_groups'
+                                                }}
                                             >
                                             </TreeSelect>
-                                            <FormHelperText style={{marginLeft: '15px'}}
-                                                            className={'error-message'}>{assetGroupSearch ? '' : 'Không được để trống'}</FormHelperText>                                        </Grid>
+                                        </Grid>
 
 
                                         <Grid item xs={6} md={6}>
@@ -616,7 +618,8 @@ export default function EditAssets(props) {
                                                 }
                                                 {
                                                     listLink.map((e, index) => (
-                                                        <TextFieldLink disable={false} changeValue={changeValueLink} index={index}
+                                                        <TextFieldLink disable={false} changeValue={changeValueLink}
+                                                                       index={index}
                                                                        deleteValueLink={deleteValueLink}
                                                                        item={e}></TextFieldLink>
                                                     ))
