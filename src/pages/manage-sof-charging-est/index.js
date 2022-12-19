@@ -48,21 +48,26 @@ import BorderColorIcon from "@mui/icons-material/BorderColor";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import {Checkbox} from "antd";
 import LinkIcon from "@mui/icons-material/Link";
+import ModalConfirm from "../../components/ModalConfirm";
 
 export default function ManageSofChargingEst() {
     const currentUser = useSelector(state => state.currentUser)
     const [openSearch, setOpenSearch] = useState(true)
     const [openTotal, setOpenTotal] = useState(true)
     const [loadingEmail, setLoadingEmail] = useState(false)
+    const [loadingExport, setLoadingExport] = useState(false)
     const navigate = useNavigate();
     const [infoUpdate, setInfoUpdate] = useState({id: '', amount: 0})
     const [openModalEdit, setOpenModalEdit] = useState(false)
     const [openModalEmail, setOpenModalEmail] = useState(false)
     const [listUser, setListUser] = useState([{id: '1', 'label': '1'}])
     const [email, setEmail] = useState([])
-    const [listInterestDay, setListInterestDay] = useState([])
+    const [listUpdateEst, setListUpdateEst] = useState([])
     const [cc, setCc] = useState([])
     const [bcc, setBcc] = useState([])
+    const [listId, setListId] = useState([])
+    const [openModalConfirm, setOpenModalConfirm] = useState(false)
+
     const [total, setTotal] = useState({
         charging_amount: 0,
         principal: 0,
@@ -91,6 +96,10 @@ export default function ManageSofChargingEst() {
         }
         return newArr;
     }
+    const handleCloseModalConfirm = () => {
+        setOpenModalConfirm(false)
+    }
+
     const handleCloseModalEdit = () => {
         setOpenModalEdit(false)
     }
@@ -162,6 +171,7 @@ export default function ManageSofChargingEst() {
                         charging_type:listConvert[i].sof[j].charging_type,
                         company_name:listConvert[i].sof[j].company_name,
                         id:listConvert[i].sof[j].id,
+                        id_detail:listConvert[i].sof[j].payable_period_detail_entities[k].id,
                         status:listConvert[i].sof[j].status,
                         principal:"",
                         sof_code:listConvert[i].sof[j].sof_code,
@@ -255,7 +265,7 @@ export default function ManageSofChargingEst() {
         })
     }, [currentUser.token])
     useEffect(() => {
-        console.log(listResult)
+        // console.log(listResult)
     }, [listResult])
     const handleChangeDateRange = (event, picker) => {
         setTimeSearch({start: picker.startDate, end: picker.endDate})
@@ -272,12 +282,12 @@ export default function ManageSofChargingEst() {
             'page_size': listResult.pageSize,
             'page_index': listResult.page + 1,
             'paging': false,
-            'charging_date_from': dayjs(timeSearch.start).format('DD-MM-YYYY'),
-            'charging_date_to': dayjs(timeSearch.end).format('DD-MM-YYYY'),
+            'start_date': dayjs(timeSearch.start).format('DD-MM-YYYY'),
+            'end_date': dayjs(timeSearch.end).format('DD-MM-YYYY'),
             // 'company_name': nameSearch === '' ? null : nameSearch,
             // 'contact_detail': contactSearch === 0 ? null : contactSearch,
             // 'tax_number': taxSearch === 0 ? null : taxSearch,
-            'capital_company_id': companySearch === 0 ? null : companySearch,
+            'company_id': companySearch === 0 ? null : companySearch,
         }).then(r => {
             setLoadingEmail(false)
             toast.success('Gửi báo cáo thành công, vui lòng kiểm tra email.', {
@@ -315,30 +325,111 @@ export default function ManageSofChargingEst() {
     }
 
     const exportChargingEst = () => {
+        setLoadingExport(true)
         Axios.post(API_MAP.EXPORT_CHARGING_EST, {
             'page_size': listResult.pageSize,
             'page_index': listResult.page + 1,
             'paging': false,
-            'charging_date_from': dayjs(timeSearch.start).format('DD-MM-YYYY'),
-            'charging_date_to': dayjs(timeSearch.end).format('DD-MM-YYYY'),
+            'start_date': dayjs(timeSearch.start).format('DD-MM-YYYY'),
+            'end_date': dayjs(timeSearch.end).format('DD-MM-YYYY'),
             // 'company_name': nameSearch === '' ? null : nameSearch,
             // 'contact_detail': contactSearch === 0 ? null : contactSearch,
             // 'tax_number': taxSearch === 0 ? null : taxSearch,
-            'capital_company_id': companySearch === 0 ? null : companySearch,
+            'company_id': companySearch === 0 ? null : companySearch,
         }, {
             headers: {'Authorization': `Bearer ${currentUser.token}`},
             responseType: 'blob'
         }).then(response => {
+            setLoadingExport(false)
             let nameFile = response.headers['content-disposition'].split(`"`)[1]
             FileDownload(response.data, nameFile);
 
         }).catch(e => {
+            setLoadingExport(false)
         })
     }
-    const handleUpdateStatusPayable = (id) => {
-        getInterestTableApi(id).then(response => {
-          setRefresh(!refresh)
+    const handleUpdateStatusPayable = (e,i,j,id,idDetail) => {
+        let listUpdate = [...listUpdateEst];
+        let ob = {id:id,idDetail:idDetail,status:e.target.checked};
+        if(!checkExist(listUpdate,ob)){
+            listUpdate.push(ob);
+            console.log("exist")
+        }
+        else{
+            listUpdate = listUpdate.filter(x => x.id != ob.id && x.idDetail !=ob.idDetail)
+        }
+        let listId = [];
+        let group = listUpdate.reduce(function (r, a) {
+                r[a.id] = r[a.id] || [];
+                r[a.id].push(a);
+                return r;
+            }, Object.create(null));
+        console.log("group",group);
+        for (const property in group) {
+            let check = true;
+            for(let j = 0; j < group[property].length; j++){
+                console.log("group[property]",group[property][j])
+                console.log("group[property].length",group[property].length)
+                if(j!=group[property].length-1)
+                if(group[property][j].status !=group[property][j+1].status){
+                    check = false;
+                    break;
+                }
+            }
+            if(check){
+                listId.push(group[property][0].id);
+            }
+        }
+        console.log("listId",listId)
+        setListId(listId);
+        for( let i = 0; i < group.length; i++){
+            let check = true;
+            for(let j = 0; j < group[i].length; j++){
+                if(group[i][j].status !=group[i][j+1].status){
+                    check = false;
+                    break;
+                }
+            }
+            if(check){
+                listId.push(group[0].id);
+            }
+        }
+        console.log("list ID ",listId)
+        setListUpdateEst(listUpdate)
+        let listResultCopy = {...listResult};
+
+        if(e.target.checked){
+            listResultCopy.rows[i].sofConvert[j].status = "paid"
+        }
+        else listResultCopy.rows[i].sofConvert[j].status = "unpaid"
+
+        setListResult(listResultCopy)
+
+
+    }
+    const submitUpdateEst = () => {
+        updateEstApi({list_id:listId}).then(response => {
+            toast.success('Cập nhật thành công', {
+                position: "top-right",
+                autoClose: 1500,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+            });
+          setRefresh(!refresh);
+          setListUpdateEst([]);
+          setListId([]);
+          handleCloseModalConfirm();
         })
+    }
+    const checkExist = (arr,ob) => {
+        for (let i = 0; i < arr.length; i++){
+            if(ob.id == arr[i].id && ob.idDetail == arr[i].idDetail){
+                return true;
+            }
+        }
+        return false;
     }
     const sendEmailBtn = () => {
         setOpenModalEmail(true)
@@ -353,9 +444,7 @@ export default function ManageSofChargingEst() {
         setLoadingEmail(true)
         return apiManagerChargingEst.sendEmailChargingEst(data);
     }
-    const exportApi = (data) => {
-        return apiManagerChargingEst.exportChargingEst(data);
-    }
+
     const getListCompanyApi = (data) => {
         return apiManagerCompany.getListCompany(data);
     }
@@ -366,7 +455,7 @@ export default function ManageSofChargingEst() {
         setLoading(true)
         return apiManagerChargingEst.getListChargingEst(data);
     }
-    const getInterestTableApi = (id) => {
+    const updateEstApi = (id) => {
         return apiManagerChargingEst.updateStatusPayable(id);
     }
     const updateChargingEstApi = (id, data) => {
@@ -393,6 +482,9 @@ export default function ManageSofChargingEst() {
             {/*    <ClipLoader*/}
             {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
             {/*</div>*/}
+            <ModalConfirm open={openModalConfirm}
+                          handleCloseModal={handleCloseModalConfirm}
+                          submit={submitUpdateEst}></ModalConfirm>
             <Dialog open={openModalEdit} onClose={handleCloseModalEdit}>
                 <DialogTitle>
                     <div className={'vmp-tittle'}>
@@ -572,9 +664,14 @@ export default function ManageSofChargingEst() {
                         Tính lãi
                     </Typography>
                     <div>
-                        <Button onClick={exportChargingEst} style={{marginLeft: '10px', marginRight: '10px'}}
-                                variant="text"
-                                startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
+
+                        {
+                            loadingExport ? <CircularProgress size={30}></CircularProgress> :
+                                <Button onClick={exportChargingEst} style={{marginLeft: '10px', marginRight: '10px'}}
+                                        variant="text"
+                                        startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
+                        }
+
                         <Button onClick={sendEmailBtn} variant="text" startIcon={<ForwardToInboxIcon/>}>Gửi thống kê về
                             email</Button>
                     </div>
@@ -654,7 +751,6 @@ export default function ManageSofChargingEst() {
                                             console.log(values)
                                             setTimeSearch({...timeSearch, start: values})
                                         }}
-
                                         renderInput={(params) => <TextField size={"small"}  {...params} />}
                                     />
                                 </LocalizationProvider>
@@ -749,35 +845,39 @@ export default function ManageSofChargingEst() {
                                                         <div className={"number"}>{currencyFormatter(detail.principal_amount)}</div>
                                                     </TableCell>
 
+                                                        <TableCell>
+                                                            <div>{detail.interest_rate}</div>
+                                                        </TableCell>
+                                                        <TableCell>{detail.type_date}</TableCell>
                                                     <TableCell>
                                                         <div>{detail.interest_rate}</div>
                                                     </TableCell>
 
-                                                    <TableCell>
-                                                        <div>{detail.start_date}</div>
-                                                    </TableCell>
+                                                        <TableCell>
+                                                            <div>{detail.start_date}</div>
+                                                        </TableCell>
 
-                                                    <TableCell>
-                                                        <div>{detail.end_date}</div>
-                                                    </TableCell>
-                                                    <TableCell>
-                                                        <div>{detail.type_date==="Trả gốc"?"-":detail.total_day}</div>
-                                                    </TableCell>
-                                                    <TableCell >
-                                                        <div className='icon-action'>
-                                                            {
-                                                                // detail.type_date=="Trả lãi"?<Checkbox
-                                                                //     checked={detail.status==="paid"}
-                                                                //     onChange={()=>handleUpdateStatusPayable(detail.id)}
-                                                                //     inputProps={{ 'aria-label': 'controlled' }}
-                                                                // />:'-'
+                                                        <TableCell>
+                                                            <div>{detail.end_date}</div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <div>{detail.type_date==="Trả gốc"?"-":detail.total_day}</div>
+                                                        </TableCell>
+                                                        <TableCell >
+                                                            <div className='icon-action'>
+                                                                {
+                                                                    // detail.type_date=="Trả lãi"?<Checkbox
+                                                                    //     checked={detail.status==="paid"}
+                                                                    //     onChange={()=>handleUpdateStatusPayable(detail.id)}
+                                                                    //     inputProps={{ 'aria-label': 'controlled' }}
+                                                                    // />:'-'
 
-                                                                <Checkbox
-                                                                    checked={detail.status==="paid"}
-                                                                    onChange={()=>handleUpdateStatusPayable(detail.id)}
-                                                                    inputProps={{ 'aria-label': 'controlled' }}
-                                                                />
-                                                            }
+                                                                    <Checkbox
+                                                                        checked={detail.status==="paid"}
+                                                                        onChange={(e)=>handleUpdateStatusPayable(e,i,j,detail.id,detail.id_detail)}
+                                                                        inputProps={{ 'aria-label': 'controlled' }}
+                                                                    />
+                                                                }
 
                                                         </div>
                                                     </TableCell>
@@ -803,13 +903,15 @@ export default function ManageSofChargingEst() {
                                         }
                                         <TableRow>
 
-                                        </TableRow>
+                                            </TableRow>
 
-                                    </>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                                        </>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+
+                    </div>
 
                 </div>
             </div>

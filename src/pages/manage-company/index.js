@@ -901,7 +901,7 @@ export default function ManageCompany() {
 
                         </div>
                         <div style={{marginTop:"17px",marginLeft:"10px"}}>
-                            <Button onClick={submitUpdateCapitalLimit} style={{color:"white !important"}} variant={'contained'} >Cập nhật</Button>
+                            <Button onClick={submitUpdateCapitalLimit}  variant={"outlined"}  color={"primary"}> Cập nhật</Button>
                         </div>
                     </div>
 

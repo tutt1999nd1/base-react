@@ -37,6 +37,7 @@ import PayablePeriodDetail from "../pages/manage-sof-charging-est/payable-period
 import CompanyHistory from "../pages/manage-company/company-history";
 import CompanyMember from "../pages/manage-company/company-member";
 import ManageSearchCompany from "../pages/manage-search-company";
+import ModeView from "../pages/manage-search-company/mode-view";
 
 export default function RenderRoute() {
     return (
@@ -48,6 +49,7 @@ export default function RenderRoute() {
             {/*    // <Test></Test>*/}
             {/*}>*/}
             {/*</Route>*/}
+            <Route path="search-company/view" element={<ModeView></ModeView>}/>
             <Route path="/" element={
                 <>
                     <AuthenticatedTemplate>
