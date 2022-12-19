@@ -205,8 +205,8 @@ export default function ChangeInterestRate(props) {
                     // });
                 }
                 return <div className='icon-action'>
-                    {params.row.attachment_id != null &&
-                        <Tooltip title="File thay đổi" onClick={() => downloadFile(params.row.attachment_id)}>
+                    {params.row.attachment_entity != null &&
+                        <Tooltip title="File thay đổi" onClick={() => downloadFile(params.row.attachment_entity.id)}>
                             <LinkIcon style={{color: "rgb(107, 114, 128)"}}></ LinkIcon>
                         </Tooltip>
                     }

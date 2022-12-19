@@ -149,10 +149,10 @@ export default function ManageSofChargingEst() {
         }
 
         setTotal(total)
-        let totalInterest = 0;
-        let totalPrincipal = 0;
         for(let i = 0; i < listConvert.length; i++){
             let newArr=[]
+            let totalInterest = 0;
+            let totalPrincipal = 0;
             for (let j = 0; j <listConvert[i].sof.length; j++){
                 console.log(listConvert[i].sof[j].payable_period_detail_entities.length)
                 for(let k=0;k<listConvert[i].sof[j].payable_period_detail_entities.length;k++){
@@ -174,19 +174,19 @@ export default function ManageSofChargingEst() {
                         interest_rate:listConvert[i].sof[j].payable_period_detail_entities[k].interest_rate,
                         attachment_id:listConvert[i].sof[j].payable_period_detail_entities[k].attachment_id
                     }
-
-
                     newArr.push(convertData)
                 }
-                // if(listConvert[i].sof[j].charging_type == "Trả lãi ân hạn" || listConvert[i].sof[j].charging_type == "Trả lãi"){
-                //     totalInterest += listConvert[i].sof[j].amount_paid_in_period;
-                // }else {
-                //     totalPrincipal += listConvert[i].sof[j].amount_paid_in_period;
-                // }
             }
+            for(let l = 0; l < newArr.length; l++){
+                if(newArr[l].charging_type == "Trả lãi ân hạn" || newArr[l].charging_type == "Trả lãi"){
+                    totalInterest += newArr[l].amount_paid_in_period;
+                }else {
+                    totalPrincipal += newArr[l].amount_paid_in_period;
+                }
+            }
+            listConvert[i].totalInterest = totalInterest;
+            listConvert[i].totalPrincipal = totalPrincipal;
             listConvert[i].sofConvert=newArr;
-            // listConvert[i].totalInterest=totalInterest;
-            // listConvert[i].totalPrincipal=totalInterest;
         }
         listConvert.sort(function(a,b){
             return new Date(convertDate(a.chargingDate)) - new Date(convertDate(b.chargingDate));
@@ -693,11 +693,11 @@ export default function ManageSofChargingEst() {
                                     <TableCell align="center">Tổng phải trả(VNĐ)</TableCell>
                                     <TableCell align="center">Tổng gốc phải trả(VNĐ)</TableCell>
                                     <TableCell align="center">Tổng lãi phải trả(VNĐ)</TableCell>
-                                    <TableCell align="center">Mã khoản vay</TableCell>
+                                    {/*<TableCell align="center">Mã khoản vay</TableCell>*/}
                                     <TableCell align="center">Số tiền phải trả(VNĐ)</TableCell>
+                                    <TableCell align="center">Kiểu trả</TableCell>
                                     <TableCell align="center">Tiền gốc tham chiếu</TableCell>
                                     <TableCell align="center">Lãi suất(%)</TableCell>
-                                    <TableCell align="center">Kiểu trả</TableCell>
                                     <TableCell align="center">Ngày bắt đầu</TableCell>
                                     <TableCell align="center">Ngày kết thúc</TableCell>
                                     <TableCell align="center">Số ngày tính lãi </TableCell>
@@ -713,8 +713,6 @@ export default function ManageSofChargingEst() {
                                     className={`message-table-empty ${listResult.rows.length === 0 && !loading ? '' : 'hidden'}`}>Không
                                     có dữ liệu
                                 </div>
-                                {console.log('vvvvvvvvvvvvvvvvvvvvvvvvvv')}
-                                {console.log(listResult)}
                                 {listResult.rows.map(item => (
 
                                     <>
@@ -730,12 +728,12 @@ export default function ManageSofChargingEst() {
                                             </TableCell>
                                             <TableCell rowSpan={item.sofConvert.length + 1}>
                                                 <div className={'error-message'}>
-                                                    {item.sof}
+                                                    {currencyFormatter(item.totalPrincipal)}
                                                 </div>
                                             </TableCell>
                                             <TableCell rowSpan={item.sofConvert.length + 1}>
                                                 <div className={'error-message'}>
-                                                    {item.total}
+                                                    {currencyFormatter(item.totalInterest)}
                                                 </div>
                                             </TableCell>
                                         </TableRow>
@@ -743,12 +741,10 @@ export default function ManageSofChargingEst() {
                                             item.sofConvert.map(detail => (
                                                 <TableRow>
                                                     <TableCell>
-                                                        <div>{detail.sof_code}</div>
-                                                    </TableCell>
-                                                    <TableCell>
                                                         <div className={'error-message number'}>{currencyFormatter(detail.amount_paid_in_period)}</div>
                                                         {/*<div className={'error/-message number'}>{detail.amount_paid_in_period}</div>*/}
                                                     </TableCell>
+                                                    <TableCell>{detail.type_date}</TableCell>
                                                     <TableCell>
                                                         <div className={"number"}>{currencyFormatter(detail.principal_amount)}</div>
                                                     </TableCell>
@@ -756,7 +752,6 @@ export default function ManageSofChargingEst() {
                                                     <TableCell>
                                                         <div>{detail.interest_rate}</div>
                                                     </TableCell>
-                                                    <TableCell>{detail.type_date}</TableCell>
 
                                                     <TableCell>
                                                         <div>{detail.start_date}</div>

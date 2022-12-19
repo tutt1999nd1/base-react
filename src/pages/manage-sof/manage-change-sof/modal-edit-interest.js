@@ -35,6 +35,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 export default function ModalEditInterest(props) {
     const {openModal, handleCloseModal,info,isUpdate,setRefresh,refresh,sourceOfFundId} = props
     const [fileAttachment, setFileAttachment] = useState([]);
+    const [checkAttachment, setCheckAttachment] = useState([]);
     const validationSchema = yup.object({
         interest_rate_type: yup.string()
             .trim()
@@ -45,7 +46,12 @@ export default function ModalEditInterest(props) {
 
     });
     useEffect(() => {
-        // alert(name)
+        if(info.attachment_entity != null){
+            setCheckAttachment(info.attachment_entity.file_name);
+        }else {
+            setCheckAttachment("");
+        }
+
 
     }, [openModal,isUpdate])
     const createChangeInterestRateApi = (data) => {
@@ -60,7 +66,6 @@ export default function ModalEditInterest(props) {
     }
 
     const uploadFile = () => {
-
         var el = window._protected_reference = document.createElement("INPUT");
         el.type = "file";
         // el.accept = ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
@@ -99,9 +104,10 @@ export default function ModalEditInterest(props) {
     const deleteFile = (name) => {
         let arr = [...fileAttachment]
         let indexRemove = fileAttachment.findIndex(e => e.name === name)
-        if (indexRemove !== -1) {
+        if (indexRemove !== -1 || name != "") {
             arr.splice(indexRemove, 1);
             setFileAttachment(arr)
+            setCheckAttachment(arr)
         }
 
     }
@@ -149,9 +155,8 @@ export default function ModalEditInterest(props) {
 
                             formData.append('file', fileAttachment[0] || null);
                             formData.append('request', request);
-                            console.log("formData",formData)
                             if (isUpdate) {
-                                updateChangeInterestRateApi(valueConvert).then(r => {
+                                updateChangeInterestRateApi(formData).then(r => {
                                     toast.success('Cập nhật thành công', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -355,6 +360,20 @@ export default function ModalEditInterest(props) {
 
 
                                         <div className={'list-file'}>
+                                            {checkAttachment != "" &&
+                                                <>
+                                                    <div className={'item-file'}>
+                                                        <div className={'name-file '}>{checkAttachment}</div>
+                                                        <div className={'delete-file'}><DeleteOutlineIcon
+                                                            style={{cursor: "pointer"}}
+                                                            color={"error"}
+                                                            onClick={() => {
+                                                                deleteFile(checkAttachment)
+                                                            }}></DeleteOutlineIcon></div>
+                                                    </div>
+                                                    <Divider light/>
+                                                </>
+                                            }
                                             {
                                                 fileAttachment.map((e) => (
                                                     <>

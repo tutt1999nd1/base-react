@@ -54,22 +54,24 @@ export default function ChangeLendingAmount(props) {
         "paid_amount":"",
         "date_apply":new dayjs,
         "type":"pay",
-        "source_of_fund_id":sourceOfFundId
+        "source_of_fund_id":sourceOfFundId,
+        "attachment_entity": {"file_name": ""}
     })
+
     useEffect(()=>{
         if(!openModalEdit){
             setInfo({
                 "paid_amount":"",
                 type:"pay",
                 "date_apply":new dayjs,
-                "source_of_fund_id":sourceOfFundId
+                "source_of_fund_id":sourceOfFundId,
+                "attachment_entity": {"file_name": ""}
             })
         }
     },[openModalEdit])
 
     const downloadFile = (id) => {
         if(id){
-            // Axios.get('http://localhost:8443/attachment/'+id, {
             Axios.get(API_MAP.LINK_FILE+id, {
                 headers: {'Authorization': `Bearer ${currentUser.token}`},
                 responseType: 'blob'
@@ -158,18 +160,17 @@ export default function ChangeLendingAmount(props) {
                     setInfoDel(params.row)
                 }
                 const updateBtn = (e) => {
-                    e.stopPropagation();
                     let copy = {...params.row}
+                    e.stopPropagation();
+
                     copy.paid_amount = Number(copy.paid_amount.replaceAll('.',''))
                     setInfo(copy)
                     setIsUpdate(true)
                     setOpenModalEdit(true)
-                    // });
                 }
                 return <div className='icon-action'>
-
-                    {params.row.attachment_id != null &&
-                    <Tooltip title="File thay đổi" onClick={() => downloadFile(params.row.attachment_id)}>
+                    {params.row.attachment_entity != null &&
+                    <Tooltip title="File thay đổi" onClick={() => downloadFile(params.row.attachment_entity.id)}>
                         <LinkIcon style={{color: "rgb(107, 114, 128)"}}></ LinkIcon>
                     </Tooltip>
                     }
@@ -248,7 +249,7 @@ export default function ChangeLendingAmount(props) {
             }).catch(e => {
                 console.log(e)
             })
-        }else{
+        } else{
             deleteApi(infoDel.id).then(r => {
                 toast.success('Xóa thành công', {
                     position: "top-right",
@@ -334,7 +335,6 @@ export default function ChangeLendingAmount(props) {
                             <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
                         </IconButton>
                     }
-
                 </div>
                 <Divider light/>
                 <Collapse in={openSearch} timeout="auto" unmountOnExit>

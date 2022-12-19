@@ -36,8 +36,8 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
 export default function ModalChangeLendingAmount(props) {
     const [fileAttachment, setFileAttachment] = useState([]);
-
     const {openModal, handleCloseModal,info,isUpdate,setRefresh,refresh,sourceOfFundId} = props
+    const [checkAttachment, setCheckAttachment] = useState([]);
     const validationSchema = yup.object({
         paid_amount: yup
             .string()
@@ -45,21 +45,25 @@ export default function ModalChangeLendingAmount(props) {
             .required('Không được để trống'),
     });
     useEffect(() => {
-        // alert(name)
+        if(info.attachment_entity != null){
+            setCheckAttachment(info.attachment_entity.file_name);
+        }else {
+            setCheckAttachment("");
+        }
 
     }, [openModal,isUpdate])
-    useState(()=> {
-        console.log("fileAttachment",fileAttachment)
-    })
+
     const deleteFile = (name) => {
         let arr = [...fileAttachment]
         let indexRemove = fileAttachment.findIndex(e => e.name === name)
-        if (indexRemove !== -1) {
+        if (indexRemove !== -1 || name != "") {
             arr.splice(indexRemove, 1);
             setFileAttachment(arr)
+            setCheckAttachment(arr)
         }
 
     }
+
     const createChangeLendingAmountApi = (data) => {
         return apiChangeLendingAmount.createChangeLendingAmount(data);
     }
@@ -73,7 +77,6 @@ export default function ModalChangeLendingAmount(props) {
     const updateChangeLendingAmountApiFile = (data) => {
         return apiChangeLendingAmount.updateChangeLendingAmountFile(info.id, data);
     }
-
     const importAssetApi = (data) => {
         return apiManagerAssets.importFile(data);
     }
@@ -114,7 +117,6 @@ export default function ModalChangeLendingAmount(props) {
 
         el.click();
     }
-
     return (
 
         <div>
@@ -149,17 +151,16 @@ export default function ModalChangeLendingAmount(props) {
                         (values, actions) => {
                             let valueConvert = {...values};
                             valueConvert.date_apply = dayjs(values.date_apply).format('DD-MM-YYYY');
-                            console.log("valueConvert.date_apply",valueConvert.date_apply);
-                            console.log(fileAttachment)
+
                             let formData = new FormData();
-                            formData.append('file', fileAttachment[0]);
-                            formData.append('sourceOfFundId', sourceOfFundId);
-                            formData.append('dateApply', valueConvert.date_apply);
-                            formData.append('paidAmount', valueConvert.paid_amount);
-                            formData.append('type', info.type);
+                            const request = new Blob([JSON.stringify(valueConvert)], {
+                                type: 'application/json'
+                            });
+                            formData.append('file', fileAttachment[0] || null);
+                            formData.append('request', request);
 
                             if (isUpdate) {
-                                updateChangeLendingAmountApiFile(valueConvert).then(r => {
+                                updateChangeLendingAmountApiFile(formData).then(r => {
                                     toast.success('Cập nhật thành công', {
                                         position: "top-right",
                                         autoClose: 1500,
@@ -210,6 +211,7 @@ export default function ModalChangeLendingAmount(props) {
                         setFieldValue,
                         handleSubmit
                     } = props;
+
                     return (
                         <Form onSubmit={handleSubmit}>
                             <DialogContent style={{width: '450px', height: '450px'}} dividers className={"model-account-form"}>
@@ -293,6 +295,20 @@ export default function ModalChangeLendingAmount(props) {
 
 
                                         <div className={'list-file'}>
+                                            {checkAttachment != "" &&
+                                                <>
+                                                    <div className={'item-file'}>
+                                                        <div className={'name-file '}>{checkAttachment}</div>
+                                                        <div className={'delete-file'}><DeleteOutlineIcon
+                                                            style={{cursor: "pointer"}}
+                                                            color={"error"}
+                                                            onClick={() => {
+                                                                deleteFile(checkAttachment)
+                                                            }}></DeleteOutlineIcon></div>
+                                                    </div>
+                                                    <Divider light/>
+                                                </>
+                                            }
                                             {
                                                 fileAttachment.map((e) => (
                                                     <>
@@ -307,10 +323,8 @@ export default function ModalChangeLendingAmount(props) {
                                                         </div>
                                                         <Divider light/>
                                                     </>
-
                                                 ))
                                             }
-
                                         </div>
                                     </Grid>
 

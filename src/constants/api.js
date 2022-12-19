@@ -92,6 +92,7 @@ const API_MAP = {
     GET_LIST_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount/search',
     CREATE_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount/create',
     UPDATE_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount',
+    GET_FILE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount',
     CREATE_CHANGE_LENDING_AMOUNT_FILE: API_DOMAIN + 'change-lending-amount/create-file',
     DELETE_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount',
     DELETE_LIST_CHANGE_LENDING_AMOUNT: API_DOMAIN + 'change-lending-amount/delete',

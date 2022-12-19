@@ -15,7 +15,9 @@ class ApiChangeInterestRate{
         })
     }
     updateChangeInterestRate = (id,data) => {
-        return axiosClient.put(API_MAP.UPDATE_CHANGE_INTEREST_RATE+`/${id}`,data)
+        return axiosClient.post(API_MAP.UPDATE_CHANGE_INTEREST_RATE+`/${id}`,data,{
+            headers: {'content-type': 'multipart/form-data'}
+        })
     }
     deleteListChangeInterestRate= (data) => {
         return axiosClient.post(API_MAP.DELETE_LIST_CHANGE_INTEREST_RATE,data)
