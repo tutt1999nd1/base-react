@@ -182,7 +182,12 @@ export default function ManageSofChargingEst() {
                         total_day:listConvert[i].sof[j].payable_period_detail_entities[k].total_day,
                         principal_amount:listConvert[i].sof[j].payable_period_detail_entities[k].principal_amount,
                         interest_rate:listConvert[i].sof[j].payable_period_detail_entities[k].interest_rate,
-                        attachment_id:listConvert[i].sof[j].payable_period_detail_entities[k].attachment_id
+
+                    }
+                    if(listConvert[i].sof[j].payable_period_detail_entities[k].attachment_entity){
+                        convertData.attachment_id = listConvert[i].sof[j].payable_period_detail_entities[k].attachment_entity.id
+                    }else {
+                        convertData.attachment_id = null;
                     }
                     newArr.push(convertData)
                 }
@@ -201,7 +206,8 @@ export default function ManageSofChargingEst() {
         listConvert.sort(function(a,b){
             return new Date(convertDate(a.chargingDate)) - new Date(convertDate(b.chargingDate));
         })
-
+        console.log('listConverttttttttt')
+        console.log(listConvert)
         return listConvert;
     }
     function convertDate(myDate){
@@ -380,7 +386,7 @@ export default function ManageSofChargingEst() {
                 listId.push(group[property][0].id);
             }
         }
-        console.log("listId",listId)
+
         setListId(listId);
         for( let i = 0; i < group.length; i++){
             let check = true;
@@ -778,6 +784,9 @@ export default function ManageSofChargingEst() {
                 </Collapse>
                 <Divider light/>
                 <div className={'main-content-body-result'} style={{position: "relative"}}>
+                    <Tooltip title="Danh sách đã chọn">
+                        <Button className={`${listUpdateEst.length>0 ?'':'hidden'}`} style={{float:"right",margin:"10px"}} onClick={()=>{setOpenModalConfirm(true)}} variant={"outlined"}  color={"primary"}>Cập nhật trạng thái</Button>
+                    </Tooltip>
                     <TableContainer style={{height: '100%', width: '100%', overflow: "auto"}}>
                         {/*<div style={{height: '100%', width: '100%'}}>*/}
                         <Table stickyHeader className={"table-custom"}>
@@ -809,7 +818,7 @@ export default function ManageSofChargingEst() {
                                     className={`message-table-empty ${listResult.rows.length === 0 && !loading ? '' : 'hidden'}`}>Không
                                     có dữ liệu
                                 </div>
-                                {listResult.rows.map(item => (
+                                {listResult.rows.map((item,i) => (
 
                                     <>
                                         <TableRow>
@@ -834,7 +843,7 @@ export default function ManageSofChargingEst() {
                                             </TableCell>
                                         </TableRow>
                                         {
-                                            item.sofConvert.map(detail => (
+                                            item.sofConvert.map((detail, j) => (
                                                 <TableRow>
                                                     <TableCell>
                                                         <div className={'error-message number'}>{currencyFormatter(detail.amount_paid_in_period)}</div>
@@ -848,10 +857,7 @@ export default function ManageSofChargingEst() {
                                                         <TableCell>
                                                             <div>{detail.interest_rate}</div>
                                                         </TableCell>
-                                                        <TableCell>{detail.type_date}</TableCell>
-                                                    <TableCell>
-                                                        <div>{detail.interest_rate}</div>
-                                                    </TableCell>
+
 
                                                         <TableCell>
                                                             <div>{detail.start_date}</div>
@@ -910,9 +916,6 @@ export default function ManageSofChargingEst() {
                                 </TableBody>
                             </Table>
                         </TableContainer>
-
-                    </div>
-
                 </div>
             </div>
         </div>

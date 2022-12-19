@@ -188,6 +188,11 @@ export default function DetailSOF(props) {
                         interest_rate:listConvert[i].sof[j].payable_period_detail_entities[k].interest_rate,
                         attachment_id:listConvert[i].sof[j].payable_period_detail_entities[k].attachment_id
                     }
+                    if(listConvert[i].sof[j].payable_period_detail_entities[k].attachment_entity){
+                        convertData.attachment_id = listConvert[i].sof[j].payable_period_detail_entities[k].attachment_entity.id
+                    }else {
+                        convertData.attachment_id = null;
+                    }
                     newArr.push(convertData)
                 }
 

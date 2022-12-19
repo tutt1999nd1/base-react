@@ -1,8 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-import {
-    createStateSyncMiddleware,
-    initMessageListener,
-} from "redux-state-sync";
 export const userSlice = createSlice({
     name: 'user',
     initialState: {
