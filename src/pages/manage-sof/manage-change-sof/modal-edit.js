@@ -38,6 +38,8 @@ export default function ModalChangeLendingAmount(props) {
     const [fileAttachment, setFileAttachment] = useState([]);
     const {openModal, handleCloseModal,info,isUpdate,setRefresh,refresh,sourceOfFundId} = props
     const [checkAttachment, setCheckAttachment] = useState([]);
+    const [isDelete, setIsDelete] = useState(false);
+
     const validationSchema = yup.object({
         paid_amount: yup
             .string()
@@ -50,6 +52,9 @@ export default function ModalChangeLendingAmount(props) {
         }else {
             setCheckAttachment("");
         }
+        if(openModal == false)
+            setFileAttachment([]);
+            setIsDelete(false)
 
     }, [openModal,isUpdate])
 
@@ -62,6 +67,10 @@ export default function ModalChangeLendingAmount(props) {
             setCheckAttachment(arr)
         }
 
+    }
+    const deleteFileServer = () => {
+        console.log('deleteServer')
+       setIsDelete(true)
     }
 
     const createChangeLendingAmountApi = (data) => {
@@ -82,7 +91,7 @@ export default function ModalChangeLendingAmount(props) {
     }
     const [newFormData, setNewFormData] = useSearchParams();
     const uploadFile = () => {
-
+        setIsDelete(false)
         var el = window._protected_reference = document.createElement("INPUT");
         el.type = "file";
         // el.accept = ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
@@ -151,13 +160,16 @@ export default function ModalChangeLendingAmount(props) {
                         (values, actions) => {
                             let valueConvert = {...values};
                             valueConvert.date_apply = dayjs(values.date_apply).format('DD-MM-YYYY');
-
+                            valueConvert.is_delete = isDelete;
+                            console.log('valueConvertttttttt')
+                            console.log(valueConvert)
                             let formData = new FormData();
                             const request = new Blob([JSON.stringify(valueConvert)], {
                                 type: 'application/json'
                             });
                             formData.append('file', fileAttachment[0] || null);
                             formData.append('request', request);
+
 
                             if (isUpdate) {
                                 updateChangeLendingAmountApiFile(formData).then(r => {
@@ -291,6 +303,7 @@ export default function ModalChangeLendingAmount(props) {
                                         <div style={{display: "flex", alignItems: "center"}}>Tập đính
                                             kèm <ControlPointIcon style={{cursor: "pointer", marginLeft: '10px'}}
                                                                   color="primary"
+                                                                  className={`${fileAttachment.length > 0?'hidden':''}`}
                                                                   onClick={uploadFile}> </ControlPointIcon></div>
 
 
@@ -303,7 +316,8 @@ export default function ModalChangeLendingAmount(props) {
                                                             style={{cursor: "pointer"}}
                                                             color={"error"}
                                                             onClick={() => {
-                                                                deleteFile(checkAttachment)
+                                                                deleteFile(checkAttachment);
+                                                                deleteFileServer();
                                                             }}></DeleteOutlineIcon></div>
                                                     </div>
                                                     <Divider light/>

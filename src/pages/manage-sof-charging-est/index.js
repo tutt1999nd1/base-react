@@ -806,8 +806,8 @@ export default function ManageSofChargingEst() {
                                     <TableCell align="center">Ngày bắt đầu</TableCell>
                                     <TableCell align="center">Ngày kết thúc</TableCell>
                                     <TableCell align="center">Số ngày tính lãi </TableCell>
-                                    <TableCell align="center">Thao tác</TableCell>
                                     <TableCell align="center">Trạng thái</TableCell>
+                                    <TableCell align="center">Thao tác</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody style={{overflowY: "auto"}}>

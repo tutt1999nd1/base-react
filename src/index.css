@@ -1143,6 +1143,15 @@ border: unset;
     bottom:0;
     z-index:999;
 }
+form button:not(:has(svg)),.main-content > button,.main-content-body-search > div > button,.main-content-body-search > div > div > button,.main-content > div >button{
+    color: #1F2251!important;
+    border: 1px solid #1F2251!important;
+}
+form button:not(:has(svg)):hover, .main-content > button:hover,.main-content-body-search > div > button:hover, .main-content-body-search > div > div > button, .main-content > div >button:hover  {
+    background: #1F2251!important;
+    color: #fff!important;
+}
+
 
 .flexible-modal-resizer {
     position:absolute;
