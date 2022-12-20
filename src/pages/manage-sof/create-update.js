@@ -488,7 +488,9 @@ export default function EditSOF(props) {
                                     draggable: true,
                                 });
                                 setTimeout(() => {
-                                    navigate(`/sof/detail?id=${idUpdate}`)
+                                    // navigate(`/sof/detail?id=${idUpdate}`)
+                                    navigate(`/sof`)
+
                                 }, 1050);
 
                             }).catch(e => {
@@ -508,7 +510,8 @@ export default function EditSOF(props) {
                                     draggable: true,
                                 });
                                 setTimeout(() => {
-                                    navigate(`/sof/detail?id=${r.data.id}`)
+                                    // navigate(`/sof/detail?id=${r.data.id}`)
+                                    navigate(`/sof`)
                                 }, 1050);
 
                             }).catch(e => {
