@@ -36,6 +36,7 @@ export default function ModalEditInterest(props) {
     const {openModal, handleCloseModal,info,isUpdate,setRefresh,refresh,sourceOfFundId} = props
     const [fileAttachment, setFileAttachment] = useState([]);
     const [checkAttachment, setCheckAttachment] = useState([]);
+    const [isDelete, setIsDelete] = useState(false);
     const validationSchema = yup.object({
         interest_rate_type: yup.string()
             .trim()
@@ -51,7 +52,9 @@ export default function ModalEditInterest(props) {
         }else {
             setCheckAttachment("");
         }
-
+        if(openModal == false)
+            setFileAttachment([]);
+            setIsDelete(false)
 
     }, [openModal,isUpdate])
     const createChangeInterestRateApi = (data) => {
@@ -64,8 +67,12 @@ export default function ModalEditInterest(props) {
     const updateChangeInterestRateApi = (data) => {
         return apiChangeInterestRate.updateChangeInterestRate(info.id, data);
     }
-
+    const deleteFileServer = () => {
+        console.log('deleteServer')
+        setIsDelete(true)
+    }
     const uploadFile = () => {
+        setIsDelete(false)
         var el = window._protected_reference = document.createElement("INPUT");
         el.type = "file";
         // el.accept = ".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel";
@@ -146,7 +153,7 @@ export default function ModalEditInterest(props) {
                         (values, actions) => {
                             let valueConvert = {...values};
                             valueConvert.date_apply = dayjs(values.date_apply).format('DD-MM-YYYY');
-
+                            valueConvert.is_delete = isDelete;
                             let formData = new FormData();
                             valueConvert.source_of_fund_id = parseInt(valueConvert.source_of_fund_id);
                             const request = new Blob([JSON.stringify(valueConvert)], {
@@ -356,6 +363,7 @@ export default function ModalEditInterest(props) {
                                         <div style={{display: "flex", alignItems: "center"}}>Tập đính
                                             kèm <ControlPointIcon style={{cursor: "pointer", marginLeft: '10px'}}
                                                                   color="primary"
+                                                                  className={`${fileAttachment.length > 0?'hidden':''}`}
                                                                   onClick={uploadFile}> </ControlPointIcon></div>
 
 
@@ -369,6 +377,7 @@ export default function ModalEditInterest(props) {
                                                             color={"error"}
                                                             onClick={() => {
                                                                 deleteFile(checkAttachment)
+                                                                deleteFileServer()
                                                             }}></DeleteOutlineIcon></div>
                                                     </div>
                                                     <Divider light/>
