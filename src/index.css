@@ -1165,6 +1165,14 @@ button:hover,.main-content-header .row button:hover{
     color: #fff;
     background: #1F2251!important;
 }
+div[role=dialog] button.Mui-selected{
+    color: #fff!important;
+    background-color: #1F2251!important;
+}
+div[role=dialog] button{
+    border: unset!important;
+}
+
 
 
 .flexible-modal-resizer {

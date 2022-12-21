@@ -226,7 +226,7 @@ export default function ModalChangeLendingAmount(props) {
 
                     return (
                         <Form onSubmit={handleSubmit}>
-                            <DialogContent style={{width: '450px', height: '450px'}} dividers className={"model-account-form"}>
+                            <DialogContent style={{width: '450px', height: '450px'}} dividers className={"model-account-form cssDatePicker"}>
                                 <Grid container spacing={4}>
                                     <Grid item xs={6} md={12}>
                                         <div className={'label-input'}>{values.type==="lend"?"Số tiền vay thêm":"Số tiền trả"} (VNĐ)<span
