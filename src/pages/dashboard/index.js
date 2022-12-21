@@ -288,8 +288,8 @@ export default function Dashboard() {
         <Box sx={{ width: '100%',height:"100%" }}>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={tab} onChange={handleChangeTab} aria-label="basic tabs example">
-                    <Tab label="Dashboard" {...a11yProps(0)} />
-                    <Tab label="Độ ưu tiên" {...a11yProps(1)} />
+                    <Tab className={"dashboardTab"} label="Dashboard" {...a11yProps(0)} />
+                    <Tab className={"dashboardTab"} label="Độ ưu tiên" {...a11yProps(1)} />
                     {/*<Tab label="Item Three" {...a11yProps(2)} />*/}
                 </Tabs>
             </Box>
@@ -355,9 +355,9 @@ export default function Dashboard() {
                                                         return (
                                                             <>
                                                                 <Table.Summary.Row>
-                                                                    <Table.Summary.Cell><th style={{color:"#1976d2"}}>Tổng</th></Table.Summary.Cell>
+                                                                    <Table.Summary.Cell><th style={{color:"#1F2251"}}>Tổng</th></Table.Summary.Cell>
                                                                     <Table.Summary.Cell>
-                                                                        <th style={{color:"#1976d2"}}>{currencyFormatter(sum(listAsset,"total_value"))} </th>
+                                                                        <th style={{color:"#1F2251"}}>{currencyFormatter(sum(listAsset,"total_value"))} </th>
                                                                     </Table.Summary.Cell>
                                                                 </Table.Summary.Row>
                                                             </>
@@ -376,9 +376,9 @@ export default function Dashboard() {
                                                         return (
                                                             <>
                                                                 <Table.Summary.Row>
-                                                                    <Table.Summary.Cell><th style={{color:"#1976d2"}}>Tổng</th></Table.Summary.Cell>
+                                                                    <Table.Summary.Cell><th style={{color:"#1F2251"}}>Tổng</th></Table.Summary.Cell>
                                                                     <Table.Summary.Cell>
-                                                                        <th style={{color:"#1976d2"}}>{currencyFormatter(sum(listSOF,"total_value"))} </th>
+                                                                        <th style={{color:"#1F2251"}}>{currencyFormatter(sum(listSOF,"total_value"))} </th>
                                                                     </Table.Summary.Cell>
                                                                 </Table.Summary.Row>
                                                             </>
