@@ -83,8 +83,8 @@ export default function ManageChangeSof(props) {
 
 
                     <Tabs value={tab} onChange={handleChangeTab} aria-label="basic tabs example">
-                        <Tab label="Thay đổi tiền gốc" {...a11yProps(0)} />
-                        <Tab label="Thay đổi lãi suất" {...a11yProps(1)} />
+                        <Tab className={"dashboardTab"} label="Thay đổi tiền gốc" {...a11yProps(0)} />
+                        <Tab className={"dashboardTab"} label="Thay đổi lãi suất" {...a11yProps(1)} />
                         {/*<Tab label="Item Three" {...a11yProps(2)} />*/}
                     </Tabs>
                 <TabPanel value={tab} index={0}>
