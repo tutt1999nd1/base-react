@@ -83,6 +83,10 @@ axiosClient.interceptors.response.use((response) => {
                 toast.error('Dữ liệu hợp đồng vay không hợp lệ', options);
             } else if(error.response.data.status.code == "member_already_exist"){
                 toast.error('Thành viên đã tồn tại', options);
+            }else if(error.response.data.status.code == "pay_error"){
+                toast.error('Số tiền trả lớn hơn số tiền vay còn lại', options);
+            }else if(error.response.data.status.code == "update_sof_fail"){
+                toast.error('Không thể cập nhật khoản vay đã được thay đổi tiền gốc hoặc lãi xuất', options);
             }
             else {
                 toast.error('Có lỗi xảy ra', options);

@@ -1,6 +1,10 @@
 import React, {useEffect, useState} from "react";
 import Collapse from "@mui/material/Collapse";
 import 'react-dropdown-tree-select/dist/styles.css'
+import PaidIcon from '@mui/icons-material/Paid';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 // import 'antd/dist/antd.css';
 import {TreeSelect} from 'antd';
 
@@ -44,6 +48,7 @@ import CheckBoxOutlinedIcon from '@mui/icons-material/CheckBoxOutlined';
 import CancelPresentationOutlinedIcon from '@mui/icons-material/CancelPresentationOutlined';
 import apiManagerSupplier from "../../api/manage-supplier";
 import apiManagerAssets from "../../api/manage-assets";
+import HistoryIcon from '@mui/icons-material/History';
 export default function ManageSOF() {
     const currentUser = useSelector(state => state.currentUser)
     const [listDelete, setListDelete] = useState([]);
@@ -116,6 +121,7 @@ export default function ManageSOF() {
         {
             filterable: false,
             sortable: false,
+            resizable: true,
             field: 'capital_company_name',
             headerName: 'Công ty vay',
             headerClassName: 'super-app-theme--header',
@@ -196,6 +202,21 @@ export default function ManageSOF() {
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
             hide: checkColumnVisibility('sof','lending_amount'),
+            renderCell: (params) => {
+
+                return <div className='content-column number'>
+                    {params.value}
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'remain_lending_amount',
+            headerName: 'Số tiền vay còn lại',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 150,
+            hide: checkColumnVisibility('sof','remain_lending_amount'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -430,7 +451,8 @@ export default function ManageSOF() {
             field: 'action',
             headerName: 'Thao tác',
             sortable: false,
-            width: 200,
+            width: 150,
+            maxWidth: 150,
             align: 'center',
             minWidth: 150,
             headerClassName: 'super-app-theme--header',
@@ -440,7 +462,7 @@ export default function ManageSOF() {
 
                 const detailBtn = (e) => {
                     e.stopPropagation();
-                    console.log(params)
+                    console.log(params);
                     navigate(`/sof/detail?id=${params.id}`)
 
                 }
@@ -453,6 +475,11 @@ export default function ManageSOF() {
                 const updateBtn = (e) => {
                     e.stopPropagation();
                     navigate(`/sof/update?id=${params.id}`)
+                    // });
+                }
+                const redirectChangeSofBtn = (e) => {
+                    e.stopPropagation();
+                    navigate(`/change-sof?id=${params.id}`)
                     // });
                 }
                 const sendBtn = (e) => {
@@ -475,26 +502,28 @@ export default function ManageSOF() {
                     console.log(params.row.status_approve)
                 }
                 return <div className='icon-action'>
-                    {
-                        params.row.created_by !== currentUser.username?'': params.row.status_approve=='Tạo mới'|| params.row.status_approve=='Đã từ chối'?
-                        <Tooltip title="Đề xuất phê duyệt" >
-                            <CheckBoxOutlinedIcon onClick={sendBtn} style={{color: "rgb(107, 114, 128)"}}></CheckBoxOutlinedIcon>
-                        </Tooltip> :
-                            params.row.status_approve=='Đang chờ phê duyệt'?
-                            <Tooltip title="Hủy phê duyệt" >
-                                <CancelPresentationOutlinedIcon onClick={cancelBtn} style={{color: "rgb(107, 114, 128)"}}></CancelPresentationOutlinedIcon>
-                            </Tooltip>:''
-                    }
+                    {/*{*/}
+                    {/*    params.row.created_by !== currentUser.username?'': params.row.status_approve=='Tạo mới'|| params.row.status_approve=='Đã từ chối'?*/}
+                    {/*    <Tooltip title="Đề xuất phê duyệt" >*/}
+                    {/*        <CheckBoxOutlinedIcon onClick={sendBtn} style={{color: "rgb(107, 114, 128)"}}></CheckBoxOutlinedIcon>*/}
+                    {/*    </Tooltip> :*/}
+                    {/*        params.row.status_approve=='Đang chờ phê duyệt'?*/}
+                    {/*        <Tooltip title="Hủy phê duyệt" >*/}
+                    {/*            <CancelPresentationOutlinedIcon onClick={cancelBtn} style={{color: "rgb(107, 114, 128)"}}></CancelPresentationOutlinedIcon>*/}
+                    {/*        </Tooltip>:''*/}
+                    {/*}*/}
 
-
+                    <Tooltip title="Thay đổi giá trị vay" onClick={redirectChangeSofBtn}>
+                        <PaidIcon style={{color: "rgb(123, 128, 154)"}}></PaidIcon>
+                    </Tooltip>
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
-                        <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
+                        <BorderColorIcon style={{color: "rgb(123, 128, 154)"}}></BorderColorIcon>
                     </Tooltip>
                     <Tooltip title="Xóa" onClick={deleteBtn}>
-                        <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
+                        <DeleteForeverIcon style={{color: "rgb(123, 128, 154)"}}></DeleteForeverIcon>
                     </Tooltip>
                     <Tooltip onClick={detailBtn} title="Xem chi tiết">
-                        <ArrowForwardIcon style={{color: "rgb(107, 114, 128)"}}></ArrowForwardIcon>
+                        <RemoveRedEyeIcon style={{color: "rgb(123, 128, 154)"}}></RemoveRedEyeIcon >
                     </Tooltip>
                 </div>;
             },
@@ -532,6 +561,7 @@ export default function ManageSOF() {
             // arr[i].capital_value = currencyFormatter(arr[i].capital_value)
             // arr[i].max_capital_value = currencyFormatter(arr[i].max_capital_value)
             arr[i].lending_amount = currencyFormatter(arr[i].lending_amount)
+            arr[i].remain_lending_amount = currencyFormatter(arr[i].remain_lending_amount)
             if (arr[i].status === 'UNPAID') {
                 arr[i].status = "Chưa tất toán"
             } else if (arr[i].status === 'PAID') {
@@ -763,8 +793,8 @@ export default function ManageSOF() {
                         Quản lý nguồn vốn
                     </Typography>
                     <div>
-                        <Button onClick={pending} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
-                        <Button onClick={pending} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
+                        <Button className={"d-none"} onClick={pending} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
+                        <Button className={"d-none"} onClick={pending} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
                                 startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
                         <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
                             Thêm
@@ -903,7 +933,7 @@ export default function ManageSOF() {
 
                 </Collapse>
                 <Divider light/>
-                <div className={'main-content-body-result'}>
+                <div className={'main-content-body-result sticky-body'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
                             getRowHeight={() => 'auto'}

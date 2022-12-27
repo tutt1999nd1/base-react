@@ -7,8 +7,9 @@ import AddIcon from '@mui/icons-material/Add';
 import VerticalAlignBottomIcon from '@mui/icons-material/VerticalAlignBottom';
 import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
 import {toast, ToastContainer} from "react-toastify";
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import {
     DataGrid,
     GridColDef,
@@ -118,11 +119,12 @@ export default function ManageCategory() {
         {
             field: 'action',
             headerClassName: 'super-app-theme--header',
+            minWidth: 150,
             headerName: 'Thao tác',
             sortable: false,
-            width: 200,
+            width: 150,
             align: 'center',
-            maxWidth: 130,
+            maxWidth: 150,
             hide: checkColumnVisibility('category','action'),
             flex: 1,
             renderCell: (params) => {
@@ -147,13 +149,13 @@ export default function ManageCategory() {
                 }
                 return <div className='icon-action'>
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
-                        <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
+                        <BorderColorIcon style={{color: "rgb(107, 114, 128)"}}></BorderColorIcon>
                     </Tooltip>
                     <Tooltip title="Xóa" onClick={deleteBtn}>
-                        <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
+                        <DeleteForeverIcon style={{color: "rgb(107, 114, 128)"}}></DeleteForeverIcon>
                     </Tooltip>
                     <Tooltip onClick={detailBtn} title="Xem chi tiết">
-                        <ArrowForwardIcon style={{color: "rgb(107, 114, 128)"}}></ArrowForwardIcon>
+                        <RemoveRedEyeIcon style={{color: "rgb(107, 114, 128)"}}></RemoveRedEyeIcon>
                     </Tooltip>
 
                 </div>;
@@ -320,8 +322,8 @@ export default function ManageCategory() {
                         Quản lý mục đích vay
                     </Typography>
                     <div>
-                        <Button onClick={pending} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
-                        <Button onClick={pending} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
+                        <Button className={"d-none"} onClick={pending} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
+                        <Button className={"d-none"} onClick={pending} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
                                 startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
                         <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
                             Thêm

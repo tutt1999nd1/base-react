@@ -5,6 +5,9 @@ class ApiManagerCompany{
     getListCompany = (data) => {
         return axiosClient.post(API_MAP.GET_LIST_COMPANY,data)
     }
+    getListCompanySOF = (data) => {
+        return axiosClient.post(API_MAP.GET_LIST_COMPANY_SOF,data)
+    }
     getListCompanyAvai = (data) => {
         return axiosClient.post(API_MAP.GET_LIST_COMPANY_AVAI,data)
     }
@@ -49,6 +52,12 @@ class ApiManagerCompany{
     };
     updateHistory = (id,data) => {
         return axiosClient.put(API_MAP.UPDATE_CHANGE_HISTORY+`/${id}`,data)
+    }
+    updateCapitalLimit = (amount) => {
+        return axiosClient.post(API_MAP.UPDATE_ALL_CAPITAL_LIMIT+`/${amount}`)
+    }
+    getDefaultCapitalLimit = () => {
+        return axiosClient.get(API_MAP.GET_CAPITAL_LIMIT)
     }
     getHistoryById = (id) => {
         return axiosClient.get(API_MAP.GET_CHANGE_HISTORY_BY_ID+`/${id}`)

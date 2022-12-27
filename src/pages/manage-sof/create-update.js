@@ -27,7 +27,8 @@ import PropTypes from "prop-types";
 import {
     capitalizeFirstLetter,
     convertToAutoComplete,
-    convertToAutoCompleteMail, currencyFormatter,
+    convertToAutoCompleteMail,
+    currencyFormatter,
     listOptionMonth,
     VNnum2words
 } from "../../constants/utils";
@@ -43,7 +44,8 @@ import TextFieldLink from "../../components/TextFieldLink";
 import Axios from "axios";
 import {useSelector} from "react-redux";
 import apiManagerSupplier from "../../api/manage-supplier";
-
+import {DataGrid, GridColDef, viVN} from "@mui/x-data-grid";
+import Checkbox from '@mui/material/Checkbox';
 export default function EditSOF(props) {
     const navigate = useNavigate();
     const [location, setLocation] = useSearchParams();
@@ -61,11 +63,14 @@ export default function EditSOF(props) {
     const [listDeletedAttachment, setListDeletedAttachment] = useState([])
     const [listCategoryTree, setListCategoryTree] = useState([]);
     const [categorySearch, setCategorySearch] = useState()
+    const [isGrace, setIsGrace] = useState(false);
     const [campaignSearch, setCampaignSearch] = useState()
-    const [lendingInMonth, setLendingInMonth] = useState({id: 1, label: '1'})
     const [listCampaignTree, setListCampaignTree] = useState([]);
+    const [listPrincipalConfig, setListPrincipalConfig] = useState([]);
+    const [listInterestConfig, setListInterestConfig] = useState([]);
     const currentUser = useSelector(state => state.currentUser)
     const [listUser, setListUser] = useState([{id: '1', 'label': '1'}])
+
     const [info, setInfo] = useState({
         id: '',
         capital_company: {},
@@ -90,8 +95,11 @@ export default function EditSOF(props) {
         interest_rate_type: 'Cố định',
         reference_interest_rate: '',
         interest_rate_rage: '',
-        changing_date:new dayjs,
-        list_attachments: []
+        changing_date: new dayjs,
+        list_attachments: [],
+        payable_principal_config_entities: [],
+        payable_interest_config_entities: [],
+        is_grace: '',
     })
     const {isUpdate} = props
     const [idUpdate, setIdUpdate] = useState(null)
@@ -154,6 +162,17 @@ export default function EditSOF(props) {
             .required('Không được để trống'),
 
     });
+
+    const [lendingStartDate, setLendingStartDate] = useState(new dayjs)
+    const [lendingAmount, setLendingAmount] = useState('')
+    const [gracePrincipalInMonth, setGracePrincipalInMonth] = useState('')
+    const [graceInterestInMonth, setGraceInterestInMonth] = useState('')
+    const [lendingInMonth, setLendingInMonth] = useState('')
+    const [principalPeriod, setPrincipalPeriod] = useState('')
+    const [interestPeriod, setInterestPeriod] = useState('')
+    useEffect(() => {
+        defaultPayable(lendingStartDate, lendingInMonth, gracePrincipalInMonth, principalPeriod, lendingAmount, interestPeriod, graceInterestInMonth)
+    }, [lendingStartDate, lendingAmount, gracePrincipalInMonth, graceInterestInMonth, lendingInMonth, principalPeriod, interestPeriod])
     const backList = () => {
         navigate('/sof')
     }
@@ -192,25 +211,17 @@ export default function EditSOF(props) {
         })
     }, [])
     useEffect(() => {
-
         getListCompanyApi({paging: false}).then(r => {
-            console.log("r tutt", r.data)
-            // console.log("r.data.companies",r.data);
-
             if (r.data.companies) {
                 setListCompany(convertToAutoComplete(r.data.companies, 'company_name'))
-
             } else {
                 setListCompany([])
             }
-
         }).catch(e => {
-
         })
         getListSupplierApi({paging: false}).then(r => {
             if (r.data.suppliers) {
                 setListCompanySupplier(convertToAutoComplete(r.data.suppliers, 'supplier_name'))
-
             } else {
                 setListCompanySupplier([])
             }
@@ -219,20 +230,24 @@ export default function EditSOF(props) {
         })
 
     }, [currentAmount])
-
     useEffect(() => {
         if (isUpdate && idUpdate) {
             getListSOFApi({id: idUpdate, page_size: 1}).then(r => {
                 setInfo(r.data.source_of_funds[0])
-                console.log(r.data.source_of_funds[0])
+                console.log("r.data.source_of_funds[0]",r.data.source_of_funds[0])
+
             }).catch(e => {
 
             })
         }
     }, [idUpdate])
     useEffect(() => {
-        console.log("listUser", listUser)
-    }, [listUser])
+        console.log("listPrincipalConfig",listPrincipalConfig)
+        console.log("listInterestConfig",listInterestConfig)
+    }, [listPrincipalConfig,listInterestConfig])
+    const handleChangeIsGrace = (event) => {
+        setIsGrace(event.target.checked);
+    }
     const createSOFApi = (data) => {
         return apiManagerSOF.createSOF(data);
     }
@@ -268,19 +283,32 @@ export default function EditSOF(props) {
 
     }
     useEffect(() => {
-        console.log('info', {id: info.grace_interest_in_month, label: info.grace_interest_in_month + ''})
-
         setListFileServer(info.list_attachments.filter(e => e.attachment_type === 'LOCAL'))
         setListLinkServer(info.list_attachments.filter(e => e.attachment_type === "REFERENCE"))
         setCategorySearch(info.capital_category.id)
         setCampaignSearch(info.capital_campaign.id)
         setCompanySearch({id: info.capital_company.id, label: info.capital_company.company_name})
+        setLendingStartDate(dayjs(info.lending_start_date, 'DD-MM-YYYY'))
+        setLendingInMonth(info.lending_in_month)
+        setGraceInterestInMonth(info.grace_interest_in_month)
+        setGracePrincipalInMonth(info.grace_principal_in_month)
+        setPrincipalPeriod(info.principal_period)
+        setInterestPeriod(info.interest_period)
+        setLendingAmount(info.lending_amount)
+        if(info.is_grace==null){
+            setIsGrace(false)
+        }else
+        setIsGrace(!info.is_grace)
+        setTimeout(()=>{
+            setListPrincipalConfig(info.payable_principal_config_entities)
+            setListInterestConfig(info.payable_interest_config_entities)
+        },500)
 
     }, [info])
     useEffect(() => {
-        getListCompanyApi({id:idCompanyCurrent,paging: false}).then(r => {
+        getListCompanyApi({id: idCompanyCurrent, paging: false}).then(r => {
             if (r.data.companies) {
-                console.log("r.data.companies",r.data.companies)
+                console.log("r.data.companies", r.data.companies)
                 setCompanyCurrent(r.data.companies[0])
             } else {
                 setCompanyCurrent(null)
@@ -376,6 +404,267 @@ export default function EditSOF(props) {
 
         el.click();
     }
+
+    const columnsInterest: GridColDef[] = [
+        {
+            sortable: false,
+            field: 'index',
+            headerName: 'STT',
+            maxWidth: 60,
+            filterable: false,
+            headerClassName: 'super-app-theme--header',
+            renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'end_date',
+            headerName: 'Ngày trả',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 250,
+            flex: 1,
+            renderCell: (params) => {
+                return <div className='content-column'>
+
+                    <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
+                        <DesktopDatePicker
+                            style={{width: '100% !important'}}
+                            inputFormat="DD-MM-YYYY"
+                            value={dayjs(params.value, 'DD-MM-YYYY')}
+                            // maxDate={dayjs(params.value, 'DD-MM-YYYY')}
+                            minDate={params.api.getRowIndex(params.row.id) == 0 ? lendingStartDate.add(graceInterestInMonth, 'month') : dayjs(listInterestConfig[params.api.getRowIndex(params.row.id) - 1].end_date, 'DD-MM-YYYY').add(1, 'day')}
+                            maxDate={lendingStartDate.add(lendingInMonth, 'month')}
+                            // minDate={dayjs(listPrincipalConfig[0].end_date,'DD-MM-YYYY')}
+                            // onChange={(values) => {
+                            //     console.log(values)
+                            //
+                            // }}
+                            onChange={value => handleChangeDateInterestConfig(params.api.getRowIndex(params.row.id), value)}
+                            renderInput={(params) => <TextField size={"small"} fullWidth {...params} />}
+                        />
+                    </LocalizationProvider>
+                </div>;
+            },
+        }
+
+        // { field: 'document', headerName: 'Nhóm tài sản' },
+    ];
+    const columns: GridColDef[] = [
+        {
+            sortable: false,
+            field: 'index',
+            headerName: 'STT',
+            maxWidth: 60,
+            filterable: false,
+            headerClassName: 'super-app-theme--header',
+            renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'end_date',
+            headerName: 'Ngày trả',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 250,
+            flex: 1,
+            renderCell: (params) => {
+                return <div className='content-column'>
+
+                    <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
+                        {/*{console.log('listPrincipalConfig[params.api.getRowIndex(params.row.id)-1].end_date',listPrincipalConfig[params.api.getRowIndex(params.row.id)-1].end_date)}*/}
+                        {console.log('listPrincipalConfig1', listPrincipalConfig[0].end_date)}
+                        {console.log('listPrincipalConfig2', dayjs(listPrincipalConfig[0].end_date, 'DD-MM-YYYY'))}
+                        <DesktopDatePicker
+                            style={{width: '100% !important'}}
+                            inputFormat="DD-MM-YYYY"
+                            value={dayjs(params.value, 'DD-MM-YYYY')}
+                            // maxDate={dayjs(params.value, 'DD-MM-YYYY')}
+                            minDate={params.api.getRowIndex(params.row.id) == 0 ? lendingStartDate.add(gracePrincipalInMonth, 'month') : dayjs(listPrincipalConfig[params.api.getRowIndex(params.row.id) - 1].end_date, 'DD-MM-YYYY').add(1, 'day')}
+                            maxDate={lendingStartDate.add(lendingInMonth, 'month')}
+                            // minDate={dayjs(listPrincipalConfig[0].end_date,'DD-MM-YYYY')}
+                            // onChange={(values) => {
+                            //     console.log(values)
+                            //
+                            // }}
+                            onChange={value => handleChangeDatePrincipalConfig(params.api.getRowIndex(params.row.id), value)}
+                            renderInput={(params) => <TextField size={"small"} fullWidth {...params} />}
+                        />
+                    </LocalizationProvider>
+                </div>;
+            },
+        },
+        {
+            filterable: false,
+            sortable: false,
+            field: 'amount',
+            headerName: 'Số tiền trả',
+            headerClassName: 'super-app-theme--header',
+            minWidth: 250,
+            flex: 1,
+            renderCell: (params) => {
+                return <div className='content-column'>
+                    <NumericFormat
+                        size={'small'}
+                        customInput={TextField}
+                        name='lending_amount'
+                        className={'formik-input text-right'}
+                        thousandSeparator={"."}
+                        decimalSeparator={","}
+                        value={params.value}
+                        InputProps={{
+                            endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
+                        }}
+                        onValueChange={(values) => {
+                            const {formattedValue, value, floatValue} = values;
+                            // do something with floatValue
+                            console.log(floatValue)
+
+                            const re = /^[0-9\b]+$/;
+                            if (re.test(floatValue) || floatValue === undefined) {
+                                // setFieldValue('lending_amount', floatValue)
+                                // setCurrentAmount(floatValue)
+                                handleChangeAmountPrincipalConfig(params.api.getRowIndex(params.row.id), floatValue)
+                            }
+                            // setFieldValue('max_capital_value', formattedValue)
+
+                        }}
+
+                    />
+                </div>;
+            },
+        }
+
+        // { field: 'document', headerName: 'Nhóm tài sản' },
+    ];
+    const handleChangeAmountPrincipalConfig = (index, amount) => {
+        console.log("index", index)
+        console.log("amount", amount)
+
+        setListPrincipalConfig([
+            ...listPrincipalConfig.slice(0, index),
+            {
+                ...listPrincipalConfig[index],
+                amount: amount
+            },
+            ...listPrincipalConfig.slice(index + 1)
+        ])
+    }
+    useEffect(() => {
+        console.log(listPrincipalConfig)
+    }, [listPrincipalConfig])
+    const handleChangeDatePrincipalConfig = (index, date) => {
+        // console.log("index",index)
+        // console.log("amount",amount)
+        console.log('date', dayjs(date).format('DD-MM-YYYY'))
+        setListPrincipalConfig([
+            ...listPrincipalConfig.slice(0, index),
+            {
+                ...listPrincipalConfig[index],
+                end_date: dayjs(date).format('DD-MM-YYYY')
+            },
+            ...listPrincipalConfig.slice(index + 1)
+        ])
+    }
+    const handleChangeDateInterestConfig = (index, date) => {
+        // console.log("index",index)
+        // console.log("amount",amount)
+        setListInterestConfig([
+            ...listInterestConfig.slice(0, index),
+            {
+                ...listInterestConfig[index],
+                end_date: dayjs(date).format('DD-MM-YYYY')
+            },
+            ...listInterestConfig.slice(index + 1)
+        ])
+    }
+    const defaultPayable = (lendingStartDate, lendingInMonth, gracePrincipalInMonth, principalPeriod, lendingAmount, interestPeriod, graceInterestInMonth) => {
+        console.log("lendingStartDate", lendingStartDate)
+        console.log("lendingInMonth", lendingInMonth)
+        console.log("gracePrincipalInMonth", gracePrincipalInMonth)
+        console.log("principalPeriod", principalPeriod)
+        console.log("lendingAmount", lendingAmount)
+        console.log("interestPeriod", interestPeriod)
+        console.log("graceInterestInMonth", graceInterestInMonth)
+        let monthOfPeriodPrincipal = (lendingInMonth - gracePrincipalInMonth) / principalPeriod;
+        console.log("monthOfPeriodPrincipal", monthOfPeriodPrincipal)
+        //ngày bắt đầu trả gốc phải tính từ sau ân hạn
+        // let afterGracePrincipal = DatetimeUtils.getCalendar(entity.getLendingStartDate(), Calendar.MONTH, entity.getGracePrincipalInMonth()).getTime();
+        let afterGracePrincipal = lendingStartDate.add(gracePrincipalInMonth, 'month');
+        // console.log("afterGracePrincipal",dayjs(afterGracePrincipal).format('DD-MM-YYYY'))
+        //số tiền gốc phải trả mặc định qua các kỳ khi chưa có thay đổi gốc
+        // let amountPeriod = (entity.getLendingAmount()).divide(new BigDecimal(entity.getPrincipalPeriod()), RoundingMode.HALF_UP);
+        let amountPeriod = lendingAmount / principalPeriod
+        // //ngày bắt đầu
+        let startDatePrincipal = afterGracePrincipal;
+        // //ngày trả gốc
+        let payableDatePrincipal = null;
+        // //ngày trả gốc phụ
+        let extraPayableDatePrincipal = null;
+        let listConfigPrincipal = [];
+        for (let i = 0; i < principalPeriod; i++) {
+            //ngày kết thúc
+            payableDatePrincipal = afterGracePrincipal.add((i + 1) * monthOfPeriodPrincipal, 'month')
+            if (i > 0) {
+                startDatePrincipal = extraPayableDatePrincipal;
+            }
+            if (getSpecialDate(payableDatePrincipal) > 0 && i < principalPeriod - 1) {
+                // payableDatePrincipal = DatetimeUtils.getCalendar(payableDatePrincipal, Calendar.DATE, getSpecialDate(payableDatePrincipal)).getTime();
+                payableDatePrincipal = payableDatePrincipal.add(getSpecialDate(payableDatePrincipal), 'day')
+            }
+            extraPayableDatePrincipal = payableDatePrincipal;
+            listConfigPrincipal.push({
+                id: i,
+                start_date: dayjs(startDatePrincipal).format('DD-MM-YYYY'),
+                end_date: dayjs(payableDatePrincipal).format('DD-MM-YYYY'),
+                amount: Math.round(amountPeriod)
+            });
+        }
+        setListPrincipalConfig(listConfigPrincipal);
+        console.log("listConfigPrincipal", listConfigPrincipal)
+        let listConfigInterest = [];
+        let monthOfPeriodInterest = (lendingInMonth - graceInterestInMonth) / interestPeriod;
+        //ngày bắt đầu tính lãi sau ân hạn
+        let afterGraceInterest = lendingStartDate.add(graceInterestInMonth, 'month')
+        //số tiền lãi mặc định khi chưa thay đổi lãi suất
+        //ngày bắt đầu tính lãi lãi, cũng là ngày bắt đầu tính lãi của kỳ tiếp theo
+        let startDateInterest = afterGraceInterest;
+        //ngày cuối cùng tính lãi của 1 kỳ
+        let payableDateInterest = null;
+        //set ngày trả lãi phụ
+        let extraPayableDateInterest = null;
+        //add các kỳ trả lãi vào bảng payable period
+        for (let i = 0; i < interestPeriod; i++) {
+            //ngày kết thúc
+            payableDateInterest = afterGraceInterest.add((i + 1) * monthOfPeriodInterest, 'month')
+            //             //nếu i > thì set ngày bắt đầu = ngày trả lãi phụ
+            if (i > 0) {
+                startDateInterest = extraPayableDateInterest;
+            }
+            //kiểm tra nếu có ngày đặc biệt và i chưa đến index cuối cùng
+            if (getSpecialDate(payableDateInterest) > 0 && i < interestPeriod - 1) {
+                payableDateInterest = payableDateInterest.add(getSpecialDate(payableDateInterest), 'day')
+            }
+            extraPayableDateInterest = payableDateInterest;
+
+            listConfigInterest.push({
+                id: i,
+                start_date: dayjs(startDateInterest).format('DD-MM-YYYY'),
+                end_date: dayjs(payableDateInterest).format('DD-MM-YYYY'),
+            });
+        }
+        console.log("listConfigInterest", listConfigInterest)
+        setListInterestConfig(listConfigInterest)
+    }
+    const getSpecialDate = (date) => {
+        let dateConvert = date.toDate();
+        let number = 0;
+        if (dateConvert.getDay() == 0) {
+            number = 1;
+        } else if (dateConvert.getDay() == 6) {
+            number = 2;
+        }
+        return number;
+    }
     return (<div className={'main-content'}>
         <ToastContainer
             position="top-right"
@@ -410,9 +699,9 @@ export default function EditSOF(props) {
                     capital_company_id: idUpdate ? info.capital_company.id : info.capital_company_id,
                     capital_category_id: idUpdate ? info.capital_category.id : info.capital_category_id,
                     capital_campaign_id: idUpdate ? info.capital_campaign.id : info.capital_campaign_id,
-                    capital_campaign_name: info.capital_company.company_name||'',
+                    capital_campaign_name: info.capital_company.company_name || '',
                     supplier_id: idUpdate ? info.supplier.id : info.supplier_id,
-                    supplier_name: info.supplier.supplier_name||'',
+                    supplier_name: info.supplier.supplier_name || '',
                     // asset_group:info.asset_group.id,
                     lending_amount: info.lending_amount,
                     owner_full_name: info.owner_full_name,
@@ -435,6 +724,7 @@ export default function EditSOF(props) {
                 onSubmit={(values, actions) => {
                     // setInfoAccount();
                     // submitAccount();
+                    // defaultPayable(values.lending_start_date,values.lending_in_month,values.grace_principal_in_month,values.principal_period,values.lending_amount)
                     if (campaignSearch && categorySearch) {
                         let valueConvert = values;
                         let formData = new FormData();
@@ -462,11 +752,22 @@ export default function EditSOF(props) {
                         formData.append('gracePrincipalInMonth', values.grace_principal_in_month)
                         formData.append('graceInterestInMonth', values.grace_interest_in_month)
                         formData.append('interestRateType', values.interest_rate_type)
+                        formData.append('isGrace', !isGrace)
                         if (values.reference_interest_rate)
                             formData.append('referenceInterestRate', values.reference_interest_rate)
                         if (values.interest_rate_rage)
                             formData.append('interestRateRage', values.interest_rate_rage)
                         formData.append('supplierId', values.supplier_id)
+                        for (let i = 0; i < listPrincipalConfig.length; i++) {
+                            formData.append('listTimePrincipal', listPrincipalConfig[i].end_date)
+                            formData.append('listAmountPrincipal', listPrincipalConfig[i].amount)
+                        }
+                        for (let i = 0; i < listInterestConfig.length; i++) {
+                            formData.append('listTimeInterest', listInterestConfig[i].end_date)
+                        }
+
+                        // formData.append('listPrincipalConfig', listPrincipalConfig)
+                        // formData.append('listInterestConfig', listInterestConfig)
 
                         // formData.append('currentCreditValue',values.)
                         if (isUpdate) {
@@ -488,7 +789,9 @@ export default function EditSOF(props) {
                                     draggable: true,
                                 });
                                 setTimeout(() => {
-                                    navigate(`/sof/detail?id=${idUpdate}`)
+                                    // navigate(`/sof/detail?id=${idUpdate}`)
+                                    navigate(`/sof`)
+
                                 }, 1050);
 
                             }).catch(e => {
@@ -508,7 +811,8 @@ export default function EditSOF(props) {
                                     draggable: true,
                                 });
                                 setTimeout(() => {
-                                    navigate(`/sof/detail?id=${r.data.id}`)
+                                    // navigate(`/sof/detail?id=${r.data.id}`)
+                                    navigate(`/sof`)
                                 }, 1050);
 
                             }).catch(e => {
@@ -535,8 +839,8 @@ export default function EditSOF(props) {
                                         id="combo-box-demo"
                                         options={listCompany}
                                         value={{
-                                                    id: values.capital_company_id,
-                                                    label: values.capital_campaign_name
+                                            id: values.capital_company_id,
+                                            label: values.capital_campaign_name
                                         }
                                         }
 
@@ -549,23 +853,22 @@ export default function EditSOF(props) {
                                         onChange={(event, newValue) => {
                                             // setCompanySearch(newValue)
                                             console.log("new_value", newValue)
-                                            if (newValue){
+                                            if (newValue) {
                                                 setFieldValue('capital_company_id', newValue.id)
                                                 setFieldValue('capital_campaign_name', newValue.label)
                                                 setIdCompanyCurrent(newValue.id)
-                                            }
-                                            else{
+                                            } else {
                                                 setFieldValue('capital_company_id', '')
                                                 setFieldValue('capital_campaign_name', '')
                                                 setIdCompanyCurrent(0)
                                             }
                                         }}
                                     />
-                                    <Typography style={{marginTop:'5px'}} variant="caption" display="block"
+                                    <Typography style={{marginTop: '5px'}} variant="caption" display="block"
                                                 gutterBottom>
                                         {
-                                            companyCurrent?
-                                                `Số tiền vay còn lại ${currencyFormatter(companyCurrent.remain_capital)} VNĐ`:''
+                                            companyCurrent ?
+                                                `Số tiền vay còn lại ${currencyFormatter(companyCurrent.remain_capital)} VNĐ` : ''
                                         }
                                     </Typography>
                                     {/*<FormControl fullWidth>*/}
@@ -615,12 +918,11 @@ export default function EditSOF(props) {
                                         onChange={(event, newValue) => {
                                             // setCompanySearch(newValue)
                                             console.log("new_value", newValue)
-                                            if (newValue){
+                                            if (newValue) {
                                                 setFieldValue('supplier_id', newValue.id)
                                                 setFieldValue('supplier_name', newValue.label)
 
-                                            }
-                                            else{
+                                            } else {
                                                 setFieldValue('supplier_id', '')
                                                 setFieldValue('supplier_name', '')
                                             }
@@ -737,7 +1039,8 @@ export default function EditSOF(props) {
                                     {/*    helperText={touched.founding_date && errors.founding_date}*/}
 
                                     {/*/>*/}
-                                    <div className={'label-input'}>Ngày vay(DD-MM-YYYY)<span className={'error-message'}>*</span>
+                                    <div className={'label-input'}>Ngày vay(DD-MM-YYYY)<span
+                                        className={'error-message'}>*</span>
                                     </div>
                                     <LocalizationProvider style={{width: '100%'}} dateAdapter={AdapterDayjs}>
                                         <DesktopDatePicker
@@ -749,7 +1052,10 @@ export default function EditSOF(props) {
                                             //
                                             // }}
 
-                                            onChange={value => props.setFieldValue("lending_start_date", value)}
+                                            onChange={value => {
+                                                props.setFieldValue("lending_start_date", value);
+                                                setLendingStartDate(value);
+                                            }}
                                             error={touched.lending_start_date && Boolean(errors.lending_start_date)}
                                             helperText={touched.lending_start_date && errors.lending_start_date}
                                             renderInput={(params) => <TextField size={"small"} fullWidth {...params} />}
@@ -757,7 +1063,7 @@ export default function EditSOF(props) {
                                     </LocalizationProvider>
 
                                 </Grid>
-                                <Grid className={`${isUpdate?'':'hidden'}`} item xs={6} md={6}>
+                                <Grid className={`${isUpdate ? '' : 'hidden'}`} item xs={6} md={6}>
                                     {/*<TextField*/}
                                     {/*    id='founding_date'*/}
                                     {/*    name='founding_date'*/}
@@ -813,6 +1119,7 @@ export default function EditSOF(props) {
                                             if (re.test(floatValue) || floatValue === undefined) {
                                                 setFieldValue('lending_amount', floatValue)
                                                 setCurrentAmount(floatValue)
+                                                setLendingAmount(floatValue)
                                             }
                                             // setFieldValue('max_capital_value', formattedValue)
 
@@ -943,14 +1250,11 @@ export default function EditSOF(props) {
                                         inputValue={values.lending_in_month}
                                         options={listOptionMonth}
                                         onInputChange={(event, value) => {
-                                            // console.log("value",value)}
-                                            // do something with floatValue
-
                                             const re = /^[0-9\b]+$/;
                                             if (re.test(value) || value === '') {
                                                 setFieldValue('lending_in_month', value)
+                                                setLendingInMonth(value)
                                             }
-                                            // setFieldValue('lending_in_month', value)
                                         }
                                         }
 
@@ -985,6 +1289,7 @@ export default function EditSOF(props) {
                                             const re = /^[0-9\b]+$/;
                                             if (re.test(floatValue) || floatValue === undefined) {
                                                 setFieldValue('principal_period', floatValue)
+                                                setPrincipalPeriod(floatValue)
                                             }
                                             // setFieldValue('max_capital_value', formattedValue)
 
@@ -1015,6 +1320,7 @@ export default function EditSOF(props) {
                                             const re = /^[0-9\b]+$/;
                                             if (re.test(floatValue) || floatValue === undefined) {
                                                 setFieldValue('interest_period', floatValue)
+                                                setInterestPeriod(floatValue)
                                             }
                                             // setFieldValue('max_capital_value', formattedValue)
 
@@ -1046,7 +1352,6 @@ export default function EditSOF(props) {
                                             // do something with floatValue
 
                                             setFieldValue('interest_rate', floatValue)
-
                                             // setFieldValue('max_capital_value', formattedValue)
                                             // alert(floatValue)
 
@@ -1078,6 +1383,7 @@ export default function EditSOF(props) {
                                             const re = /^[0-9\b]+$/;
                                             if (re.test(value) || value === '') {
                                                 setFieldValue('grace_principal_in_month', value)
+                                                setGracePrincipalInMonth(value)
                                             }
                                             // setFieldValue('lending_in_month', value)
                                         }
@@ -1116,6 +1422,7 @@ export default function EditSOF(props) {
                                             const re = /^[0-9\b]+$/;
                                             if (re.test(value) || value === '') {
                                                 setFieldValue('grace_interest_in_month', value)
+                                                setGraceInterestInMonth(value)
                                             }
                                             // setFieldValue('lending_in_month', value)
                                         }
@@ -1151,13 +1458,22 @@ export default function EditSOF(props) {
                                         >
                                             <MenuItem value={'Cố định'}>Cố định</MenuItem>
                                             <MenuItem value={'Biên độ'}>Biên độ</MenuItem>
-
-
                                         </Select>
                                         <FormHelperText
                                             className={'error-message'}>{errors.interest_rate_type}</FormHelperText>
                                     </FormControl>
                                 </Grid>
+                                <Grid item xs={6} md={6}>
+                                    <div className={'label-input'}>Trả lãi ân hạn kỳ đầu</div>
+                                    <Checkbox
+                                        checked={isGrace}
+                                        onChange={handleChangeIsGrace}
+                                        inputProps={{ 'aria-label': 'controlled' }}
+                                    ></Checkbox>
+
+
+                                </Grid>
+
                                 <Grid className={`${values.interest_rate_type === 'Cố định' ? 'hidden' : ''}`} item
                                       xs={6} md={6}>
                                     <div className={'label-input'}>Lãi suất tham chiếu (%/năm)<span
@@ -1199,7 +1515,7 @@ export default function EditSOF(props) {
                                     <div className={'label-input'}>Biên độ lãi suất (%)<span
                                         className={'error-message'}>*</span></div>
                                     <NumericFormat
-                                        style={{width: '200px'}}
+                                        // style={{width: '200px'}}
                                         size={'small'}
                                         id='interest_rate_rage'
                                         customInput={TextField}
@@ -1301,6 +1617,62 @@ export default function EditSOF(props) {
                                         }
                                     </div>
                                 </Grid>
+                                <Grid item xs={6} md={12}>
+                                    <div className={'main-content-body-tittle'}>
+                                        <h4>Chi tiết các kỳ trả </h4>
+                                    </div>
+                                    <Divider light/>
+                                </Grid>
+                                <Grid item xs={6} md={6} style={{height: "400px"}}>
+                                    <div className={'label-input'}>Danh sách các kỳ trả gốc</div>
+                                    <DataGrid
+                                        // getRowHeight={() => 'auto'}
+                                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
+                                        labelRowsPerPage={"Số kết quả"}
+                                        density="standard"
+                                        rows={listPrincipalConfig}
+                                        columns={columns}
+                                        pageSize={10}
+                                        rowsPerPageOptions={[5]}
+                                        // loading={loading}
+                                        disableSelectionOnClick
+                                        sx={{
+                                            // boxShadow: 2,
+                                            overflowX: 'scroll',
+                                            border: 1,
+                                            borderColor: 'rgb(255, 255, 255)',
+                                            '& .MuiDataGrid-iconSeparator': {
+                                                display: 'none',
+                                            }
+                                        }}
+
+                                    />
+                                </Grid>
+                                <Grid item xs={6} md={6} style={{height: "400px"}}>
+                                    <div className={'label-input'}>Danh sách các kỳ trả lãi</div>
+                                    <DataGrid
+                                        // getRowHeight={() => 'auto'}
+                                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
+                                        labelRowsPerPage={"Số kết quả"}
+                                        density="standard"
+                                        rows={listInterestConfig}
+                                        columns={columnsInterest}
+                                        pageSize={10}
+                                        rowsPerPageOptions={[5]}
+                                        // loading={loading}
+                                        disableSelectionOnClick
+                                        sx={{
+                                            // boxShadow: 2,
+                                            overflowX: 'scroll',
+                                            border: 1,
+                                            borderColor: 'rgb(255, 255, 255)',
+                                            '& .MuiDataGrid-iconSeparator': {
+                                                display: 'none',
+                                            }
+                                        }}
+
+                                    />
+                                </Grid>
                                 {/*<Grid item xs={6} md={6}>*/}
                                 {/*    <input type="file"/>*/}
                                 {/*</Grid>*/}
@@ -1318,6 +1690,7 @@ export default function EditSOF(props) {
                     </Form>)
                 }}
             </Formik>
+
         </div>
     </div>)
 }

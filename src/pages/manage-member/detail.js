@@ -17,21 +17,21 @@ import ModalAddMember from "./modal-add-member";
 
 export default function DetailMember(props) {
     const navigate = useNavigate();
-    const [location,setLocation] = useSearchParams();
-    const [idDetail,setIdDetail] = useState(null)
-    const [openModalDel,setOpenModalDel] = useState(false)
-    const [openModalRemove,setOpenModalRemove] = useState(false)
+    const [location, setLocation] = useSearchParams();
+    const [idDetail, setIdDetail] = useState(null)
+    const [openModalDel, setOpenModalDel] = useState(false)
+    const [openModalRemove, setOpenModalRemove] = useState(false)
     const [openModalAddMember, setOpenModalAddMember] = useState(false)
-    const [isRefresh,setIsRefresh] = useState(false)
+    const [isRefresh, setIsRefresh] = useState(false)
     const [listCompany, setListCompany] = React.useState([]);
     const [idRemove, setIdRemove] = useState(0)
     const redirectToCompany = (id) => {
-      navigate('/company/detail?id='+id)
+        navigate('/company/detail?id=' + id)
     }
-    const [info,setInfo] =useState({
-        name:'',
-        description:'',
-        type:'',
+    const [info, setInfo] = useState({
+        name: '',
+        description: '',
+        type: '',
     })
     const columns: GridColDef[] = [
         {
@@ -50,9 +50,10 @@ export default function DetailMember(props) {
             headerName: 'Tên công ty',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-            flex:1,
+            flex: 1,
             renderCell: (params) => {
-                return <div className='content-column text-decoration' onClick={()=>redirectToCompany(params.row.company_id)}>
+                return <div className='content-column text-decoration'
+                            onClick={() => redirectToCompany(params.row.company_id)}>
                     {params.value}
                 </div>;
             },
@@ -64,7 +65,7 @@ export default function DetailMember(props) {
             headerName: 'Vị trí',
             headerClassName: 'super-app-theme--header',
             minWidth: 200,
-            hide: checkColumnVisibility('company','tax_number'),
+            hide: checkColumnVisibility('company', 'tax_number'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -73,7 +74,7 @@ export default function DetailMember(props) {
                             className={''}
                             size={'small'}
                             value={params.value}
-                            onChange={(e)=>handleChangePosition(e,params.row)}
+                            onChange={(e) => handleChangePosition(e, params.row)}
                             // size='small'
                         >
                             <MenuItem value={'TGĐ'}>Tổng giám đốc</MenuItem>
@@ -87,7 +88,7 @@ export default function DetailMember(props) {
         {
             field: 'action',
             headerClassName: 'super-app-theme--header',
-            hide: checkColumnVisibility('company','action'),
+            hide: checkColumnVisibility('company', 'action'),
             headerName: 'Thao tác',
             sortable: false,
             width: 200,
@@ -131,7 +132,7 @@ export default function DetailMember(props) {
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
-    const handleChangePosition = (e,row) => {
+    const handleChangePosition = (e, row) => {
         // updateCompanyMemberApi
         console.log(e.target.value);
         row.position = e.target.value
@@ -152,32 +153,31 @@ export default function DetailMember(props) {
     const backList = () => {
         navigate('/member')
     }
-    useEffect(()=>{
-        if(idDetail){
-            getListMemberApi({id:idDetail,page_size:1}).then(r=>{
-                setInfo( r.data.member_entities[0])
-            }).catch(e=>{
+    useEffect(() => {
+        if (idDetail) {
+            getListMemberApi({id: idDetail, page_size: 1}).then(r => {
+                setInfo(r.data.member_entities[0])
+            }).catch(e => {
 
             })
-            getListCompanyOfMemberApi(idDetail).then(r=>{
-                console.log("Company of Member",r)
+            getListCompanyOfMemberApi(idDetail).then(r => {
+                console.log("Company of Member", r)
                 setListCompany(r.data);
-            }).catch(e=>{
+            }).catch(e => {
 
             })
 
         }
-    },[idDetail,isRefresh])
-    useEffect(()=>{
-        if(location.get('id')){
+    }, [idDetail, isRefresh])
+    useEffect(() => {
+        if (location.get('id')) {
             setIdDetail(location.get('id'));
-        }
-        else navigate('/member')
+        } else navigate('/member')
 
-    },[location])
+    }, [location])
     const submitDelete = () => {
         // alert("tutt20")
-        deleteMemberApi(info.id).then(r=>{
+        deleteMemberApi(info.id).then(r => {
             toast.success('Xóa thành công', {
                 position: "top-right",
                 autoClose: 1500,
@@ -190,7 +190,7 @@ export default function DetailMember(props) {
                 navigate(`/member`)
             }, 1050);
 
-        }).catch(e=>{
+        }).catch(e => {
             console.log(e)
         })
 
@@ -236,9 +236,9 @@ export default function DetailMember(props) {
     const removeMemberFromCompanyApi = (id) => {
         return apiManagerMember.removeMemberFromCompany(id);
     }
-    useEffect(()=>{
-        console.log("info",info)
-    },[info])
+    useEffect(() => {
+        console.log("info", info)
+    }, [info])
     return (
         <div className={'main-content main-content-detail'}>
             {/*<div className={`loading ${false ? '' : ''}`}>*/}
@@ -246,9 +246,12 @@ export default function DetailMember(props) {
             {/*    <ClipLoader*/}
             {/*        color={'#1d78d3'} size={50} css={css`color: #1d78d3`} />*/}
             {/*</div>*/}
-            <ModalConfirmDel name={info.name} openModalDel={openModalDel} handleCloseModalDel={handleCloseModalDel} submitDelete={submitDelete} ></ModalConfirmDel>
-            <ModalConfirmDel openModalDel={openModalRemove} handleCloseModalDel={handleCloseModalRemove} submitDelete={submitRemove} ></ModalConfirmDel>
-            <ModalAddMember isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddMember={openModalAddMember} handleCloseModalAddMember={handleCloseModalAddMember} memberId={idDetail}></ModalAddMember>
+            <ModalConfirmDel name={info.name} openModalDel={openModalDel} handleCloseModalDel={handleCloseModalDel}
+                             submitDelete={submitDelete}></ModalConfirmDel>
+            <ModalConfirmDel openModalDel={openModalRemove} handleCloseModalDel={handleCloseModalRemove}
+                             submitDelete={submitRemove}></ModalConfirmDel>
+            <ModalAddMember isRefresh={isRefresh} setIsRefresh={setIsRefresh} openModalAddMember={openModalAddMember}
+                            handleCloseModalAddMember={handleCloseModalAddMember} memberId={idDetail}></ModalAddMember>
 
             <ToastContainer
                 position="top-right"
@@ -261,14 +264,16 @@ export default function DetailMember(props) {
                 draggable
                 pauseOnHover
             />
-            <Button onClick={backList} style={{marginBottom:'10px'}} variant="text" startIcon={<KeyboardBackspaceIcon />}>Thành viên</Button>
+            <Button onClick={backList} style={{marginBottom: '10px'}} variant="text"
+                    startIcon={<KeyboardBackspaceIcon/>}>Thành viên</Button>
 
             <div className={'main-content-header'}>
-                <div className={'row'} style={{justifyContent:'space-between'}}>
+                <div className={'row'} style={{justifyContent: 'space-between'}}>
                     <Typography variant="h5" className={'main-content-tittle'}>
                         {info.asset_name}
                     </Typography>
-                    <Button onClick={update} style={{marginBottom:'10px'}} variant="outlined" startIcon={<BorderColorOutlinedIcon />}>Cập nhật</Button>
+                    <Button onClick={update} style={{marginBottom: '10px'}} variant="outlined"
+                            startIcon={<BorderColorOutlinedIcon/>}>Cập nhật</Button>
 
                 </div>
             </div>
@@ -277,7 +282,7 @@ export default function DetailMember(props) {
                     <h4>Thông tin chi tiết</h4>
 
                 </div>
-                <Divider light />
+                <Divider light/>
                 <div className={'row-detail'}>
                     <div className={'text-info-tittle'}>
                         Tên thành viên
@@ -292,7 +297,7 @@ export default function DetailMember(props) {
                         Loại thành viên
                     </div>
                     <div className={'text-info-content'}>
-                        {info.type==='human'?'Cá nhân':'Công'}
+                        {info.type === 'human' ? 'Cá nhân' : 'Công'}
                     </div>
                 </div>
                 <Divider></Divider>
@@ -307,49 +312,51 @@ export default function DetailMember(props) {
                 <Divider></Divider>
 
             </div>
-            <div className={'main-content-body'}>
-                <div className={'main-content-body-tittle'}>
-                    <h4>Danh sách công ty</h4>
-                    <div>
-                        <Button  variant="outlined" onClick={()=>{setOpenModalAddMember(true)}} startIcon={<AddIcon/>}>
-                            Thêm thành viên vào công ty
-                        </Button>
-                    </div>
-                </div>
-                <div style={{height: '400px', width: '100%',marginTop:'10px'}}>
+            {/*<div className={'main-content-body'}>*/}
+            {/*    <div className={'main-content-body-tittle'}>*/}
+            {/*        <h4>Danh sách công ty</h4>*/}
+            {/*        <div>*/}
+            {/*            <Button variant="outlined" onClick={() => {*/}
+            {/*                setOpenModalAddMember(true)*/}
+            {/*            }} startIcon={<AddIcon/>}>*/}
+            {/*                Thêm thành viên vào công ty*/}
+            {/*            </Button>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*    <div style={{height: '400px', width: '100%', marginTop: '10px'}}>*/}
 
-                    <DataGrid
-                        // getRowHeight={() => 'auto'}
-                        localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
-                        labelRowsPerPage={"Số kết quả"}
-                        density="standard"
-                        rows={listCompany}
-                        columns={columns}
-                        pageSize={5}
-                        rowsPerPageOptions={[5]}
-                        // loading={loading}
-                        disableSelectionOnClick
-                        sx={{
-                            // boxShadow: 2,
-                            overflowX: 'scroll',
-                            border: 1,
-                            borderColor: 'rgb(255, 255, 255)',
-                            '& .MuiDataGrid-iconSeparator': {
-                                display: 'none',
-                            }
-                        }}
+            {/*        <DataGrid*/}
+            {/*            // getRowHeight={() => 'auto'}*/}
+            {/*            localeText={viVN.components.MuiDataGrid.defaultProps.localeText}*/}
+            {/*            labelRowsPerPage={"Số kết quả"}*/}
+            {/*            density="standard"*/}
+            {/*            rows={listCompany}*/}
+            {/*            columns={columns}*/}
+            {/*            pageSize={5}*/}
+            {/*            rowsPerPageOptions={[5]}*/}
+            {/*            // loading={loading}*/}
+            {/*            disableSelectionOnClick*/}
+            {/*            sx={{*/}
+            {/*                // boxShadow: 2,*/}
+            {/*                overflowX: 'scroll',*/}
+            {/*                border: 1,*/}
+            {/*                borderColor: 'rgb(255, 255, 255)',*/}
+            {/*                '& .MuiDataGrid-iconSeparator': {*/}
+            {/*                    display: 'none',*/}
+            {/*                }*/}
+            {/*            }}*/}
 
-                    />
-                </div>
-
-                </div>
+            {/*        />*/}
+            {/*    </div>*/}
+            {/*</div>*/}
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
                     <h4>Quản lý</h4>
                 </div>
-                <Divider light />
-                <div style={{padding:'20px'}}>
-                    <Button onClick={deleteMemberBtn}  color={'error'} style={{marginBottom:'10px'}} variant="outlined" >Xóa dữ liệu</Button>
+                <Divider light/>
+                <div style={{padding: '20px'}}>
+                    <Button onClick={deleteMemberBtn} color={'error'} style={{marginBottom: '10px'}} variant="outlined">Xóa
+                        dữ liệu</Button>
                     <div className={'text-info-content'}>
                         Thao tác này sẽ xóa toàn bộ dữ liệu của bản ghi
                     </div>

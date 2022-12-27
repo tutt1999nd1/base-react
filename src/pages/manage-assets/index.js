@@ -20,11 +20,20 @@ import VerticalAlignTopIcon from '@mui/icons-material/VerticalAlignTop';
 import {toast, ToastContainer} from "react-toastify";
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import BorderColorIcon from '@mui/icons-material/BorderColor';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, viVN} from "@mui/x-data-grid";
 import {useNavigate} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import {changeVisibilityTableAll, checkColumnVisibility, currencyFormatter, pending} from "../../constants/utils";
+import {
+    changeVisibilityTableAll,
+    checkColumnVisibility,
+    convertToTreeTable,
+    currencyFormatter,
+    pending
+} from "../../constants/utils";
 import {useSelector} from "react-redux";
 import {TreeSelect} from "antd";
 import apiManagerAssetGroup from "../../api/manage-asset-group";
@@ -55,6 +64,7 @@ export default function ManageAssets() {
     const [typeSearch, setTypeSearch] = useState(0)
     const [openSearch, setOpenSearch] = useState(true)
     const [listAssetGroupTree, setListAssetGroupTree] = useState([]);
+    const [listAsset,setListAsset] = useState([])
     const [listResult, setListResult] = React.useState({
         page: 0,
         pageSize: 10,
@@ -217,9 +227,9 @@ export default function ManageAssets() {
             field: 'action',
             headerName: 'Thao tác',
             sortable: false,
-            width: 200,
+            width: 150,
             align: 'center',
-            maxWidth: 130,
+            maxWidth: 150,
             headerClassName: 'super-app-theme--header',
             hide: checkColumnVisibility('asset','action'),
             // flex: 1,
@@ -244,13 +254,13 @@ export default function ManageAssets() {
                 }
                 return <div className='icon-action'>
                     <Tooltip title="Cập nhật" onClick={updateBtn}>
-                        <EditOutlinedIcon style={{color: "rgb(107, 114, 128)"}}></EditOutlinedIcon>
+                        <BorderColorIcon style={{color: "rgb(107, 114, 128)"}}></BorderColorIcon>
                     </Tooltip>
                     <Tooltip title="Xóa" onClick={deleteBtn}>
-                        <DeleteOutlineIcon style={{color: "rgb(107, 114, 128)"}}></DeleteOutlineIcon>
+                        <DeleteForeverIcon style={{color: "rgb(107, 114, 128)"}}></DeleteForeverIcon>
                     </Tooltip>
                     <Tooltip onClick={detailBtn} title="Xem chi tiết">
-                        <ArrowForwardIcon style={{color: "rgb(107, 114, 128)"}}></ArrowForwardIcon>
+                        <RemoveRedEyeIcon style={{color: "rgb(107, 114, 128)"}}></RemoveRedEyeIcon>
                     </Tooltip>
                 </div>;
             },
@@ -303,7 +313,9 @@ export default function ManageAssets() {
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
-
+    useEffect(()=>{
+        console.log(listAsset)
+    },[listAsset])
     const redirectAddPage = () => {
         navigate('/assets/create')
     }
@@ -357,7 +369,7 @@ export default function ManageAssets() {
             setLoading(false)
             console.log(e)
         })
-    }, [listResult.page, listResult.pageSize, nameSearch, groupSearch, typeSearch, refresh, currentUser])
+    }, [listResult.page, listResult.pageSize, nameSearch, groupSearch, typeSearch, refresh, currentUser.token])
     useEffect(() => {
 
         getListAssetGroupTreeApi({paging: false}).then(r => {
@@ -366,6 +378,14 @@ export default function ManageAssets() {
         }).catch(e => {
             console.log(e)
         })
+
+        getListAssetApi().then(r=>{
+            let arr = convertToTreeTable(r.data.asset_aggregates)
+            console.log("tutt 222",arr)
+            setListAsset(arr)
+        })
+
+
     }, [currentUser])
 
     function CustomToolbar() {
@@ -449,6 +469,9 @@ export default function ManageAssets() {
     }
     const downTemplateAssetApi = (data) => {
         return apiManagerAssets.downTemplateAsset(data);
+    }
+    const getListAssetApi = () => {
+        return apiManagerAssets.getListAssetDashboard();
     }
     return (
         <div className={'main-content'}>
@@ -551,15 +574,23 @@ export default function ManageAssets() {
                                 fieldNames={{label: 'group_name', value: 'id', children: 'child_asset_groups'}}
                             >
                             </TreeSelect>
-
                         </div>
+                        <div style={{width: '20%', marginLeft: '20px'}}>
+                            {
+                                listAsset.map((e)=>(
+                                    <div>
+                                        {e.group_name} : {currencyFormatter(e.total_value)}
+                                    </div>
+                                    )
 
+                                )}
+                        </div>
 
                     </div>
 
                 </Collapse>
                 <Divider light/>
-                <div className={'main-content-body-result'}>
+                <div className={'main-content-body-result sticky-body'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
                             getRowHeight={() => 'auto'}

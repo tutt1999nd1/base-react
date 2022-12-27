@@ -57,7 +57,7 @@ hr {
 }
 .MuiButtonBase-root{
     font-size: 0.88rem !important;
-    color: #1F2251 !important;
+    /*color: #1F2251 !important;*/
     text-transform: inherit !important;
 }
 .makhoanvay h5{
@@ -214,7 +214,7 @@ input:has(> div){
 }
 
 .main-content {
-    position: relative;
+    /*position: relative;*/
     padding: 30px;
     /*width: 97%;*/
     /*height: 95%;*/
@@ -274,17 +274,18 @@ input:has(> div){
     display: flex;
     align-items: center;
 }
-.MuiBox-root .Mui-selected{
-    color: #1F2251 !important;
-}
+
 .MuiTabs-indicator{
     background-color: #1F2251 !important;
 }
 .main-content-body-search {
     padding-left: 20px;
-    height: 90px;
+    padding-right: 20px;
+    /*height: 90px;*/
     display: flex;
     align-items: center;
+    min-height:90px;
+    height: 100%;
 }
 
 .MuiDataGrid-root .MuiDataGrid-cell:focus {
@@ -734,18 +735,21 @@ th{
     background-color: #1F2251;
     color: #fff !important;
 }
-.main-content > button{
+.main-content > button,.main-content .MuiBox-root > button{
     padding: 4px 10px;
     border: 1px solid #1F2251 !important;
 }
-.main-content > button:hover{
-    background-color: #1F2251;
+.main-content > button:hover,.main-content .MuiBox-root > button:hover{
+    background-color: #1F2251!important;
     color: #fff !important;
 }
-.main-content > button:hover svg path{
+.main-content > button:hover svg path,.main-content .MuiBox-root > button:hover svg path{
     fill: #fff;
 }
-
+.main-content .MuiBox-root h5 {
+    color: #1F2251;
+    margin-top: 15px;
+}
 .table-custom th{
 height: 40px;
 white-space: nowrap;
@@ -844,7 +848,7 @@ border-bottom: none;
 background-color: #1F2251   ;
 height: 50px;
 font-weight: bold;
-font-size: 0.88rem;
+font-size: 0.8rem;
 line-height: 1.5;
 letter-spacing: 0.00938em;
 }
@@ -911,30 +915,47 @@ border: 1px solid #1F2251;
 background-color: #1F2251;
 color: #fff !important;
 }
-.main-content-body-result .MuiSvgIcon-root{
-font-size: 0.8rem;
+.main-content-body-result .MuiSvgIcon-root,.main-content-body .MuiSvgIcon-root{
+font-size: 1rem;
 }
 .main-content-body-tittle button{
 border: unset;
 }
 @media only screen and (max-width: 1600px) {
-.table-custom{
-    font-size: 0.8rem !important;
+    .table-custom{
+        font-size: 0.8rem !important;
+    }
+    .item-dashboard{
+        font-size: 0.8rem ;
+        width: 22%;
+    }
+
+    .item-dashboard-content h6{
+        font-size: 1rem ;
+    }
+    .main-content{
+        padding: 15px;
+    }
 }
-.item-dashboard{
-    font-size: 0.8rem ;
-    width: 22%;
-}
-.item-dashboard-content h6{
-    font-size: 1rem ;
-}
-.main-content{
-    padding: 15px;
-}
+.d-none{
+    display: none!important;
 }
 .row-member{
     max-height: 150px;
     overflow-y: auto;
+}
+.change-lending-amount > div > h5{
+    font-weight: 500 !important;
+    font-size: 1rem;
+    color: #1F2251;
+    margin-bottom: 20px;
+}
+.change-lending-amount .main-content,.change-lending-amount .MuiBox-root{
+    padding: 0 !important;
+}
+.change-lending-amount .MuiTabs-root button:hover{
+    border-bottom: 2px solid #1F2251;
+    margin-left: 2px;
 }
 
 /* mobile style */
@@ -944,6 +965,10 @@ border: unset;
     }
     .nav.animationTab {
         visibility: visible;
+    }
+    .wrapper-form-login{
+        width: unset;
+        background: #ffffff94;
     }
     .nav {
         position: fixed;
@@ -1022,6 +1047,9 @@ border: unset;
         justify-content: space-between;
         display: flex;
     }
+    .wrapper-form-login .logo{
+        display: block;
+    }
     .logo img{
         width: 85% !important;
     }
@@ -1034,7 +1062,7 @@ border: unset;
         border: unset;
         display: block;
     }
-    #simple-tabpanel-0 > div{
+    #simple-tabpanel-0 > div,.simple-tabpanel-1 > div{
         padding: 0;
     }
     .list-table{
@@ -1060,4 +1088,144 @@ border: unset;
     .text-info-content{
         white-space: unset;
     }
+}
+.tutt20 .MuiDataGrid-columnHeaders:after {
+    content: "Thao tác";
+    width: 177px !important;
+}
+
+.main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-columnHeaders:after {
+    content: "Thao tác";
+    width: 157px;
+    height: 56px;
+    position: absolute;
+    right: -1px;
+    background-color: #1f2251;
+    padding-left: 10px;
+    color: #fff;
+    border-left: 1px solid #dee2e6;
+    font-family: Roboto,Helvetica,Arial,sans-serif;
+    font-weight: 500;
+    font-size: .8rem;
+}
+.main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-row .MuiDataGrid-cell:last-child {
+    position: sticky;
+    right: 0px;
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+    border-left: 1px solid #dee2e6;
+    min-width: 153px!important;
+}
+.main-content-body-result tr th:last-child,.main-content-body tr th:last-child{
+    position: sticky;
+    right: 0;
+    background-color: #1f2251;
+    border-left: 1px solid #dee2e6;
+}
+.main-content-body-result table tbody tr > td:last-child,.main-content-body table tbody tr > td:last-child{
+    position: sticky;
+    right: 0;
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+
+}
+.icon-action svg:not(svg:last-child){
+    border-right: 1px dashed rgb(206 206 206);
+    padding-right: 8px;
+}
+.symbol-percent:after {
+    content: "%";
+
+}
+.flexible-modal {
+    position: absolute;
+    z-index: 1000 !important;
+    border: 1px solid #ccc;
+    background: white;
+}
+.flexible-modal-mask {
+    position: fixed;
+    height: 100%;
+    background: rgba(55, 55, 55, 0.6);
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    z-index:999;
+}
+
+button:has(svg){
+    color: #1F2251!important;
+    border: unset!important;
+}
+button:has(svg):hover,.basic.tabs button:hover{
+    background: unset!important;
+    color: unset!important;
+}
+button,.main-content-header .row button{
+    color: #1F2251!important;
+    border: 1px solid #1F2251!important;
+}
+button:hover,.main-content-header .row button:hover{
+    background: #1F2251!important;
+    color: #fff!important;
+}
+.dashboardTab{
+    border: unset!important;
+}
+.dashboardTab:hover{
+    color: #fff;
+    background: #1F2251!important;
+}
+div[role=dialog] button.Mui-selected{
+    color: #fff!important;
+    background-color: #1F2251!important;
+}
+div[role=dialog] button{
+    border: unset!important;
+}
+
+
+
+.flexible-modal-resizer {
+    position:absolute;
+    right:0;
+    bottom:0;
+    cursor:se-resize;
+    margin:5px;
+    border-bottom: solid 2px #333;
+    border-right: solid 2px #333;
+}
+.flexible-modal-drag-area{
+    background: white !important ;
+    height: 50px;
+    position:absolute;
+    right:0;
+    top:0;
+    cursor:move;
+}
+.modal-header-resize{
+    color:black;
+    display:flex;
+    align-items:center;
+    height: 50px;
+    background: white !important;
+
+}
+.modal-header-resize-tittle{
+    color:black;
+    z-index: 1;
+    font-weight: 500;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    letter-spacing: 0.0075em;
+    padding-left: 10px;
+}
+.modal-body-resize{
+    height: 80%;
+    width: 100%;
+}
+/*disable datepicker*/
+button[disabled]{
+    color: rgba(0, 0, 0, 0.38) !important;
 }

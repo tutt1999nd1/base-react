@@ -17,6 +17,12 @@ class ApiManagerAssets{
             headers: {'content-type': 'multipart/form-data'}
         })
     }
+    importFile = (data) => {
+        return axiosClient.post(API_MAP.IMPORT_FILES,data,{
+            // params: description,
+            headers: {'content-type': 'multipart/form-data'}
+        })
+    }
     updateAsset = (id,data) => {
         return axiosClient.put(API_MAP.UPDATE_ASSETS+`/${id}`,data)
     }

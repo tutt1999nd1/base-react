@@ -1,5 +1,4 @@
 import { createSlice } from '@reduxjs/toolkit';
-
 export const userSlice = createSlice({
     name: 'user',
     initialState: {
@@ -14,7 +13,8 @@ export const userSlice = createSlice({
         language: 'en',
         showMenu:true,
         msalInstance:undefined,
-        homeAccountId:''
+        homeAccountId:'',
+        listSelectCompany:[]
 
     },
     reducers: {
@@ -47,6 +47,9 @@ export const userSlice = createSlice({
         },
         updateRole: (state, action) => {
             state.roles = action.payload
+        },
+        updateSelectCompany: (state, action) => {
+            state.listSelectCompany = action.payload
         },
         updateUsername: (state, action) => {
             state.username = action.payload
@@ -104,4 +107,4 @@ export const userSlice = createSlice({
     }
 })
 export default userSlice.reducer;
-export const {updateTokenGraphApi,updateHomeAccountId,updateName,onMsalInstanceChange,updateShowMenu, updateToken, updateProjectRedux, updateLanguage, logout, updateLoading, updateRole,updateUsername } = userSlice.actions;
+export const {updateSelectCompany,updateTokenGraphApi,updateHomeAccountId,updateName,onMsalInstanceChange,updateShowMenu, updateToken, updateProjectRedux, updateLanguage, logout, updateLoading, updateRole,updateUsername } = userSlice.actions;

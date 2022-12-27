@@ -163,7 +163,7 @@ export default function EditCategory(props) {
                         // asset_type:info.asset_type.id,
                         // asset_group:info.asset_group.id,
                         member_id: idUpdate ? (info.member?info.member.id:"") : info.member_id,
-                        member_name:info.member? info.member.name:'',
+                        member_name:info.member? info.member.name:"",
                         tax_number: info.tax_number,
                         charter_capital: info.charter_capital,
                         founding_date: isUpdate ? dayjs(info.founding_date, 'DD-MM-YYYY') : info.founding_date,
@@ -292,9 +292,12 @@ export default function EditCategory(props) {
                                                 options={listMember}
                                                 value={{
                                                     id: values.member_id,
-                                                    label: values.member_name
+                                                    label: values.member_name||""
                                                 }
                                                 }
+                                                freeSolo
+                                                inputValue={values.member_name}
+
                                                 // defaultValue={[{
                                                 //     id: info.id: info.capital_company.id,,
                                                 //     label: info.capital_company.company_name
@@ -320,6 +323,11 @@ export default function EditCategory(props) {
                                                         setFieldValue('member_name', '')
                                                     }
                                                 }}
+                                                onInputChange={(event, value) => {
+                                                    setFieldValue('member_name', value)
+                                                    setFieldValue('member_id', '')
+                                                }
+                                                }
                                             />
                                         </Grid>
 

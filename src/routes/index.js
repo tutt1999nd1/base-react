@@ -32,6 +32,12 @@ import EditSofChargingEst from "../pages/manage-sof-charging-est/create-update";
 import ManageMember from "../pages/manage-member";
 import EditMember from "../pages/manage-member/create-update";
 import DetailMember from "../pages/manage-member/detail";
+import ManageChangeSof from "../pages/manage-sof/manage-change-sof";
+import PayablePeriodDetail from "../pages/manage-sof-charging-est/payable-period-detail";
+import CompanyHistory from "../pages/manage-company/company-history";
+import CompanyMember from "../pages/manage-company/company-member";
+import ManageSearchCompany from "../pages/manage-search-company";
+import ModeView from "../pages/manage-search-company/mode-view";
 
 export default function RenderRoute() {
     return (
@@ -43,6 +49,7 @@ export default function RenderRoute() {
             {/*    // <Test></Test>*/}
             {/*}>*/}
             {/*</Route>*/}
+            <Route path="search-company/view" element={<ModeView></ModeView>}/>
             <Route path="/" element={
                 <>
                     <AuthenticatedTemplate>
@@ -62,15 +69,15 @@ export default function RenderRoute() {
                 <Route path="assets/update" element={<EditAssets isUpdate={true}></EditAssets>}/>
                 <Route path="company" element={<ManageCompany></ManageCompany>}/>
                 <Route path="company/create" element={<EditCompany isUpdate={false}></EditCompany>}/>
+                <Route path="search-company" element={<ManageSearchCompany ></ManageSearchCompany>}/>
                 <Route path="company/update" element={<EditCompany isUpdate={true}></EditCompany>}/>
                 <Route path="company/detail" element={<DetailCompany></DetailCompany>}/>
-
-
+                <Route path="company/member" element={<CompanyMember></CompanyMember>}/>
+                <Route path="company/history" element={<CompanyHistory></CompanyHistory>}/>
                 <Route path="member" element={<ManageMember></ManageMember>}/>
                 <Route path="member/create" element={<EditMember isUpdate={false}></EditMember>}/>
                 <Route path="member/update" element={<EditMember isUpdate={true}></EditMember>}/>
                 <Route path="member/detail" element={<DetailMember></DetailMember>}/>
-
                 <Route path="supplier" element={<ManageSupplier ></ManageSupplier>}/>
                 <Route path="supplier/create" element={<EditSupplier isUpdate={false}></EditSupplier>}/>
                 <Route path="supplier/update" element={<EditSupplier isUpdate={true}></EditSupplier>}/>
@@ -89,6 +96,8 @@ export default function RenderRoute() {
                 <Route path="campaign/detail" element={<DetailCampaign></DetailCampaign>}/>
                 <Route path="approve" element={<ManageApprove></ManageApprove>}/>
                 <Route path="sof" element={<ManageSOF>Khoản vay</ManageSOF>}/>
+                <Route path="change-sof" element={<ManageChangeSof></ManageChangeSof>}/>
+                <Route path="detail-est" element={<PayablePeriodDetail></PayablePeriodDetail>}/>
                 <Route path="sof/create" element={<EditSOF isUpdate={false}></EditSOF>}/>
                 <Route path="sof/update" element={<EditSOF isUpdate={true}></EditSOF>}/>
                 <Route path="sof/detail" element={<DetailSOF></DetailSOF>}/>
