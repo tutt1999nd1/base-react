@@ -184,6 +184,9 @@ input:has(> div){
 .main-content-header button:hover svg path{
     fill: #fff;
 }
+.main-content-body-tittle button:hover svg path{
+    fill: #1F2251;
+}
 .main-content-header button{
     border: 1px solid #1F2251;
     margin: 0 6px;
