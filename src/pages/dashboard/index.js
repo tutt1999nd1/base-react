@@ -288,7 +288,7 @@ export default function Dashboard() {
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                 <Tabs value={tab} onChange={handleChangeTab} aria-label="basic tabs example">
                     <Tab className={"dashboardTab"} label="Dashboard" {...a11yProps(0)} />
-                    <Tab className={"dashboardTab"} label="Độ ưu tiên" {...a11yProps(1)} />
+                    <Tab className={"dashboardTab d-none"} label="Độ ưu tiên" {...a11yProps(1)} />
                     {/*<Tab label="Item Three" {...a11yProps(2)} />*/}
                 </Tabs>
             </Box>

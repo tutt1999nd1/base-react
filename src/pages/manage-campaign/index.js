@@ -335,8 +335,8 @@ export default function ManageCategory() {
                         Quản lý mục đích vay
                     </Typography>
                     <div>
-                        <Button onClick={pending} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
-                        <Button onClick={pending} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
+                        <Button className={"d-none"} onClick={pending} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
+                        <Button className={"d-none"} onClick={pending} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
                                 startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
                         <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
                             Thêm

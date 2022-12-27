@@ -922,19 +922,23 @@ font-size: 1rem;
 border: unset;
 }
 @media only screen and (max-width: 1600px) {
-.table-custom{
-    font-size: 0.8rem !important;
+    .table-custom{
+        font-size: 0.8rem !important;
+    }
+    .item-dashboard{
+        font-size: 0.8rem ;
+        width: 22%;
+    }
+
+    .item-dashboard-content h6{
+        font-size: 1rem ;
+    }
+    .main-content{
+        padding: 15px;
+    }
 }
-.item-dashboard{
-    font-size: 0.8rem ;
-    width: 22%;
-}
-.item-dashboard-content h6{
-    font-size: 1rem ;
-}
-.main-content{
-    padding: 15px;
-}
+.d-none{
+    display: none!important;
 }
 .row-member{
     max-height: 150px;
@@ -961,6 +965,10 @@ border: unset;
     }
     .nav.animationTab {
         visibility: visible;
+    }
+    .wrapper-form-login{
+        width: unset;
+        background: #ffffff94;
     }
     .nav {
         position: fixed;
@@ -1039,6 +1047,9 @@ border: unset;
         justify-content: space-between;
         display: flex;
     }
+    .wrapper-form-login .logo{
+        display: block;
+    }
     .logo img{
         width: 85% !important;
     }
@@ -1095,6 +1106,7 @@ border: unset;
     border-left: 1px solid #dee2e6;
     font-family: Roboto,Helvetica,Arial,sans-serif;
     font-weight: 500;
+    font-size: .8rem;
 }
 .main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-row .MuiDataGrid-cell:last-child {
     position: sticky;

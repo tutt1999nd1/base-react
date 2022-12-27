@@ -30,12 +30,13 @@ import RemoveRedEyeIcon from '@mui/icons-material/RemoveRedEye';
 import {useNavigate} from "react-router-dom";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import {
+    capitalizeFirstLetter,
     changeVisibilityTableAll,
     checkColumnVisibility,
     convertToAutoComplete,
     currencyFormatter,
     pending,
-    typeToName
+    typeToName, VNnum2words
 } from "../../constants/utils";
 import apiManagerCompany from "../../api/manage-company";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
@@ -669,7 +670,7 @@ export default function ManageCompany() {
                             </IconButton>
                         </Tooltip>
                         <Button onClick={uploadFile} variant="text" startIcon={<VerticalAlignTopIcon/>}>Nhập</Button>
-                        <Button onClick={pending} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
+                        <Button className={"d-none"} onClick={pending} style={{marginLeft: '10px',marginRight:'10px'}} variant="text"
                                 startIcon={<VerticalAlignBottomIcon/>}>Xuất</Button>
                         <Button onClick={redirectAddPage} variant="outlined" startIcon={<AddIcon/>}>
                             Thêm
@@ -866,45 +867,54 @@ export default function ManageCompany() {
                 <Divider light/>
 
                 <Collapse in={openUpdate} timeout="auto" unmountOnExit>
-                    <div className={'main-content-body-search'} >
-                        <div style={{width: '20%'}}>
-                            <div className={'label-input'}>Cập nhật số tiền vay tối đa</div>
-                            <NumericFormat
-                                id='max_capital_value'
-                                name='max_capital_value'
-                                className={'formik-input text-right'}
-                                size={"small"}
-                                // type={"number"}
-                                // variant="standard"
-                                value={capitalLimit}
-                                // onChange={handleChange}
-                                customInput={TextField}
-                                InputProps={{
-                                    endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
+                    <div className={'main-content-body-search'} style={{display: 'block', height: '110px',paddingTop:'20px'}}>
+                        <div style={{display: 'flex'}}>
+                            <div style={{width:'25%'}}>
+                                <div className={'label-input'}>Cập nhật số tiền vay tối đa</div>
+                                <div>
+                                    <NumericFormat
+                                        id='max_capital_value'
+                                        name='max_capital_value'
+                                        className={'formik-input text-right'}
+                                        size={"small"}
+                                        // type={"number"}
+                                        // variant="standard"
+                                        value={capitalLimit}
+                                        // onChange={handleChange}
+                                        customInput={TextField}
+                                        InputProps={{
+                                            endAdornment: <InputAdornment position="end">VNĐ</InputAdornment>,
 
-                                }}
-                                thousandSeparator={"."}
-                                decimalSeparator={","}
-                                onValueChange={(values) => {
-                                    const {formattedValue, value, floatValue} = values;
-                                    // do something with floatValue
-                                    const re = /^[0-9\b]+$/;
-                                    if (re.test(floatValue)) {
-                                        // setFieldValue('max_capital_value', floatValue)
-                                        // setRemainAmount(floatValue)
-                                        setCapitalLimit(floatValue)
-                                    }
-                                    // setFieldValue('max_capital_value', formattedValue)
+                                        }}
+                                        thousandSeparator={"."}
+                                        decimalSeparator={","}
+                                        onValueChange={(values) => {
+                                            const {formattedValue, value, floatValue} = values;
+                                            // do something with floatValue
+                                            const re = /^[0-9\b]+$/;
+                                            if (re.test(floatValue)) {
+                                                // setFieldValue('max_capital_value', floatValue)
+                                                // setRemainAmount(floatValue)
+                                                setCapitalLimit(floatValue)
+                                            }
+                                            // setFieldValue('max_capital_value', formattedValue)
 
-                                }}
-                            />
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                            <div style={{marginTop:"17px",marginLeft:"10px"}}>
+                                <Button onClick={submitUpdateCapitalLimit}  variant={"outlined"}  color={"primary"}> Cập nhật</Button>
+                            </div>
 
                         </div>
-                        <div style={{marginTop:"17px",marginLeft:"10px"}}>
-                            <Button onClick={submitUpdateCapitalLimit}  variant={"outlined"}  color={"primary"}> Cập nhật</Button>
+                        <div style={{width:'25%'}}>
+                            <Typography className={'uppercase'} variant="caption" display="block"
+                                        gutterBottom>
+                                {capitalLimit ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(capitalLimit))} đồng` : ''}
+                            </Typography>
                         </div>
                     </div>
-
                 </Collapse>
                 <Divider light/>
                 <div className={'main-content-body-result sticky-body tutt20'}>

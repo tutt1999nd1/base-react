@@ -83,7 +83,7 @@ export default function Nav() {
                                 </div>
                             </li>
                         </NavLink>
-                        <NavLink className={'nav-link'} to={'approve'} onClick={isMobile?touchMenu:''}>
+                        <NavLink className={'nav-link d-none'} to={'approve'} onClick={isMobile?touchMenu:''}>
                             <li>
                                 <div className={'nav-item'}>
                                     <div className={'nav-item-name'}><AssignmentIcon></AssignmentIcon>Quản lý phê duyệt</div>
