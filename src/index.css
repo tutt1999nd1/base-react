@@ -1213,3 +1213,7 @@ div[role=dialog] button{
     height: 80%;
     width: 100%;
 }
+/*disable datepicker*/
+button[disabled]{
+    color: rgba(0, 0, 0, 0.38) !important;
+}

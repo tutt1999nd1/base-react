@@ -522,7 +522,7 @@ export default function DetailSOF(props) {
                 </div>
                 <Divider light/>
                 <div style={{height: '500px', width: '100%'}}>
-                    <TableContainer style={{height: '100%', width: '100%', overflow: "auto"}}>
+                    <TableContainer style={{height: '100%', width: '100%', overflow: "auto",position:"relative"}}>
                         {/*<div style={{height: '100%', width: '100%'}}>*/}
                         <Table stickyHeader className={"table-custom"}>
                             <TableHead>
