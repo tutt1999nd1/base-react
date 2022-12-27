@@ -97,7 +97,6 @@ export default function ManageSearchCompany() {
 
         // Ở đây bạn có thể xử lý message đã nhận.
         // bạn có thể gửi object dạng { 'title': 'tiêu đề', 'message': 'nội dung' }
-        alert(message);
         // vân vân.
         // mây mây.
     };
@@ -776,6 +775,7 @@ export default function ManageSearchCompany() {
                             onSelectionModelChange={(newSelectionModel) => {
                                 setListDelete(newSelectionModel)
                             }}
+                            selectionModel={listDelete}
                             sx={{
                                 overflowX: 'scroll',
                                 // boxShadow: 2,

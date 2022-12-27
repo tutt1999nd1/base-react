@@ -12,7 +12,7 @@ import {
     InputAdornment,
     MenuItem,
     Select,
-    TextField,
+    TextField, Tooltip,
     Typography
 } from "@mui/material";
 import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
@@ -36,7 +36,11 @@ import apiManagerSupplier from "../../api/manage-supplier";
 import {NumericFormat} from "react-number-format";
 import apiManagerMember from "../../api/manage-member";
 import ModalConfirm from "../../components/ModalConfirm";
-
+import BorderColorIcon from "@mui/icons-material/BorderColor";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+import RemoveIcon from '@mui/icons-material/Remove';
+import dayjs from "dayjs";
 export default function ModeView() {
     const currentUser = useSelector(state => state.currentUser)
     const [isDelList, setIsDelList] = useState(false)
@@ -62,8 +66,8 @@ export default function ModeView() {
     const [remainAmount, setRemainAmount] = useState(0)
     const [statusSearch, setStatusSearch] = useState(3)
     const [openSearch, setOpenSearch] = useState(true)
-    const [listResult,setListResult] = useState([])
-    const [listConvert,setListConvert] = useState([])
+    const [listResult, setListResult] = useState([])
+    const [listConvert, setListConvert] = useState([])
 
 
     window.addEventListener("storage", message_receive);
@@ -78,7 +82,7 @@ export default function ModeView() {
 
         // Ở đây bạn có thể xử lý message đã nhận.
         // bạn có thể gửi object dạng { 'title': 'tiêu đề', 'message': 'nội dung' }
-        console.log("message",message);
+        console.log("message", message);
         setListResult(message)
         // vân vân.
         // mây mây.
@@ -86,53 +90,84 @@ export default function ModeView() {
     useEffect(() => {
         setListResult(currentUser.listSelectCompany);
 
-    },[])
+    }, [])
     useEffect(() => {
-        let objectCampaignSearch = listCampaign.filter(e=>e.id === campaignSearch)
-        let nameCampaign=undefined;
-        if(objectCampaignSearch.length>0){
+        let objectCampaignSearch = listCampaign.filter(e => e.id === campaignSearch)
+        let nameCampaign = undefined;
+        if (objectCampaignSearch.length > 0) {
             nameCampaign = objectCampaignSearch[0].campaign_name
         }
-        let listSearch = listResult.filter(e=>checkSearch(e,nameCampaign,companySearch,companySupplierSearch,statusSearch,remainAmount,represent))
-        for(let i = 0; i < listSearch.length; i++) {
-            listResult[i].index = i+1;
+        let listSearch = listResult.filter(e => checkSearch(e, nameCampaign, companySearch, companySupplierSearch, statusSearch, remainAmount, represent))
+        for (let i = 0; i < listSearch.length; i++) {
+            // listResult[i].index = i + 1;
         }
         setListConvert(listSearch);
-    },[listResult,campaignSearch, companySearch, companySupplierSearch, statusSearch, remainAmount, represent])
-    function checkSearch(e,campaignSearch,companySearch,companySupplierSearch,statusSearch,remainAmount,represent) {
-        let status= undefined;
-        console.log("statusSearch",statusSearch)
-        if(statusSearch==true){
-            status="Chưa vay"
-        }
-        else if(statusSearch==false){
-            status="Đang vay"
+    }, [listResult, campaignSearch, companySearch, companySupplierSearch, statusSearch, remainAmount, represent])
+
+    function checkSearch(e, campaignSearch, companySearch, companySupplierSearch, statusSearch, remainAmount, represent) {
+        let status = undefined;
+        console.log("statusSearch", statusSearch)
+        if (statusSearch == true) {
+            status = "Chưa vay"
+        } else if (statusSearch == false) {
+            status = "Đang vay"
         }
 
-        if(campaignSearch&&e.campaign_name!=campaignSearch){
+        if (campaignSearch && e.campaign_name != campaignSearch) {
             return false;
         }
-        if(companySearch&&e.company_name!=companySearch){
+        if (companySearch && e.company_name != companySearch) {
             return false;
         }
-        if(companySupplierSearch&&e.supplier_name!=companySupplierSearch){
+        if (companySupplierSearch && e.supplier_name != companySupplierSearch) {
             return false;
         }
-        console.log("status",status)
-        console.log("e.status",e.status)
-        if(status&&e.status!=status){
+        console.log("status", status)
+        console.log("e.status", e.status)
+        if (status && e.status != status) {
             return false;
         }
-        if(represent.memberName!=''&&e.member_name!=represent.memberName){
+        if (represent.memberName != '' && e.member_name != represent.memberName) {
             return false;
         }
 
-        if(parseFloat(e.remain_amount)<remainAmount){
+        if (parseFloat(e.remain_amount) < remainAmount) {
             return false;
         }
         return true;
     }
+
     const columns: GridColDef[] = [
+        {
+            field: 'action',
+            headerClassName: 'super-app-theme--header',
+            hide: checkColumnVisibility('company', 'action'),
+            headerName: '',
+            sortable: false,
+            width: 60,
+            minWidth: 60,
+            align: 'center',
+            // flex: 1,
+            renderCell: (params) => {
+
+                const updateBtn = (e) => {
+                    e.stopPropagation();
+                    let index = params.api.getRowIndex(params.row.id)
+                    setListConvert()
+                    setListConvert([
+                        ...listConvert.slice(0, index),
+                        ...listConvert.slice(index + 1)
+                    ])
+                    // navigate(`/member/update?id=${params.id}`)
+                    // });
+                }
+                return <div className='icon-action' style={{display:"flex",justifyContent:'center',alignItems:'center'}}>
+                    <Tooltip title="Xóa" onClick={updateBtn}>
+                        <RemoveIcon style={{color: "rgb(107, 114, 128)",marginLeft:'1px'}}></RemoveIcon>
+                    </Tooltip>
+                </div>;
+            },
+        },
         {
             sortable: false,
             field: 'index',
@@ -141,7 +176,7 @@ export default function ModeView() {
             filterable: false,
             headerClassName: 'super-app-theme--header',
             hide: checkColumnVisibility('sof', 'index'),
-            // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
+            renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         {
             sortable: false,
@@ -283,7 +318,7 @@ export default function ModeView() {
 
 
     const handleChangeCampaign = (e) => {
-        console.log("e",e)
+        console.log("e", e)
         setCampaignSearch(e)
     };
     const handleChangeStatus = (e) => {
@@ -291,7 +326,7 @@ export default function ModeView() {
     };
     useEffect(() => {
 
-    }, [ campaignSearch, companySearch, companySupplierSearch, statusSearch, refresh, currentUser.token, remainAmount, represent])
+    }, [campaignSearch, companySearch, companySupplierSearch, statusSearch, refresh, currentUser.token, remainAmount, represent])
     useEffect(() => {
         getListCategoryApi({paging: false}).then(r => {
             if (r.data.categories) {
@@ -552,7 +587,7 @@ export default function ModeView() {
                         </div>
                         <div style={{width: '20%', marginLeft: '20px'}}>
                             <div className={'label-input'}>Mục đích vay</div>
-                                <TreeSelect
+                            <TreeSelect
                                 style={{width: '100%'}}
                                 showSearch
                                 value={campaignSearch}

@@ -27,7 +27,13 @@ import {DataGrid, GridColDef, GridToolbarColumnsButton, GridToolbarContainer, vi
 import {useNavigate} from "react-router-dom";
 import apiManagerAssets from "../../api/manage-assets";
 import ModalConfirmDel from "../../components/ModalConfirmDelete";
-import {changeVisibilityTableAll, checkColumnVisibility, currencyFormatter, pending} from "../../constants/utils";
+import {
+    changeVisibilityTableAll,
+    checkColumnVisibility,
+    convertToTreeTable,
+    currencyFormatter,
+    pending
+} from "../../constants/utils";
 import {useSelector} from "react-redux";
 import {TreeSelect} from "antd";
 import apiManagerAssetGroup from "../../api/manage-asset-group";
@@ -58,6 +64,7 @@ export default function ManageAssets() {
     const [typeSearch, setTypeSearch] = useState(0)
     const [openSearch, setOpenSearch] = useState(true)
     const [listAssetGroupTree, setListAssetGroupTree] = useState([]);
+    const [listAsset,setListAsset] = useState([])
     const [listResult, setListResult] = React.useState({
         page: 0,
         pageSize: 10,
@@ -306,7 +313,9 @@ export default function ManageAssets() {
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
-
+    useEffect(()=>{
+        console.log(listAsset)
+    },[listAsset])
     const redirectAddPage = () => {
         navigate('/assets/create')
     }
@@ -369,6 +378,14 @@ export default function ManageAssets() {
         }).catch(e => {
             console.log(e)
         })
+
+        getListAssetApi().then(r=>{
+            let arr = convertToTreeTable(r.data.asset_aggregates)
+            console.log("tutt 222",arr)
+            setListAsset(arr)
+        })
+
+
     }, [currentUser])
 
     function CustomToolbar() {
@@ -452,6 +469,9 @@ export default function ManageAssets() {
     }
     const downTemplateAssetApi = (data) => {
         return apiManagerAssets.downTemplateAsset(data);
+    }
+    const getListAssetApi = () => {
+        return apiManagerAssets.getListAssetDashboard();
     }
     return (
         <div className={'main-content'}>
@@ -554,9 +574,17 @@ export default function ManageAssets() {
                                 fieldNames={{label: 'group_name', value: 'id', children: 'child_asset_groups'}}
                             >
                             </TreeSelect>
-
                         </div>
+                        <div style={{width: '20%', marginLeft: '20px'}}>
+                            {
+                                listAsset.map((e)=>(
+                                    <div>
+                                        {e.group_name} : {currencyFormatter(e.total_value)}
+                                    </div>
+                                    )
 
+                                )}
+                        </div>
 
                     </div>
 
