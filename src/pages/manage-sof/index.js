@@ -35,7 +35,7 @@ import ModalConfirmDel from "../../components/ModalConfirmDelete";
 import {
     changeVisibilityTableAll,
     checkColumnVisibility,
-    convertToAutoComplete,
+    convertToAutoComplete, convertToTreeTable,
     currencyFormatter,
     pending
 } from "../../constants/utils";
@@ -49,6 +49,7 @@ import CancelPresentationOutlinedIcon from '@mui/icons-material/CancelPresentati
 import apiManagerSupplier from "../../api/manage-supplier";
 import apiManagerAssets from "../../api/manage-assets";
 import HistoryIcon from '@mui/icons-material/History';
+import ItemDashboard from "../../components/ItemDashboard";
 export default function ManageSOF() {
     const currentUser = useSelector(state => state.currentUser)
     const [listDelete, setListDelete] = useState([]);
@@ -59,10 +60,12 @@ export default function ManageSOF() {
     const onChange = (newValue: string) => {
         setValue(newValue);
     };
+    const [openTotal, setOpenTotal] = useState(true)
     const [listCompany, setListCompany] = useState([]);
     const [listCompanySupplier, setListCompanySupplier] = useState([]);
     const [listCampaign, setListCampaign] = useState([]);
     const [listCategory, setListCategory] = useState([]);
+    const [listSOFTotal, setListSOFTotal] = useState([]);
     const [statusSOF, setStatusSOF] = useState();
     const [listCategoryTree, setListCategoryTree] = useState([
     ]);
@@ -672,6 +675,10 @@ export default function ManageSOF() {
         }).catch(e => {
             console.log(e)
         })
+        getListSOFTotalApi().then(r=>{
+            let arr = convertToTreeTable(r.data.sof_aggregates)
+            setListSOFTotal(arr)
+        })
 
     }, [currentUser.token])
 
@@ -764,6 +771,9 @@ export default function ManageSOF() {
     const cancelApproveSOFApi = (data) => {
         return apiManagerSOF.cancelApproveSOF(data);
     }
+    const getListSOFTotalApi = () => {
+        return apiManagerSOF.getListSOFDashboard();
+    }
     return (
         <div className={'main-content'}>
             {/*<div className={`loading ${true ? '' : ''}`}>*/}
@@ -799,7 +809,35 @@ export default function ManageSOF() {
                         </Button>
                     </div>
                 </div>
+                <div className={'main-content-body'}>
+                    <div className={'main-content-body-tittle'}>
+                        <h4>Thống kê</h4>
+                        {openTotal ? <IconButton color="primary" style={{cursor: 'pointer'}}
+                                                 onClick={() => setOpenTotal(false)}>
+                                <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>
+                            </IconButton> :
+                            <IconButton style={{cursor: 'pointer'}} color="primary"
+                                        onClick={() => setOpenTotal(true)}>
+                                <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
+                            </IconButton>
+                        }
+                    </div>
+                    <Divider light/>
+                    <Collapse in={openTotal} timeout="auto" unmountOnExit>
+                        <div className={'row'} style={{width:'40%',padding: '0 50px 50px 50px',justifyContent:'space-between'}}>
+                            {
+                                listSOFTotal.map((e) => (
+                                        <ItemDashboard  tittle={e.category_name}
+                                                       content={e.total_value}></ItemDashboard>
+                                    )
+                                )
+                            }
 
+                        </div>
+                    </Collapse>
+
+
+                </div>
             </div>
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
@@ -813,8 +851,6 @@ export default function ManageSOF() {
                             <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
                         </IconButton>
                     }
-
-
                 </div>
                 <Divider light/>
                 <Collapse in={openSearch} timeout="auto" unmountOnExit>

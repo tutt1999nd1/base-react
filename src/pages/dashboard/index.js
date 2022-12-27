@@ -203,7 +203,6 @@ export default function Dashboard() {
             })
             getListSOFApi().then(r=>{
                 let arr = convertToTreeTable(r.data.sof_aggregates)
-                console.log("arr2",arr)
                 setListSOF(arr)
             })
         }

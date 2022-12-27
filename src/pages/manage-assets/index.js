@@ -40,10 +40,13 @@ import apiManagerAssetGroup from "../../api/manage-asset-group";
 import SimCardDownloadIcon from '@mui/icons-material/SimCardDownload';
 import Axios from "axios";
 import API_MAP from "../../constants/api";
+import ItemDashboard from "../../components/ItemDashboard";
+
 export default function ManageAssets() {
     const FileDownload = require('js-file-download');
     const currentUser = useSelector(state => state.currentUser)
     const navigate = useNavigate();
+    const [openTotal, setOpenTotal] = useState(true)
     //     const localizedTextsMap = {
     //     columnMenuUnsort: "não classificado",
     //     columnMenuSortAsc: "Classificar por ordem crescente",
@@ -53,7 +56,7 @@ export default function ManageAssets() {
     //     columnMenuShowColumns: "Mostrar colunas"
     // };
     const [listDelete, setListDelete] = useState([]);
-    const [isDelList,setIsDelList] =  useState(false)
+    const [isDelList, setIsDelList] = useState(false)
     const [listGroup, setListGroup] = useState([]);
     const [listType, setListType] = useState([]);
     const [loading, setLoading] = useState(false)
@@ -64,7 +67,7 @@ export default function ManageAssets() {
     const [typeSearch, setTypeSearch] = useState(0)
     const [openSearch, setOpenSearch] = useState(true)
     const [listAssetGroupTree, setListAssetGroupTree] = useState([]);
-    const [listAsset,setListAsset] = useState([])
+    const [listAsset, setListAsset] = useState([])
     const [listResult, setListResult] = React.useState({
         page: 0,
         pageSize: 10,
@@ -94,7 +97,7 @@ export default function ManageAssets() {
             maxWidth: 60,
             filterable: false,
             headerClassName: 'super-app-theme--header',
-            hide: checkColumnVisibility('asset','index'),
+            hide: checkColumnVisibility('asset', 'index'),
             // renderCell: (index) => index.api.getRowIndex(index.row.id) + 1,
         },
         {
@@ -104,7 +107,7 @@ export default function ManageAssets() {
             headerName: 'Tên tài sản',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-            hide: checkColumnVisibility('asset','asset_name'),
+            hide: checkColumnVisibility('asset', 'asset_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -119,7 +122,7 @@ export default function ManageAssets() {
             headerName: 'Nhóm tài sản',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-            hide: checkColumnVisibility('asset','asset_group_name'),
+            hide: checkColumnVisibility('asset', 'asset_group_name'),
             renderCell: (params) => {
 
                 return <div className='content-column'>
@@ -134,7 +137,7 @@ export default function ManageAssets() {
             headerName: 'Giá trị ban đầu',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-            hide: checkColumnVisibility('asset','initial_value'),
+            hide: checkColumnVisibility('asset', 'initial_value'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -149,7 +152,7 @@ export default function ManageAssets() {
             headerName: 'Vốn vay',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-            hide: checkColumnVisibility('asset','capital_value'),
+            hide: checkColumnVisibility('asset', 'capital_value'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -164,7 +167,7 @@ export default function ManageAssets() {
             headerName: 'Gốc vay tín dụng hiện tại',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-            hide: checkColumnVisibility('asset','current_credit_value'),
+            hide: checkColumnVisibility('asset', 'current_credit_value'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -180,7 +183,7 @@ export default function ManageAssets() {
             headerName: 'Số tiền vay tối đa',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-            hide: checkColumnVisibility('asset','max_capital_value'),
+            hide: checkColumnVisibility('asset', 'max_capital_value'),
             renderCell: (params) => {
 
                 return <div className='content-column number'>
@@ -195,7 +198,7 @@ export default function ManageAssets() {
             headerName: 'Trạng thái',
             headerClassName: 'super-app-theme--header',
             minWidth: 150,
-            hide: checkColumnVisibility('asset','status'),
+            hide: checkColumnVisibility('asset', 'status'),
             flex: 1,
             renderCell: (params) => {
 
@@ -212,7 +215,7 @@ export default function ManageAssets() {
             headerName: 'Thông tin',
             headerClassName: 'super-app-theme--header',
             minWidth: 450,
-            hide: checkColumnVisibility('asset','description'),
+            hide: checkColumnVisibility('asset', 'description'),
             // flex: 3,
             renderCell: (params) => {
 
@@ -231,7 +234,7 @@ export default function ManageAssets() {
             align: 'center',
             maxWidth: 150,
             headerClassName: 'super-app-theme--header',
-            hide: checkColumnVisibility('asset','action'),
+            hide: checkColumnVisibility('asset', 'action'),
             // flex: 1,
             renderCell: (params) => {
 
@@ -276,11 +279,11 @@ export default function ManageAssets() {
 
             new Promise(function (resolve) {
                 setTimeout(function () {
-                    if(el.files.length > 0) {
+                    if (el.files.length > 0) {
                         console.log(el.files);
                         let formData = new FormData();
                         formData.append('file', el.files[0])
-                        importAssetApi(formData).then(r=>{
+                        importAssetApi(formData).then(r => {
                             console.log(r);
                             toast.success('Nhập dữ liệu thành công', {
                                 position: "top-right",
@@ -313,9 +316,9 @@ export default function ManageAssets() {
     const handleCloseModalDel = () => {
         setOpenModalDel(false)
     }
-    useEffect(()=>{
+    useEffect(() => {
         console.log(listAsset)
-    },[listAsset])
+    }, [listAsset])
     const redirectAddPage = () => {
         navigate('/assets/create')
     }
@@ -379,9 +382,9 @@ export default function ManageAssets() {
             console.log(e)
         })
 
-        getListAssetApi().then(r=>{
+        getListAssetApi().then(r => {
             let arr = convertToTreeTable(r.data.asset_aggregates)
-            console.log("tutt 222",arr)
+            console.log("tutt 222", arr)
             setListAsset(arr)
         })
 
@@ -395,14 +398,16 @@ export default function ManageAssets() {
                 {/*<GridToolbarDensitySelector/>*/}
                 {listDelete.length > 0 ?
                     <Tooltip title="Xóa">
-                        <Button onClick={deleteListBtn} variant={"outlined"} style={{right:"20px",position:'absolute'}} color={"error"}>Xóa</Button>
+                        <Button onClick={deleteListBtn} variant={"outlined"}
+                                style={{right: "20px", position: 'absolute'}} color={"error"}>Xóa</Button>
                     </Tooltip> : ''}
             </GridToolbarContainer>
         );
     }
+
     const submitDelete = () => {
-        if(isDelList){
-            deleteListApi({list_id:listDelete}).then(r => {
+        if (isDelList) {
+            deleteListApi({list_id: listDelete}).then(r => {
                 setRefresh(!refresh)
                 toast.success('Xóa thành công', {
                     position: "top-right",
@@ -415,7 +420,7 @@ export default function ManageAssets() {
             }).catch(e => {
                 console.log(e)
             })
-        }else{
+        } else {
             deleteAssetApi(infoDel.id).then(r => {
                 toast.success('Xóa thành công', {
                     position: "top-right",
@@ -441,13 +446,13 @@ export default function ManageAssets() {
     }
     const downTemplate = () => {
         Axios.get(API_MAP.DOWN_TEMPLATE_ASSETS, {
-            headers: { 'Authorization': `Bearer ${currentUser.token}` },
+            headers: {'Authorization': `Bearer ${currentUser.token}`},
             responseType: 'blob'
         }).then(response => {
             let nameFile = response.headers['content-disposition'].split(`"`)[1]
-            FileDownload(response.data,nameFile);
+            FileDownload(response.data, nameFile);
 
-        }).catch(e=>{
+        }).catch(e => {
         })
     }
     const deleteListApi = (data) => {
@@ -517,7 +522,35 @@ export default function ManageAssets() {
                     </div>
 
                 </div>
+                <div className={'main-content-body calculate-interest-body'}>
+                    <div className={'main-content-body-tittle'}>
+                        <h4>Thống kê</h4>
+                        {openTotal ? <IconButton color="primary" style={{cursor: 'pointer'}}
+                                                 onClick={() => setOpenTotal(false)}>
+                                <ExpandLessOutlinedIcon></ExpandLessOutlinedIcon>
+                            </IconButton> :
+                            <IconButton style={{cursor: 'pointer'}} color="primary"
+                                        onClick={() => setOpenTotal(true)}>
+                                <ExpandMoreOutlinedIcon></ExpandMoreOutlinedIcon>
+                            </IconButton>
+                        }
+                    </div>
+                    <Divider light/>
+                    <Collapse in={openTotal} timeout="auto" unmountOnExit>
+                        <div className={'row'} style={{padding: '0 50px 50px 50px', justifyContent: "space-between"}}>
+                            {
+                                listAsset.map((e) => (
+                                        <ItemDashboard tittle={e.group_name}
+                                                       content={e.total_value}></ItemDashboard>
+                                    )
+                                )
+                            }
 
+                        </div>
+                    </Collapse>
+
+
+                </div>
             </div>
             <div className={'main-content-body'}>
                 <div className={'main-content-body-tittle'}>
@@ -575,16 +608,7 @@ export default function ManageAssets() {
                             >
                             </TreeSelect>
                         </div>
-                        <div style={{width: '20%', marginLeft: '20px'}}>
-                            {
-                                listAsset.map((e)=>(
-                                    <div>
-                                        {e.group_name} : {currencyFormatter(e.total_value)}
-                                    </div>
-                                    )
 
-                                )}
-                        </div>
 
                     </div>
 
@@ -602,8 +626,8 @@ export default function ManageAssets() {
                             pagination
                             rowCount={listResult.total}
                             {...listResult}
-                            onColumnVisibilityModelChange={(event) =>{
-                                changeVisibilityTableAll('asset',event)
+                            onColumnVisibilityModelChange={(event) => {
+                                changeVisibilityTableAll('asset', event)
                             }}
                             paginationMode="server"
                             // onPageChange={(page) => setCurrentPage(page)}
