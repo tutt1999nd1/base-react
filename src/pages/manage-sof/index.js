@@ -826,7 +826,7 @@ export default function ManageSOF() {
                     </div>
                     <Divider light/>
                     <Collapse in={openTotal} timeout="auto" unmountOnExit>
-                        <div className={'row'} style={{width:'40%',padding: '0 50px 50px 50px',justifyContent:'space-between'}}>
+                        <div className={'row hot-fix'} style={{width:'100%',padding: '0 50px 50px 50px'}}>
                             {
                                 listSOFTotal.map((e) => (
                                         <ItemDashboard  tittle={e.category_name}

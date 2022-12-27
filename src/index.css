@@ -1239,3 +1239,9 @@ div[role=dialog] button{
 button[disabled]{
     color: rgba(0, 0, 0, 0.38) !important;
 }
+.hot-fix>div{
+    /*margin-left: 20px;*/
+}
+.hot-fix > div:last-child{
+   margin-left: 30px;
+}
