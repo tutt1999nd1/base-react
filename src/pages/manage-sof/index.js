@@ -477,7 +477,7 @@ export default function ManageSOF() {
                 return <div className='icon-action'>
                     {
                         params.row.created_by !== currentUser.username?'': params.row.status_approve=='Tạo mới'|| params.row.status_approve=='Đã từ chối'?
-                        <Tooltip title="Đề xuát phê duyệt" >
+                        <Tooltip title="Đề xuất phê duyệt" >
                             <CheckBoxOutlinedIcon onClick={sendBtn} style={{color: "rgb(107, 114, 128)"}}></CheckBoxOutlinedIcon>
                         </Tooltip> :
                             params.row.status_approve=='Đang chờ phê duyệt'?
