@@ -904,12 +904,16 @@ font-size: 0.88rem;
 font-size: 1.2rem;
 }
 .nav.animationTab{
-width: 20rem;
+    width: 20rem;
+    height: 100%;
+}
+.navbarBox__main{
+    height: 100%;
 }
 .MuiDialogActions-root button{
-background: #fff;
-box-shadow: none;
-border: 1px solid #1F2251;
+    background: #fff;
+    box-shadow: none;
+    border: 1px solid #1F2251;
 }
 .MuiDialogActions-root button:hover{
 background-color: #1F2251;
@@ -960,6 +964,12 @@ border: unset;
 
 /* mobile style */
 @media only screen and (max-width: 787px) {
+    .main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-columnHeaders:after{
+        content: unset!important;
+    }
+    .main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-row .MuiDataGrid-cell:last-child{
+        position: unset!important;
+    }
     .super-app-theme--header{
         font-size: .8rem;
     }
