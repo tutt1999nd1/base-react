@@ -202,13 +202,6 @@ input:has(> div){
 
 .main-body {
     height: calc(100vh - 80px);
-    /*background-color: red;*/
-    /*display: flex;*/
-    /*justify-content: center;*/
-    /*align-items: center;*/
-    /*margin-top: 54px;*/
-
-
 }
 
 .row {
@@ -431,13 +424,31 @@ p::first-letter, .uppercase::first-letter {
     white-space: normal;
     min-height: 50px !important;
 }
-
+.manhnd:nth-child(odd){
+    background: red;
+}
+.manhnd:nth-child(even){
+    background: green;
+}
+.infoColumn{
+    height: 100px;
+}
 .MuiDataGrid-row {
     max-height: none !important;
 }
 .MuiDataGrid-root .MuiDataGrid-cell {
     text-overflow: initial;
     overflow-x: auto;
+}
+.word-break-unset .content-column{
+    word-break: unset;
+}
+.main-content-body-result table tbody tr.greyColumn > td:last-child, .main-content-body table tbody tr.greyColumn > td:last-child{
+    background: rgb(239 240 246);
+}
+
+.word-break-unset{
+    word-break: unset!important;
 }
 .content-column{
     width: 100%;
@@ -970,8 +981,13 @@ border: unset;
     .main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-columnHeaders:after{
         content: unset!important;
     }
-    .main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-row .MuiDataGrid-cell:last-child{
+    .main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-row .MuiDataGrid-cell:last-child,.main-content-body-result table tbody tr > td:last-child, .main-content-body table tbody tr > td:last-child,
+    .main-content-body-result table tbody tr > td:last-child, .main-content-body table tbody tr > td:last-child
+    {
         position: unset!important;
+    }
+    .main-content-body-result tr th:last-child, .main-content-body tr th:last-child{
+        right: unset!important;
     }
     .super-app-theme--header{
         font-size: .8rem;
@@ -1102,18 +1118,18 @@ border: unset;
         white-space: unset;
     }
 }
-.tutt20 .MuiDataGrid-columnHeaders:after {
+.styleContent .MuiDataGrid-columnHeaders:after {
     content: "Thao tác";
     width: 177px !important;
 }
 
 .main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-columnHeaders:after {
-    content: "Thao tác";
+    content: "";
     width: 157px;
     height: 56px;
     position: absolute;
     right: -1px;
-    background-color: #1f2251;
+    background-image: url("/public/manipulation.svg");
     padding-left: 10px;
     color: #fff;
     border-left: 1px solid #dee2e6;
@@ -1138,7 +1154,7 @@ border: unset;
 .main-content-body-result table tbody tr > td:last-child,.main-content-body table tbody tr > td:last-child{
     position: sticky;
     right: 0;
-    background-color: #fff;
+    background: #fff;
     border-bottom: 1px solid #dee2e6;
 
 }

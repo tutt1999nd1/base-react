@@ -917,7 +917,7 @@ export default function ManageCompany() {
                     </div>
                 </Collapse>
                 <Divider light/>
-                <div className={'main-content-body-result sticky-body tutt20'}>
+                <div className={'main-content-body-result sticky-body styleContent'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
                             onColumnVisibilityModelChange={(event) =>{

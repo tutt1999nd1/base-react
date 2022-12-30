@@ -28,6 +28,7 @@ import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import {Checkbox} from "antd";
 import LinkIcon from "@mui/icons-material/Link";
+import {makeStyles} from "@mui/styles";
 
 export default function DetailSOF(props) {
     const navigate = useNavigate();
@@ -210,8 +211,6 @@ export default function DetailSOF(props) {
 
 
         }
-        // console.log('bbbbbbbbbbbbbbbbbbbbbb')
-        // console.log(listConvert)
         listConvert.sort(function(a,b){
             return new Date(convertDate(a.chargingDate)) - new Date(convertDate(b.chargingDate));
         })
@@ -577,9 +576,9 @@ export default function DetailSOF(props) {
                                     className={`message-table-empty ${listResult.rows.length === 0 ? '' : 'hidden'}`}>Không
                                     có dữ liệu
                                 </div>
-                                {listResult.rows.map(item => (
+                                {listResult.rows.map((item,i) => (
                                     <>
-                                        <TableRow>
+                                        <TableRow style ={ i % 2? {background : "rgb(239 240 246)" }:{ background : "#fff" }}>
 
                                             <TableCell rowSpan={item.sofConvert.length + 1}>{item.chargingDate}</TableCell>
                                             <TableCell rowSpan={item.sofConvert.length + 1}>
@@ -600,11 +599,13 @@ export default function DetailSOF(props) {
                                                     {currencyFormatter(item.totalInterest)}
                                                 </div>
                                             </TableCell>
+                                            <TableCell className={"d-none"} rowSpan={item.sofConvert.length + 1}>
+                                            </TableCell>
                                         </TableRow>
                                         {
                                             item.sofConvert.map(detail => (
 
-                                                <TableRow>
+                                                <TableRow className={i % 2?"greyColumn":"whiteColumn"} style ={ i % 2? {background : "rgb(239 240 246)" }:{ background : "#fff" }}>
                                                     <TableCell>
                                                         <div className={'error-message number'}>{currencyFormatter(detail.amount_paid_in_period)}</div>
                                                         {/*<div className={'error/-message number'}>{detail.amount_paid_in_period}</div>*/}
@@ -654,16 +655,6 @@ export default function DetailSOF(props) {
                                 ))}
                             </TableBody>
                         </Table>
-                        {/*<TablePagination*/}
-                        {/*    rowsPerPageOptions={[5, 10, 25]}*/}
-                        {/*    component="div"*/}
-                        {/*    count={listResult.total}*/}
-                        {/*    rowsPerPage={listResult.pageSize}*/}
-                        {/*    page={listResult.page}*/}
-                        {/*    onPageChange={(page) => setListResult((prev) => ({...prev, page}))}*/}
-                        {/*    onPageChange={handleChangePage}*/}
-                        {/*    onRowsPerPageChange={handleChangeRowsPerPage}*/}
-                        {/*/>*/}
                     </TableContainer>
                 </div>
                 <Divider></Divider>

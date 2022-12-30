@@ -1133,6 +1133,10 @@ export default function EditSOF(props) {
                                                 gutterBottom>
                                         {values.lending_amount ? `*Bằng chữ: ${capitalizeFirstLetter(VNnum2words(values.lending_amount))} đồng` : ''}
                                     </Typography>
+                                    <Typography className={'uppercase'} variant="caption" display="block"
+                                                gutterBottom>
+                                        {values.lending_amount >= 0  ? '' : 'Số tiền phải là số dương và lớn hơn 0'}
+                                    </Typography>
 
                                 </Grid>
                                 {/*<Grid item xs={6} md={6}>*/}

@@ -45,14 +45,14 @@ export default function EditCompany(props) {
 
     });
     const backList = () => {
-        navigate('/asset-groups')
+        navigate('/asset-group')
     }
     useEffect(()=>{
         if(isUpdate){
             if(location.get('id')){
                 setIdUpdate(location.get('id'));
             }
-            else navigate('/asset-groups')
+            else navigate('/asset-group')
         }
 
     },[location])

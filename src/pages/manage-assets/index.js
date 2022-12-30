@@ -219,7 +219,7 @@ export default function ManageAssets() {
             // flex: 3,
             renderCell: (params) => {
 
-                return <div className='content-column'>
+                return <div className='content-column infoColumn'>
                     {params.value}
                 </div>;
             },

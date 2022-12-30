@@ -819,11 +819,10 @@ export default function ManageSofChargingEst() {
                                     có dữ liệu
                                 </div>
                                 {listResult.rows.map((item,i) => (
-
                                     <>
-                                        <TableRow>
+                                        <TableRow style ={ i % 2? {background : "rgb(239 240 246)" }:{ background : "#fff" }}>
                                             <TableCell rowSpan={item.sofConvert.length + 1}>{item.chargingDate}</TableCell>
-                                            <TableCell rowSpan={item.sofConvert.length + 1}>
+                                            <TableCell className={"word-break-unset"} rowSpan={item.sofConvert.length + 1}>
                                                 <div>{item.companyName}</div>
                                             </TableCell>
                                             <TableCell rowSpan={item.sofConvert.length + 1}>
@@ -841,10 +840,12 @@ export default function ManageSofChargingEst() {
                                                     {currencyFormatter(item.totalInterest)}
                                                 </div>
                                             </TableCell>
-                                        </TableRow>
+                                            <TableCell className={"d-none"} rowSpan={item.sofConvert.length + 1}>
+                                            </TableCell>
+                                        </TableRow >
                                         {
                                             item.sofConvert.map((detail, j) => (
-                                                <TableRow>
+                                                <TableRow className={i % 2?"greyColumn":"whiteColumn"} style ={ i % 2? {background : "rgb(239 240 246)" }:{ background : "#fff" }}>
                                                     <TableCell>
                                                         <div className={'error-message number'}>{currencyFormatter(detail.amount_paid_in_period)}</div>
                                                         {/*<div className={'error/-message number'}>{detail.amount_paid_in_period}</div>*/}
@@ -869,7 +870,7 @@ export default function ManageSofChargingEst() {
                                                         <TableCell>
                                                             <div>{detail.type_date==="Trả gốc"?"-":detail.total_day}</div>
                                                         </TableCell>
-                                                        <TableCell >
+                                                        <TableCell>
                                                             <div className='icon-action'>
                                                                 {
                                                                     // detail.type_date=="Trả lãi"?<Checkbox
