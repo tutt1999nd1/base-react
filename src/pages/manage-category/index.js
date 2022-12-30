@@ -402,6 +402,9 @@ export default function ManageCategory() {
                             pagination
                             rowCount={listResult.total}
                             {...listResult}
+                            getRowClassName={(params) =>
+                                params.indexRelativeToCurrentPage % 2 === 0 ? 'mui-even' : 'mui-odd'
+                            }
                             paginationMode="server"
                             // onPageChange={(page) => setCurrentPage(page)}
                             // onPageSizeChange={(pageSize) =>

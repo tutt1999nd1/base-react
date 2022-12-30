@@ -433,6 +433,9 @@ export default function ManageCategory() {
                             onSelectionModelChange={(newSelectionModel) => {
                                 setListDelete(newSelectionModel)
                             }}
+                            getRowClassName={(params) =>
+                                params.indexRelativeToCurrentPage % 2 === 0 ? 'mui-even' : 'mui-odd'
+                            }
                             checkboxSelection
                             loading={loading}
                             rowsPerPageOptions={[5, 10, 25]}

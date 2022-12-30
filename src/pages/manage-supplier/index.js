@@ -340,10 +340,9 @@ export default function ManageAssetGroup() {
                             rowCount={listResult.total}
                             {...listResult}
                             paginationMode="server"
-                            // onPageChange={(page) => setCurrentPage(page)}
-                            // onPageSizeChange={(pageSize) =>
-                            //    setCurrentSize(pageSize)
-                            // }
+                            getRowClassName={(params) =>
+                                params.indexRelativeToCurrentPage % 2 === 0 ? 'mui-even' : 'mui-odd'
+                            }
                             onPageChange={(page) => setListResult((prev) => ({...prev, page}))}
                             onPageSizeChange={(pageSize) =>
                                 setListResult((prev) => ({...prev, pageSize}))

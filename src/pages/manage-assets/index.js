@@ -628,6 +628,7 @@ export default function ManageAssets() {
                 <div className={'main-content-body-result sticky-body'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
+                            className={'connnnnnnnn'}
                             getRowHeight={() => 'auto'}
                             localeText={viVN.components.MuiDataGrid.defaultProps.localeText}
                             labelRowsPerPage={"Số kết quả"}
@@ -656,6 +657,9 @@ export default function ManageAssets() {
                             loading={loading}
                             rowsPerPageOptions={[5, 10, 25]}
                             disableSelectionOnClick
+                            getRowClassName={(params) =>
+                                params.indexRelativeToCurrentPage % 2 === 0 ? 'mui-even' : 'mui-odd'
+                            }
                             sx={{
                                 overflowX: 'scroll',
                                 // boxShadow: 2,

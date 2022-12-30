@@ -1118,9 +1118,9 @@ border: unset;
         white-space: unset;
     }
 }
-.styleContent .MuiDataGrid-columnHeaders:after {
-    content: "Thao tác";
-    width: 177px !important;
+.main-content-body:not(.company-manage-body) .sticky-body.manipulation-manage-company .MuiDataGrid-columnHeaders:after{
+    background-image: url("/public/manipulation-second.svg");
+    width: 175px;
 }
 .manage-assets-item-dashboard > div{
     margin-right: 15px;
@@ -1141,11 +1141,23 @@ border: unset;
 }
 .main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-row .MuiDataGrid-cell:last-child {
     position: sticky;
-    right: 0px;
-    background-color: #fff;
+    right: 0;
+    background: #fff;
     border-bottom: 1px solid #dee2e6;
     border-left: 1px solid #dee2e6;
     min-width: 153px!important;
+}
+.main-content-body-result table tbody tr.greyColumn > td:last-child, .main-content-body table tbody tr.greyColumn > td:last-child {
+    background: rgb(239 240 246);
+}
+.mui-even,.mui-even:hover{
+    background: #fff!important;
+}
+.mui-odd,.mui-odd:hover{
+    background: rgb(239, 240, 246)!important;
+}
+.mui-odd > div:last-child{
+    background: rgb(239, 240, 246)!important;
 }
 .main-content-body-result tr th:last-child,.main-content-body tr th:last-child{
     position: sticky;

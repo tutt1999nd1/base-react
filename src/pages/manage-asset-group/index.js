@@ -402,10 +402,9 @@ export default function ManageCategory() {
                             rowCount={listResult.total}
                             {...listResult}
                             paginationMode="server"
-                            // onPageChange={(page) => setCurrentPage(page)}
-                            // onPageSizeChange={(pageSize) =>
-                            //    setCurrentSize(pageSize)
-                            // }
+                            getRowClassName={(params) =>
+                                params.indexRelativeToCurrentPage % 2 === 0 ? 'mui-even' : 'mui-odd'
+                            }
                             onSelectionModelChange={(newSelectionModel) => {
                                 setListDelete(newSelectionModel)
                             }}

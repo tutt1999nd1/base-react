@@ -761,6 +761,9 @@ export default function ManageSearchCompany() {
                             // onPageSizeChange={(pageSize) =>
                             //    setCurrentSize(pageSize)
                             // }
+                            getRowClassName={(params) =>
+                                params.indexRelativeToCurrentPage % 2 === 0 ? 'mui-even' : 'mui-odd'
+                            }
                             onColumnVisibilityModelChange={(event) => {
                                 changeVisibilityTableAll('sof', event)
                             }}

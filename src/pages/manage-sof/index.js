@@ -1027,6 +1027,9 @@ export default function ManageSOF() {
                             onColumnVisibilityModelChange={(event) =>{
                                 changeVisibilityTableAll('sof',event)
                             }}
+                            getRowClassName={(params) =>
+                                params.indexRelativeToCurrentPage % 2 === 0 ? 'mui-even' : 'mui-odd'
+                            }
                             onPageChange={(page) => setListResult((prev) => ({...prev, page}))}
                             onPageSizeChange={(pageSize) =>
                                 setListResult((prev) => ({...prev, pageSize}))

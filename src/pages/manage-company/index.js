@@ -759,8 +759,7 @@ export default function ManageCompany() {
                                 value={{
                                     id: represent.memberId,
                                     label: represent.memberName,
-                                }
-                                }
+                                }}
 
                                 renderInput={(params) => < TextField  {...params} />}
                                 size={"small"}
@@ -917,7 +916,7 @@ export default function ManageCompany() {
                     </div>
                 </Collapse>
                 <Divider light/>
-                <div className={'main-content-body-result sticky-body styleContent'}>
+                <div className={'main-content-body-result sticky-body styleContent manipulation-manage-company'}>
                     <div style={{height: '100%', width: '100%'}}>
                         <DataGrid
                             onColumnVisibilityModelChange={(event) =>{
@@ -943,6 +942,9 @@ export default function ManageCompany() {
                             onSelectionModelChange={(newSelectionModel) => {
                                 setListDelete(newSelectionModel)
                             }}
+                            getRowClassName={(params) =>
+                                params.indexRelativeToCurrentPage % 2 === 0 ? 'mui-even' : 'mui-odd'
+                            }
                             checkboxSelection
                             loading={loading}
                             rowsPerPageOptions={[5, 10, 25]}
