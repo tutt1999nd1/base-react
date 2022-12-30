@@ -1122,7 +1122,9 @@ border: unset;
     content: "Thao tác";
     width: 177px !important;
 }
-
+.manage-assets-item-dashboard > div{
+    margin-right: 15px;
+}
 .main-content-body:not(.company-manage-body) .sticky-body .MuiDataGrid-columnHeaders:after {
     content: "";
     width: 157px;

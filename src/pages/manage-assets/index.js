@@ -68,6 +68,7 @@ export default function ManageAssets() {
     const [openSearch, setOpenSearch] = useState(true)
     const [listAssetGroupTree, setListAssetGroupTree] = useState([]);
     const [listAsset, setListAsset] = useState([])
+    const [listSOFAmount, setListSOFAmount] = useState([]);
     const [listResult, setListResult] = React.useState({
         page: 0,
         pageSize: 10,
@@ -367,6 +368,18 @@ export default function ManageAssets() {
                 arr = convertArr(r.data.assets)
             else arr = [];
             console.log("arr tutt", arr)
+            let totalAmountArr = [];
+            totalAmountArr.initial_value = 0;
+            totalAmountArr.capital_value = 0;
+            totalAmountArr.current_credit_value = 0;
+            for(let i = 0; i < arr.length; i++){
+                totalAmountArr.initial_value += parseInt(arr[i].initial_value.split('.').join(''));
+                totalAmountArr.capital_value += parseInt(arr[i].capital_value.split('.').join(''));
+                totalAmountArr.current_credit_value += parseInt(arr[i].current_credit_value.split('.').join(''));
+            }
+            setListSOFAmount(totalAmountArr);
+
+
             setListResult({...listResult, rows: (arr), total: r.data.page.total_elements});
         }).catch(e => {
             setLoading(false)
@@ -384,7 +397,6 @@ export default function ManageAssets() {
 
         getListAssetApi().then(r => {
             let arr = convertToTreeTable(r.data.asset_aggregates)
-            console.log("tutt 222", arr)
             setListAsset(arr)
         })
 
@@ -537,14 +549,13 @@ export default function ManageAssets() {
                     </div>
                     <Divider light/>
                     <Collapse in={openTotal} timeout="auto" unmountOnExit>
-                        <div className={'row'} style={{padding: '0 50px 50px 50px', justifyContent: "space-between"}}>
-                            {
-                                listAsset.map((e) => (
-                                        <ItemDashboard tittle={e.group_name}
-                                                       content={e.total_value}></ItemDashboard>
-                                    )
-                                )
-                            }
+                        <div className={'row manage-assets-item-dashboard'} style={{padding: '0 50px 50px 50px'}}>
+                            <ItemDashboard  tittle={"Giá trị ban đầu"}
+                                            content={listSOFAmount.initial_value}></ItemDashboard>
+                            <ItemDashboard  tittle={"Vốn vay"}
+                                            content={listSOFAmount.capital_value}></ItemDashboard>
+                            <ItemDashboard  tittle={"Gốc vay tín dụng hiện tại"}
+                                            content={listSOFAmount.current_credit_value}></ItemDashboard>
 
                         </div>
                     </Collapse>
