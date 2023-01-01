@@ -141,7 +141,7 @@ export default function ManageSofChargingEst() {
                 for (let j = 0; j < listConvert.length; j++) {
                     if (listConvert[j].key === key) {
                         listConvert[j].sof.push(arr[i]);
-                        listConvert[j].total = listConvert[j].total + arr[i].amount_paid_in_period;
+                        listConvert[j].total = Math.round(listConvert[j].total + arr[i].amount_paid_in_period);
                     }
 
                 }
